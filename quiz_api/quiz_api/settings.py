@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-$n1k9#_lio-1vkb(7ee!kt^%*&cc7zzsi$6&2l@mje1x#vlh1u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 
@@ -37,19 +38,50 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'quiz',
+
+    'nested_admin',
+    'rest_framework',
+    'django_filters',
+    'debug_toolbar',
+    # 'django-rest-knox',
+    # 'boto3',
+    # 'knox',
+    
+
+    'djoser',
+    'corsheaders'
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
+INTERNAL_IPS = ['127.0.0.1']
+
 ROOT_URLCONF = 'quiz_api.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {

@@ -1,0 +1,164 @@
+from django.db.models import Q
+# from django.db.models.query import Prefetch
+from django.db.models import Prefetch
+from django.db.models.query_utils import select_related_descend
+from django.shortcuts import render
+# import django_filters
+from django.db.models import Max
+import random
+from rest_framework.response import Response
+from rest_framework import generics,viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
+from quiz.models import Quiz,Question,Answer
+from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerListSerializer
+
+# class FieldModuleFilterAPI(generics.ListAPIView):
+    # queryset = Quiz.objects.prefetch_related(
+    #     Prefetch("question",queryset=Question.objects.filter(field='analog'), to_attr='filtered_question')
+    # )
+class QuestionListApi(APIView):
+# this is for all indicate quiz, field and module
+    def get(self, request, format=None):
+        queryset = Question.objects.filter(quiz=request.query_params['quiz'],
+        field=request.query_params['field'],
+        module=request.query_params['module'])
+        quiz_num = int(request.query_params['num'])
+        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+        serializer = QuestionListSerializer(question, many=True)
+        return Response(serializer.data)
+
+class QuizFilteredListApi(APIView):
+# this is for only filtering specific quiz
+    def get(self, request, format=None):
+        queryset = Question.objects.filter(quiz=request.query_params['quiz'])
+        quiz_num = int(request.query_params['num'])
+        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+        serializer = QuestionListSerializer(question, many=True)
+        return Response(serializer.data)
+
+class FieldFilteredListApi(APIView):
+# this is for only filtering specific field
+    def get(self, request, format=None):
+        queryset = Question.objects.filter(field=request.query_params['field'])
+        quiz_num = int(request.query_params['num'])
+        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+        serializer = QuestionListSerializer(question, many=True)
+        return Response(serializer.data)
+
+class ModuleFilteredListApi(APIView):
+# this is for only filtering specific module
+    def get(self, request, format=None):
+        queryset = Question.objects.filter(module=request.query_params['module'])
+        quiz_num = int(request.query_params['num'])
+        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+        serializer = QuestionListSerializer(question, many=True)
+        return Response(serializer.data)
+    
+def pick_random_object(queryset,quiz_num):
+    num = quiz_num
+    random_id_list = list()
+    max_id = queryset.aggregate(max_id=Max("id"))['max_id']
+    while True:
+        pk = random.randint(0, max_id)
+        question = queryset.filter(pk=pk).select_related('quiz').first()
+        if question:
+            if len(random_id_list) == num:
+                return random_id_list
+            elif len(random_id_list) <= 1:
+                random_id_list.append(question.id)
+            elif len(random_id_list) >= 2:
+                random_id_list.append(question.id)
+                a = set(random_id_list)
+                random_id_list = list(a)
+
+class QuizListApi(generics.ListAPIView):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['id',]
+
+    # def pick_random_object(self):
+    #     max_id = Quiz.objects.all().aggregate(max_id=Max("id"))['max_id']
+    #     while True:
+    #         pk = random.randint(1, max_id)
+    #         quiz = Quiz.objects.filter(pk=pk).first()
+    #         if quiz:
+    #             return quiz.id
+
+    # def get_queryset(self):
+    #     quiz=self.queryset.filter(question__module__icontains='２課'
+    #     ).distinct().prefetch_related(Prefetch('question', queryset=Question.objects.filter(module__icontains='２課')))
+    #     return quiz
+
+
+# class QuestionListApi(generics.ListAPIView):
+#     queryset = Question.objects.filter(quiz='2')
+#     serializer_class = QuestionListSerializer
+#     filter_backends = [DjangoFilterBackend]
+#     filterset_fields = ['quiz','field','module']
+
+#     def pick_random_object(self):
+#         random_id_list = list()
+#         max_id = self.queryset.aggregate(max_id=Max("id"))['max_id']
+#         while True:
+#             pk = random.randint(0, max_id)
+#             question = self.queryset.filter(pk=pk).first()
+#             if question:
+#                 if len(random_id_list) == 3:
+#                     return random_id_list
+#                 elif len(random_id_list) <= 1:
+#                     random_id_list.append(question.id)
+#                 elif len(random_id_list) >= 2:
+#                     random_id_list.append(question.id)
+#                     a = set(random_id_list)
+#                     random_id_list = list(a)
+
+#     def get_queryset(self):
+#         return self.queryset.filter(id__in=self.pick_random_object())
+
+class AnswerListApi(generics.ListAPIView):
+    queryset = Answer.objects
+    serializer_class = AnswerListSerializer
+
+# #  test   
+# class FieldModuleFiltersAPI(APIView):
+#     def get(self, request, format=None):
+#         num = int(request.query_params['num'])
+#         queryset = Quiz.objects.filter(name=request.query_params['name'])
+#         queryset = Quiz.objects.filter(question__id__in=self.pick_random_object(queryset,num),question__module__icontains=request.query_params['module'],question__field__icontains=request.query_params['field']
+#         ).distinct().prefetch_related(Prefetch('question', queryset=Question.objects.filter(id__in=self.pick_random_object(queryset,num),module__icontains=request.query_params['module'],field__icontains=request.query_params['field'])))
+#         print(dict(queryset))
+#         # random_query = queryset.filter(question__id=12)
+#         serializer = QuizListSerializer(queryset, many=True)
+#         return Response(serializer.data)
+
+    
+    
+#     def pick_random_object(self,queryset,quiz_num):
+#         num = quiz_num
+#         random_id_list = list()
+#         max_id = Max(queryset[0].question__pk)
+#         while True:
+#             pk = random.randint(0, max_id)
+#             question = queryset(pk=pk).first()
+#             if question:
+#                 if len(random_id_list) == num:
+#                     return random_id_list
+#                 elif len(random_id_list) <= 1:
+#                     random_id_list.append(question.id)
+#                 elif len(random_id_list) >= 2:
+#                     random_id_list.append(question.id)
+#                     a = set(random_id_list)
+#                     random_id_list = list(a)
+
+# class QuestionFiltersAPI(APIView):
+#     def get(self, request, format=None):
+#         queryset= Question.objects.distinct().all()
+#         serializer = QuestionListWithQuizSerializer(queryset,many=True)
+#         return Response(serializer.data)
+
+    
+
+
+    
