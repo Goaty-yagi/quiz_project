@@ -26,22 +26,33 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, related_name='question', on_delete=models.CASCADE)
     label = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='quizzes/', blank=True, null=True)
     order = models.IntegerField(default=False)
     field = models.CharField(max_length= 50, blank=True)
     module = models.CharField(max_length=50, blank=True)
+    correct_answer = models.JSONField()
     
 
     def __str__(self):
         return self.label
+
+    def get_image(self):
+        if self.image:
+            return 'http://127.0.0.1:8000' + self.image.url
+        return ''
 
 
 class Answer(models.Model):
     question = models.ForeignKey(Question,related_name='answer', on_delete=models.CASCADE)
     label = models.CharField(max_length=100)
     is_correct = models.BooleanField(default=False)
+    answer_id = models.IntegerField(default=1)
 
     def __str__(self):
         return self.label
+
+# class CorrectAnswer(models.Model):
+#     order = models.IntegerField(default=1)
 
  
 class QuizTaker(models.Model):

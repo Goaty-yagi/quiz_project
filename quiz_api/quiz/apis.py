@@ -1,5 +1,3 @@
-from django.db.models import Q
-# from django.db.models.query import Prefetch
 from django.db.models import Prefetch
 from django.db.models.query_utils import select_related_descend
 from django.shortcuts import render
@@ -7,7 +5,7 @@ from django.shortcuts import render
 from django.db.models import Max
 import random
 from rest_framework.response import Response
-from rest_framework import generics,viewsets
+from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from quiz.models import Quiz,Question,Answer
@@ -77,6 +75,12 @@ class QuizListApi(generics.ListAPIView):
     serializer_class = QuizListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id',]
+
+class OneQuestionApi(generics.ListAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['label',]
 
     # def pick_random_object(self):
     #     max_id = Quiz.objects.all().aggregate(max_id=Max("id"))['max_id']

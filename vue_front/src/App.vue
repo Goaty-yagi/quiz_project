@@ -1,13 +1,20 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link>
-    <router-link to="/quiz">Quiz</router-link>
-    
+  <div id="wrapper">
+    <nav class="navbar is-dark">
+        <div class="navbar-brand">
+          <router-link to="/" class="navbar-item"><strong>何を学ぶ</strong></router-link>
+        </div>
+        <router-link to="/" class="button　m-3 is-primary is-outlined">Home</router-link>
+        <router-link to="/quiz" class="button m-3 is-primary is-rounded">Quiz</router-link>
+    </nav>
     <section class="section">
-      <router-view/>
+        <router-view/>
     </section>
-  </div>
 
+    <footer class="footer">
+        <p class="has-text-centered">Copyright (c) 2021</p>
+    </footer>
+  </div>
 </template>
 
 <style lang="scss">

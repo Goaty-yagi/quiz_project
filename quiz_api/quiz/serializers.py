@@ -4,7 +4,7 @@ from quiz.models import Quiz,Question,Answer
 class AnswerListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct"]
+		fields = ["id", "question", "label", "is_correct",'answer_id']
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
 	# answers_count = serializers.SerializerMethodField()
 	class Meta:
 		model = Question
-		fields = ["id", "quiz", "label", "order",'field','module','answer']
+		fields = ["id", "quiz", "label", "image","get_image","order",'field','module','correct_answer','answer']
 
 	# def get_answers_count(self, obj):
 	# 	return obj.answer_set.all().count()
