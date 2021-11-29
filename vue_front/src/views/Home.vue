@@ -1,5 +1,5 @@
 <template>
-<h1>HOMEです</h1>
+<h1 id='unko'>HOMEです</h1>
 </template>
 
 <script>
@@ -10,3 +10,8 @@ export default {
   }
 }
 </script>
+<style>
+  h1#unko{
+    color:blue;
+  }
+</style>

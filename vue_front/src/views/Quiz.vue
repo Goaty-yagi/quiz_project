@@ -1,25 +1,27 @@
 <template>
   <div id="wrapper">
-    <div class="section" v-if="quizzes[0]&&questions[0]">
-      <div class='container'>
-      <div v-if="!showQuiz" @click="handleSHowQuiz">
-        <p class="title is 3">{{quizzes[0].name}}問題</p>
-        <p class="subtitle is 4">全{{questions.length}}問</p>
-        <button>START</button>
-      </div>
+    <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]">
+      <div class='container-'>
+        <div v-if="!showQuiz" @click="handleSHowQuiz">
+          <p class="title is 3">{{quizzes[0].name}}問題</p>
+          <p class="subtitle is 4">全{{questions.length}}問</p>
+          <button>START</button>
+        </div>
       <!-- <div v-show="counter > quizzes[0].question.length">
         <p class="title is-3">Result</p>
       </div> -->
       <div v-if="showQuiz && counter < questions.length + 1">
-        <div class="title is-1"> 
-          <h1>初級</h1>
-          <p class=" button is-static is-rounded is-active subtitle is-6">第{{ counter }}問</p>
+        <div class="i is-size-1-tablet title is-size-3-mobile"> 
+          <p>初級</p>
+          <p class=" button is-small is-static is-rounded is-active is-size-6-tablet ">第{{ counter }}問</p>
         </div>
         <div v-for="(question,questionindex) in questions.slice(a,b)"
             v-bind:key="questionindex">
-          <p>
+          <div>
+            <p class='button has-background-link subtitle-4 has-text-link-light is-hovered is-static'>
             {{ question.label }}
-          </p>
+            </p>
+          </div>
           <div :class='showPic(question.image)'>
             <img  v-bind:src="question.get_image"/>
           </div>
@@ -28,18 +30,22 @@
           <div class='columns is-vcentered is-centered is-mobile'    
             v-for="(answer,answerindex) in question.answer"
             v-bind:key="answerindex">
-            <div class="column py-6 is-three-fifths-desktop button is-fullwidth my-4 has-text-grey-darker" 
+            <div class="py-6 is-three-fifths-tablet button has-background-light is-fullwidth my-4" 
               @click="onClicked(answer,question.field)"
               :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
               >
-              <p class='button has-background-dark has-text-white is-static is-inline-block'>{{ answerindex+1 }}</p>
+              <div class='column'>
+                <p class='button is-pulled-left has-background-dark has-text-white is-static is-inline-block'>{{ answerindex+1 }}</p>
+              </div>
               <p
-              class="column subtitle is-marginless has-text-centered"
+              class="column is-overlay mt-5 subtitle is-marginless has-text-centered　has-text-grey-darker"
               >{{ answer.label }}</p>
-              <p class="title is 4 is-marginless button is-vcentered is-medium is-rounded has-background-warning-light has-text-warning-dark"
-              v-if="question.field=='並び替え'&&sort.includes(answer.answer_id)&&showAnswerDetail==false">
-              {{sort.indexOf(answer.answer_id)+1}}
-              </p>
+              <div v-if="question.field=='並び替え'&&showAnswerDetail==false">
+                <div class="column-1 is-marginless button is-vcentered is-medium is-rounded has-background-warning-light has-text-warning-dark">
+                  <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
+                  class ='is-overlay title is 4 mt-2 has-text-warning-dark'>{{sort.indexOf(answer.answer_id)+1}}</p>
+                </div>
+              </div>
               <p :class="detailClassHandler(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
               v-if="question.field!='並び替え' && showAnswerDetail">
               {{ getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field) }}
@@ -316,9 +322,6 @@ export default {
           else if(correct_answer != answer_id && selectedAnswerArray[counter-1] == answer_id){
             return 'has-background-danger-light has-text-white is-static is-hovered'
           }
-          else{
-        return"section button is-fullwidth my-4 has-background-white has-text-grey-darker is-static is-hovered" 
-          }
        }
       else if(question_field =='並び替え'){
           if(selectedAnswerArray[counter-1].indexOf(answer_id) == correct_answer.indexOf(answer_id)){
@@ -326,9 +329,6 @@ export default {
           }
           else if(selectedAnswerArray[counter-1].indexOf(answer_id) != correct_answer.indexOf(answer_id)){
               return 'has-background-danger-light has-text-white is-static is-hovered'
-          }
-          else{
-        return"section button is-fullwidth my-4 has-background-white has-text-grey-darker is-static is-hovered" 
           }
        }
     },
@@ -429,4 +429,12 @@ export default {
   //   }
   // }
 }
-</script> 
+</script>
+<style>
+  /* @media(min-width: 480px){
+    #wrapper{
+      background-color: blueviolet;
+    }
+  } */
+
+</style>
