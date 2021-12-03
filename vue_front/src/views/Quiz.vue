@@ -1,101 +1,174 @@
 <template>
   <div id="wrapper">
-    <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]">
-      <div class='container-'>
-        <div v-if="!showQuiz" @click="handleSHowQuiz">
-          <p class="title is 3">{{quizzes[0].name}}問題</p>
-          <p class="subtitle is 4">全{{questions.length}}問</p>
-          <button>START</button>
-        </div>
-      <!-- <div v-show="counter > quizzes[0].question.length">
-        <p class="title is-3">Result</p>
-      </div> -->
-      <div v-if="showQuiz && counter < questions.length + 1">
-        <div class="i is-size-1-tablet title is-size-3-mobile"> 
-          <p>初級</p>
-          <p class=" button is-small is-static is-rounded is-active is-size-6-tablet ">第{{ counter }}問</p>
-        </div>
-        <div v-for="(question,questionindex) in questions.slice(a,b)"
-            v-bind:key="questionindex">
-          <div>
-            <p class='button has-background-link subtitle-4 has-text-link-light is-hovered is-static'>
-            {{ question.label }}
-            </p>
+    <!-- <div v-show='$store.state.isLoading'>
+           <div class="fas fa-spinner fa-pulse">{{}}</div>
+    </div> -->
+    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+      <div class="lds-dual-ring"></div>
+    </div>
+      <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]">
+        <div id="wrapper-quiz">
+        <div class='container'>
+          
+          <div v-if="!showQuiz" @click="handleSHowQuiz">
+            <p class="title is 3">{{quizzes[0].name}}問題</p>
+            <p class="subtitle is 4">全{{questions.length}}問</p>
+            <button id='ko'>START</button>
           </div>
-          <div :class='showPic(question.image)'>
-            <img  v-bind:src="question.get_image"/>
-          </div>
-          <!-- answer part -->
-          <!-- :class="{'has-background-primary-light has-text-white is-hovered':answer.label == selectedAnswer[0]&&question.field !='並び替え'}" -->
-          <div class='columns is-vcentered is-centered is-mobile'    
-            v-for="(answer,answerindex) in question.answer"
-            v-bind:key="answerindex">
-            <div class="py-6 is-three-fifths-tablet button has-background-light is-fullwidth my-4" 
-              @click="onClicked(answer,question.field)"
-              :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
-              >
-              <div class='column'>
-                <p class='button is-pulled-left has-background-dark has-text-white is-static is-inline-block'>{{ answerindex+1 }}</p>
+          <div v-if="showQuiz && counter < questions.length + 1">
+            <progress v-if="showAnswerDetail==false" class="progress is-warning is-marginless mb-1" :value="progress(counter,questions.length)" max="100"/>
+            <div class="is-size-1-tablet  title is-size-4-mobile"> 
+              <p>初級</p>
+              <p class=" button is-small is-static is-rounded is-active is-size-6-tablet ">第{{ counter }}問</p>
+            </div>
+            <div v-for="(question,questionindex) in questions.slice(a,b)"
+                v-bind:key="questionindex">
+              <div>
+                <p class='button has-background-link subtitle-4 has-text-link-light is-hovered is-static'>
+                {{ question.label }}
+                </p>
               </div>
-              <p
-              class="column is-overlay mt-5 subtitle is-marginless has-text-centered　has-text-grey-darker"
-              >{{ answer.label }}</p>
-              <div v-if="question.field=='並び替え'&&showAnswerDetail==false">
-                <div class="column-1 is-marginless button is-vcentered is-medium is-rounded has-background-warning-light has-text-warning-dark">
-                  <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
-                  class ='is-overlay title is 4 mt-2 has-text-warning-dark'>{{sort.indexOf(answer.answer_id)+1}}</p>
+              <div :class='showPic(question.image)'>
+                <img  v-bind:src="question.get_image"/>
+              </div>
+
+              <!-- answer part -->
+              
+              <div class='columns is-mobile is-vcentered'    
+                v-for="(answer,answerindex) in question.answer"
+                v-bind:key="answerindex">
+                <div class="py-5 is-three-fifths-tablet button is-paddingless has-background-light is-fullwidth my-2" 
+                  @click="onClicked(answer,question.field)"
+                  :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
+                  id='answer-container'>
+                  <div class='column'>
+                    <div id ='order-container' class='button is-pulled-left is-small  px-4 is-rounded has-background-dark has-text-white has-text-weight-bold is-size-6-mobile is-static'>
+                      <p id="answer-index">{{ answerindex+1 }}</p>
+                    </div>
+                  </div>
+                  <p
+                  class="is-overlay mt-4  has-text-grey-darker"
+                    id='answer-label'>{{ answer.label }}
+                  </p>
+                  <div v-if="question.field=='並び替え'&&showAnswerDetail==false">
+                    <div class='column' >
+                      <div id='order-space' class="button is-small is-rounded has-background-warning-light has-text-warning-dark">
+                        <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
+                        class ='is-size-4-mobile mt-1 has-text-warning-dark'
+                        id='order-num'
+                        style='position:absolute'>{{sort.indexOf(answer.answer_id)+1}}</p>
+                      </div>
+                    </div>  
+                  </div>
+
+                
+                  <div class='columns is-mobile is-vcentered' id='result'>
+                    <div class="column result-all">
+                      <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                        v-if="question.field!='並び替え' && showAnswerDetail">
+                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                      </div>
+                      <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                        v-if="question.field=='並び替え' && showAnswerDetail">
+                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                      </div>
+                  </div>
+                  <div class='button px-2 is-paddingless ml-1 has-background-warning-light has-text-primary-dark is-static'
+                    id='result-order-num'
+                    v-if="question.field=='並び替え' && showAnswerDetail">
+                    <p id='result-num' class='has-text-weight-bold	'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
+                  </div>
                 </div>
               </div>
-              <p :class="detailClassHandler(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-              v-if="question.field!='並び替え' && showAnswerDetail">
-              {{ getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field) }}
-              </p>
-              <div :class="detailClassHandler(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-              v-if="question.field=='並び替え' && showAnswerDetail">
-              {{ getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field) }}
-              </div>
-            </div>
-              <div class='button is-1 py-6 ml-3 has-background-warning-light has-text-primary-dark is-static'
-              v-if="question.field=='並び替え' && showAnswerDetail">
-              <p class='is-size-3  has-text-weight-bold	'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
-              </div>
-          </div>
-          <button
-          class="button is-link is-rounded"
-          v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
-            @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
-          <button
-          class="button is-info is-rounded"
-          v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
-            @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
 
-          <!-- for detail -->
-          <button
-          class="button is-info is-rounded"
-          v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
-            @click="detailHandler('back')">＜ Back</button>
-            <button
-          class="button mx-2 has-background-danger-light has-text-danger-dark"
-          v-show="showAnswerDetail"
-            @click="detailHandler('backToResult',QL=questions.length)">結果に戻る</button>
-          <button
-          class="button is-link is-rounded"
-          v-show='counter != questions.length && showAnswerDetail'
-            @click="detailHandler('next')">Next ＞</button>
-        </div>
-      </div>
-      <!-- //result page// -->
-      <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
-        <div class='py-5 my-5 button has-background-info-light is-static'>
-          <p class="title is 3 has-text-danger">結果発表</p>          
-        </div>
-        <div class=box> 
-            <div class="mx-5 is-inline-block subtitle is 4">{{ questions.length }}問中</div>
-            <div class="is-inline-block has-text-danger-dark title is 4">{{ numOfTrue(rerultAnswer) }} 問正解</div>
-            <div>
-              <p class="subtitle is 5 button is-rounded is-static"> 正解率 {{ getPercentage(numOfTrue(rerultAnswer),questions.length) }}%</p>
+                </div>
+                
+              <button
+              class="button is-link is-rounded"
+              v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
+                @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
+              <button
+              class="button is-info is-rounded"
+              v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
+                @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
+
+            <!-- detail part -->
+            
+            <div class="buttons has-addons is-centered">
+              <p class="control">
+                <button
+                  class="button"
+                  v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
+                    @click="detailHandler('back')">
+                    ＜ Back
+                </button>
+              </p>
+              <p class="control">
+                <button
+                class="button has-background-danger-light is-paddingless px-2 has-text-danger-dark"
+                v-show="showAnswerDetail"
+                  @click="detailHandler('backToResult',QL=questions.length)">結果に戻る
+                </button>
+              </p>
+              <p class="control">
+                <button
+                class="button"
+                v-show='counter != questions.length && showAnswerDetail'
+                  @click="detailHandler('next')">Next ＞</button>
+              </p>
             </div>
-            <table class='is my-5 table is-fullwidth is-hoverable' v-for="(result,resultindex) in rerultAnswer"
+          </div>
+        </div>
+        <!-- //result page// -->
+        
+        <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
+          <div class='box is-paddingless pb-4'> 
+            <div class='button my-5 has-background-info-light is-centered is-static'>
+              <p class="title is 3 has-text-danger">結果発表</p>          
+            </div>
+            <div>
+              <p class="mx-5 is-inline-block subtitle is 4">{{ questions.length }}問中</p>
+              <p class="is-inline-block has-text-danger-dark title is 4">{{ numOfTrue(rerultAnswer) }} 問正解</p>
+              <div>
+                <p class="subtitle is 5 button is-rounded is-static"> 正解率 {{ getPercentage(numOfTrue(rerultAnswer),questions.length) }}%</p>
+              </div>
+            </div>
+          </div>
+          <section class="section">
+            <div class='result pt-6'>
+              <div class="columns is-multiline is-vcentered is-mobile is-centered"
+                v-for="(result,resultindex) in rerultAnswer.slice(0,resultDetailslice)"
+                v-bind:key="resultindex"
+                style='margin-top: -2rem'
+                id='result-column'>
+                <div class="column">
+                  <p class='subtitle'>{{ resultindex+ 1 }} 問目</p>
+                </div>
+                <div class="column result-all">
+                  <div class='result-font' :class='getResultFont(result)'>
+                    <i id='result-font' :class='returnFont(result)'></i>
+                  </div>
+                </div>
+                <div class="column" id='resultString'>
+                  <p class='subtitle is 4'>{{ getJPResult(result) }}</p>
+                </div>
+              </div>
+              <div style='margin-top: -2rem'>
+                <div class='mt-6' v-if='!resultDetail' @click='resultDetailHandler(resultDetailslice)'>
+                  <i class="fas fa-chevron-circle-down fa-2x" style='color: lightgray'></i>  
+                </div>
+
+                <div v-if='resultDetail' @click='resultDetailHandler(resultDetailslice)'>
+                  <i class="fas fa-chevron-circle-up fa-2x" style='color: lightgray'></i> 
+                </div>
+              </div>
+            </div>
+            <div>
+                <button @click='showDetail' class="button mt-2 is-info is-rounded">詳細を見る</button>
+            </div>    
+          </section>
+        
+            <!-- <table class='is my-5 table is-fullwidth is-hoverable' v-for="(result,resultindex) in rerultAnswer"
               v-bind:key="resultindex">
               <tr>
                 <td> 
@@ -105,13 +178,13 @@
                   <p class='is-inline-block subtitle is 4'>{{  getJPResult(result) }}</p>
                 </td>
               </tr>
-            </table>
-              <button @click='showDetail' class="button is-info is-rounded">詳細を見る</button>
-        </div>
-          <router-link to="/" class="mx-2 button is-primary is-outlined">Home</router-link>
+            </table> -->
+           
+          <router-link to="/" class="mx-2 button is-primary is-outlined">戻る</router-link>
           <a href="/quiz" class="mx-2 button is-warning is-light">もう一度</a>
+        </div>
       </div>
-      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -136,7 +209,9 @@ export default {
       test:[],
       arreyCounter:-1,
       selectedAnswerArray:[],
-      showAnswerDetail: false
+      showAnswerDetail: false,
+      resultDetailslice:3,
+      resultDetail: false
       }
   },
   mounted:function() {
@@ -145,22 +220,33 @@ export default {
     this.getOneQuestion()
   },
   methods:{
-    getquiz(){
-    axios
-    .get('/api/quizzes/?id=2')
-    .then(response => (this.quizzes = response.data))
+    async getquiz(){
+      this.$store.commit('setIsLoading', true)
+      await axios
+        .get('/api/quizzes/?id=2')
+        .then(response => (this.quizzes = response.data))
+        .catch(error => {
+                      console.log(error)
+                  })
+      },
+    async　getQuestion(){
+    await　axios
+      .get('/api/questions/quizzes/?quiz=2&num=3')
+      // .get('/api/questions/fields/?field=並び替え&num=3')
+      // .get('/api/questions/fields/?field=絵&num=1')
+      .then(response => (this.questions = this.getRandomQuestion(response.data)))
+      this.$store.commit('setIsLoading', false)
     },
-    getQuestion(){
-    axios
-    .get('/api/questions/quizzes/?quiz=2&num=7')
-    // .get('/api/questions/fields/?field=並び替え&num=3')
-    // .get('/api/questions/fields/?field=絵&num=1')
-    .then(response => (this.questions = this.getRandomQuestion(response.data)))
+    progress(counter,question_length){
+      console.log(counter / question_length *100)
+      return counter / question_length *100
+
     },
     handleSHowQuiz(){
       this.showQuiz = !this.showQuiz
     },
     nextQuestion(sort,selectedAnswer,question_correct_answer,question_field){
+      this.scrollTop()
       this.a += 1
       this.b += 1
       this.checkCorrectAnswer(sort,selectedAnswer[1],question_correct_answer)
@@ -177,6 +263,12 @@ export default {
       console.log('slevtedID',selectedAnswer[1],'CA',question_correct_answer)
       console.log('resultAnswer',this.rerultAnswer)
       console.log('selectedAnswerArray',this.selectedAnswerArray)
+    },
+    scrollTop(){
+      window.scrollTo({
+        top: 0,
+        behavior: "auto"
+      });
     },
     onClicked(answer,question_field){
       if(this.showAnswerDetail == false)
@@ -238,7 +330,7 @@ export default {
     },
     showPic(pic){
       if (pic){
-        return 'my-4 has-background-link-light image is-128x128 is-inline-block'
+        return 'my-4 has-background-link-light image is-96x96 is-inline-block'
       }
     },
     arrayEqual(array1,array2){
@@ -333,6 +425,18 @@ export default {
        }
     },
     // detail
+    resultDetailHandler(slice){
+      if(slice <= 5){
+        console.log(this.resultDetailslice)
+        this.resultDetailslice = 100
+        this.resultDetail = true
+      }
+      else{
+        this.resultDetailslice = 3
+        this.resultDetail = false
+      }
+    },
+    
     showDetail(){
       this.a =0
       this.b =1
@@ -343,6 +447,7 @@ export default {
     detailHandler(direction,QL=false){
       console.log(direction)
       console.log(this.showAnswerDetail)
+      this.scrollTop()
       if(direction == 'next'){
         this.a +=1
         this.b +=1
@@ -362,33 +467,32 @@ export default {
     getDetailFont(answer_id,correct_answer,selectedAnswerArray,counter,question_field){
       if(question_field !='並び替え'){
         if (answer_id == correct_answer){
-          return '○'
+          return true
         }
         else if(answer_id!=correct_answer && selectedAnswerArray[counter-1] ==answer_id){
-          return'×'
+          return false
         }
+        else{console.log('none')}
       }
       else if(question_field =='並び替え'){
         if(selectedAnswerArray[counter-1].indexOf(answer_id) == correct_answer.indexOf(answer_id)){
-          return '○'
+          return true
         }
         else if(selectedAnswerArray[counter-1].indexOf(answer_id) != correct_answer.indexOf(answer_id))
-        return '×'
+        return false
        }
-       else{
-         return '    '
-       }
+       
     },
-    detailClassHandler(a){
-      if(a == '○'){
-        return'is-size-1 is-marginless has-text-primary-dark'
-      }
-      else if(a == '×'){
-        return'is-size-1 is-marginless has-text-danger-dark'
-      }
-    },
+    // detailClassHandler(a){
+    //   if(a == '○'){
+    //     return'is-size-1 is-marginless has-text-primary-dark'
+    //   }
+    //   else if(a == '×'){
+    //     return'iis-size-1 s-marginless has-text-danger-dark'
+    //   }
+    // },
     getCorrectOrderClass(answer_id,correct_answer,selectedAnswerArray,counter,showAnswerDetail){
-      return correct_answer.indexOf(answerid)
+      return correct_answer.indexOf(answer_id)
     },
     numOfTrue(answered_array){
       let counter = 0
@@ -399,6 +503,22 @@ export default {
           counter += 1
         }console.log('numcounter',counter)
       }return counter
+    },
+    returnFont(boolean){
+      if(boolean == true){
+        return "far fa-circle"
+      }
+      else if(boolean == false){
+        return "fas fa-times"
+      }
+    },
+    getResultFont(result){
+      if(result == true){
+        return "result-font-green"
+      }
+      else if(result == false){
+        return "result-font-red"
+      }
     },
     getOneQuestion(){
     axios
@@ -430,11 +550,109 @@ export default {
   // }
 }
 </script>
-<style>
-  /* @media(min-width: 480px){
-    #wrapper{
-      background-color: blueviolet;
+<style lang="scss">
+@import "style/_variables.scss";
+/* this is for Iphone */
+  @media(max-width: 767px){
+  #resultString{
+      display: none ;
     }
-  } */
+  #answer-label{
+    font-weight:bold;
+     }
+  #result-order-num{
+    height: 3rem;
+    }
+  #result-num{
+    font-size: 2rem;
+    }
+  .result-all{
+    font-size: 1.5rem;
+    }
+  }
+  /* between Iphone and Ipad*/
+  @media(min-width: 415px) and (max-width: 767px){
 
+  }
+  // wider than ipad include ipad
+  @media(min-width: 768px){
+  #wrapper-quiz{
+    border: solid lighten( $base-color, 30% );
+    border-radius: 3rem;
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+  #answer-container{
+    // width: 300px;
+    height: 5rem;
+  }
+  #answer-label{
+    position: absolute;
+    // padding-top:0.5rem;
+    font-size: 2rem;  
+    }
+  #answer-index{
+    font-size: 1.7rem;
+    position: absolute;
+  }
+  #order-container{
+    width: 3rem;
+    height: 3rem;
+  }
+  #order-space{
+    padding: 1.5rem;
+    margin-right: 0.5rem;
+  }
+  #order-num{
+    font-size: 2rem;
+    font-weight:bold;
+  }
+  #result-order-num{
+    width: 3rem;
+    height: 5rem;
+    font-size: 2rem;
+  }
+  .detailClassHandler{
+    font-size: 10rem
+  }
+  .result-all{
+    font-size: 2rem;
+  }
+  
+  }
+  // for desktop include ipadpro
+  @media(min-width: 1024px){
+
+  }
+  #wrapper-quiz{
+    padding: 2rem;
+    }
+  .result{
+    border: solid lighten( $base-color, 30% );
+  }
+  #result-column{
+    border-bottom: solid rgb(231, 221, 221);
+    margin-right: 2rem;
+    margin-left: 2rem;
+    margin-bottom: 2rem;
+  }
+  .result-all{
+    margin-right:1rem;
+    .result-font-green{
+      color: green;
+    }
+    .result-font-red{
+      color:red;
+    }
+  }
+  #order-space{
+    text-align: right;
+    
+  }
+  // #result{
+  //   .result-all{
+  //     text-align: right;
+  //   }
+  // }
+ 
 </style>

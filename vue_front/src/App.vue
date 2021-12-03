@@ -1,29 +1,32 @@
 <template>
   <div id="wrapper">
-    <div class='box'>
+    <div>
       <nav class="navbar is-dark　is-mobile">
           <div class="navbar-brand">
             <a class="navbar-item">
                 <router-link to="/" >何を学ぶ</router-link>
             </a>
             <a class="navbar-burger" @click="showMobileMenu = !showMobileMenu">
-              <span></span>
-              <span></span>
-              <span></span>
+              <button v-if='showMobileMenu==true' class="delete mt-3 is-large"></button>
+                <div v-if='showMobileMenu==false'>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
             </a>
           </div>
           
           <div class='navbar-menu' :class="{'is-active': showMobileMenu }">
-            <div class="navbar-end">
-              <div class="navbar-item">
-                <router-link to="/" class="button　m-3 is-primary is-outlined">Home</router-link>
-                <router-link to="/quiz" class="button m-3 is-primary is-rounded">Quiz</router-link>
-              </div>
+            <div class="navbar-end is-expanded" @click="showMobileMenu =false">
+              <!-- <div  @click="showMobileMenu =false"> -->
+                <router-link to="/" class="navbar-item"><i class="fas fa-home"></i>Home</router-link>
+                <router-link to="/quiz" class="navbar-item is-spaced"><i class="fas fa-lightbulb"></i>Quiz</router-link>
+              <!-- </div> -->
             </div>
 
           </div>
       </nav>
-      <section class="section is-paddingless pt-4">
+      <section class="section">
           <router-view/>
       </section>
 
@@ -53,6 +56,42 @@ export default{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid rgb(214, 9, 9);
+  border-color: #ccc transparent #ccc transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.is-loading-bar {
+  height: 0;
+  overflow: hidden;
+
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+
+  &.is-loading {
+    height: 80px;
+  }
 }
 
   // #nav {

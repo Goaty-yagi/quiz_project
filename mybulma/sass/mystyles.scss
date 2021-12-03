@@ -1,0 +1,9 @@
+@charset "utf-8";
+@import "../node_modules/bulma/bulma.sass";
+
+// brand color
+$purple: #8A4D76;
+
+$orange: #ff8606;
+$orange-invert: findColorInvert($orange);
+$custom-colors: ("orange": ($orange, $orange-invert));
