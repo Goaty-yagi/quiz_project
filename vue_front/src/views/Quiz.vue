@@ -6,7 +6,7 @@
     <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
       <div class="lds-dual-ring"></div>
     </div>
-      <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]">
+      <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
         <div id="wrapper-quiz">
         <div class='container'>
           
@@ -14,6 +14,8 @@
             <p class="title is 3">{{quizzes[0].name}}問題</p>
             <p class="subtitle is 4">全{{questions.length}}問</p>
             <button id='ko'>START</button>
+            <div>
+          </div>
           </div>
           <div v-if="showQuiz && counter < questions.length + 1">
             <progress v-if="showAnswerDetail==false" class="progress is-warning is-marginless mb-1" :value="progress(counter,questions.length)" max="100"/>
@@ -84,8 +86,8 @@
                 </div>
                 
               <button
-              class="button is-link is-rounded"
-              v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
+                class="button is-link is-rounded"
+                v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
                 @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
               <button
               class="button is-info is-rounded"
@@ -167,75 +169,118 @@
                 <button @click='showDetail' class="button mt-2 is-info is-rounded">詳細を見る</button>
             </div>    
           </section>
-        
-            <!-- <table class='is my-5 table is-fullwidth is-hoverable' v-for="(result,resultindex) in rerultAnswer"
-              v-bind:key="resultindex">
-              <tr>
-                <td> 
-                  <p class='mx-5 is-inline-block subtitle is 4'>{{ resultindex+ 1 }}問目</p>
-                  <p class='mx-6 title is-1 has-text-link is-inline-block subtitle is 4'
-                  :class="{'has-text-danger':result==true}">{{ getFont(result) }}</p>
-                  <p class='is-inline-block subtitle is 4'>{{  getJPResult(result) }}</p>
-                </td>
-              </tr>
-            </table> -->
            
-          <router-link to="/" class="mx-2 button is-primary is-outlined">戻る</router-link>
-          <a href="/quiz" class="mx-2 button is-warning is-light">もう一度</a>
+          <router-link to="/" @click='storeReset' class="mx-2 button is-primary is-outlined">戻る</router-link>
+          <div @click='reset' class="mx-2 button is-warning is-light">もう一度</div>
         </div>
       </div>
-    </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script> 
-import axios from 'axios'
+<script>
+import {mapGetters,mapActions} from 'vuex'
+// import axios from 'axios'
 export default {
   name: 'Quiz',
+  
   data(){
     return{
       counter: 1,
       selectedAnswer:'',
       rerultAnswer:[],
-      quizzes: [],
-      questions: [],
+      // quizzes: [],
+      // questions: [],
       sort: [],
       showQuiz: false,
       a: 0,
       b: 1,
-      hover: false,
       percentage:100,
-      test:[],
       arreyCounter:-1,
       selectedAnswerArray:[],
       showAnswerDetail: false,
       resultDetailslice:3,
-      resultDetail: false
+      resultDetail: false,
       }
   },
-  mounted:function() {
-    this.getquiz()
-    this.getQuestion()
-    this.getOneQuestion()
+  beforeMount(){
+    console.log('before-mounted',this.$route.params)
+    
+    
+    
+    
+    
   },
+  mounted:function() {
+    console.log('quiz-mounted')
+    // this.getquiz()
+    // this.getQuestion()
+    // this.getOneQuestion()  
+  },
+  update(){
+  },
+  beforeCreate(){
+    console.log('before-created',this.$route.params)
+    
+    // console.log(this.$store.state.itemStatus,this.$store.state.itemNum)
+    
+    
+  },
+  created(){
+    console.log('quiz-created',this.$store.state.itemStatus)
+    
+    
+    this.$store.commit('setIsLoading', true)
+    // this.$store.commit('getURLs',5)
+      // this.queryFilter(this.$route.params)
+      // this.$store.commit('setNum',this.quizNumSlug)
+      this.getquiz()
+      this.getquestions()
+      
+      
+    //   setTimeout(() =>{
+    //   this.$store.commit('setIsLoading', false);
+    // },2000)
+    },
+    beforeDestroyed(){
+      console.log('done')
+    },
+  computed: mapGetters(['questions','quizzes']),
   methods:{
-    async getquiz(){
-      this.$store.commit('setIsLoading', true)
-      await axios
-        .get('/api/quizzes/?id=2')
-        .then(response => (this.quizzes = response.data))
-        .catch(error => {
-                      console.log(error)
-                  })
+    ...mapActions(['getquiz','getquestions']),
+    // here is to get quiz itself by num 2 is 初級
+    // async getquiz(){
+    //   this.$store.commit('setIsLoading', true)
+    //   await axios
+    //     .get('/api/quizzes/?id=2')
+    //     .then(response => (this.quizzes = response.data))
+    //     .catch(error => {
+    //                   console.log(error)
+    //               })
+    //   },
+    //   // quiz = must be the same id above, field is field, num is num of quizzes  
+    // async　getQuestion(){
+    //   console.log('axios',this.quizNumSlug)
+    // await　axios
+    
+    //   .get(`/api/questions/quizzes/?quiz=2&num=${this.quizNumSlug}`)
+      
+    //   // .get('/api/questions/fields/?field=並び替え&num=3')
+    //   // .get('/api/questions/fields/?field=絵&num=1')
+    //   .then(response => (this.questions = this.getRandomQuestion(response.data)))
+    //   this.$store.commit('setIsLoading', false)
+    // },
+    reset: function () {
+      location.reload()
       },
-    async　getQuestion(){
-    await　axios
-      .get('/api/questions/quizzes/?quiz=2&num=3')
-      // .get('/api/questions/fields/?field=並び替え&num=3')
-      // .get('/api/questions/fields/?field=絵&num=1')
-      .then(response => (this.questions = this.getRandomQuestion(response.data)))
-      this.$store.commit('setIsLoading', false)
+    storeReset(){
+      this.$store.commit('reset')
+    },
+    queryFilter(query){
+      this.quizNameSlug = query['id']
+      this.quizFieldSlug = query['field']
+      this.quizNumSlug = Number(query['num'])
     },
     progress(counter,question_length){
       console.log(counter / question_length *100)
@@ -267,7 +312,7 @@ export default {
     scrollTop(){
       window.scrollTo({
         top: 0,
-        behavior: "auto"
+        behavior: "smooth"
       });
     },
     onClicked(answer,question_field){
@@ -342,22 +387,22 @@ export default {
       }
       return true;
     },
-    getRandomQuestion:function(array){
-      for (let i = array.length - 1; i >= 0; i--) {
-        let r = Math.floor(Math.random() * (i + 1))
-        let tmp = array[i]
-        array[i] = array[r]
-        array[r] = tmp
-        }
-      for ( let k =0; k < array.length; k++){
-        for (let i = array[k].answer.length - 1; i >= 0; i--) {
-          let r = Math.floor(Math.random() * (i + 1))
-          let tmp = array[k].answer[i]
-          array[k].answer[i] = array[k].answer[r]
-          array[k].answer[r] = tmp
-          }}
-        return array
-    },
+    // getRandomQuestion:function(array){
+    //   for (let i = array.length - 1; i >= 0; i--) {
+    //     let r = Math.floor(Math.random() * (i + 1))
+    //     let tmp = array[i]
+    //     array[i] = array[r]
+    //     array[r] = tmp
+    //     }
+    //   for ( let k =0; k < array.length; k++){
+    //     for (let i = array[k].answer.length - 1; i >= 0; i--) {
+    //       let r = Math.floor(Math.random() * (i + 1))
+    //       let tmp = array[k].answer[i]
+    //       array[k].answer[i] = array[k].answer[r]
+    //       array[k].answer[r] = tmp
+    //       }}
+    //     return array
+    // },
     deleteStringArray(answer_id){
       let tempArray = this.sort.slice(0)
       if (tempArray.length > 1){
@@ -438,6 +483,7 @@ export default {
     },
     
     showDetail(){
+      this.scrollTop()
       this.a =0
       this.b =1
       this.counter =1
@@ -520,15 +566,6 @@ export default {
         return "result-font-red"
       }
     },
-    getOneQuestion(){
-    axios
-    // test
-    .get('/api/onequestion/?label=並び替え')
-    .then(response => (this.test = response))
-    },
-    consoleTest(i){
-    console.log('test',i)
-    }
   },
   // getTrue(){
   //     for(i in this.correctAnswe){

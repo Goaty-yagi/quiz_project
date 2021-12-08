@@ -9,24 +9,63 @@
         <p class="is-size-6 is-size-4-tablet">
           問題やる？
         </p>
-        <button class='button is-outlined'> start </button>
-      </div>      
+        
+        <p>{{ this.$store.state.id }}</p>
+        <div  @click="onClick()">
+          <div>
+            <div @click='showCompoHandler'><i class="fas fa-home"></i>quiz</div>
+          <!-- <router-link :to="(this.$store.commit('getURLs',4),this.$store.state.randomURL)" class="navbar-item"><i class="fas fa-home"></i>quiz</router-link> -->
+          <!-- <router-link :to="(this.$store.commit('getURLs',5),this.$store.state.randomURL)" class="navbar-item"><i class="fas fa-home"></i>中</router-link> -->
+          <!-- <router-link :to="(unko())" class="navbar-item"><i class="fas fa-home"></i>unko</router-link> -->
+          </div>   
+        </div>
+      </div>
     </div>
+     <div v-if='showCompo'>
+        <QuizConf @close='showCompoHandler' />   
+      </div>   
+    
   </section>
 
 </template>
 
 <script>
-
+import QuizConf from '@/components/QuizConf.vue'
 export default {
   name: 'Home',
   components: {
+  QuizConf
+  },
+  data(){
+    return{
+      manko: '/test/manko',
+      // status: 2,
+      field:'並び替え',
+      // num:3,
+      showCompo: false,
+      item:{status: 2,num:5}
+    }
+  },
+  methods:{
+    unko(){
+      return `/quiz/${this.status}`
+    },
+    onClick(){
+      console.log('onclick')
+      this.$store.commit('getURLs',this.item)
+    },
+    showCompoHandler(){
+      console.log('handler')
+      this.showCompo = !this.showCompo
+    }
+      
+    
   }
 }
 </script>
 <style lang="scss">
 @import "style/_variables.scss";
-@media(max-width: 414px){
+@media(max-width: 414px){  
   .box{
       margin: 0;
       padding:0;

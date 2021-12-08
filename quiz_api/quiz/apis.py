@@ -4,6 +4,7 @@ from django.shortcuts import render
 # import django_filters
 from django.db.models import Max
 import random
+from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,22 +19,28 @@ from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerLis
 class QuestionListApi(APIView):
 # this is for all indicate quiz, field and module
     def get(self, request, format=None):
-        queryset = Question.objects.filter(quiz=request.query_params['quiz'],
-        field=request.query_params['field'],
-        module=request.query_params['module'])
-        quiz_num = int(request.query_params['num'])
-        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-        serializer = QuestionListSerializer(question, many=True)
-        return Response(serializer.data)
+        try:
+            queryset = Question.objects.filter(quiz=request.query_params['quiz'],
+            field=request.query_params['field'],
+            module=request.query_params['module'])
+            quiz_num = int(request.query_params['num'])
+            question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+            serializer = QuestionListSerializer(question, many=True)
+            return Response(serializer.data)
+        except Question.DoesNotExist:
+            raise Http404
 
 class QuizFilteredListApi(APIView):
 # this is for only filtering specific quiz
     def get(self, request, format=None):
-        queryset = Question.objects.filter(quiz=request.query_params['quiz'])
-        quiz_num = int(request.query_params['num'])
-        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-        serializer = QuestionListSerializer(question, many=True)
-        return Response(serializer.data)
+        try:
+            queryset = Question.objects.filter(quiz=request.query_params['quiz'])
+            quiz_num = int(request.query_params['num'])
+            question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+            serializer = QuestionListSerializer(question, many=True)
+            return Response(serializer.data)
+        except Question.DoesNotExist:
+            raise Http404
 
 class FieldFilteredListApi(APIView):
 # this is for only filtering specific field

@@ -21,6 +21,7 @@
               <!-- <div  @click="showMobileMenu =false"> -->
                 <router-link to="/" class="navbar-item"><i class="fas fa-home"></i>Home</router-link>
                 <router-link to="/quiz" class="navbar-item is-spaced"><i class="fas fa-lightbulb"></i>Quiz</router-link>
+                <router-link to="/test" class="navbar-item"><i class="fas fa-home"></i>Test</router-link>
               <!-- </div> -->
             </div>
 
@@ -39,6 +40,7 @@
 
 <script>
 export default{
+  
   data(){
     return{
       showMobileMenu: false
