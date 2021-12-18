@@ -3,6 +3,8 @@ import Home from '../views/Home.vue'
 import Quiz from '../views/Quiz.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/NotFound.vue'
+import Signin from '../views/Signin.vue'
+import Account from '../views/Account.vue'
 
 const routes = [
   {
@@ -24,6 +26,16 @@ const routes = [
     path: '/norfound',
     name: 'Notfound',
     component: NotFound 
+  },
+  {
+    path: '/signin',
+    name: 'Signin',
+    component: Signin
+  },
+  {
+    path: '/account',
+    name: 'Account',
+    component: Account
   },
   { 
     path: '/:catchAll(.*)',

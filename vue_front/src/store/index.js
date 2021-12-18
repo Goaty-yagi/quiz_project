@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import {router} from "../main.js"
+import { signup } from './modules/signup'
 
 let getDefaultState = () => {
   return {
@@ -12,16 +13,21 @@ let getDefaultState = () => {
     questions:[],
     quizzes:[],
     randomURL:'',
+    test:null,
+    notice:false,
+    step:1
   }}
 
 
 export default createStore({
   state: getDefaultState(),
-  
+  modules: {
+    // signup,
+  },
   plugins: [
     createPersistedState({
       key: 'quizkey',  // 設定しなければ'vuex'
-      paths: ['id','num'],  // 保存するモジュール：設定しなければ全部。
+      paths: ['id','num','test'],  // 保存するモジュール：設定しなければ全部。
       storage: window.sessionStorage,  // 設定しなければlocalStorage
     })],
   getters:{
@@ -36,13 +42,10 @@ export default createStore({
       Object.assign(state, getDefaultState())
     },
     getURLs(state,item){
-      console.log('storeunko',item)
       state.num = item.num
-      state.itemNum = item.num
       // state.field= field
       state.id = item.status
-      state.itemStatus = item.status
-      console.log('storeunko2',state.itemStatus,state.itemNum)
+      state.test = item.test
       state.randomURL = `/quiz/${state.id}`
     },
     getRandomQuestion(state,array){
@@ -62,7 +65,17 @@ export default createStore({
         return array
     },
     setQuestions:(state,questions) => (state.questions = questions),
-    setQuiz:(state,quizzes) => (state.quizzes = quizzes)
+    setQuiz:(state,quizzes) => (state.quizzes = quizzes),
+    // initial
+    testHandler(state){
+      state.test = false
+    },
+    noticeHandler(state){
+      state.notice = true
+    },
+    addStep(state){
+      state.step += 1
+    }
     // quizRouter(i,f,n){
     //   state.id = i
     //   state.field = f
@@ -96,6 +109,4 @@ export default createStore({
       
     },
   },
-  modules: {
-  }
 })

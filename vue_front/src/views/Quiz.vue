@@ -1,38 +1,36 @@
 <template>
-  <div id="wrapper">
-    <!-- <div v-show='$store.state.isLoading'>
-           <div class="fas fa-spinner fa-pulse">{{}}</div>
-    </div> -->
+  <div id="quiz-wrapper">
+    
     <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
       <div class="lds-dual-ring"></div>
     </div>
-      <div class="section is-paddingless" v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
+      <div  v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
         <div id="wrapper-quiz">
-        <div class='container'>
-          
-          <div v-if="!showQuiz" @click="handleSHowQuiz">
-            <p class="title is 3">{{quizzes[0].name}}問題</p>
-            <p class="subtitle is 4">全{{questions.length}}問</p>
-            <button id='ko'>START</button>
-            <div>
-          </div>
-          </div>
+         <div class='container'>
+          <Start
+           v-show='!this.$store.state.test'
+           :showQuiz='showQuiz'
+           :quizzes='quizzes'
+           :questions='questions'
+           @handle="handleSHowQuiz"/>
+  
           <div v-if="showQuiz && counter < questions.length + 1">
             <progress v-if="showAnswerDetail==false" class="progress is-warning is-marginless mb-1" :value="progress(counter,questions.length)" max="100"/>
-            <div class="is-size-1-tablet  title is-size-4-mobile"> 
-              <p>初級</p>
-              <p class=" button is-small is-static is-rounded is-active is-size-6-tablet ">第{{ counter }}問</p>
-            </div>
+            <div class="is-size-1-tablet mt-3 title is-size-4-mobile"> 
+              <p v-show="!this.$store.state.test" class='has-text-white'>初級</p>
+              <p v-show="this.$store.state.test" class='has-text-white'>実力テスト</p>
+            </div>              
             <div v-for="(question,questionindex) in questions.slice(a,b)"
-                v-bind:key="questionindex">
-              <div>
-                <p class='button has-background-link subtitle-4 has-text-link-light is-hovered is-static'>
-                {{ question.label }}
-                </p>
+                 v-bind:key="questionindex">
+              <div class='question-wrapper'>
+                <div class="question-header"><i class='q'>Q</i>第{{ counter }}問</div>
+                <div class='question-body'>{{ question.label }}</div>
               </div>
-              <div :class='showPic(question.image)'>
-                <img  v-bind:src="question.get_image"/>
-              </div>
+            <div>
+          </div>
+            <div :class='showPic(question.image)'>
+              <img  v-bind:src="question.get_image"/>
+            </div>
 
               <!-- answer part -->
               
@@ -44,8 +42,8 @@
                   :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
                   id='answer-container'>
                   <div class='column'>
-                    <div id ='order-container' class='button is-pulled-left is-small  px-4 is-rounded has-background-dark has-text-white has-text-weight-bold is-size-6-mobile is-static'>
-                      <p id="answer-index">{{ answerindex+1 }}</p>
+                    <div id ='order-container' class='button is-pulled-left is-small has-background-grey-dark px-4 is-rounded has-text-weight-bold is-size-6-mobile is-static'>
+                      <p id="answer-index">{{ String.fromCharCode(answerindex+65) }}</p>
                     </div>
                   </div>
                   <p
@@ -86,11 +84,13 @@
                 </div>
                 
               <button
-                class="button is-link is-rounded"
+                class="button is-rounded"
+                id='answer-button'
                 v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
                 @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
               <button
-              class="button is-info is-rounded"
+              class="button"
+              id='answer-button'
               v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
                 @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
 
@@ -124,74 +124,47 @@
         <!-- //result page// -->
         
         <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
-          <div class='box is-paddingless pb-4'> 
-            <div class='button my-5 has-background-info-light is-centered is-static'>
-              <p class="title is 3 has-text-danger">結果発表</p>          
-            </div>
-            <div>
-              <p class="mx-5 is-inline-block subtitle is 4">{{ questions.length }}問中</p>
-              <p class="is-inline-block has-text-danger-dark title is 4">{{ numOfTrue(rerultAnswer) }} 問正解</p>
-              <div>
-                <p class="subtitle is 5 button is-rounded is-static"> 正解率 {{ getPercentage(numOfTrue(rerultAnswer),questions.length) }}%</p>
-              </div>
-            </div>
-          </div>
-          <section class="section">
-            <div class='result pt-6'>
-              <div class="columns is-multiline is-vcentered is-mobile is-centered"
-                v-for="(result,resultindex) in rerultAnswer.slice(0,resultDetailslice)"
-                v-bind:key="resultindex"
-                style='margin-top: -2rem'
-                id='result-column'>
-                <div class="column">
-                  <p class='subtitle'>{{ resultindex+ 1 }} 問目</p>
-                </div>
-                <div class="column result-all">
-                  <div class='result-font' :class='getResultFont(result)'>
-                    <i id='result-font' :class='returnFont(result)'></i>
-                  </div>
-                </div>
-                <div class="column" id='resultString'>
-                  <p class='subtitle is 4'>{{ getJPResult(result) }}</p>
-                </div>
-              </div>
-              <div style='margin-top: -2rem'>
-                <div class='mt-6' v-if='!resultDetail' @click='resultDetailHandler(resultDetailslice)'>
-                  <i class="fas fa-chevron-circle-down fa-2x" style='color: lightgray'></i>  
-                </div>
-
-                <div v-if='resultDetail' @click='resultDetailHandler(resultDetailslice)'>
-                  <i class="fas fa-chevron-circle-up fa-2x" style='color: lightgray'></i> 
-                </div>
-              </div>
-            </div>
-            <div>
-                <button @click='showDetail' class="button mt-2 is-info is-rounded">詳細を見る</button>
-            </div>    
-          </section>
-           
-          <router-link to="/" @click='storeReset' class="mx-2 button is-primary is-outlined">戻る</router-link>
-          <div @click='reset' class="mx-2 button is-warning is-light">もう一度</div>
+          <Result
+            v-show='!this.$store.state.test'
+            :question_length='questions.length'
+            :rerultAnswer='rerultAnswer'
+            @show='showDetail'/>
         </div>
+       </div>
       </div>
-      </div>
+      <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
+        <TestResult
+          v-show='this.$store.state.test'/>
+        <transition name="notice">
+          <Notification
+            v-if='this.$store.state.notice'
+            />
+        </transition>
+    </div>
     </div>
   </div>
 </template>
 
 <script>
+import Result from '@/components/quiz_components/Result.vue'
+import TestResult from '@/components/initial/TestResult.vue'
+import Notification from '@/components/initial/Notification.vue'
+import Start from '@/components/quiz_components/Start.vue'
 import {mapGetters,mapActions} from 'vuex'
 // import axios from 'axios'
 export default {
   name: 'Quiz',
-  
+  components: {
+    Result,
+    Start,
+    TestResult,
+    Notification
+  },  
   data(){
     return{
       counter: 1,
       selectedAnswer:'',
       rerultAnswer:[],
-      // quizzes: [],
-      // questions: [],
       sort: [],
       showQuiz: false,
       a: 0,
@@ -200,92 +173,41 @@ export default {
       arreyCounter:-1,
       selectedAnswerArray:[],
       showAnswerDetail: false,
-      resultDetailslice:3,
-      resultDetail: false,
       }
   },
-  beforeMount(){
-    console.log('before-mounted',this.$route.params)
-    
-    
-    
-    
-    
-  },
-  mounted:function() {
-    console.log('quiz-mounted')
-    // this.getquiz()
-    // this.getQuestion()
-    // this.getOneQuestion()  
-  },
-  update(){
-  },
-  beforeCreate(){
-    console.log('before-created',this.$route.params)
-    
-    // console.log(this.$store.state.itemStatus,this.$store.state.itemNum)
-    
-    
-  },
   created(){
-    console.log('quiz-created',this.$store.state.itemStatus)
-    
-    
     this.$store.commit('setIsLoading', true)
-    // this.$store.commit('getURLs',5)
-      // this.queryFilter(this.$route.params)
-      // this.$store.commit('setNum',this.quizNumSlug)
-      this.getquiz()
-      this.getquestions()
-      
-      
+    this.getquiz()
+    this.getquestions()
+    this.testHandler()
     //   setTimeout(() =>{
     //   this.$store.commit('setIsLoading', false);
     // },2000)
     },
+    beforeMount(){
+    },
+    mounted(){
+      window.addEventListener('beforeunload', () => {
+      this.$store.commit('reset')
+    })
+    },
     beforeDestroyed(){
-      console.log('done')
+      this.$store.commit('reset')
+      console.log('beforDeth')
     },
   computed: mapGetters(['questions','quizzes']),
+
   methods:{
     ...mapActions(['getquiz','getquestions']),
-    // here is to get quiz itself by num 2 is 初級
-    // async getquiz(){
-    //   this.$store.commit('setIsLoading', true)
-    //   await axios
-    //     .get('/api/quizzes/?id=2')
-    //     .then(response => (this.quizzes = response.data))
-    //     .catch(error => {
-    //                   console.log(error)
-    //               })
-    //   },
-    //   // quiz = must be the same id above, field is field, num is num of quizzes  
-    // async　getQuestion(){
-    //   console.log('axios',this.quizNumSlug)
-    // await　axios
     
-    //   .get(`/api/questions/quizzes/?quiz=2&num=${this.quizNumSlug}`)
-      
-    //   // .get('/api/questions/fields/?field=並び替え&num=3')
-    //   // .get('/api/questions/fields/?field=絵&num=1')
-    //   .then(response => (this.questions = this.getRandomQuestion(response.data)))
-    //   this.$store.commit('setIsLoading', false)
-    // },
-    reset: function () {
-      location.reload()
-      },
-    storeReset(){
-      this.$store.commit('reset')
-    },
-    queryFilter(query){
-      this.quizNameSlug = query['id']
-      this.quizFieldSlug = query['field']
-      this.quizNumSlug = Number(query['num'])
-    },
     progress(counter,question_length){
       console.log(counter / question_length *100)
       return counter / question_length *100
 
+    },
+    testHandler(){
+      if (this.$store.state.test==true){
+        this.showQuiz=true}
     },
     handleSHowQuiz(){
       this.showQuiz = !this.showQuiz
@@ -336,6 +258,7 @@ export default {
       }
     },
     showResult(sort,selectedAnswer,question_correct_answer,question_field){
+      this.scrollTop()
       this.checkCorrectAnswer(sort,selectedAnswer[1],question_correct_answer)
       this.selectedAnswer = ''
       this.counter += 1
@@ -355,23 +278,12 @@ export default {
         this.rerultAnswer.push(false)
       }
     },
-    getJPResult(result){
-      if (result == true){
-        return '正解'
-      }else{
-        return'不正解'
-      }
-
-    },
     getFont(result){
       if (result == true){
         return '○'
       }else{
         return'×'
       }
-    },
-    getPercentage(answer,question_length){
-      return Math.round(answer/question_length * 100)
     },
     showPic(pic){
       if (pic){
@@ -468,20 +380,7 @@ export default {
               return 'has-background-danger-light has-text-white is-static is-hovered'
           }
        }
-    },
-    // detail
-    resultDetailHandler(slice){
-      if(slice <= 5){
-        console.log(this.resultDetailslice)
-        this.resultDetailslice = 100
-        this.resultDetail = true
-      }
-      else{
-        this.resultDetailslice = 3
-        this.resultDetail = false
-      }
-    },
-    
+    },  
     showDetail(){
       this.scrollTop()
       this.a =0
@@ -529,27 +428,19 @@ export default {
        }
        
     },
-    // detailClassHandler(a){
-    //   if(a == '○'){
-    //     return'is-size-1 is-marginless has-text-primary-dark'
-    //   }
-    //   else if(a == '×'){
-    //     return'iis-size-1 s-marginless has-text-danger-dark'
-    //   }
-    // },
     getCorrectOrderClass(answer_id,correct_answer,selectedAnswerArray,counter,showAnswerDetail){
       return correct_answer.indexOf(answer_id)
     },
-    numOfTrue(answered_array){
-      let counter = 0
-      console.log('innum_resultanswer',this.rerultAnswer)
-      console.log('anarray',answered_array)
-      for (let t of answered_array){
-        if(t == true){
-          counter += 1
-        }console.log('numcounter',counter)
-      }return counter
-    },
+    // numOfTrue(answered_array){
+    //   let counter = 0
+    //   console.log('innum_resultanswer',this.rerultAnswer)
+    //   console.log('anarray',answered_array)
+    //   for (let t of answered_array){
+    //     if(t == true){
+    //       counter += 1
+    //     }console.log('numcounter',counter)
+    //   }return counter
+    // },
     returnFont(boolean){
       if(boolean == true){
         return "far fa-circle"
@@ -567,30 +458,19 @@ export default {
       }
     },
   },
-  // getTrue(){
-  //     for(i in this.correctAnswe){
-  //       if(i == true){
-  //         this.True += 1
-  //       }
-  //     }
-  //     return this.True 
-  //   },
-  // computed:{
-  //   trueAnswer: function(){
-  //     for(i in this.correctAnswe){
-  //       if(i == true){
-  //         this.True += 1
-  //       }
-        
-  //     } return this.True
-  //   }
-  // }
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 @import "style/_variables.scss";
+  #quiz-wrapper{
+    width: 100vw;
+    height: 100vh;
+  }
 /* this is for Iphone */
   @media(max-width: 767px){
+  // #quiz-wrapper{
+  //   padding-top:5vw;
+  // }
   #resultString{
       display: none ;
     }
@@ -612,12 +492,13 @@ export default {
 
   }
   // wider than ipad include ipad
-  @media(min-width: 768px){
+  @media(min-width: 768px) and (max-width: 1024px){
   #wrapper-quiz{
-    border: solid lighten( $base-color, 30% );
-    border-radius: 3rem;
-    margin-left: 3rem;
-    margin-right: 3rem;
+    // border: solid lighten( $base-color, 30% );
+    // border-radius: 3rem;
+
+    margin-left: 8rem;
+    margin-right: 8rem;
   }
   #answer-container{
     // width: 300px;
@@ -659,10 +540,14 @@ export default {
   }
   // for desktop include ipadpro
   @media(min-width: 1024px){
-
+    #wrapper-quiz{
+    margin-left: 16rem;
+    margin-right: 16rem;
+    }
   }
   #wrapper-quiz{
     padding: 2rem;
+
     }
   .result{
     border: solid lighten( $base-color, 30% );
@@ -686,10 +571,79 @@ export default {
     text-align: right;
     
   }
-  // #result{
-  //   .result-all{
-  //     text-align: right;
-  //   }
+  .question-wrapper{
+            border: solid  rgba(243, 91, 36, 0.808);
+            border-radius: 1rem;
+            overflow:hidden;
+            margin-top: -1rem;
+            // margin-left: auto;
+            // margin-right: auto;
+        }
+        .question-header{
+            background: linear-gradient($base-lite,$base-color);
+            color:white;
+            padding:0.5rem;
+            font-weight:bold;
+            position:relative;
+        }
+        .q{
+          position:absolute;
+          left:5%;
+          bottom:2%;
+          font-size:1.5rem;
+          
+        }
+        .question-body{
+            background-color: rgb(253, 245, 239);
+            padding:1rem;
+            font-weight:bold;
+        }
+  #answer-container{
+    transition:0.3s;
+    border-radius: 2vh;
+    border: 0.1rem solid black;
+  }
+  #order-container{
+    background: transparent;
+    color:black;
+    border: 0.1rem solid black;
+    transition:0.3s;
+    }
+  #answer-index{
+    transition:0.3s;
+    color:white;
+  }
+  #answer-container:hover{
+    border:0.1rem solid $base-color;
+    }
+  #answer-container:hover #order-container{
+    border:0.1rem solid $base-color;
+    }
+  #answer-container:hover #order-container #answer-index{
+    color: $base-color;
+  }
+  #answer-button{
+    background: none;
+    color:white;
+    border: 0.1rem solid  $base-color;
+    transition:0.3s;
+  }
+  #answer-button:hover{
+    background: $base-color;
+    color:white;
+    font-weight: bold;
+    border: 0.1rem solid  darken($base-color,10%);
+  }
+  .notice-enter-from{
+    opacity: 0;
+  }
+  .notice-enter-to{
+    opacity: 1 ;
+  }
+  .notice-enter-active, .notice-leave-active {
+  transition: opacity .5s;
+  }
+  // .notice-enter, notice.leave-to{
+  //   opacity: 0;
   // }
- 
 </style>

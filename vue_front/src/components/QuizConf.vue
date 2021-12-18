@@ -6,14 +6,11 @@
             <!-- <button class="delete"></button> -->
         </div>
         <div class="conf-body">
-            <router-link @click='closeConf' to=/ class="button"><i class="fas fa-home"></i>NO</router-link>
-            <router-link :to='this.$store.state.randomURL' class="button"><i class="far fa-hand-point-right"></i>YES</router-link>    
+            <router-link @click='closeConf' to=/ class="button m-2"><i class="fas fa-home"></i>NO</router-link>
+            <router-link :to='this.$store.state.randomURL' class="button m-2" id='or-button'>START</router-link>
+            <!-- <button id='or-button' @click='showCompoHandler'>SRART</button>    -->
         </div>
-    </article>
-                
-                <!-- <router-link :to="(this.$store.commit('getURLs',4),this.$store.state.randomURL)" class="button"><i class="fas fa-home"></i>YES</router-link> -->
-                
-           
+    </article>                     
   </div>
 </template>
 
@@ -34,26 +31,59 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+    @media(max-width: 414px){
+        .quiz-conf{
+            width:100%;
+            height:100%;
+            .conf-wrapper{
+                margin-top:12rem;
+               
+            }
+        }
+    }
+    @media(min-width: 415px) and (max-width: 767px){
+        .quiz-conf{
+            width:50%;
+            height:50%;
+            .conf-wrapper{
+                margin-top:15rem;
+                width:80%;
+            }
+        }
+    }
+    @media(min-width: 767px){
+        .quiz-conf{
+            width:50%;
+            height:50%;
+            .conf-wrapper{
+                margin-top:15rem;
+                width:60%;
+                
+            }
+        }
+    }
     .quiz-conf{
         top:0;
         position: fixed;
-        /* background-color: red; */
         background:rgba(0,0,0,0.5);
         width:100%;
-        height:100%;
+        height:100%;        
         
         .conf-wrapper{
             border: solid  rgba(243, 91, 36, 0.808);
             border-radius: 1rem;
-            margin-top:10rem;
             overflow:hidden;
+            margin-left: auto;
+            margin-right: auto;
+            
+            
 
         }
         .conf-header{
-            box-sizing:inherit;;
             background-color: #ff9933;
             color:white;
             padding:0.5rem;
+            font-weight:bold;
         }
         .conf-body{
             background-color: rgb(253, 245, 239);
