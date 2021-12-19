@@ -8,30 +8,26 @@
         </div>
         <form v-if='$store.state.step==1&&showProgress' @submit.prevent='submitForm' class="field-wrapper">
             <div class="field">
-                <!-- <label class="label">Username</label> -->
                 <div class="input-box">
-                    <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' placeholder="Username"></i>
+                    <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
                 </div>       
             </div>
             <div v-if='nameError' class='error'>{{ nameError }}</div>  
             <div class="field">
-                <!-- <label class="label">E-mail</label> -->
                 <div class="input-box">
-                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' placeholder="E-mail"></i>
+                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
                 </div>         
             </div>
             <div class="field">
-                <!-- <label class="label">Confirm</label> -->
                 <div class="input-box">
-                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' placeholder="Confirm"></i>
+                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
                 </div>         
             </div>
             <div v-if='mailError' class='error'>{{ mailError }}</div>
             <div class="field">
-                <!-- <label class="label">Country</label> -->
                 <div class="input-box">
                     <i class="fas fa-globe" id='in-font'>
-                        <select class="select-box" v-model='country' >
+                        <select class="select-box" id='Country' v-model='country' >
                         <option hidden>Country-Name</option>
                         <option>unko</option>
                         </select>
@@ -52,7 +48,7 @@
             />
         </transition>
         <Password
-          v-if='$store.state.step==3'
+          v-if='$store.state.step==3&&!showEdit&&!showRegiConf'
           @handle='showProgressHandler'
           @confHandle='showRegiConfHandler'/>
 
@@ -60,13 +56,20 @@
             v-if='$store.state.step==2'
             @handle='showProgressHandler'/>
         <RegisterConfirm
-           v-if='$store.state.step==3&&showRegiConf'
-           @handle='showProgressHandler'
+           v-if='$store.state.step==3&&showRegiConf&&!showEdit'
+           @handle='progressOff'
+           @edithandle='showEditHandler'
            />
         <Registered
             v-if='$store.state.step==4'
             @handle='showProgressHandler'
             />
+        <Edit
+            v-if='showEdit'
+            @handle='showProgressHandler'
+            @confHandle='showRegiConfHandler'
+            @edithandle='showEditHandler'
+            :showProgress='showProgress'/>
     </div>
 </template>
 
@@ -77,6 +80,7 @@ import ID from '@/components/signin/ID.vue'
 import Password from '@/components/signin/Password.vue'
 import RegisterConfirm from '@/components/signin/RegisterConfirm.vue'
 import Registered from '@/components/signin/Registered.vue'
+import Edit from '@/components/signin/Edit.vue'
 export default {
     components:{
         Progress,
@@ -84,7 +88,8 @@ export default {
         ID,
         Password,
         RegisterConfirm,
-        Registered
+        Registered,
+        Edit
     },
     data(){
         return{
@@ -100,12 +105,14 @@ export default {
             showProgress:true,
             showButton:true,
             showRegiConf:false,
+            showEdit:false
 
         }
     },
     updated(){
         
         this.showButtonHandler()
+        console.log(this.$store.state.signup.username)
         // this.getClass()
     },
     mounted(){
@@ -126,6 +133,11 @@ export default {
             if (this.nameError == ''&& this.mailError ==''){
                 this.showSentHandler()
                 this.showProgressHandler()
+                this.$store.commit('getUsername',this.username)
+                this.$store.commit('getEmail',this.email)
+                this.$store.commit('getEmail2',this.email2)
+                this.$store.commit('getCountry',this.country)
+                
             }
         },
         showSentHandler(){
@@ -136,6 +148,12 @@ export default {
         },
         showRegiConfHandler(){
             this.showRegiConf = !this.showRegiConf
+        },
+        showEditHandler(){
+            this.showEdit = !this.showEdit
+        },
+        progressOff(){
+            this.showProgress = false
         },
         showButtonHandler(){
             if(this.username!=''&&
@@ -149,6 +167,28 @@ export default {
                 this.showButton = true
             }
         },
+        getFilledItems(item){
+            if(item == 'Username'){
+                if(this.$store.signup.state.username !=''){
+                    this.username = this.$store.signup.state.username
+                }
+            }
+            if(item == 'E-mail'){
+                if(this.$store.signup.state.email !=''){
+                    this.email = this.$store.signup.state.email
+                }
+            }
+            if(item == 'Confirm'){
+                if(this.$store.signup.state.email2 !=''){
+                    this.email2 = this.$store.signup.state.email2
+                }
+            }
+            if(item == 'Country'){
+                if(this.$store.signup.state.country !=''){
+                    this.country = this.$store.signup.state.country
+                }
+            }
+        }
         // getClass(){
         //     if(this.showSent == false){
         //         if (this.showButton == false){

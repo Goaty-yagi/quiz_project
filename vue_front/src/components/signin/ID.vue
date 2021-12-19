@@ -50,7 +50,7 @@ export default {
     updated(){
         this.checkSixDigit()
         this.makeSixDigit()
-        console.log(this.sixDigit)
+        console.log(this.sixDigit,this.uername)
     },
     watch:{
         digit1:function(v) { if (v.length == 1) { this.$refs.digit2.focus() } },
@@ -108,6 +108,7 @@ export default {
             }else{
                 this.sixDigitList=[]
                 this.allclear()
+                this.$refs.digit1.focus()
             }
         },
         arrayEqual(array1,array2){

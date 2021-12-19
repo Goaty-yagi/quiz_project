@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import {router} from "../main.js"
-import { signup } from './modules/signup'
+import  signup  from './modules/signup'
 
 let getDefaultState = () => {
   return {
@@ -20,10 +20,10 @@ let getDefaultState = () => {
 
 
 export default createStore({
-  state: getDefaultState(),
   modules: {
-    // signup,
+    signup,
   },
+  state: getDefaultState(),
   plugins: [
     createPersistedState({
       key: 'quizkey',  // 設定しなければ'vuex'

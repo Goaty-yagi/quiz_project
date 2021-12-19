@@ -6,22 +6,31 @@
             <div class="field">
                 <div class="input-box">
                     <div><i class="fas fa-robot" id='in-font'></i></div>
-                    <div class="text-box">name</div>
+                    <div class="text-box">{{ $store.state.signup.username }}</div>
                 </div>         
             </div>
             <div class="field">
                 <div class="input-box">
                     <div><i class="far fa-envelope" id='in-font'></i></div>
-                    <div class="text-box">mail</div>
+                    <div class="text-box">{{ $store.state.signup.email }}</div>
+                </div>         
+            </div>
+            <div class="field">
+                <div class="input-box">
+                    <div><i class="fas fa-globe" id='in-font'></i></div>
+                    <div class="text-box">{{ $store.state.signup.country }}</div>
                 </div>         
             </div>
             <div class="field">
                 <div class="input-box">
                     <i class="fas fa-unlock-alt" id='in-font'></i>
-                    <div class="text-box">password</div>
+                    <div class="text-box">{{ $store.state.signup.password }}</div>
                 </div>         
             </div>
-            <button  @click='addStep' class='button' id='color-button'><p>登録</p></button>
+            <div class="buttons">
+                <button  @click='goEdit' class='button' id='color-button'><p>編集する</p></button>
+                <button  @click='addStep' class='button' id='color-button'><p>登録</p></button>
+            </div>
         </div>
     </div>
 </template>
@@ -32,6 +41,10 @@ export default {
         addStep(){
             this.$emit('confHandle')
             this.$store.commit('addStep')
+            this.$emit('handle')
+        },
+        goEdit(){
+            this.$emit('edithandle')
             this.$emit('handle')
         }
     },
@@ -102,8 +115,14 @@ export default {
         font-weight: bold;
         margin-top:0.3rem;
     }
+    .buttons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
     .button{
         font-weight: bold;
-        margin:3rem;
+        
     }
 </style>

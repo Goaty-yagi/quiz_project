@@ -5,12 +5,14 @@
                 <p class='password-text'>パスワード設定</p>
                 <div class="field">
                     <div class="input-box">
-                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" type='password' v-model='password' placeholder="Password"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType" v-model='password' placeholder="Password"></i>
+                        <i :class="[passType ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click' ></i>
                     </div>      
                 </div>
                 <div class="field">
                     <div class="input-box">
-                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" type='password' v-model='password2' placeholder="Conf Password"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType2" v-model='password2' placeholder="Conf Password"></i>
+                        <i :class="[passType2 ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click2' ></i>
                     </div>          
                 </div>
             </div>
@@ -36,15 +38,24 @@ export default {
             password2:'',
             accept:'',
             showButton:true,
-            passwordError:''
+            passwordError:'',
+            passType:false,
+            passType2:false,
         }
     },
     mounted(){
         this.$emit('handle')
     },
     updated(){
-        console.log('souwb',this.showButton)
         this.showButtonHandler()
+    },
+    computed: {
+    inputType: function () {
+      return this.passType ? "text" : "password";
+        },
+    inputType2: function () {
+      return this.passType2 ? "text" : "password";
+        }
     },
     watch:{
         showButton:function(v) {if (v == false) { this.$refs.bform.classList.add('button-hover')}
@@ -65,8 +76,15 @@ export default {
             this.passwordError = this.password == this.password2?
             '' : 'your password is not the same'
             if (this.passwordError == ''){
-                this.$emit('confHandle')           
+                this.$emit('confHandle')
+                this.$store.commit('getPassword',this.password)         
             }
+        },
+        click(){
+            this.passType = !this.passType
+        },
+        click2(){
+            this.passType2 = !this.passType2
         },
     }
         
@@ -124,6 +142,7 @@ export default {
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        position:relative;
         
     }#in-font{
         margin-left:0.5rem;
@@ -142,6 +161,16 @@ export default {
         margin-left:0.5rem;
         position:absolute;
         left:1rem;
+    }
+    #eye{
+        position:absolute;
+        right:0;
+        margin-right:0.5rem;
+        color:rgb(158, 158, 158);
+        transition:0.3s;
+    }
+    #eye:hover{
+        color:rgb(92, 92, 92);
     }
     .select-box{
         width: 82%;
