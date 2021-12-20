@@ -23,6 +23,7 @@
 
 export default {
     mounted(){
+        console.log('testresult')
         setTimeout(() =>{
         // this.$store.commit('testHandler');
         this.$store.commit('noticeHandler');
@@ -36,6 +37,7 @@ export default {
         /* height: 100vh; */
         width: 100vw;
         line-height:initial;
+        padding-top: 3rem;
         
 }
     /* // this is only for i phone5 */

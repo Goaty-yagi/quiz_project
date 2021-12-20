@@ -1,147 +1,134 @@
 <template>
-  <div id="quiz-wrapper">
+  <div class="quiz-wrapper">
     
     <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
       <div class="lds-dual-ring"></div>
     </div>
-      <div  v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
-        <div id="wrapper-quiz">
-         <div class='container'>
-          <Start
-           v-show='!this.$store.state.test'
-           :showQuiz='showQuiz'
-           :quizzes='quizzes'
-           :questions='questions'
-           @handle="handleSHowQuiz"/>
-  
-          <div v-if="showQuiz && counter < questions.length + 1">
-            <progress v-if="showAnswerDetail==false" class="progress is-warning is-marginless mb-1" :value="progress(counter,questions.length)" max="100"/>
-            <div class="is-size-1-tablet mt-3 title is-size-4-mobile"> 
-              <p v-show="!this.$store.state.test" class='has-text-white'>初級</p>
-              <p v-show="this.$store.state.test" class='has-text-white'>実力テスト</p>
-            </div>              
-            <div v-for="(question,questionindex) in questions.slice(a,b)"
-                 v-bind:key="questionindex">
-              <div class='question-wrapper'>
-                <div class="question-header"><i class='q'>Q</i>第{{ counter }}問</div>
-                <div class='question-body'>{{ question.label }}</div>
-              </div>
-            <div>
-          </div>
+      <div class='quiz-countainer'>
+        <div  v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
+          <div>
+            <Start
+            v-show='!this.$store.state.test'
+            :showQuiz='showQuiz'
+            :quizzes='quizzes'
+            :questions='questions'
+            @handle="handleSHowQuiz"/>
+    
+            <div v-if="showQuiz && counter < questions.length + 1">
+              <progress v-if="showAnswerDetail==false" class="progress" :value="progress(counter,questions.length)" max="100"/>
+              <div class=question-grade> 
+                <p v-show="!this.$store.state.test" class='quiz-title'>初級</p>
+                <p v-show="this.$store.state.test" class='quiz-title'>実力テスト</p>
+              </div>              
+              <div v-for="(question,questionindex) in questions.slice(a,b)"
+                  v-bind:key="questionindex">
+                <div class='question-wrapper'>
+                  <div class="question-header"><i class='q'>Q</i>第{{ counter }}問</div>
+                  <div class='question-body'>{{ question.label }}</div>
+                </div>
+              <div>
+            </div>
             <div :class='showPic(question.image)'>
               <img  v-bind:src="question.get_image"/>
             </div>
 
-              <!-- answer part -->
-              
-              <div class='columns is-mobile is-vcentered'    
-                v-for="(answer,answerindex) in question.answer"
-                v-bind:key="answerindex">
-                <div class="py-5 is-three-fifths-tablet button is-paddingless has-background-light is-fullwidth my-2" 
-                  @click="onClicked(answer,question.field)"
-                  :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
-                  id='answer-container'>
-                  <div class='column'>
-                    <div id ='order-container' class='button is-pulled-left is-small has-background-grey-dark px-4 is-rounded has-text-weight-bold is-size-6-mobile is-static'>
-                      <p id="answer-index">{{ String.fromCharCode(answerindex+65) }}</p>
-                    </div>
-                  </div>
-                  <p
-                  class="is-overlay mt-4  has-text-grey-darker"
-                    id='answer-label'>{{ answer.label }}
-                  </p>
-                  <div v-if="question.field=='並び替え'&&showAnswerDetail==false">
-                    <div class='column' >
-                      <div id='order-space' class="button is-small is-rounded has-background-warning-light has-text-warning-dark">
-                        <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
-                        class ='is-size-4-mobile mt-1 has-text-warning-dark'
-                        id='order-num'
-                        style='position:absolute'>{{sort.indexOf(answer.answer_id)+1}}</p>
-                      </div>
-                    </div>  
-                  </div>
-
+                <!-- answer part -->
                 
-                  <div class='columns is-mobile is-vcentered' id='result'>
-                    <div class="column result-all">
-                      <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-                        v-if="question.field!='並び替え' && showAnswerDetail">
-                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
-                      </div>
-                      <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-                        v-if="question.field=='並び替え' && showAnswerDetail">
-                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
-                      </div>
-                  </div>
-                  <div class='button px-2 is-paddingless ml-1 has-background-warning-light has-text-primary-dark is-static'
-                    id='result-order-num'
-                    v-if="question.field=='並び替え' && showAnswerDetail">
-                    <p id='result-num' class='has-text-weight-bold	'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
-                  </div>
+            <div class='answer-flex'    
+              v-for="(answer,answerindex) in question.answer"
+              v-bind:key="answerindex">
+              <div class='answer-container' 
+                @click="onClicked(answer,question.field)"
+                :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
+                >
+                <div class='order-container'>
+                  <p class="answer-index">{{ String.fromCharCode(answerindex+65) }}</p>
+                </div>
+                <p class="answer-label">{{ answer.label }}</p>
+                <div class="order-space" v-if="question.field=='並び替え'&&showAnswerDetail==false">        
+                    <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
+                    class ='order-num'
+                    >{{sort.indexOf(answer.answer_id)+1}}</p>
+                </div>
+
+                <div class='' >
+                  <div class="">
+                    <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                      v-if="question.field!='並び替え' && showAnswerDetail">
+                      <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                    </div>
+                    <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                      v-if="question.field=='並び替え' && showAnswerDetail">
+                      <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                    </div>
+                </div>
+                <div class=''
+                  id='result-order-num'
+                  v-if="question.field=='並び替え' && showAnswerDetail">
+                  <p id='result-num' class='has-text-weight-bold	'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
                 </div>
               </div>
+            </div>
 
-                </div>
-                
-              <button
-                class="button is-rounded"
-                id='answer-button'
-                v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
-                @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
-              <button
-              class="button"
-              id='answer-button'
-              v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
-                @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
-
-            <!-- detail part -->
-            
-            <div class="buttons has-addons is-centered">
-              <p class="control">
+                  </div>
+                  
                 <button
                   class="button"
-                  v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
-                    @click="detailHandler('back')">
-                    ＜ Back
-                </button>
-              </p>
-              <p class="control">
-                <button
-                class="button has-background-danger-light is-paddingless px-2 has-text-danger-dark"
-                v-show="showAnswerDetail"
-                  @click="detailHandler('backToResult',QL=questions.length)">結果に戻る
-                </button>
-              </p>
-              <p class="control">
+                  id='color-button'
+                  v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
+                  @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
                 <button
                 class="button"
-                v-show='counter != questions.length && showAnswerDetail'
-                  @click="detailHandler('next')">Next ＞</button>
-              </p>
+                id='color-button'
+                v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
+                  @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
+
+              <!-- detail part -->
+              
+              <div class="">
+                <p class="control">
+                  <button
+                    class="button"
+                    v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
+                      @click="detailHandler('back')">
+                      ＜ Back
+                  </button>
+                </p>
+                <p class="control">
+                  <button
+                  class=""
+                  v-show="showAnswerDetail"
+                    @click="detailHandler('backToResult',QL=questions.length)">結果に戻る
+                  </button>
+                </p>
+                <p class="control">
+                  <button
+                  class="button"
+                  v-show='counter != questions.length && showAnswerDetail'
+                    @click="detailHandler('next')">Next ＞</button>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
         <!-- //result page// -->
-        
-        <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
-          <Result
-            v-show='!this.$store.state.test'
-            :question_length='questions.length'
-            :rerultAnswer='rerultAnswer'
-            @show='showDetail'/>
-        </div>
+
+          <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
+            <Result
+              v-show='!this.$store.state.test'
+              :question_length='questions.length'
+              :rerultAnswer='rerultAnswer'
+              @show='showDetail'/>
+          </div>
        </div>
       </div>
-      <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
-        <TestResult
-          v-show='this.$store.state.test'/>
-        <transition name="notice">
+    </div>
+      <TestResult
+        v-if='this.$store.state.test&&counter-1 == questions.length&&$store.state.isLoading==false'/>
+      <transition name="notice">
           <Notification
             v-if='this.$store.state.notice'
             />
-        </transition>
-    </div>
-    </div>
+      </transition>
   </div>
 </template>
 
@@ -187,6 +174,8 @@ export default {
     beforeMount(){
     },
     mounted(){
+      console.log('storetest',this.$store.state.test)
+      console.log('long',this.questions.length,this.counter)
       window.addEventListener('beforeunload', () => {
       this.$store.commit('reset')
     })
@@ -230,7 +219,7 @@ export default {
       console.log('slevtedID',selectedAnswer[1],'CA',question_correct_answer)
       console.log('resultAnswer',this.rerultAnswer)
       console.log('selectedAnswerArray',this.selectedAnswerArray)
-    },
+      },
     scrollTop(){
       window.scrollTo({
         top: 0,
@@ -299,22 +288,6 @@ export default {
       }
       return true;
     },
-    // getRandomQuestion:function(array){
-    //   for (let i = array.length - 1; i >= 0; i--) {
-    //     let r = Math.floor(Math.random() * (i + 1))
-    //     let tmp = array[i]
-    //     array[i] = array[r]
-    //     array[r] = tmp
-    //     }
-    //   for ( let k =0; k < array.length; k++){
-    //     for (let i = array[k].answer.length - 1; i >= 0; i--) {
-    //       let r = Math.floor(Math.random() * (i + 1))
-    //       let tmp = array[k].answer[i]
-    //       array[k].answer[i] = array[k].answer[r]
-    //       array[k].answer[r] = tmp
-    //       }}
-    //     return array
-    // },
     deleteStringArray(answer_id){
       let tempArray = this.sort.slice(0)
       if (tempArray.length > 1){
@@ -357,10 +330,10 @@ export default {
       console.log(sort)
       if(this.showAnswerDetail==false){
         if (question_field !='並び替え'&& answer_label == selectedAnswer){
-          return 'has-background-primary-light has-text-white is-hovered'
+          return 'clicked'
           }
         else if (question_field =='並び替え'&&sort.includes(answer_id)){
-          return 'has-background-primary-light has-text-white is-hovered'
+          return 'clicked'
           }
         // detail
        }
@@ -431,16 +404,6 @@ export default {
     getCorrectOrderClass(answer_id,correct_answer,selectedAnswerArray,counter,showAnswerDetail){
       return correct_answer.indexOf(answer_id)
     },
-    // numOfTrue(answered_array){
-    //   let counter = 0
-    //   console.log('innum_resultanswer',this.rerultAnswer)
-    //   console.log('anarray',answered_array)
-    //   for (let t of answered_array){
-    //     if(t == true){
-    //       counter += 1
-    //     }console.log('numcounter',counter)
-    //   }return counter
-    // },
     returnFont(boolean){
       if(boolean == true){
         return "far fa-circle"
@@ -462,122 +425,27 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "style/_variables.scss";
-  #quiz-wrapper{
-    width: 100vw;
-    height: 100vh;
+  .quiz-wrapper{
+    width:100vw;
+    height:100vh;
   }
-/* this is for Iphone */
-  @media(max-width: 767px){
-  // #quiz-wrapper{
-  //   padding-top:5vw;
-  // }
-  #resultString{
-      display: none ;
-    }
-  #answer-label{
-    font-weight:bold;
-     }
-  #result-order-num{
-    height: 3rem;
-    }
-  #result-num{
-    font-size: 2rem;
-    }
-  .result-all{
+  .quiz-countainer{
+    width:19rem;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+  }
+  .progress{
+    margin-top:3rem;
+  }
+  .quiz-title{
+    color:white;
     font-size: 1.5rem;
-    }
-  }
-  /* between Iphone and Ipad*/
-  @media(min-width: 415px) and (max-width: 767px){
-
-  }
-  // wider than ipad include ipad
-  @media(min-width: 768px) and (max-width: 1024px){
-  #wrapper-quiz{
-    // border: solid lighten( $base-color, 30% );
-    // border-radius: 3rem;
-
-    margin-left: 8rem;
-    margin-right: 8rem;
-  }
-  #answer-container{
-    // width: 300px;
-    height: 5rem;
-  }
-  #answer-label{
-    position: absolute;
-    // padding-top:0.5rem;
-    font-size: 2rem;  
-    }
-  #answer-index{
-    font-size: 1.7rem;
-    position: absolute;
-  }
-  #order-container{
-    width: 3rem;
-    height: 3rem;
-  }
-  #order-space{
-    padding: 1.5rem;
-    margin-right: 0.5rem;
-  }
-  #order-num{
-    font-size: 2rem;
-    font-weight:bold;
-  }
-  #result-order-num{
-    width: 3rem;
-    height: 5rem;
-    font-size: 2rem;
-  }
-  .detailClassHandler{
-    font-size: 10rem
-  }
-  .result-all{
-    font-size: 2rem;
-  }
-  
-  }
-  // for desktop include ipadpro
-  @media(min-width: 1024px){
-    #wrapper-quiz{
-    margin-left: 16rem;
-    margin-right: 16rem;
-    }
-  }
-  #wrapper-quiz{
-    padding: 2rem;
-
-    }
-  .result{
-    border: solid lighten( $base-color, 30% );
-  }
-  #result-column{
-    border-bottom: solid rgb(231, 221, 221);
-    margin-right: 2rem;
-    margin-left: 2rem;
-    margin-bottom: 2rem;
-  }
-  .result-all{
-    margin-right:1rem;
-    .result-font-green{
-      color: green;
-    }
-    .result-font-red{
-      color:red;
-    }
-  }
-  #order-space{
-    text-align: right;
-    
   }
   .question-wrapper{
             border: solid  rgba(243, 91, 36, 0.808);
             border-radius: 1rem;
             overflow:hidden;
-            margin-top: -1rem;
-            // margin-left: auto;
-            // margin-right: auto;
         }
         .question-header{
             background: linear-gradient($base-lite,$base-color);
@@ -598,42 +466,249 @@ export default {
             padding:1rem;
             font-weight:bold;
         }
-  #answer-container{
-    transition:0.3s;
-    border-radius: 2vh;
-    border: 0.1rem solid black;
-  }
-  #order-container{
-    background: transparent;
-    color:black;
-    border: 0.1rem solid black;
-    transition:0.3s;
+
+  .answer-container{
+    border: 0.2rem solid rgb(110, 109, 108);
+    border-radius: 50vh;
+    background: white;
+    margin-bottom:0.5rem;
+    display:flex;
+    position:relative;
+    transition: 0.3s
     }
-  #answer-index{
-    transition:0.3s;
-    color:white;
-  }
-  #answer-container:hover{
-    border:0.1rem solid $base-color;
+    .answer-container:hover{
+      border: 0.2rem solid lighten($base-color,20%);
+      }
+    .answer-container.clicked{
+      border: 0.2rem solid $base-color;
+      .order-container{
+        border: 0.2rem solid rgb(93, 93, 93);
+        background:$base-color;
+        color:white;
+      }
     }
-  #answer-container:hover #order-container{
-    border:0.1rem solid $base-color;
-    }
-  #answer-container:hover #order-container #answer-index{
-    color: $base-color;
+      .order-container{
+        height: 2.5rem;
+        width: 2.5rem;
+        border: 0.2rem solid $base-color;
+        border-radius: 50%;
+        margin-left:0.5rem;
+        position:relative;
+        transition: 0.3s
+      }
+      .answer-index{
+        font-size:1.5rem;
+        position:absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom: 0;
+        font-weight: bold;    
   }
-  #answer-button{
-    background: none;
-    color:white;
-    border: 0.1rem solid  $base-color;
-    transition:0.3s;
+  .answer-label{
+    position:absolute;
+    height: 50%;
+    left:0;
+    right:0;
+    bottom:0;
+    top:0;
+    margin:auto;
   }
-  #answer-button:hover{
-    background: $base-color;
-    color:white;
-    font-weight: bold;
-    border: 0.1rem solid  darken($base-color,10%);
+  .order-space{
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    // border: 0.1rem solid black;
+    // border-radius: 10%;
+    box-sizing: content-box;
+    margin-right:1rem;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    // height: 90%;
+    // width: inherit;
   }
+  .order-num{
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight:bold;
+    color:rgb(93, 93, 93);
+  }
+// @import "style/_variables.scss";
+//   #quiz-wrapper{
+//     width: 100vw;
+//     height: 100vh;
+//   }
+// /* this is for Iphone */
+//   @media(max-width: 767px){
+//   // #quiz-wrapper{
+//   //   padding-top:5vw;
+//   // }
+//   #resultString{
+//       display: none ;
+//     }
+//   #answer-label{
+//     font-weight:bold;
+//      }
+//   #result-order-num{
+//     height: 3rem;
+//     }
+//   #result-num{
+//     font-size: 2rem;
+//     }
+//   .result-all{
+//     font-size: 1.5rem;
+//     }
+//   }
+//   /* between Iphone and Ipad*/
+//   @media(min-width: 415px) and (max-width: 767px){
+
+//   }
+//   // wider than ipad include ipad
+//   @media(min-width: 768px) and (max-width: 1024px){
+//   #wrapper-quiz{
+//     // border: solid lighten( $base-color, 30% );
+//     // border-radius: 3rem;
+
+//     margin-left: 8rem;
+//     margin-right: 8rem;
+//   }
+//   #answer-container{
+//     // width: 300px;
+//     height: 5rem;
+//   }
+//   #answer-label{
+//     position: absolute;
+//     // padding-top:0.5rem;
+//     font-size: 2rem;  
+//     }
+//   #answer-index{
+//     font-size: 1.7rem;
+//     position: absolute;
+//   }
+//   #order-container{
+//     width: 3rem;
+//     height: 3rem;
+//   }
+//   #order-space{
+//     padding: 1.5rem;
+//     margin-right: 0.5rem;
+//   }
+//   #order-num{
+//     font-size: 2rem;
+//     font-weight:bold;
+//   }
+//   #result-order-num{
+//     width: 3rem;
+//     height: 5rem;
+//     font-size: 2rem;
+//   }
+//   .detailClassHandler{
+//     font-size: 10rem
+//   }
+//   .result-all{
+//     font-size: 2rem;
+//   }
+  
+//   }
+//   // for desktop include ipadpro
+//   @media(min-width: 1024px){
+//     #wrapper-quiz{
+//     margin-left: 16rem;
+//     margin-right: 16rem;
+//     }
+//   }
+//   #wrapper-quiz{
+//     padding: 2rem;
+
+//     }
+//   .result{
+//     border: solid lighten( $base-color, 30% );
+//   }
+//   #result-column{
+//     border-bottom: solid rgb(231, 221, 221);
+//     margin-right: 2rem;
+//     margin-left: 2rem;
+//     margin-bottom: 2rem;
+//   }
+//   .result-all{
+//     margin-right:1rem;
+//     .result-font-green{
+//       color: green;
+//     }
+//     .result-font-red{
+//       color:red;
+//     }
+//   }
+//   #order-space{
+//     text-align: right;
+    
+//   }
+//   .question-wrapper{
+//             border: solid  rgba(243, 91, 36, 0.808);
+//             border-radius: 1rem;
+//             overflow:hidden;
+//             margin-top: -1rem;
+//             // margin-left: auto;
+//             // margin-right: auto;
+//         }
+//         .question-header{
+//             background: linear-gradient($base-lite,$base-color);
+//             color:white;
+//             padding:0.5rem;
+//             font-weight:bold;
+//             position:relative;
+//         }
+//         .q{
+//           position:absolute;
+//           left:5%;
+//           bottom:2%;
+//           font-size:1.5rem;
+          
+//         }
+//         .question-body{
+//             background-color: rgb(253, 245, 239);
+//             padding:1rem;
+//             font-weight:bold;
+//         }
+//   #answer-container{
+//     transition:0.3s;
+//     border-radius: 2vh;
+//     border: 0.1rem solid black;
+//   }
+//   #order-container{
+//     background: transparent;
+//     color:black;
+//     border: 0.1rem solid black;
+//     transition:0.3s;
+//     }
+//   #answer-index{
+//     transition:0.3s;
+//     color:white;
+//   }
+//   #answer-container:hover{
+//     border:0.1rem solid $base-color;
+//     }
+//   #answer-container:hover #order-container{
+//     border:0.1rem solid $base-color;
+//     }
+//   #answer-container:hover #order-container #answer-index{
+//     color: $base-color;
+//   }
+//   #answer-button{
+//     background: none;
+//     color:white;
+//     border: 0.1rem solid  $base-color;
+//     transition:0.3s;
+//   }
+//   #answer-button:hover{
+//     background: $base-color;
+//     color:white;
+//     font-weight: bold;
+//     border: 0.1rem solid  darken($base-color,10%);
+//   }
+  
   .notice-enter-from{
     opacity: 0;
   }
@@ -643,7 +718,4 @@ export default {
   .notice-enter-active, .notice-leave-active {
   transition: opacity .5s;
   }
-  // .notice-enter, notice.leave-to{
-  //   opacity: 0;
-  // }
 </style>

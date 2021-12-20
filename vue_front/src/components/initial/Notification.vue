@@ -75,10 +75,7 @@ export default {
         flex-direction: column;
         display: flex;
         justify-content: center;
-        align-items: center;
-       
-        
-        
+        align-items: center;        
     }
     .notice-wrapper{
         border: solid $base-color;
