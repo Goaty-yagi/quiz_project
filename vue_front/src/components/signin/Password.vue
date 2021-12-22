@@ -197,8 +197,6 @@ export default {
         width: 100%;
         height:60%;
         margin-top:1rem;
-        // margin-left: auto;
-
-        // margin-right: 0;
+        
         }
 </style>

@@ -11,8 +11,8 @@
             </div>
             <div class="field">
                 <div class="input-box">
-                    <div><i class="far fa-envelope" id='in-font'></i></div>
-                    <div class="text-box">{{ $store.state.signup.email }}</div>
+                    <div><i class="far fa-envelope" id='in-font'></i></div>      
+                        <div class="text-box" id='mail'>{{ $store.state.signup.email }}</div>
                 </div>         
             </div>
             <div class="field">
@@ -28,28 +28,65 @@
                 </div>         
             </div>
             <div class="buttons">
-                <button  @click='goEdit' class='button' id='color-button'><p>編集する</p></button>
-                <button  @click='addStep' class='button' id='color-button'><p>登録</p></button>
+                <button  @click='goEdit' class='button' :disabled='error' id='color-button'><p>編集する</p></button>
+                <button  @click='addStep' class='button' :disabled='error' id='color-button'><p>登録</p></button>
             </div>
+            <transition name="notice">
+                <div v-if='error' class="error">
+                    <p class='error-message' v-if='error'> {{ error }} </p>
+                    <button class='fbottun' id='color-button'>戻る</button>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
 
 <script>
+import ID from './ID.vue'
 export default {
+  components: { ID },
+    data(){
+        return{
+            error: null,
+            errorMessage:'このメールアドレスはすでに使われています。',
+            errorMessage2:'登録できませんでした。もう一度お試しください。',
+        }
+    },
     methods:{
-        addStep(){
-            this.$emit('confHandle')
-            this.$store.commit('addStep')
-            this.$emit('handle')
+        async addStep(){
+            await this.handleSubmit()
+            if (this.error == null){
+                this.$emit('confHandle')
+                this.$store.commit('addStep')
+                this.$emit('handle')
+            }
         },
         goEdit(){
             this.$emit('edithandle')
             this.$emit('handle')
-        }
+        },
+        async handleSubmit(){
+            try {
+                await this.$store.dispatch('signup',{
+                    email: this.$store.state.signup.email,
+                    password: this.$store.state.signup.password
+                })
+            } catch (err){
+                this.error = this.errorMessage2
+                console.log('catch error',this.error)
+            }
+        },
+        errorMessageHandler(error){
+            if ( error == 'Firebase: Error (auth/email-already-in-use).'){
+                this.error = this.errorMessage
+            }else{
+                this.error = this.errorMessage2
+            }
+        }        
     },
     mounted(){
-    }
+        console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
+    },
 }
 </script>
 
@@ -71,7 +108,7 @@ export default {
         border-radius: 2vh;
         background:$back-white;
         text-align: center;       
-        display:inline-block;
+        position:relative;
         padding-top:1.5rem;
         height:30rem;
         width: 20rem;
@@ -97,23 +134,32 @@ export default {
         margin-right: 1rem;
         height: 3rem;
         position:relative;
+        font-size:0.5rem;
     }
     #in-font{
         font-size:1.5rem;
         margin-left: 1rem;
         position:absolute;
         left:0;
-        top:0.4rem;
+        top:0.6rem;
     }
     .text-box{
-        position: absolute;
+        // position: absolute;
         left:0;
         right:0;
         top:0;
         bottom: 0;
         font-size:1.3rem;
         font-weight: bold;
-        margin-top:0.3rem;
+        margin-top:0.5rem;
+        margin-left:3rem;
+        margin-right:2rem;
+    }
+    #mail{
+        overflow-wrap: break-word;
+        font-size:1rem;
+        line-height: 0.9rem;
+        margin-top:0.8rem;        
     }
     .buttons{
         display: flex;
@@ -123,6 +169,26 @@ export default {
     }
     .button{
         font-weight: bold;
-        
+    }
+    .error{
+        position:absolute;
+        border:solid red;
+        background: rgb(247, 230, 232);
+        border-radius: 1rem;
+        height:70%;
+        left:0;
+        right:0;
+        bottom:0;
+        top:0;
+        margin:auto;
+        transition: 0.3s;
+        padding:2rem;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .error-message{
+        font-weight: bold;
     }
 </style>

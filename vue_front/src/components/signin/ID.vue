@@ -50,7 +50,6 @@ export default {
     updated(){
         this.checkSixDigit()
         this.makeSixDigit()
-        console.log(this.sixDigit,this.uername)
     },
     watch:{
         digit1:function(v) { if (v.length == 1) { this.$refs.digit2.focus() } },

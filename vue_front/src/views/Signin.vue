@@ -81,6 +81,8 @@ import Password from '@/components/signin/Password.vue'
 import RegisterConfirm from '@/components/signin/RegisterConfirm.vue'
 import Registered from '@/components/signin/Registered.vue'
 import Edit from '@/components/signin/Edit.vue'
+
+
 export default {
     components:{
         Progress,
@@ -131,6 +133,8 @@ export default {
             this.mailError = this.email == this.email2 ?
             '' : 'your mail adrress is not the same'
             if (this.nameError == ''&& this.mailError ==''){
+                console.log('here')
+                this.$store.dispatch('checkEmail',this.email)
                 this.showSentHandler()
                 this.showProgressHandler()
                 this.$store.commit('getUsername',this.username)
@@ -188,16 +192,11 @@ export default {
                     this.country = this.$store.signup.state.country
                 }
             }
+        },
+        async providers(){
+            const provider = await firebase.auth().fetchSignInMethodsForEmail(this.email);
+            console.log('provider',provider)
         }
-        // getClass(){
-        //     if(this.showSent == false){
-        //         if (this.showButton == false){
-        //         this.$refs.bform.classList.add('button-hover')
-        //         }else{
-        //             this.$refs.bform.classList.remove('button-hover')
-        //     }   
-        //     }
-        // },
     }
 }
 </script>
