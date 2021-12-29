@@ -1,6 +1,6 @@
 <template>
-  <div class="account-wrapper">
-    <div v-if='emailVerified==false'>
+<div class="account-wrapper">
+    <!-- <div v-if='emailVerified==false'> -->
         <div class='main-notification-wrapper'>
             <div class='main-notice-wrapper'>
                 <img class='main-image' src="@/assets/logo.png">
@@ -10,56 +10,17 @@
                 <!-- <button  @click='addStep' class='button' id='color-button'><p>次へ</p></button> -->
             </div>
         </div>
-      </div>
-      <Sent v-show='showSent'/>
-      <div class='account'  v-if='this.$store.state.signup.emailVerified'>
-        <p>accountdayo</p>
-        <p> {{ this.$store.state.signup.emailVerified}}unko</p>
-        <div v-if='this.$store.state.signup.user.email'>
-          {{this.$store.state.signup.user.email}}
-        </div>
-      </div>
-  </div>
+    </div>
 </template>
 
 <script>
-import Sent from '@/components/signin/Sent.vue'
-import { computed } from 'vue'
-import { useStore } from 'vuex'
-export default{
-  setup(){
-    const store = useStore()
-    return{
-      user: computed(() => store.state.signup.user),
-      email: computed(() => store.state.signup.email),
-      password: computed(() => store.state.signup.password),
-      emailVerified: computed(() => store.state.signup.emailVerified),
-    }
-  },
-  data(){
-    return{
-      showSent:false,
-      error:''
-    }
-  },
-  components: {
-    Sent,
-  },
-  methods:{
-    async resent(){
-          try{
-              await this.$store.dispatch('sendEmailVerify')
-              this.handleShowSent()
-              console.log('showsent:',this.showSent)
-          }catch(err){
-            this.error = err
-            console.log(this.error)
-          }
-          },
-          handleShowSent(){
-            this.showSent = true
+export default {
+    methods:{
+        resent(){
+            this.$store.dispatch('sendEmailVerify')
+            this.$emit('handleShowSent')
         }
-  }
+    }
 }
 </script>
 

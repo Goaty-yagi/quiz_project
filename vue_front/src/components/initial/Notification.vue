@@ -45,7 +45,7 @@
             </div>
             <div class='buttons'>
                 <router-link @click='closeConf' to='/' class='button' id='register-button'>登録しない</router-link>
-                <router-link  to='/signin' class='button' id='register-button'>登録する</router-link>
+                <router-link  to='/signup' class='button' id='register-button'>登録する</router-link>
             </div>
         </div>
     </div>
@@ -89,7 +89,7 @@ export default {
     }
     .image{
         width:15%;
-        height:15%;
+        height:auto;
         margin-left: auto;
         margin-right: auto;
     }
@@ -164,7 +164,8 @@ export default {
         display:flex;
         justify-content: center;
         align-items: center;
-        margin:10%;
+        margin:1%;
+        margin-bottom:1rem;
     }
     #register-button{
         width: auto;
@@ -189,7 +190,7 @@ export default {
   }
 @media(min-width: 1025px){
     .text1{
-        font-size:3vw;
+        font-size:2vw;
     }
     .notice-wrapper{
         margin-top:10%;

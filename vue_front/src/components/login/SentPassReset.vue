@@ -2,9 +2,8 @@
     <div class='notification-wrapper'>
         <div class='notice-wrapper'>
             <img class='image' src="@/assets/logo.png">
-            <p class='text1'>承認メールを送信しました。</p>
+            <p class='text1'>パスワード再登録メールを送信しました。</p>
             <p class='text1'>登録したアドレスで確認してください。</p>
-            <!-- <button  @click='addStep' class='button' id='color-button'><p>アカウント</p></button> -->
         </div>
     </div>
 </template>
@@ -22,7 +21,6 @@ export default {
         }
     },
     mounted(){
-        this.$emit('handle')
     }
 }
 </script>

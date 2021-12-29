@@ -4,13 +4,30 @@
       <div class="main-header">
        <Header/>
       </div>
+      
+      
         <section class="main-section">
-            <router-view
+          <router-view
             id='router'/>
+           <!-- <div v-if='user&&emailVerified==false&&this.$store.state.step==1'>
+             <div class='main-notification-wrapper'>
+                  <div class='main-notice-wrapper'>
+                      <img class='main-image' src="@/assets/logo.png">
+                      <p class='main-text1'>メール承認が完了していません。</p>
+                      <p class='main-text1'>メール承認を完了してください。</p>
+                      <p @click='resent' class='main-text1'>承認メールを送る。</p>                      
+                      <button  @click='addStep' class='button' id='color-button'><p>次へ</p></button>
+                  </div>
+              </div>
+           </div>
+           <Sent v-if='showSent'/> -->
+            <div class='mobile-header'>
+          <MobileHeader/>
+        </div>
+          <Footer
+          v-if='!this.$router.path==quizurl'
+          />
         </section>
-      <Footer
-      v-if='!this.$router.path==quizurl'
-      />
     </div>
   </div>
 </template>
@@ -18,19 +35,46 @@
 <script>
 import Footer from '@/components/html_components/Footer.vue'
 import Header from '@/components/html_components/Header.vue'
+import MobileHeader from '@/components/html_components/MobileHeader.vue'
+import Sent from '@/components/signin/Sent.vue'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 export default{
+  setup(){
+    const store = useStore()
+    // const m = ref(window.matchMedia("(max-width: 896px)"));
+    // const mediaQuery = () =>  window.matchMedia("(max-width: 896px)")
+    return{
+      user: computed(() => store.state.signup.user),
+      email: computed(() => store.state.signup.email),
+      password: computed(() => store.state.signup.password),
+      emailVerified: computed(() => store.state.signup.emailVerified),
+      // mobileChecker:computed(() => window.innerWidth)
+    }
+  },
   data(){
     return{
-      quizurl:'/quiz/2'
+      quizurl:'/quiz/2',
+      showSent:false
     }
   },
   components: {
     Footer,
-    Header
+    Sent,
+    Header,
+    MobileHeader
   },
   methods:{
     storeReset(){
           this.$store.commit('reset')
+    },
+  async resent(){
+        // try{
+            await this.$store.dispatch('sendEmailVerify')
+            this.handleShowSent()
+    },
+    handleShowSent(){
+      this.showsent = true
     }
   }
 }
@@ -50,13 +94,16 @@ export default{
 #wrapper{
   background: linear-gradient(#5B759F,#1C254C);
   width: 100vw;
-  height:100vh;  
+  height:100vh;
+  overflow:scroll;  
 }
  .wrapper2{
-   position:relative;
+   position:absolute;
+   height:100%;
 }
 .main-header{
-  position:absolute;
+  position:relative;
+  bottom:0;
 }
 .main-section{
   // background: linear-gradient(#5B759F,#1C254C);
@@ -160,7 +207,28 @@ export default{
         background: transparent;
         color:$base-color;
     }
-@media(min-width: 1024px){
+    // formerror
+    .error-form{
+        color:red;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom:0.2rem;
+        border: 0.2rem solid red;
+        border-radius: 1rem;
+        background:rgb(252, 252, 252);
+        width: 100%;
+        padding-top:0.5rem;
+        padding-bottom:0.5rem;
+        transition:0.5s;
+        align-self: center;
+      }
+      .form-error{
+        border: solid red;
+      }
+@media(min-width: 428px){
+  .mobile-header{
+    display:none;
+  }
   .wrapper{
     position:relative
   }.main-section{
@@ -182,6 +250,41 @@ export default{
   //   position: absolute;
   // }
 }
+// mailvalidation notice
+// .main-notification-wrapper{
+//         top:0;
+//         position: fixed;
+//         background:rgba(0,0,0,0.5);
+//         width:100vw;
+//         height:100vh;
+//         flex-direction: column;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//     }
+//     .main-notice-wrapper{
+//         border: solid $base-color;
+//         border-radius: 2vh;
+//         background:$back-white;
+//         text-align: center;       
+//         position:relative;
+//         padding-top:1.5rem;
+//         height:30rem;
+//         width: 20rem;
+//         }
+//     .main-image{
+//         width:15%;
+//         height:auto;
+//         margin-left: auto;
+//         margin-right: auto;
+//     }
+//     .main-text1{
+//         font-size:1rem;
+//         font-weight: bold;
+//         margin:2rem;
+//     }
+
+    
 // animation for name'notice'
 .notice-enter-from{
     opacity: 0;

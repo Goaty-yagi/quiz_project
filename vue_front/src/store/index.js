@@ -15,7 +15,7 @@ let getDefaultState = () => {
     randomURL:'',
     test:null,
     notice:false,
-    step:1
+    step:1,
   }}
 
 
@@ -40,6 +40,7 @@ export default createStore({
     },
     reset(state) {
       Object.assign(state, getDefaultState())
+      router.push('/')
     },
     getURLs(state,item){
       state.num = item.num
@@ -72,9 +73,16 @@ export default createStore({
     },
     noticeHandler(state){
       state.notice = true
+      
+    },
+    noticeOff(state){
+      state.notice = false  
     },
     addStep(state){
       state.step += 1
+    },
+    stepClear(state){
+      state.step = 1
     }
     // quizRouter(i,f,n){
     //   state.id = i

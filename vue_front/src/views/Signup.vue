@@ -8,13 +8,12 @@
         </div>
         <form v-if='$store.state.step==1&&showProgress' @submit.prevent='submitForm' class="field-wrapper">
             <div class="field">
-                <div class="input-box">
+                <div class="input-box" ref='formName'>
                     <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
                 </div>       
             </div>
-            <div v-if='nameError' class='error'>{{ nameError }}</div>  
             <div class="field">
-                <div class="input-box">
+                <div class="input-box" ref='formMail'>
                     <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
                 </div>         
             </div>
@@ -23,7 +22,6 @@
                     <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
                 </div>         
             </div>
-            <div v-if='mailError' class='error'>{{ mailError }}</div>
             <div class="field">
                 <div class="input-box">
                     <i class="fas fa-globe" id='in-font'>
@@ -34,36 +32,44 @@
                     </i>
                 </div>         
             </div>
-            <input class='check-box' required type='checkbox' v-model='robotConf'>
-            <span class='check-box-text'>私はロボットではありません。</span>
+            <div v-if='mailError||nameError||mailInUseError' class='error-form'>
+                <i class="fas fa-exclamation-triangle"></i>
+                <div v-if='mailError'>{{ mailError}}</div>
+                <div v-if='nameError'>{{ nameError }}</div>
+                <div v-if='mailInUseError'>{{ mailInUseError }}</div>
+            </div>
             <div>
-                <button class='fbottun'  ref='bform' id=''>送信</button>
+                <button class='fbottun'  ref='bform' id=''>次へ</button>
             </div>
         </form>
+        
+        <transition name="notice">
+            <Password
+            v-if='$store.state.step==2&&!showEdit'
+            @handle='showProgressHandler'
+            @confHandle='showRegiConfHandler'
+            />
+          </transition>
+        <!-- <ID
+            v-if='$store.state.step==2'
+            @handle='showProgressHandler'/> -->
+        <RegisterConfirm
+           v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
+           @handle='showProgressHandler'
+           @edithandle='showEditHandler'
+           @sentHandle='showSentHandler'
+           />
+        <!-- <Registered
+            v-if='$store.state.step==4'
+            @handle='showProgressHandler'
+            /> -->
         <transition name="notice">
           <Sent
-            v-if='showSent&&$store.state.step==1'
+            v-if='showSent&&$store.state.step==3'
             @handle='showProgressHandler'
             @sentHandle='showSentHandler'
             />
         </transition>
-        <Password
-          v-if='$store.state.step==3&&!showEdit&&!showRegiConf'
-          @handle='showProgressHandler'
-          @confHandle='showRegiConfHandler'/>
-
-        <ID
-            v-if='$store.state.step==2'
-            @handle='showProgressHandler'/>
-        <RegisterConfirm
-           v-if='$store.state.step==3&&showRegiConf&&!showEdit'
-           @handle='progressOff'
-           @edithandle='showEditHandler'
-           />
-        <Registered
-            v-if='$store.state.step==4'
-            @handle='showProgressHandler'
-            />
         <Edit
             v-if='showEdit'
             @handle='showProgressHandler'
@@ -100,9 +106,9 @@ export default {
             email:'',
             email2:'',
             country:'',
-            robotConf:'',
-            nameError:'',
-            mailError:'',
+            nameError:null,
+            mailError:null,
+            mailInUseError:null,
             showSent: false,
             showProgress:true,
             showButton:true,
@@ -123,25 +129,37 @@ export default {
     watch:{
         showButton:function(v) {if (v == false) { this.$refs.bform.classList.add('button-hover')}
         else{this.$refs.bform.classList.remove('button-hover')}},
+        nameError:function(v) {if (v != '') { this.$refs.formName.classList.add('form-error')}
+        else{this.$refs.formName.classList.remove('form-error')}},
+        mailError:function(v) {if (v != '') { this.$refs.formMail.classList.add('form-error')}
+        else{this.$refs.formName.classList.remove('form-error')}},
+        mailInUseError:function(v) {if (v != '') { this.$refs.formMail.classList.add('form-error')}
+        else{this.$refs.formName.classList.remove('form-error')}},
     },
     methods:{
-        submitForm(){
+        async submitForm(){
             // validate email
             // console.log('clicked1')
-            this.nameError = this.username.length < 6 ?
-            '' : 'username must be less than 5 chars'
+            this.nameError = this.username.length < 21 ?
+            '' : '@name must be less than 20 chars'
             this.mailError = this.email == this.email2 ?
-            '' : 'your mail adrress is not the same'
+            '' : '@addresses are not the same'
+            console.log(this.nameError)
             if (this.nameError == ''&& this.mailError ==''){
-                console.log('here')
-                this.$store.dispatch('checkEmail',this.email)
-                this.showSentHandler()
+                await this.$store.dispatch('checkEmail',this.email)
+                console.log(this.$store.state.signup.checkedEmail)
+                this.mailInUseError = this.$store.state.signup.checkedEmail ?
+                '' : '@address is already in use'
+                console.log(this.mailInUseError)
+                if (this.$store.state.signup.checkedEmail == true){
+                // this.showSentHandler()
                 this.showProgressHandler()
+                this.$store.commit('addStep')
                 this.$store.commit('getUsername',this.username)
                 this.$store.commit('getEmail',this.email)
                 this.$store.commit('getEmail2',this.email2)
                 this.$store.commit('getCountry',this.country)
-                
+                }                
             }
         },
         showSentHandler(){
@@ -163,8 +181,7 @@ export default {
             if(this.username!=''&&
                 this.email!=''&&
                 this.email2!=''&&
-                this.country!=''&&
-                this.robotConf!=''){
+                this.country!=''){
                     this.showButton = false
             }
             else{
@@ -193,10 +210,6 @@ export default {
                 }
             }
         },
-        async providers(){
-            const provider = await firebase.auth().fetchSignInMethodsForEmail(this.email);
-            console.log('provider',provider)
-        }
     }
 }
 </script>
@@ -204,7 +217,7 @@ export default {
 <style scoped lang='scss'>
 @import "style/_variables.scss";
     .signin-wrapper{
-        height: 100vh;
+        // height: 100vh;
         width:100vw;
         flex-direction: column;
         align-items: flex-start;;
@@ -212,6 +225,7 @@ export default {
         padding-top:5rem;
         // justify-content: center;
         align-items: center;
+        overflow:scroll;  
         }
     .signin-text{
         color:white;
@@ -285,20 +299,8 @@ export default {
         background: $back-white;
         margin-left:0.5rem;
     }
-    
     .check-box-text{
         color:white;
         margin-left:1rem;
     }
-    .error{
-        color:red;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom:0.2rem;
-        border: 0.1rem solid red;
-        background:rgb(243, 214, 214);
-        width: 90%;
-        margin-left: auto;
-        margin-right: 0;
-        }
 </style>

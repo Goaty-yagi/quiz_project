@@ -53,36 +53,52 @@ export default {
         }
     },
     methods:{
-        async addStep(){
-            await this.handleSubmit()
-            if (this.error == null){
-                this.$emit('confHandle')
-                this.$store.commit('addStep')
-                this.$emit('handle')
-            }
+       async addStep(){
+            // try{
+                await this.$store.dispatch('signup',{
+                        email: this.$store.state.signup.email,
+                        password: this.$store.state.signup.password
+                        })
+                        this.$emit('confHandle')
+                        this.$emit('sentHandle')
+                        this.$store.commit('addStep')
+                        this.$emit('handle')
+                        
+                
+            // }catch(err){
+            //     this.error = this.errorMessage2
+            //     console.log('catch error',this.error)
+            //     }
+            
+
+            // await this.handleSubmit()
+            // if (this.error == null){
+                
+            // }
         },
         goEdit(){
             this.$emit('edithandle')
             this.$emit('handle')
         },
-        async handleSubmit(){
-            try {
-                await this.$store.dispatch('signup',{
-                    email: this.$store.state.signup.email,
-                    password: this.$store.state.signup.password
-                })
-            } catch (err){
-                this.error = this.errorMessage2
-                console.log('catch error',this.error)
-            }
-        },
-        errorMessageHandler(error){
-            if ( error == 'Firebase: Error (auth/email-already-in-use).'){
-                this.error = this.errorMessage
-            }else{
-                this.error = this.errorMessage2
-            }
-        }        
+        // async handleSubmit(){
+        //     try {
+        //         await this.$store.dispatch('sentValidation',{
+        //             email: this.$store.state.signup.email,
+        //             password: this.$store.state.signup.password
+        //             })
+        //             this.$store.dispatch('')
+        //     } catch (err){
+        //         this.error = this.errorMessage2
+        //         console.log('catch error',this.error)
+        //     }
+        // },
+        // errorMessageHandler(error){
+        //     if ( error == 'Firebase: Error (auth/email-already-in-use).'){
+        //         this.error = this.errorMessage
+        //     }else{
+        //         this.error = this.errorMessage2
+        //     }
+        // }        
     },
     mounted(){
         console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)

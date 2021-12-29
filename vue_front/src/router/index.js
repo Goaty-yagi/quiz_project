@@ -3,8 +3,11 @@ import Home from '../views/Home.vue'
 import Quiz from '../views/Quiz.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/NotFound.vue'
-import Signin from '../views/Signin.vue'
+import Signup from '../views/Signup.vue'
 import Account from '../views/Account.vue'
+import Login from '../views/Login.vue'
+import Policy from '../views/Policy.vue'
+import store from '../store'
 
 const routes = [
   {
@@ -22,20 +25,31 @@ const routes = [
     name: 'Test',
     component: Test
   },
-  { 
-    path: '/norfound',
-    name: 'Notfound',
-    component: NotFound 
-  },
   {
-    path: '/signin',
-    name: 'Signin',
-    component: Signin
+    path: '/signup',
+    name: 'Signup',
+    component: Signup,
   },
   {
     path: '/account',
     name: 'Account',
-    component: Account
+    component: Account,
+    meta:{requireLogin: true}
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/policy',
+    name: 'Policy',
+    component: Policy
+  },
+  { 
+    path: '/norfound',
+    name: 'Notfound',
+    component: NotFound 
   },
   { 
     path: '/:catchAll(.*)',
@@ -47,6 +61,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requireLogin) && !store.state.signup.user) {
+    next({ name: 'Login' });
+  } else {
+    next()
+  }
 })
 
 export default router

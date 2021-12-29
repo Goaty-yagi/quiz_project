@@ -27,7 +27,6 @@ export default {
     data(){
         return{
             checked: false
-
         }
     },
     mounted(){
@@ -38,7 +37,8 @@ export default {
             this.$store.commit('reset')
         },
         getURL(){
-            this.$router.push(this.$store.state.randomURL)      
+            this.$router.push(this.$store.state.randomURL)
+            this.$store.commit('noticeOff')     
         },
         getClass(){
             if (this.checked == false){

@@ -125,9 +125,9 @@
       <TestResult
         v-if='this.$store.state.test&&counter-1 == questions.length&&$store.state.isLoading==false'/>
       <transition name="notice">
-          <Notification
-            v-if='this.$store.state.notice'
-            />
+        <Notification
+          v-if='this.$store.state.notice&&counter-1 == questions.length'
+          />
       </transition>
   </div>
 </template>
@@ -174,8 +174,6 @@ export default {
     beforeMount(){
     },
     mounted(){
-      console.log('storetest',this.$store.state.test)
-      console.log('long',this.questions.length,this.counter)
       window.addEventListener('beforeunload', () => {
       this.$store.commit('reset')
     })
@@ -485,6 +483,9 @@ export default {
         border: 0.2rem solid rgb(93, 93, 93);
         background:$base-color;
         color:white;
+        .answer-index{
+          color:white;
+        }
       }
     }
       .order-container{
@@ -494,6 +495,7 @@ export default {
         border-radius: 50%;
         margin-left:0.5rem;
         position:relative;
+        color:grey;
         transition: 0.3s
       }
       .answer-index{
@@ -502,8 +504,8 @@ export default {
         left:0;
         right:0;
         top:0;
-        bottom: 0;
-        font-weight: bold;    
+        color:grey;
+        font-weight: bold;
   }
   .answer-label{
     position:absolute;
@@ -513,6 +515,7 @@ export default {
     bottom:0;
     top:0;
     margin:auto;
+    color:rgb(48, 48, 48);
   }
   .order-space{
     position:absolute;
@@ -534,6 +537,9 @@ export default {
     font-size: 1.5rem;
     font-weight:bold;
     color:rgb(93, 93, 93);
+  }
+  .button{
+    margin-bottom: 1rem;
   }
 // @import "style/_variables.scss";
 //   #quiz-wrapper{

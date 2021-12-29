@@ -8,6 +8,8 @@
       <div  @click="onClick()">
           <button id='or-button' @click='showCompoHandler'>SRART</button>
       </div>
+      <div>
+      </div>
     </div>        
      <div class='home-conf' v-if='showCompo'>
         <TestConf @close='showCompoHandler' />   
@@ -23,8 +25,8 @@ import Notification from '@/components/initial/Notification.vue'
 export default {
   name: 'Home',
   components: {
-  TestConf,
-  Notification
+    TestConf,
+    Notification
   },
   data(){
     return{
@@ -32,7 +34,8 @@ export default {
       field:'並び替え',
       // num:3,
       showCompo: false,
-      item:{status: 2,num:5,test:true}
+      item:{status: 2,num:5,test:true},
+      // a:window.innerWidth
     }
   },
   methods:{

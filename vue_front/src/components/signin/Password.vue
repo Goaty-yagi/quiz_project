@@ -4,7 +4,7 @@
             <div class='field-wrapper'>
                 <p class='password-text'>パスワード設定</p>
                 <div class="field">
-                    <div class="input-box">
+                    <div class="input-box" ref='pass'>
                         <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType" v-model='password' placeholder="Password"></i>
                         <i :class="[passType ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click' ></i>
                     </div>      
@@ -16,13 +16,15 @@
                     </div>          
                 </div>
             </div>
-            <div class='error-wrapper'>
-                <div v-if='passwordError' class='error'>{{ passwordError }}</div> 
-            </div>            
-
-            <input class='check-box' required type='checkbox' v-model='accept'>
-            <span class='check-box-text'>・利用規約に同意します。</span>
-            <!-- <p class='password-text'>{{ accept }}</p> -->
+            <div class='check-box-wrapper'>
+                <input class='check-box' required type='checkbox' v-model='accept'>
+                <span @click='goPolicy' class='check-box-text'>・利用規約に同意します。</span>
+            </div>
+            <div class='error-form' v-if='passwordError||passwordError2'>
+                <i class="fas fa-exclamation-triangle"></i>
+                <div v-if='passwordError' >{{ passwordError }}</div> 
+                <div v-if='passwordError2'>{{ passwordError2 }}</div>
+            </div>    
             <div>
                 <button class='fbottun' ref='bform'>次へ</button>
             </div>
@@ -39,8 +41,9 @@ export default {
             accept:'',
             showButton:true,
             passwordError:'',
-            passType:false,
-            passType2:false,
+            passwordError2:'',
+            passType:true,
+            passType2:true,
         }
     },
     mounted(){
@@ -51,15 +54,17 @@ export default {
     },
     computed: {
     inputType: function () {
-      return this.passType ? "text" : "password";
+      return this.passType ? "password":"text";
         },
     inputType2: function () {
-      return this.passType2 ? "text" : "password";
+      return this.passType2 ? "password":"text";
         }
     },
     watch:{
         showButton:function(v) {if (v == false) { this.$refs.bform.classList.add('button-hover')}
         else{this.$refs.bform.classList.remove('button-hover')}},
+        passwordError:function(v) {if (v != '') { this.$refs.pass.classList.add('form-error')}
+        else{this.$refs.pass.classList.remove('form-error')}},
     },
     methods:{
         showButtonHandler(){
@@ -74,8 +79,10 @@ export default {
             // validate password
             console.log('clicked')
             this.passwordError = this.password == this.password2?
-            '' : 'your password is not the same'
-            if (this.passwordError == ''){
+            '' : '@passwords are not the same'
+            this.passwordError2 = this.password.length > 7?
+            '' : '@password is less than 8 char'
+            if (this.passwordError == ''&&this.passwordError2 == ''){
                 this.$emit('confHandle')
                 this.$store.commit('getPassword',this.password)         
             }
@@ -86,6 +93,9 @@ export default {
         click2(){
             this.passType2 = !this.passType2
         },
+        goPolicy(){
+            this.$router.push({name:'Policy'})
+        }
     }
         
 }
@@ -93,13 +103,12 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .signin-wrapper{
-        height: 100vh;
+    .password-wrapper{
         width:100vw;
         flex-direction: column;
         align-items: flex-start;;
         display: flex;
-        padding-top:5rem;
+        
         align-items: center;
         }
     .password-text{
@@ -154,6 +163,9 @@ export default {
         color:rgb(92, 92, 92);
 
     }
+    .form-error{
+        border: solid red;
+      }
     .text-box{
         width: 14rem;
         border:none;
@@ -161,6 +173,9 @@ export default {
         margin-left:0.5rem;
         position:absolute;
         left:1rem;
+    }
+    .check-box-wrapper{
+        margin-top: 1.5rem;
     }
     #eye{
         position:absolute;
@@ -170,6 +185,9 @@ export default {
         transition:0.3s;
     }
     #eye:hover{
+        color:rgb(92, 92, 92);
+    }
+    #eye:focus-within{
         color:rgb(92, 92, 92);
     }
     .select-box{
@@ -187,16 +205,4 @@ export default {
         width: 100%;
         height:5rem;
     }
-    .error{
-        color:red;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom:0.2rem;
-        border: 0.1rem solid red;
-        background:rgb(243, 214, 214);
-        width: 100%;
-        height:60%;
-        margin-top:1rem;
-        
-        }
 </style>

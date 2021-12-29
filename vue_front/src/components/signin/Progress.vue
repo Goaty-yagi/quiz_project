@@ -5,15 +5,15 @@
             <p v-if='$store.state.step==1'> 情報入力</p>
             <p v-if='$store.state.step!=1'>1</p>
         </div>
-        <div class="shape-contaner" ref='text2'>
+        <div class="shape-contaner" id='second' ref='text2'>
             <div class="parallel-quadrangle" ref='step2'></div>
             <p v-if='$store.state.step!=2'>2</p>
-            <p class='id-text' v-if='$store.state.step==2'> ID入力</p>
+            <p class='ips-text' v-if='$store.state.step==2'>パスワード<wbr>入力</p>
         </div>
         <div class="shape-contaner" id='three' ref='text3'>
             <div class="parallel-quadrangle" ref='step3'></div>
             <p v-if='$store.state.step!=3'> 3</p>
-            <p class='ps-text' v-if='$store.state.step==3'>パスワード<wbr>入力</p>
+            <p class='ps-text' v-if='$store.state.step==3'>メール承認<wbr></p>
         </div>
         <div class="shape-contaner" ref='text4'>
             <div class="parallel-quadrangle" ref='step4'></div>
@@ -100,15 +100,21 @@ export default {
         overflow: visible;
         white-space:nowrap;
     }
-    .shape-contaner.text#three p{
+    .shape-contaner.text#second p{
         // white-space:initial;
         font-size:0.8rem;
         top:55%;
         line-height:1rem
     }
+    .shape-contaner.text#three p{
+        // white-space:initial;
+        font-size:0.8rem;
+        top:7%;
+        line-height:1rem
+    }
     .shape-contaner p{
         position:absolute;
-        color:whblackite;
+        color:rgb(56, 55, 55);
         top: 50%;
         left: 60%;
         font-size:1.5rem;

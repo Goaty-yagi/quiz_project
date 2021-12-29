@@ -7,10 +7,9 @@
                         <i class="fas fa-robot" id='in-font'><input required class="text-box" v-model='username' type='text' id='Username' ></i>
                     </div>       
                 </div>
-                <div v-if='nameError' class='error'>{{ nameError }}</div>  
                 <div class="field">
                     <div class="input-box">
-                        <i class="far fa-envelope" id='in-font'><input required class="text-box" disabled :value='$store.state.signup.email' type='email'  id='E-mail' placeholder="E-mail"></i>
+                        <i class="far fa-envelope" id='in-font'><input required class="text-box" v-model='email' type='email'  id='E-mail' placeholder="E-mail"></i>
                     </div>         
                 </div>
                 <div class="field">
@@ -26,24 +25,27 @@
                 <div class="field">
                     <div class="input-box">
                         <i class="fas fa-unlock-alt" id='in-font'><input required v-model='password' class="text-box" :type="inputType"></i>
-                        <i :class="[passType ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click' ></i>
+                        <i :class="[passType ? 'fas fa-eye-slash':'fas fa-eye']" id='eye' @click='click' ></i>
                     </div>      
                 </div>
                 <div class="field">
                     <div class="input-box">
                         <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType2" v-model='password2' placeholder="Conf Password"></i>
-                            <i :class="[passType2 ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click2' ></i>
+                            <i :class="[passType2 ? 'fas fa-eye-slash':'fas fa-eye']" id='eye' @click='click2' ></i>
                     </div>          
-                </div>
-                <div class='error-wwapper'>
-                    <div class='error-wrapper'>
-                    <div v-if='passwordError' class='error'>{{ passwordError }}</div> 
-                </div>
                 </div>
                 <div class="field">
                     <input class='check-box' required type='checkbox' v-model='accept'>
                     <span class='check-box-text'>・利用規約に同意します。</span>
                 </div>
+                <div class='error-form' v-if='passwordError||passwordError2||mailError||nameError||mailInUseError'>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div v-if='mailError'>{{ mailError}}</div>
+                    <div v-if='nameError'>{{ nameError }}</div>
+                    <div v-if='mailInUseError'>{{ mailInUseError }}</div>
+                    <div v-if='passwordError' >{{ passwordError }}</div> 
+                    <div v-if='passwordError2'>{{ passwordError2 }}</div> 
+                </div>    
                 <!-- <p class='password-text'>{{ accept }}</p> -->
                 <div>
                     <button class='fbottun' ref='bform'>次へ</button>
@@ -60,13 +62,18 @@ export default {
             username:this.$store.state.signup.username,
             country:this.$store.state.signup.country,
             password:this.$store.state.signup.password,
+            email:this.$store.state.signup.email,
             password2:'',
             accept:'',
             showButton:true,
             passwordError:'',
+            passwordError2:'',
+            mailInUseError:null,
             nameError:false,
+            mailError:false,
             passType:false,
             passType2:false,
+            
         }
     },
     props:[
@@ -125,17 +132,27 @@ export default {
                 this.showButton = true
                 }
             },
-        submitForm(){
+        async submitForm(){
             // validate password
-            console.log('clicked')
+            console.log('clicked',this.password,this.password2)
             this.passwordError = this.password == this.password2?
-            '' : 'your password is not the same'
-            if (this.passwordError == ''){
-                // this.$emit('confHandle')
-                this.$emit('edithandle')
-                this.$store.commit('getPassword',this.password)
-                this.$store.commit('getUsername',this.username)
-                this.$store.commit('getCountry',this.country)                
+            '' : '@passwords are not the same'
+            console.log(this.passwordError)
+            this.passwordError2 = this.password.length > 7?
+            '' : '@password is less than 8 char'
+            this.nameError = this.username.length < 21 ?
+            '' : '@name must be less than 20 chars'
+            await this.$store.dispatch('checkEmail',this.email)
+                this.mailInUseError = this.$store.state.signup.checkedEmail ?
+                '' : '@address is already in use'
+            console.log('nameerror:',this.nameError,'mailerror',this.mailError,this.passwordError)
+                if (this.passwordError == ''&&this.passwordError2 == ''&&this.$store.state.signup.checkedEmail == true&&
+                    this.nameError == ''&& this.mailError ==''){
+                    console.log('in second if',this.passwordError,this.passwordError2,this.$store.state.signup.checkedEmail)
+                    this.$emit('edithandle')
+                    this.$store.commit('getPassword',this.password)
+                    this.$store.commit('getUsername',this.username)
+                    this.$store.commit('getCountry',this.country)
             }
         },
     },        
