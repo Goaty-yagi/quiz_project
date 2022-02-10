@@ -5,12 +5,13 @@
     <div class='wrapper'>
       <img class='is-image' src="@/assets/logo.png">
       <p class='home-text'>日本語クイズ</p>
+      <!-- {{ $store.state.signup.user.uid }} -->
       <div  @click="onClick()">
           <button id='or-button' @click='showCompoHandler'>SRART</button>
       </div>
       <div>
       </div>
-    </div>        
+    </div>   
      <div class='home-conf' v-if='showCompo'>
         <TestConf @close='showCompoHandler' />   
       </div>   

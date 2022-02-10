@@ -7,6 +7,8 @@ import Signup from '../views/Signup.vue'
 import Account from '../views/Account.vue'
 import Login from '../views/Login.vue'
 import Policy from '../views/Policy.vue'
+import Community from '../views/Community.vue'
+import BoardDetail from '../views/BoardDetail.vue'
 import store from '../store'
 
 const routes = [
@@ -21,7 +23,7 @@ const routes = [
     component: Quiz
   },
   {
-    path: '/test/:slug',
+    path: '/test',
     name: 'Test',
     component: Test
   },
@@ -31,10 +33,20 @@ const routes = [
     component: Signup,
   },
   {
-    path: '/account',
+    path: '/account/:uid',
     name: 'Account',
     component: Account,
-    meta:{requireLogin: true}
+    // meta:{requireLogin: true}
+  },
+  {
+    path: '/board',
+    name: 'Community',
+    component: Community
+  },
+  {
+    path: '/board-detail/:slug',
+    name: 'BoardDetail',
+    component: BoardDetail
   },
   {
     path: '/login',
@@ -46,16 +58,16 @@ const routes = [
     name: 'Policy',
     component: Policy
   },
-  { 
-    path: '/norfound',
-    name: 'Notfound',
-    component: NotFound 
-  },
-  { 
-    path: '/:catchAll(.*)',
-    name: 'NotFound',
-    component: NotFound 
-  }
+  // { 
+  //   path: '/norfound',
+  //   name: 'Notfound',
+  //   component: NotFound 
+  // },
+  // { 
+  //   path: '/:catchAll(.*)',
+  //   name: 'NotFound',
+  //   component: NotFound 
+  // }
 ]
 
 const router = createRouter({

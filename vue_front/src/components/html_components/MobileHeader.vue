@@ -2,8 +2,8 @@
     <div class='mobile-header-wrapper'>
         <div class="mobilemenu-wrapper">
             <router-link to="/" @click="storeReset" class="nav-mobile-item"><i class="fas fa-home" ></i><p>Home</p></router-link>
-            <router-link to="/"  class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></router-link>
-            <router-link to="/"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Comunity</p></router-link>
+            <div @click='getAccount($store.state.signup.user.uid)' class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></div>
+            <router-link to="/board"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Community</p></router-link>
             <router-link to="/"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
             <router-link to="/"  class="nav-mobile-item"><i class="fas fa-cog"></i><p>その他</p></router-link>
         </div>
@@ -11,11 +11,17 @@
 </template>
 
 <script>
+import {router} from "@/main.js"
 export default {
     methods:{
     storeReset(){
           this.$store.commit('reset')
         },
+    getAccount(id){
+            console.log(id)
+            // this.$store.commit('getSlug',slug)
+            router.push(`/account/${id}` )
+        }
     }
 }
 </script>

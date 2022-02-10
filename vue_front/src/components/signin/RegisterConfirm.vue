@@ -43,6 +43,7 @@
 
 <script>
 import ID from './ID.vue'
+import axios from 'axios'
 export default {
   components: { ID },
     data(){
@@ -63,6 +64,8 @@ export default {
                         this.$emit('sentHandle')
                         this.$store.commit('addStep')
                         this.$emit('handle')
+                        console.log('start django add')
+                        this.registerUserOndDjango()
                         
                 
             // }catch(err){
@@ -75,6 +78,20 @@ export default {
             // if (this.error == null){
                 
             // }
+        },
+        registerUserOndDjango(){
+            console.log('start add')
+            axios({
+                method: 'post',
+                url: '/api/user/',
+                data: {
+                    UID: this.$store.state.signup.user.uid,
+                    name: this.$store.state.signup.username,
+                    email: this.$store.state.signup.email,
+                    grade: 'unko',
+                    country: this.$store.state.signup.country
+                },
+            })
         },
         goEdit(){
             this.$emit('edithandle')

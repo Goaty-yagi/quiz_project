@@ -12,17 +12,23 @@
         </div>
       </div>
       <Sent v-show='showSent'/>
+      <Thumbnail v-if="showThumbnail"/>
       <div class='account'  v-if='this.$store.state.signup.emailVerified'>
         <p>accountdayo</p>
-        <p> {{ this.$store.state.signup.emailVerified}}unko</p>
-        <div v-if='this.$store.state.signup.user.email'>
-          {{this.$store.state.signup.user.email}}
+        <div>
+            <img v-bind:src="userData.thumbnail"/>
+            <p @click='handleShowThumbnail'>画像を変更する</p>
         </div>
+        <p> Username {{ userData.name}}</p>
+        <p> grade {{ userData.grade}}</p>
       </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+import 'cropperjs/dist/cropper.css';
+import  Thumbnail from '@/components/account/Thumbnail.vue'
 import Sent from '@/components/signin/Sent.vue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
@@ -39,13 +45,31 @@ export default{
   data(){
     return{
       showSent:false,
-      error:''
+      error:'',
+      userData:'',
+      showThumbnail:false
     }
   },
   components: {
     Sent,
+    Thumbnail
+  },
+  mounted(){
+    console.log('account mounted',this.$route.params.uid)
+    this.getUserData()
   },
   methods:{
+      async getUserData(){
+          await axios
+            .get(`/api/user/${this.$route.params.uid}`)
+            .then(response => {
+                this.userData = response.data
+                console.log('inGet', this.userData)
+                })
+            .catch(error => {
+                console.log(error)
+                })
+            },
     async resent(){
           try{
               await this.$store.dispatch('sendEmailVerify')
@@ -55,16 +79,20 @@ export default{
             this.error = err
             console.log(this.error)
           }
-          },
-          handleShowSent(){
-            this.showSent = true
-        }
+    },
+    handleShowSent(){
+      this.showSent = true
+    },
+    handleShowThumbnail(){
+        this.showThumbnail = true
+    }        
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "style/_variables.scss";
+// @import 'cropperjs/dist/cropper.css';
 .main-notification-wrapper{
         top:0;
         position: fixed;
@@ -96,5 +124,19 @@ export default{
         font-size:1rem;
         font-weight: bold;
         margin:2rem;
+    }
+    img {
+        border-radius: 50%; 
+        width:  5rem;   
+        height: 5rem;       
+    }
+    .cropper-view-box,
+    .cropper-face {
+      border-radius: 50%;
+      cursor: grab;
+      outline: initial;
+    }
+    .cropper-face:active {
+      cursor: grabbing;
     }
 </style>

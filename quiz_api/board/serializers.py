@@ -1,27 +1,62 @@
 from pickletools import read_long1
 from rest_framework import serializers
-from board.models import User, BoardQuestion, BoardAnswer
+from board.models import BoardQuestion, BoardAnswer, BoardReply
+
+# from user.models import User
+# from user.serializers import UserSerializer
 
 
-class BoardUserListSerializer(serializers.ModelSerializer):
+class BoardReplyReadSerializer(serializers.ModelSerializer):
+	# user = serializers.StringRelatedField(allow_null=False)
 	class Meta:
-		model = User
-		fields = ["id", 
-				  "UID", 
-				  "name", 
-				  "email", 
-				  "grade", 
-				  "country"]
+		model = BoardReply
+		fields = ["id",
+				  "answer", 
+				  "description", 
+				  "user",
+				  "created_on",
+				  ]
+		read_only_field = ['answer',]
+		depth=1
 
 
-class BoardAnswerListSerializer(serializers.ModelSerializer):
-	# id = serializers.IntegerField(required=False)
+class BoardReplyCreateSerializer(serializers.ModelSerializer):
+	# user = serializers.StringRelatedField(allow_null=False)
+	class Meta:
+		model = BoardReply
+		fields = ["id",
+				  "answer", 
+				  "description", 
+				  "user",
+				  "created_on",
+				  ]
+		read_only_field = ['answer',]
+
+
+class BoardAnswerReadSerializer(serializers.ModelSerializer):
+	reply = BoardReplyReadSerializer(many=True)
 	class Meta:
 		model = BoardAnswer
 		fields = ["id",
 				  "question", 
 				  "description", 
-				  "created_by",
+				  "user",
+				  "created_on",
+				  "best",
+				  "reply"
+				  ]
+		read_only_field = ['questions',]
+		depth=1
+
+class BoardAnswerCreateSerializer(serializers.ModelSerializer):
+	# user = serializers.StringRelatedField(allow_null=False)
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "question", 
+				  "description", 
+				  "user",
+				  "created_on",
 				  "best",
 				  ]
 		read_only_field = ['questions',]
@@ -36,7 +71,8 @@ class BoardAnswerListSerializer(serializers.ModelSerializer):
 
 
 class BoardQuestionListSerializer(serializers.ModelSerializer):
-	answer = BoardAnswerListSerializer(many=True, required=False)
+	answer = BoardAnswerReadSerializer(many=True, required=False)
+	# user = UserSerializer(required=True)
 	
 	class Meta:
 		model = BoardQuestion
@@ -49,11 +85,12 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "tag", 
 				  "vote", 
 				  "add_good",
+				  "user",
 				  "answer",
-				  "created_by", 
+				  "created_on", 
 				#   'replay_count'
 				  ]
-		depth=1
+		# depth=1
 		
 		# def get_replay_count(self, obj):
 		# 	return obj.question_set.all().count()
@@ -63,3 +100,4 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 		# 	question = BoardQuestion.objects.create(answer={}**validated_data)
 		# 	# BoardAnswer.objects.create(question=question, **answer)
 		# 	return question
+
