@@ -30,7 +30,7 @@ class Question(models.Model):
     order = models.IntegerField(default=False)
     field = models.CharField(max_length= 50, blank=True)
     module = models.CharField(max_length=50, blank=True)
-    correct_answer = models.JSONField()
+    correct_answer = models.JSONField(blank=True, null=True)
     
 
     def __str__(self):

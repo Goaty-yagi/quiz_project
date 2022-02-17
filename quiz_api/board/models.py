@@ -14,6 +14,8 @@ class BoardQuestion(models.Model):
     good = models.IntegerField(default=0)
     tag = models.CharField(max_length=20, blank=True)
     vote = models.IntegerField(default=0)
+    img = models.ImageField(blank=True)
+    viewed = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
 
 
@@ -23,9 +25,11 @@ class BoardQuestion(models.Model):
         super().save(*args, **kwargs)
 
 
-    def add_good(self):
-        self.good += 1
+    # def add_good(self):
+    #     self.good += 1
     
+    # def add_viewed(self):
+    #     self.viewed += 1
     # @property
     # def answer(self):
     #     return self.answer_set.all()
@@ -42,7 +46,7 @@ class BoardQuestion(models.Model):
 
 class BoardAnswer(models.Model):
     question = models.ForeignKey(BoardQuestion, related_name='answer', on_delete=models.CASCADE)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=200)
     user = models.ForeignKey(User, default=None, related_name='answer', on_delete=models.CASCADE)
     best = models.BooleanField(null=True)
     good = models.IntegerField(default=0)
@@ -70,3 +74,18 @@ class BoardReply(models.Model):
         
     def __str__(self):
         return self.description
+
+
+# class BoardLiked(models.Model):
+#     user = models.ForeignKey(User, related_name='liked', on_delete=models.CASCADE)
+#     question = models.ForeignKey(BoardQuestion, related_name='liked', on_delete=models.CASCADE)
+#     answer = models.ForeignKey(BoardAnswer, related_name='liked', on_delete=models.CASCADE)
+#     good = models.IntegerField(default=0)
+
+
+#     class Meta:
+#         ordering = ['created_on',]
+
+        
+#     def __str__(self):
+#         return self.description
