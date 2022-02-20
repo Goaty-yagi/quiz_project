@@ -1,31 +1,41 @@
 <template>
     <div class="community-wrapper" v-if="questions">
-        <h1>質問板</h1>
-        <div class='search-wrapper'>
-            <p>分からないことがあったら質問してみよう。</p>
+        <div class="main-wrapper">
+            <h1 class='title-white'>質問板</h1>
+            <div class='search-wrapper'>
+                <i class="fas fa-search"></i>
+                <input class='search' type="text">
+            </div>
+            <div class="question-box" @click='handleShowCreateQuestion'>
+                <p class='word'>わからない事があったら質問してみよう。</p>
+                <button class='btn-base-white-db-sq'>質問する</button>
+            </div>
+            <div class=select-wrapper>
+                <button class='btn-tr-black-baselite-cir'>最近の投稿</button>
+                <button class='btn-tr-white-base-cir'>おすすめの<wbr>投稿</button>
+            </div>
+            <div class="question-wrapper">
+                <div
+                v-for="(question,questionindex) in questions"
+                v-bind:key="questionindex">
+                    <div class='question-list' @click="getDetail(question.slug)">
+                        <div class="tag-wrapper">
+                            <div class="tag">tag:{{ question.tag }}</div>
+                        </div>
+                        <div class="question-title">{{ question.title }}</div>
+                        <div class="question-description">{{ question.description.substr(0,7)+'...' }}</div>
+                        <div class='good-like-wrapper'>
+                            <i class="far fa-heart"></i>
+                            <div class="good">{{ question.good }}</div>
+                            <div class="date">作成日：{{ remove_T_Z(question.created_on) }}</div>
+                        </div>
+                    </div>        
+                </div>
+                    <CreateQuestion v-if='showCreateQuestion'
+                    @handleShowConfirm='handleShowConfirm'/>
+                    <Confirm v-if='showConfirm'/>
+            </div>
         </div>
-        <div class="ask-box" @click='handleShowCreateQuestion'>
-            <button>質問する</button>
-        </div>
-        <div class=select-wrapper>
-            <button>最近の投稿</button>
-            <button>オススメの投稿</button>
-        </div>
-        <!-- {{ questions }} -->
-        <div class=question 
-         v-for="(question,questionindex) in questions"
-         v-bind:key="questionindex">
-            <div @click="getDetail(question.slug)">
-                {{ question.slug }}
-                <div class="tag">tag:{{ question.tag }}</div>
-                <div class="title">title:{{ question.title }}</div>
-                <div class="good">good:{{ question.good }}</div>
-                <div class="date">data:{{ remove_T_Z(question.created_on) }}</div>
-            </div>        
-        </div>
-        <CreateQuestion v-if='showCreateQuestion'
-        @handleShowConfirm='handleShowConfirm'/>
-        <Confirm v-if='showConfirm'/>
     </div>
 </template>
 
@@ -41,7 +51,7 @@ export default {
   },
     data(){
         return{
-            questions:[],
+            questions:'',
             showCreateQuestion: false,
             showConfirm: false,
         }
@@ -51,7 +61,7 @@ export default {
     },
     mounted() {
         this.getQuestion()
-        console.log('mounted at community') 
+        console.log('mounted at community',this.cestions) 
     },
     methods: {
         async getQuestion() {
@@ -91,8 +101,105 @@ export default {
 }
 </script>
 
-<style scoped>
-.question{
-    color:white;    
+<style lang='scss' scoped>
+@import "style/_variables.scss";
+
+.community-wrapper{
+    background: linear-gradient(#5B759F,#1C254C);
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    height: auto;
+    width: 100vw;
+    align-items: center;
+    .main-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .search-wrapper{
+            border: solid $base-color;
+            border-radius: 50vh;
+            width: 70%;
+            height: 2.5rem;
+            background: $back-white;
+            display: flex;
+            align-items: center;        
+            .fa-search{
+                margin-left: 1rem;
+            }
+            .search{
+                border: none;
+                background: $back-white;
+                width: 85%;
+            }
+        }
+        .question-box{
+            border: solid $base-color;
+            border-radius: 0.5rem;
+            width: 90%;
+            height: 10rem;
+            background: rgb(252, 252, 252);
+            margin: 1rem;
+            .word{
+                margin: 1rem;
+                font-size: 1.5rem;
+            }
+            .btn-base-white-db-sq{
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                font-size: 1rem;
+                font-weight: bold;
+            }
+        }
+        .select-wrapper{
+            .btn-tr-black-baselite-cir{
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                font-size: 0.8rem;
+                margin-right: 0.1rem;
+            }
+            .btn-tr-white-base-cir{
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                font-size: 0.8rem;
+                margin-left: 0.1rem;
+            }
+        }
+        .question-wrapper{
+            margin: 1rem;
+            width: 85%;
+            .question-list{
+                border: solid $base-color;
+                margin-bottom: 0.5rem;
+                background: rgb(252, 252, 252);
+                display: flex;
+                flex-direction: column;
+                .tag-wrapper{
+                    display: flex;
+                    .tag{
+                        border: solid black;
+                        border-radius: 50vh;
+                        background: rgb(230, 230, 230);
+                        margin-top: 0.3rem;
+                        margin-left: 0.3rem;
+                        padding: 0.5rem;
+                    }
+                }
+                 .good-like-wrapper{
+                    display: flex;
+                    .fa-heart{
+                        color: rgb(221, 36, 221);
+                        margin-left: 0.5rem;
+                        margin-right: 0.3rem;
+                    }
+                    .date{
+                        margin-left: 0.5rem;
+                    }
+                }
+            }
+        }
+    }
 }
 </style>

@@ -1,7 +1,86 @@
 // @import 'cropperjs/dist/cropper.css';
 
 $base-color: #ff9933;
-$base-lite:#FFD3CC;
+$base-lite:#f5b030;
 $back-white:#F6F3E4;
+$back-lite-white:rgb(252, 252, 252);
+$dark-blue: #1C254C;
+$buttongradient:linear-gradient(#F6F3E4 1%,#ff9933);
 $background:linear-gradient(#5B759F,#1C254C);
 $ORbackground: linear-gradient($base-lite,$base-color);
+
+
+// base
+
+body, div, dl, dt, dd, ul, ol, li,
+h1, h2, h3, h4, h5, h6,
+pre, code, form, fieldset, legend, input, textarea,
+p, blockquote, th, td {
+  margin: 0;
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+fieldset,
+img {
+  border: 0;
+}
+
+
+
+// layou
+.l-wrapper{
+
+}
+.l-container{
+    
+}
+.main-wrapper{
+    max-width: 700px;
+    width: 100vw;
+}
+
+
+
+// module
+.title-white{
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+
+/* button */
+/* btn-backgroundcolor-textcolor-border-radius */
+
+.btn-base-white-db-sq{
+    background: $base-color;
+    color:white;
+    border: 0.1rem solid  $dark-blue;
+    border-radius: 0.5rem;
+}
+.btn-tr-black-sq{
+    background: none;
+    color:black;
+    border: 0.1rem solid  $base-color;
+    border-radius: 0.5rem;
+}
+.btn-tr-white-base-cir{
+    background: none;
+    color:white;
+    border: 0.1rem solid  $base-color;
+    border-radius:50vh;
+}
+.btn-tr-black-baselite-cir{
+    background: $base-lite;
+    color:black;
+    border: 0.1rem solid  $base-color;
+    border-radius:50vh;
+}
+
+// fontawesome
+.far{
+  margin-top: 0.2rem;
+}

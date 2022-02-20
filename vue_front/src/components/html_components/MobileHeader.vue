@@ -26,9 +26,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style  lang='scss' scoped>
 .mobilemenu-wrapper{
-    position:absolute;
+    
+    position:fixed;
     width:100%;
     display: flex;
     justify-content: center;
@@ -43,10 +44,10 @@ export default {
     flex-basis:20%;
     padding-left:0.1rem;
     padding-right:0.1rem;
-    background:rgba(255, 255, 255, 0.3);
+    background: linear-gradient(rgba(91, 117, 159, 0.9),rgba(28, 37, 76, 0.9));
     transition:0.5s;
   }
   .nav-mobile-item:hover{
-    background:rgba(255, 255, 255, 0.5);
+    background: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,1));
   }
 </style>

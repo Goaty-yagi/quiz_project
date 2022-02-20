@@ -1,0 +1,23 @@
+
+@import "@_variables.scss";
+/* button */
+/* btn-backgroundcolor-textcolor-border-radius */
+
+.btn-base-white-cir{
+    background: $base-color;
+    color:white;
+    border: 0.1rem solid  $base-color;
+    border-radius: 0.5rem;
+}
+.btn-tr-black-cir{
+    background: none;
+    color:black;
+    border: 0.1rem solid  $base-color;
+    border-radius: 0.5rem;
+}
+.btn-tr-white-cir{
+    background: none;
+    color:white;
+    border: 0.1rem solid  $base-color;
+    border-radius: 0.5rem;
+}

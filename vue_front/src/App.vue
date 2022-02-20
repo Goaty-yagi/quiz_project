@@ -1,9 +1,9 @@
 <template>
   <div id="wrapper">
     <div class="wrapper2">
-      <div class="main-header">
+      
        <Header/>
-      </div>
+      
       
       
         <section class="main-section">
@@ -94,12 +94,13 @@ export default{
 #wrapper{
   background: linear-gradient(#5B759F,#1C254C);
   width: 100vw;
-  height:100vh;
-  overflow:scroll;  
+  height: 100%;
+  min-height: 100vh;
+  
 }
  .wrapper2{
    position:absolute;
-   height:100%;
+
 }
 .main-header{
   position:relative;

@@ -59,7 +59,7 @@ export default {
   }
   .home-section{
     width:100%;
-    height:100%;
+    // height:100%;
   }.wrapper{
     flex-direction: column;
     display: flex;
