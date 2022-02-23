@@ -24,9 +24,10 @@
             <div class='mobile-header'>
           <MobileHeader/>
         </div>
-          <Footer
+        <Footer/>
+          <!-- <Footer
           v-if='!this.$router.path==quizurl'
-          />
+          /> -->
         </section>
     </div>
   </div>
@@ -92,11 +93,19 @@ export default{
   color: #2c3e50;
 }
 #wrapper{
+  // background: linear-gradient(#5B759F,#1C254C);
+  // background: red;
+  // height: 100%;
+  // position: relative;
+  // min-height: 100%;
+}
+#wrapper:after{
   background: linear-gradient(#5B759F,#1C254C);
-  width: 100vw;
-  height: 100%;
-  min-height: 100vh;
-  
+  position: fixed;/*固定配置*/
+  top: 0; left: 0;/*左上に固定*/
+  width: 100%; height: 100%;/*画面全体を覆う*/
+  content: "";
+  z-index: -1;/*背景にするため*/
 }
  .wrapper2{
    position:absolute;

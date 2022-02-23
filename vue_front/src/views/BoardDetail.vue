@@ -5,7 +5,9 @@
                 <p class='title-white'>質問板</p>
                 <div class='question-box'>
                     <div class="question-box-header">
-                        <img class='img' v-bind:src="question.user.thumbnail"/>
+                        <div class="image">
+                            <img class='img' v-bind:src="question.user.thumbnail"/>
+                        </div>
                         <div class="username-date">
                             <p> {{ question.user.name}}さん </p>
                             <p> {{ question.created_on }} </p>
@@ -14,8 +16,10 @@
                             <p class="question-status"> {{ questionStatus }} </p>
                         </div>
                     </div>
-                    <p>  {{ question.title }} </p>        
-                    <p> {{ question.description}} </p>
+                    <div class="title-question">
+                        <p class="question-title">  {{ question.title }} </p>        
+                        <p class='question-description'> {{ question.description}} </p>
+                    </div>
                     <div class="question-box-footer">
                         <i class="far fa-heart"></i>
                         <p class="good"> {{ question.good}} </p>
@@ -27,14 +31,15 @@
                     <p>関連した質問</p>
                     <p>もっと見る></p>
                 </div>
-                <div class="answer-box">
+                <div class="answer-box" v-if='question.answer[0]'>
                     <div class="answer-box-title">
                         <p v-if='question.answer[0]'> 回答</p>
                         ({{ question.answer.length }}件)
                     </div>
                     <div
-                    v-for="(answer,answerindex) in question.answer"
-                    v-bind:key="answerindex">
+                     class="under-line"
+                     v-for="(answer,answerindex) in question.answer"
+                     v-bind:key="answerindex">
                         <div class="answer-box-header">
                             <img class='img' v-bind:src="answer.user.thumbnail"/>
                             <div class="username-date">
@@ -50,6 +55,7 @@
                         <button v-if='answer.reply==false' class='btn-base-white-db-sq' @click='handleShowReplyPage(answer.id)'>返信する</button>
                         <!-- reply should be appir if post user or replyer -->
                         <div class='reply-wrapper' v-if='answer.reply[0]'>
+                            <div>コメント</div>
                             <div class='reply-flex' 
                             v-for="(reply,replyindex) in answer.reply"
                             v-bind:key="replyindex">
@@ -58,10 +64,15 @@
                                     <div class="username-date">
                                         <p> {{ question.user.name}}さん </p>
                                         <p> {{ question.created_on }} </p>
+                                        <!-- {{ reply.user.UID }} -->
                                     </div>
                                 </div>
-                                <p class="replay-description">返信{{ reply.description }}</p>
+                                <p class="replay-description">{{ reply.description }}</p>
+                                <button v-if='$store.state.signup.user.uid==reply.user.UID' class='btn-base-white-db-sq' @click='handleShowReplyPage(answer.id)'>返信する</button>
                             </div>
+                        </div>
+                        <div class='line-flex'>
+                            <div class="line"></div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +127,7 @@ export default {
     beforeMount(){
     },
     mounted() {
-        console.log('mounted at detail') 
+        // console.log('mounted at detail', this.$store.state.signup.user.uid) 
         this.getDetail() 
     },
     methods: {
@@ -165,27 +176,48 @@ export default {
         width: 95%;
         .question-box-header{
             display: flex;
-            .img{
+            .image{
+                .img{
                 border-radius: 50%; 
                 width:  3rem;   
                 height: 3rem;
                 margin: 0.5rem; 
+            }
             }
             .username-date{
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 margin-top: 0.5rem;
+                width:40%;
             }
             .question-status-container{
-                width: 40%;
+                display: flex;
+                justify-content: flex-end;
+                width: 50%;
                 position: relative;
                 .question-status{
                     position: absolute;
                     right:0;
                     top: 0.5rem;
                     color: rgb(255, 43, 209);
+                    margin-right: 1rem;
                 }
+            }
+        }
+        .title-question{
+            padding:1rem;
+            .question-title{
+                text-align: center;
+                margin-bottom: 1rem;
+                border-bottom: solid $dark-blue;
+                display: inline-block;
+                padding-bottom: 1rem;
+            }
+            .question-description{
+                text-align: left;
+                padding: 1rem; 
+                background: rgb(236, 236, 236);
             }
         }
         .question-box-footer{
@@ -223,9 +255,23 @@ export default {
         border-radius: 0.5rem;
         background: $back-lite-white;
         width: 95%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         .answer-box-title{
             display: flex;
             justify-content: center;
+            margin-top: 1rem;
+        }
+        .under-line{
+            width: 90%;
+            border-bottom: 0.2rem solid rgb(236, 236, 236);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            &:last-child{
+                border-bottom: none;
+            }
         }
         .answer-box-header{
             display: flex;
@@ -243,7 +289,10 @@ export default {
             }
         }
         .answer-description-container{
-            margin: 1rem; 
+            margin: 1rem;
+            background: rgb(236, 236, 236);
+            padding: 1rem;
+            text-align: left;
         }
         .answer-box-footer{
             display: flex;
@@ -263,16 +312,17 @@ export default {
             font-weight: bold;
         }
         .reply-wrapper{
-            display: flex;
-            flex-direction: column;
+            // display: flex;
+            // flex-direction: column;
             // justify-content: center;
-            align-items: center;
+            // align-items: center;
             .reply-flex{
                 width: 100%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                margin-bottom: 1rem;
                 .reply-wrapper-header{
                     width: 80%;
                     height: 100%;
@@ -293,11 +343,31 @@ export default {
                 }
                 .replay-description{
                     width: 63%;
-                    border-left: solid $dark-blue;
+                    // border-left: solid $dark-blue;
+                    background: rgb(236, 236, 236);
+                    text-align: left;
+                    padding: 0.5rem;
+                }
+            }
+        }
+        .line-flex{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            // .line-flex:last-of-type{
+            //     border-bottom: none;
+            // }
+            &.line{
+                width: 90%;
+                border-bottom: 0.2rem solid rgb(236, 236, 236);
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+                &:last-child{
+                    border-bottom: none;
                 }
             }
         }
     }
 }
-
 </style>

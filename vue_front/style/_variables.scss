@@ -4,7 +4,9 @@ $base-color: #ff9933;
 $base-lite:#f5b030;
 $back-white:#F6F3E4;
 $back-lite-white:rgb(252, 252, 252);
+$back-tr-white:rgba(252, 252, 252, 0.95);
 $dark-blue: #1C254C;
+$lite-blue: #5B759F;
 $buttongradient:linear-gradient(#F6F3E4 1%,#ff9933);
 $background:linear-gradient(#5B759F,#1C254C);
 $ORbackground: linear-gradient($base-lite,$base-color);
@@ -28,17 +30,40 @@ img {
   border: 0;
 }
 
+body{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    // height: 100vh;
+    // width: 100vw;
+}
+
 
 
 // layou
 .l-wrapper{
-
+	top:0;
+	left: 0;
+	position: fixed;
+	background:rgba(0,0,0,0.7);
+	width:100vw;
+	height:100vh;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .l-container{
-    
+	background: $back-tr-white;
+	border: solid $base-color;
+	border-radius: 0.5rem;
+	width: 90vw;
+	max-width: 550px;
+	height: auto;
+	max-height: 950px;
+    overflow-y: scroll;
 }
 .main-wrapper{
-    max-width: 700px;
+    max-width: 600px;
     width: 100vw;
 }
 
@@ -47,6 +72,14 @@ img {
 // module
 .title-white{
     color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: inline-block;
+    border-bottom: 0.2rem solid $dark-blue;
+    margin-bottom: 0.5rem;
+}
+.title-black{
+    color: black;
     font-size: 1.5rem;
     font-weight: bold;
 }
@@ -67,6 +100,12 @@ img {
     border: 0.1rem solid  $base-color;
     border-radius: 0.5rem;
 }
+.btn-tr-black-base-sq{
+    background: none;
+    color:black;
+    border: 0.1rem solid  $base-color;
+    border-radius: 0.5rem;
+}
 .btn-tr-white-base-cir{
     background: none;
     color:white;
@@ -81,6 +120,8 @@ img {
 }
 
 // fontawesome
-.far{
-  margin-top: 0.2rem;
-}
+// .fas{
+//   margin-top: 0.2rem;
+// }
+
+// cropper

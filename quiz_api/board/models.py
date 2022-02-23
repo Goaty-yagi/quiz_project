@@ -7,14 +7,14 @@ from user.models import User
  
 class BoardQuestion(models.Model):
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=70)
+    description = models.CharField(max_length=400)
     slug = models.SlugField(default='')
     user = models.ForeignKey(User, related_name='question', default=None, on_delete=models.CASCADE)
     solved = models.BooleanField(default=False)
     good = models.IntegerField(default=0)
     tag = models.CharField(max_length=20, blank=True)
     vote = models.IntegerField(default=0)
-    img = models.ImageField(blank=True)
+    img = models.ImageField(blank=True, null=True)
     viewed = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
 

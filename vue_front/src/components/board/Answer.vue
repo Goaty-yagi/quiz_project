@@ -1,33 +1,32 @@
 <template>
-    <div class="create-question-wrapper">
-        <div class="innner-wrapper">
-            <div class="question-wrapper">
-                <div class="title">
-                    <p>質問文</p>
-                </div>
+     <div class="l-wrapper">
+        <div class='l-container'>
+            <div class="title-black">
+                 <p>質問文</p>
+            </div>
+            <form class="form" @submit.prevent='submitForm'>
                 <div class="question-title">
-                    <p>title: {{ questionTitle }}</p>
+                    <p>{{ questionTitle }}</p>
                 </div>
                 <div class="question-discription">
-                    <p>description: {{ questionDescription }}</p>
+                    <p>{{ questionDescription }}</p>
                 </div>
-            </div>
 
-            <div class="answer-wraper">
-                <div class="title">
-                    <p>回答文</p>
+                <div class="line"></div>
+
+                <div class="answer-wraper">
+                    <p class="title-black">回答文</p>
+                    <textarea class='form-text' type="text" v-model='description' placeholder="回答"></textarea>
                 </div>
-                <input type="text" v-model='description' placeholder="回答">
-                {{ description }}
-                {{ questionId }}
-            </div>
-            <div class="image">
-
-            </div>
-            <div class="button-group">
-                <p>キャンセル</p>
-                <button @click="addAnswer">回答する</button>
-            </div>
+                <!-- <div class="image">
+                    <i class="fas fa-camera"></i>
+                    <p>写真を添付</p>
+                </div> -->
+                <div class="button-group">
+                    <p @click="$emit('handleShowAnswerPage')">キャンセル</p>
+                    <button class="btn-tr-black-base-sq" @click="addAnswer">回答する</button>
+                </div>
+                </form>
         </div>
     </div>
 </template>
@@ -69,22 +68,70 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .create-question-wrapper{
-        top:0;
-        position: fixed;
-        background:rgba(0,0,0,0.5);
-        width:100vw;
-        height:100vh;
-        flex-direction: column;
+.l-container{
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    align-items: center;
+    .title-black{
+        margin: 2rem;
+    }
+    .form{
+        width: 100%;
         display: flex;
-        justify-content: center;
-        align-items: center;       
+        flex-direction: column;
+        // justify-content: center;
+        align-items: center;
+        .question-discription{
+            width:90%;
+            height: 100px;
+            background: rgb(228, 228, 228);
+            margin-top: 1rem;
+            padding: 0.5rem;
+            text-align: left;
+            white-space: pre-wrap;
+            overflow-y: scroll;
+
+        }
+        .line{
+            width: 80%;
+            border-bottom: 0.2rem solid $dark-blue;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .answer-wraper{
+            width: 100%;
+            .title-black{
+                margin: 0;
+            }
+            .form-text{
+                background: $back-white;
+                padding: 1rem;
+                width: 80%;
+                height:10rem;
+                border: 0.1rem solid $base-color;
+                border-radius: 1vh;
+                resize: none;
+            }
+        }
+        .image{
+            width:80%;
+            display:flex;
+            // align-items: left;  
+            margin:1rem;
+            // justify-content: flex-start;
+        }
+        .button-group{
+            width: 80%;
+            display:flex;
+            margin:1rem;
+            justify-content: flex-end;
+            .btn-tr-black-base-sq{
+                margin-left: 0.5rem;
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+            }
+        }
     }
-    .innner-wrapper{
-        border: solid $base-color;
-        border-radius: 2vh;
-        background:$back-white;
-        text-align: center;
-        display:inline-block;        
-    }
+}
 </style>

@@ -3,12 +3,15 @@
         <p>thumbnail</p>
         <form @submit.prevent='userUpdate'>
             <input type="file" @change='getImage' enctype="multipart/form-data">
-            <div v-if="selectedFile">
-                <img ref='image' :src="selectedFile">
+            <div class="cropper-outer-wrapper" v-if="selectedFile">
+                <div class='cropperinner-wrapper'>
+                    <img ref='image' :src="selectedFile" style="width: 300px; height: 300px;">
+                </div>
+                <button class='save-button'>save</button>
+                <button class='save-button' v-if='selectedFile' @click='chancel'>chancel</button>
+                <!-- 　　　　 -->
             </div>
-             <button>save</button>
         </form>
-         <button v-if='selectedFile' @click='chancel'>chancel</button>
         <div>
             <!-- <div>
                 <img id="image" src="@/assets/logo.png">
@@ -43,7 +46,6 @@ export default {
             this.imageCropper()
         },
         async imageCropper(){
-            // console.log(Cropper.getCanvasData())
             this.cropper = new Cropper(this.$refs.image, {
             zoomable: false,
             scalable: false,
@@ -63,12 +65,20 @@ export default {
         chancel(){
             this.selectedFile=null
         },
+        // getCroppedURL(){
+        //     console.log('croppedURL')
+        //     document.getElementById('crop-btn').addEventListener('click', function () {
+        //     resultImgUrl = this.cropper.getCroppedCanvas().toDataURL();
+        //     var result = document.getElementById('result-img');
+        //     result.src = resultImgUrl;
+        //      });
+        // },
         async userUpdate(){
             const canvas = this.cropper.getCroppedCanvas({
                 width: 160,
                 height: 90,
-                minWidth: 256,
-                minHeight: 256,
+                minCropBoxHeight: 300,
+                minCropBoxWidth: 300,
                 maxWidth: 4096,
                 maxHeight: 4096,
                 fillColor: '#fff',
@@ -95,9 +105,8 @@ export default {
     height: 100%;
     overflow:scroll;  
 }
-.cropper-area img {
-  display: block;
-  max-width: 100%;
+.save-button{
+    z-index: 10;
 }
 .cropper-view-box,
     .cropper-face {
@@ -108,5 +117,4 @@ export default {
     .cropper-face:active {
       cursor: grabbing;
     }
-
 </style>

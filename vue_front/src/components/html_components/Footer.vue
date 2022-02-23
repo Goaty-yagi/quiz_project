@@ -14,6 +14,7 @@ export default {
  .footer{
      background-color: transparent;
      background-image: none;
+     height: 10rem;
  }
 
 </style>

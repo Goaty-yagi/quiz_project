@@ -95,12 +95,27 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  ]
 		depth=1
 		
-		# def get_viewed_count(self, obj):
-		# 	return obj.question_set.all().count()
 
-		# def create(self, validated_data):
-		# 	answer = validated_data.pop('answer')
-		# 	question = BoardQuestion.objects.create(answer={}**validated_data)
-		# 	# BoardAnswer.objects.create(question=question, **answer)
-		# 	return question
-
+class BoardQuestionCreateSerializer(serializers.ModelSerializer):
+	answer = BoardAnswerReadSerializer(many=True, required=False)
+	# viewed_count = serializers.SerializerMethodField()
+	# user = UserSerializer(required=True)
+	
+	class Meta:
+		model = BoardQuestion
+		fields = ["id", 
+				  "title", 
+				  "description", 
+				  "slug", 
+				  "solved", 
+				  "good", 
+				  "tag", 
+				  "vote", 
+				  "user",
+				  "answer",
+				  "img",
+				  "viewed",
+				  "created_on", 
+				#   "viewed_count",
+				#   'replay_count'
+				  ]

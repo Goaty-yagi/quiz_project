@@ -1,11 +1,15 @@
 from rest_framework import generics
 from board.models import BoardQuestion, BoardAnswer, BoardReply
-from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer
+from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer
 
 
-class BoardQuestionList(generics.ListCreateAPIView):
+class BoardQuestionList(generics.ListAPIView):
     queryset = BoardQuestion.objects.all()
     serializer_class = BoardQuestionListSerializer
+
+class BoardQuestionCreate(generics.CreateAPIView):
+    queryset = BoardQuestion.objects.all()
+    serializer_class = BoardQuestionCreateSerializer
 
 
 class BoardQuestionDetail(generics.RetrieveUpdateDestroyAPIView):

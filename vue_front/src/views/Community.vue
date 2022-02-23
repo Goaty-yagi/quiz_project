@@ -31,9 +31,14 @@
                         </div>
                     </div>        
                 </div>
-                    <CreateQuestion v-if='showCreateQuestion'
-                    @handleShowConfirm='handleShowConfirm'/>
-                    <Confirm v-if='showConfirm'/>
+                    <CreateQuestion
+                     v-if='showCreateQuestion'
+                     @handleShowConfirm='handleShowConfirm'
+                     @handleShowCreateQuestion='handleShowCreateQuestion'/>
+                    <Confirm
+                     v-if='showConfirm'
+                     @handleShowConfirm='handleShowConfirm'
+                    />
             </div>
         </div>
     </div>
@@ -56,11 +61,14 @@ export default {
             showConfirm: false,
         }
     },
-    beforeMount(){
+    created(){
         this.getQuestion() 
     },
+    beforeMount(){
+        // this.getQuestion() 
+    },
     mounted() {
-        this.getQuestion()
+        // this.getQuestion()
         console.log('mounted at community',this.cestions) 
     },
     methods: {
@@ -70,7 +78,7 @@ export default {
             // const category_slug = this.$route.params.category_slug
             // const product_slug = this.$route.params.product_slug
             await axios
-                .get('/api/board/question/')
+                .get('/api/board/question/list')
                 .then(response => {
                     this.questions = response.data
                     // document.title = this.product.name + ' | Djackets'
@@ -82,10 +90,11 @@ export default {
             this.$store.commit('setIsLoading', false)
         },
         handleShowCreateQuestion(){
-            this.showCreateQuestion = true
+            console.log('showCreate')
+            this.showCreateQuestion = !this.showCreateQuestion
         },
         handleShowConfirm(){
-            this.showConfirm = true
+            this.showConfirm = !this.showConfirm
             console.log('confurm',this.showConfirm)
         },
         remove_T_Z(datatime){
@@ -105,7 +114,7 @@ export default {
 @import "style/_variables.scss";
 
 .community-wrapper{
-    background: linear-gradient(#5B759F,#1C254C);
+    // background: linear-gradient(#5B759F,#1C254C);
     display: flex;
     flex-direction: column;
     // justify-content: center;
@@ -193,6 +202,7 @@ export default {
                         color: rgb(221, 36, 221);
                         margin-left: 0.5rem;
                         margin-right: 0.3rem;
+                        margin-top: 0.2rem;
                     }
                     .date{
                         margin-left: 0.5rem;

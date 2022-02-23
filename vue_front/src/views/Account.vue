@@ -15,7 +15,7 @@
       <Thumbnail v-if="showThumbnail"/>
       <div class='account'  v-if='this.$store.state.signup.emailVerified'>
         <p>accountdayo</p>
-        <div>
+        <div class="cropper-wrapper">
             <img v-bind:src="userData.thumbnail"/>
             <p @click='handleShowThumbnail'>画像を変更する</p>
         </div>
