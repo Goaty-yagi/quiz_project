@@ -1,31 +1,35 @@
 <template>
-    <div class="create-question-wrapper">
-        <div class="innner-wrapper">
-            <div class="question-wrapper">
-                <div class="title">
-                    <p>質問文</p>
+    <div class="l-wrapper">
+        <div class="l-container">
+            <div class="reply-wrapper">
+                <div class="title-black">
+                    <p>コメント</p>
                 </div>
-                <div class="question-title">
-                    <p>title: {{ questionTitle }}</p>
+                <div class="comment-wrapper">
+                    <p>{{ reply }}</p>
                 </div>
-                <div class="question-discription">
+                <!-- <div class="question-discription">
                     <p>description: {{ questionDescription }}</p>
-                </div>
+                </div> -->
             </div>
 
-            <div class="answer-wraper">
-                <div class="title">
+            <div class="answer-wrapper">
+                <div class="title-black">
                     <p>返信文</p>
                 </div>
-                <input type="text" v-model='description' placeholder="回答">
-                {{ description }}
+                <textarea class='form-text' v-model='description' placeholder="回答"/>
             </div>
             <div class="image">
 
             </div>
             <div class="button-group">
-                <p>キャンセル</p>
-                <button @click="addAnswer">回答する</button>
+                <p @click="$emit('handleShowReplyPage')">キャンセル</p>
+                <button class="btn-tr-black-base-sq" @click="addAnswer">回答する</button>
+            </div>
+            <div v-if="alert" :class="{'notification-red':alert}">
+                <div class="notification-text">
+                    文章を入力してください。
+                </div>
             </div>
         </div>
     </div>
@@ -41,9 +45,11 @@ export default {
     },
     props:[
         'answerId',
+        'reply',
+        'handleNotifications'
     ],
     mounted(){
-        console.log('answerMounted',this.questionId)
+        console.log('answerMounted',this.reply)
     },
     methods:{
         addAnswer(){
@@ -57,31 +63,96 @@ export default {
                     answer: this.answerId
                 }
               })
+              console.log('end add')
+              this.$emit('handleNotifications','reply')
+              this.$emit('getDetail')
+              this.$emit('handleShowReplyPage')
             //   this.$emit('handleshowAnswerPage')
-              this.$router.go({path: this.$router.currentRoute.path, force: true})
+            //   this.$router.go({path: this.$router.currentRoute.path, force: true})
          },
+        //  esetNotifications(){
+        //     this.alert = false
+        // },
+        // descriptionCheck(){
+        //     if(this.description==''){
+        //         this.alert = true
+        //         setTimeout(this.resetNotifications, 3000)
+        //     }
+        // },
+        // async replyPost(){
+        //     await axios({
+        //         method: 'post',
+        //         url: '/api/board/reply/create/',
+        //         data: {
+        //             description: this.description,
+        //             user: this.$store.state.signup.user.uid,
+        //             answer: this.answerId
+        //         }
+        //       })
+        // },
+        // addAnswer(){
+        //     console.log('start add')
+        //     this.descriptionCheck()
+        //     if(this.alert==false){
+        //         this.replyPost
+        //         this.$emit('handleNotifications','reply')
+        //         this.$emit('getDetail')
+        //         this.$emit('handleShowReplyPage')
+        //         console.log('end-reply')
+        //     }
+        //     //   this.$emit('handleshowAnswerPage')
+        //     //   this.$router.go({path: this.$router.currentRoute.path, force: true})
+        //  },
     }
 }
 </script>
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .create-question-wrapper{
-        top:0;
-        position: fixed;
-        background:rgba(0,0,0,0.5);
-        width:100vw;
-        height:100vh;
-        flex-direction: column;
-        display: flex;
-        justify-content: center;
-        align-items: center;       
+.l-container{
+    animation: l-container 3s;
+    padding:1rem;
+}
+.reply-wrapper{
+    .title-black{
+        margin: 1rem;
     }
-    .innner-wrapper{
-        border: solid $base-color;
-        border-radius: 2vh;
-        background:$back-white;
-        text-align: center;
-        display:inline-block;        
+    .comment-wrapper{
+        background: rgb(235, 235, 235);
+        padding: 0.5rem;
+        // margin:0.5rem;
+        text-align: left;
+        white-space: pre-wrap;
     }
+}
+.answer-wrapper{
+    .title-black{
+        margin: 1rem;
+    }
+    .form-text{
+        width: 100%;
+        background: $back-white;
+        height: auto;
+        min-height: 100px;
+        border: 0.1rem solid $base-color;
+        border-radius: 1vh;
+        padding: 1rem;
+        resize: none;
+    }
+    .form-text:focus{
+        outline: none;
+    }
+}
+.button-group{
+    // width: 80%;
+    display:flex;
+    // margin:1rem;
+    margin-top: 1rem;
+    justify-content: flex-end;
+    .btn-tr-black-base-sq{
+        margin-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+    }
+}
 </style>

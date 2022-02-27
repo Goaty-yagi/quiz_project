@@ -4,7 +4,8 @@
             <div class="title-black">
                  <p>質問文</p>
             </div>
-            <form class="form" @submit.prevent='submitForm'>
+            
+            <form class="form" @submit.prevent='addAnswer'>
                 <div class="question-title">
                     <p>{{ questionTitle }}</p>
                 </div>
@@ -24,9 +25,14 @@
                 </div> -->
                 <div class="button-group">
                     <p @click="$emit('handleShowAnswerPage')">キャンセル</p>
-                    <button class="btn-tr-black-base-sq" @click="addAnswer">回答する</button>
+                    <button class="btn-tr-black-base-sq">回答する</button>
                 </div>
-                </form>
+            </form>
+        </div>
+        <div v-if="alert" :class="{'notification-red':alert}">
+            <div class="notification-text">
+                文章を入力してください。
+            </div>
         </div>
     </div>
 </template>
@@ -37,20 +43,30 @@ export default {
     data(){
         return{
             description:'',
+            alert: false
         }
     },
     props:[
         'questionDescription',
         'questionTitle',
-        'questionId'
+        'questionId',
+        'handleNotifications'
     ],
     mounted(){
         console.log('answerMounted',this.questionId)
     },
     methods:{
-        addAnswer(){
-            console.log('start add')
-            axios({
+        resetNotifications(){
+            this.alert = false
+        },
+        descriptionCheck(){
+             if(this.description==''){
+                 this.alert = true
+                 setTimeout(this.resetNotifications, 3000)
+             }
+         },
+        async answerPost(){
+            await axios({
                 method: 'post',
                 url: '/api/board/answer/create',
                 data: {
@@ -58,9 +74,19 @@ export default {
                     user: this.$store.state.signup.user.uid,
                     question: this.questionId
                 }
-              })
-              this.$emit('handleShowAnswerPage')
-              this.$router.go({path: this.$router.currentRoute.path, force: true})
+            })
+        },
+        async addAnswer(){
+            this.descriptionCheck()
+            console.log('start add')
+            if(this.alert==false){
+               await this.answerPost()
+                this.$emit('getDetail')
+                this.$emit('handleNotifications','answer')
+                this.$emit('handleShowAnswerPage')
+                console.log('end reply')
+            }
+            //   this.$router.go({path: this.$router.currentRoute.path, force: true})
          },
     }
 }
@@ -69,6 +95,7 @@ export default {
 <style scoped lang='scss'>
 @import "style/_variables.scss";
 .l-container{
+    animation: l-container 3s;
     display: flex;
     flex-direction: column;
     // justify-content: center;

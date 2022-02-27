@@ -1,7 +1,16 @@
 <template>
-    <div class="community-wrapper" v-if="questions">
-        <div class="main-wrapper">
+    <div  :style="{ top:scroll_position, position: '100'}" class="community-wrapper">
+        <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+            <!-- <i class="fas fa-cog"></i> -->
+            <div class="lds-dual-ring"></div>
+        </div>
+        <div class="main-wrapper"  v-if="questions">
             <h1 class='title-white'>質問板</h1>
+            <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
+                    <div class="notification-text">
+                        投稿しました。
+                    </div>
+                </div> -->
             <div class='search-wrapper'>
                 <i class="fas fa-search"></i>
                 <input class='search' type="text">
@@ -10,6 +19,7 @@
                 <p class='word'>わからない事があったら質問してみよう。</p>
                 <button class='btn-base-white-db-sq'>質問する</button>
             </div>
+            <!-- <button @click="handleNotifications">unko</button> -->
             <div class=select-wrapper>
                 <button class='btn-tr-black-baselite-cir'>最近の投稿</button>
                 <button class='btn-tr-white-base-cir'>おすすめの<wbr>投稿</button>
@@ -23,7 +33,7 @@
                             <div class="tag">tag:{{ question.tag }}</div>
                         </div>
                         <div class="question-title">{{ question.title }}</div>
-                        <div class="question-description">{{ question.description.substr(0,7)+'...' }}</div>
+                        <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
                             <div class="good">{{ question.good }}</div>
@@ -38,6 +48,8 @@
                     <Confirm
                      v-if='showConfirm'
                      @handleShowConfirm='handleShowConfirm'
+                     @getDetail='getDetail'
+                     @handleNotifications='handleNotifications'
                     />
             </div>
         </div>
@@ -59,6 +71,14 @@ export default {
             questions:'',
             showCreateQuestion: false,
             showConfirm: false,
+            scrollFixed: false,
+            scroll_position: '100',
+            // notifications:false,
+            fixed: '',
+            styles:{
+                position:'',
+                top:'',
+            }
         }
     },
     created(){
@@ -92,6 +112,8 @@ export default {
         handleShowCreateQuestion(){
             console.log('showCreate')
             this.showCreateQuestion = !this.showCreateQuestion
+            this.handleScrollFixed()
+            this.a()
         },
         handleShowConfirm(){
             this.showConfirm = !this.showConfirm
@@ -102,9 +124,34 @@ export default {
             return time
         },
         getDetail(slug){
-            console.log(slug)
+            console.log('slug',slug)
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
+        },
+         handleScrollFixed(){
+            this.scrollFixed = !this.scrollFixed
+        },
+        // resetNotifications(){
+        //     this.notifications = false
+            
+        // },
+        // handleNotifications(){
+        //         this.notifications = true
+        //         setTimeout(this.resetNotifications, 3000)    
+        // },
+        a(){
+            this.scroll_position = window.pageYOffset;
+            this.styles.top = this.scroll_position
+            console.log(this.scroll_position,)
+        
+        // const elem = document.getElementById('scroll');
+        // elem.style.top = scroll_position
+        // console.log('scroll', scroll_position)
+        // window.scrollTo({
+        //     top: scroll_position,
+        //     behavior: "smooth"
+        //     });
+        //     console.log("unko")
         }
     }
 }
@@ -112,6 +159,9 @@ export default {
 
 <style lang='scss' scoped>
 @import "style/_variables.scss";
+.scroll{
+    position:fixed;
+}
 
 .community-wrapper{
     // background: linear-gradient(#5B759F,#1C254C);

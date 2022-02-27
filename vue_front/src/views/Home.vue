@@ -23,6 +23,7 @@
 <script>
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
+//  import { uuid } from 'vue-uuid';
 export default {
   name: 'Home',
   components: {
@@ -39,6 +40,8 @@ export default {
       // a:window.innerWidth
     }
   },
+  mounted(){
+  },
   methods:{
     unko(){
       return `/quiz/${this.status}`
@@ -48,7 +51,7 @@ export default {
     },
     showCompoHandler(){
       this.showCompo = !this.showCompo
-    }   
+    },
   }
 }
 </script>

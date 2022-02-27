@@ -1,9 +1,23 @@
 <template>
-    <div class="board-detail-wrapper" v-if="question">
+    <div  class="board-detail-wrapper">
         <div class="main-wrapper">
-            <div class="question-wrapper">
+            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+                <!-- <i class="fas fa-cog"></i> -->
+                <div class="lds-dual-ring"></div>
+            </div>
+            <div class="question-wrapper" v-if="question">
                 <p class='title-white'>質問板</p>
-                <div class='question-box'>
+                <div v-if="notifications.reply" :class="{'notification-blue':notifications.reply}">
+                    <div class="notification-text">
+                        返信しました。
+                    </div>
+                </div>
+                <div v-if="notifications.answer" :class="{'notification-blue':notifications.answer}">
+                    <div class="notification-text">
+                        回答しました。
+                    </div>
+                </div>
+                <div class='question-box'> 
                     <div class="question-box-header">
                         <div class="image">
                             <img class='img' v-bind:src="question.user.thumbnail"/>
@@ -25,7 +39,8 @@
                         <p class="good"> {{ question.good}} </p>
                         <p class="viewed"> viewed {{ question.viewed}} </p>
                     </div>
-                    <button class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    <!-- <button @click="handleNotifications('reply')" >unko</button> -->
                 </div>
                 <div class="relative-box">
                     <p>関連した質問</p>
@@ -52,7 +67,11 @@
                             <i class="far fa-heart"></i>
                             <p class="good"> {{ answer.good}} </p>
                         </div>
-                        <button v-if='answer.reply==false' class='btn-base-white-db-sq' @click='handleShowReplyPage(answer.id)'>返信する</button>
+                        <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
+                         class='btn-base-white-db-sq' 
+                         @click='handleReplyPage(answer.id, answer.description)'>
+                         返信する
+                         </button>
                         <!-- reply should be appir if post user or replyer -->
                         <div class='reply-wrapper' v-if='answer.reply[0]'>
                             <div>コメント</div>
@@ -62,13 +81,16 @@
                                 <div class="reply-wrapper-header">
                                     <img class='img' v-bind:src="reply.user.thumbnail"/>
                                     <div class="username-date">
-                                        <p> {{ question.user.name}}さん </p>
-                                        <p> {{ question.created_on }} </p>
-                                        <!-- {{ reply.user.UID }} -->
+                                        <p> {{ reply.user.name}}さん </p>
+                                        <p> {{ reply.created_on }} </p>
                                     </div>
                                 </div>
                                 <p class="replay-description">{{ reply.description }}</p>
-                                <button v-if='$store.state.signup.user.uid==reply.user.UID' class='btn-base-white-db-sq' @click='handleShowReplyPage(answer.id)'>返信する</button>
+                                <button v-if='$store.state.signup.user.uid==question.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID!=question.user.UID || $store.state.signup.user.uid==answer.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID==question.user.UID'
+                                 class='btn-base-white-db-sq' 
+                                 @click='handleReplyPage(answer.id, reply.description)'>
+                                 返信する
+                                 </button>
                             </div>
                         </div>
                         <div class='line-flex'>
@@ -78,15 +100,20 @@
                 </div>
             </div>
         <Answer v-if='showAnswerPage'
-        @handleShowAnswerPage='handleShowAnswerPage'
-        :questionTitle='questionTitle'
-        :questionDescription='questionDescription'
-        :questionId='questionId
-        '/>
+         @handleShowAnswerPage='handleShowAnswerPage'
+         @getDetail="getDetail"
+         @handleNotifications="handleNotifications"
+         :questionTitle='questionTitle'
+         :questionDescription='questionDescription'
+         :questionId='questionId'
+         />
         <Reply v-if='showReplyPage'
-        @handleShowReplyPage='handleShowReplyPage'
-        :answerId='answerId'
-        />
+         @handleShowReplyPage='handleShowReplyPage'
+         @getDetail="getDetail"
+         @handleNotifications="handleNotifications"
+         :answerId='answerId'
+         :reply="reply"
+         />
         <!-- {{ questions }} -->
         <!-- <div class=question 
          v-for="(question,questionindex) in questions"
@@ -114,6 +141,7 @@ export default {
   },
     data(){
         return{
+            currentUserId:'',
             question:'',
             showAnswerPage: false,
             showReplyPage: false,
@@ -121,17 +149,29 @@ export default {
             questionDescription:'',
             questionId:'',
             answerId:'',
-            questionStatus:'未解決'
+            questionStatus:'未解決',
+            reply:'',
+            notifications:{
+                reply: false,
+                answer: false,
+            },
+            questionAnswerUser:[
+            ]
         }
     },
     beforeMount(){
+        // this.currentUserId = this.$store.state.signup.user.uid
     },
     mounted() {
+        // this.currentUserId = this.$store.state.signup.user.uid
+        console.log(this.currentUserId)
         // console.log('mounted at detail', this.$store.state.signup.user.uid) 
         this.getDetail() 
     },
     methods: {
         async getDetail() {
+            this.$store.commit('setIsLoading', true)
+            console.log('inthegetdetail')
             await axios
                 .get(`/api/board/question/${this.$route.params.slug}`)
                 .then(response => {
@@ -142,33 +182,84 @@ export default {
                 .catch(error => {
                     console.log(error)
             })
+            this.$store.commit('setIsLoading', false)
         },
         handleShowAnswerPage(){
             this.showAnswerPage = !this.showAnswerPage
+            // this.handleScrollFixed()
         },
-        handleShowReplyPage(id){
+        getReply(reply){
+            this.reply = reply
+        },
+        handleShowReplyPage(){
+            this.showReplyPage = !this.showReplyPage
+        },
+        handleReplyPage(id, reply=''){
             this.getAnswerId(id)
             this.showReplyPage = !this.showReplyPage
+            this.getReply(reply)
         },
         getAnswerId(id){
             this.answerId = id
-        }
+        },
+        getReplyUserAndQuestionUser(reply, question){
+            this.questionAnswerUser.push(reply)
+            this.questionAnswerUser.push(question)
+        },
+        resetNotifications(){
+            this.notifications.answer = false
+            this.notifications.reply = false
+        },
+        handleNotifications(elem){
+            // this.notifications.reply = false
+            // this.notifications.answer = false
+            // console.log('inhanglenotu',elem)
+            // console.log(this.notifications.answer)
+            if(elem == "reply"){
+                this.notifications.reply = true
+                setTimeout(this.resetNotifications, 3000)
+                
+            }
+            if(elem == "answer"){
+                console.log("in answer")
+                this.notifications.answer = true
+                setTimeout(this.resetNotifications, 3000)
+                console.log(this.notifications.answer)
+            }            
+        },
+        // falseNotifications(elem){
+        //     if(elem == "answer"){
+        //         this.notifications.answer = false
+        //     }
+        //     if(elem == "reply"){
+        //         this.notifications.reply = false
+        //     }
+        // },
+        // handleScrollFixed(){
+        //     this.scrollFixed = !this.scrollFixed
+        // },
     }
 }
 </script>
 
 <style lang='scss' scoped>
 @import "style/_variables.scss";
+.scroll{
+    position:fixed;
+}
 
 .board-detail-wrapper{
     display: flex;
     justify-content: center;
+    width: 100vw;
+    align-items: center;
 }
 .question-wrapper{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
     .question-box{
         border: solid $base-color;
         border-radius: 0.5rem;

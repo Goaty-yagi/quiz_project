@@ -40,30 +40,36 @@
 
 <script>
 import axios from 'axios'
+import { uuid } from 'vue-uuid';
 export default {
     data(){
         return{
             title: '',
             discription:'',
+            uuid:uuid.v1(),
         }
     },
     mounted(){
         this.title=this.$store.state.title
     },
     methods:{
-        publish(){
-            console.log('start add')
-            axios({
+        async publish(){
+            console.log('start add','uuid',this.uuid)
+            await axios({
                 method: 'post',
                 url: '/api/board/question/create',
                 data: {
                     title: this.$store.state.title,
                     description: this.$store.state.description,
                     user: this.$store.state.signup.user.uid,
+                    slug: this.uuid
                 },
                 
             })
-            this.$router.go({path: this.$router.currentRoute.path, force: true})
+            // this.$emit('handleNotifications')
+            this.$emit('getDetail',this.uuid)
+            // this.$emit('handleShowConfirm')
+            // this.$router.go({path: this.$router.currentRoute.path, force: true})
         }
         //     axios.post(
         //         '/api/forum/question/',

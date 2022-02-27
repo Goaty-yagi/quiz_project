@@ -88,7 +88,11 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
+.l-wrapper{
+    // animation: l-wrapper 2s
+}
 .l-container{
+    animation: l-container 3s;
     display: flex;
     flex-direction: column;
     // justify-content: center;

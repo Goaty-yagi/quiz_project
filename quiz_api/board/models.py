@@ -8,7 +8,7 @@ from user.models import User
 class BoardQuestion(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=400)
-    slug = models.SlugField(default='')
+    slug = models.SlugField(null=False)
     user = models.ForeignKey(User, related_name='question', default=None, on_delete=models.CASCADE)
     solved = models.BooleanField(default=False)
     good = models.IntegerField(default=0)
@@ -19,10 +19,10 @@ class BoardQuestion(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = secrets.token_urlsafe(64)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         self.slug = secrets.token_urlsafe(64)
+    #     super().save(*args, **kwargs)
 
 
     # def add_good(self):

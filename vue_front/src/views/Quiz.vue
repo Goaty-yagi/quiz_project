@@ -715,13 +715,13 @@ export default {
 //     border: 0.1rem solid  darken($base-color,10%);
 //   }
   
-  .notice-enter-from{
-    opacity: 0;
-  }
-  .notice-enter-to{
-    opacity: 1 ;
-  }
-  .notice-enter-active, .notice-leave-active {
-  transition: opacity .5s;
-  }
+  // .notice-enter-from{
+  //   opacity: 0;
+  // }
+  // .notice-enter-to{
+  //   opacity: 1 ;
+  // }
+  // .notice-enter-active, .notice-leave-active {
+  // transition: opacity .5s;
+  // }
 </style>
