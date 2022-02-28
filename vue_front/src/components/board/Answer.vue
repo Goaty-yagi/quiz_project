@@ -25,13 +25,14 @@
                 </div> -->
                 <div class="button-group">
                     <p @click="$emit('handleShowAnswerPage')">キャンセル</p>
-                    <button class="btn-tr-black-base-sq">回答する</button>
+                    <button class="btn-tr-black-base-sq" 
+                    :disabled="alert">回答する</button>
                 </div>
             </form>
-        </div>
-        <div v-if="alert" :class="{'notification-red':alert}">
-            <div class="notification-text">
-                文章を入力してください。
+            <div v-if="alert" :class="{'notification-red':alert}">
+                <div class="notification-text">
+                    文章を入力してください。
+                </div>
             </div>
         </div>
     </div>
@@ -100,6 +101,7 @@ export default {
     flex-direction: column;
     // justify-content: center;
     align-items: center;
+    position:relative;
     .title-black{
         margin: 2rem;
     }

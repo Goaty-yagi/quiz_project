@@ -16,6 +16,7 @@
                          <p>TITLE</p>
                     </div>
                     <input class='question-title' maxlength="20" type="text" v-model='title' placeholder="20字以内">
+                    <!-- 文字数　{{ title.length}} -->
                 </div>
 
                 <div class="line"></div>
@@ -38,6 +39,14 @@
                     <button class='btn-tr-black-base-sq' @click='confirm'>確認</button>
                 </div>                
             </form>
+            <div v-if="alerts.title||alerts.description" :class="{'notification-red':alerts.title||alerts.description}">
+                <div v-if="alerts.title" class="notification-text">
+                    タイトルを入力してください。
+                </div>
+                <div v-if="alerts.description" class="notification-text">
+                    文章を入力してください。
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -54,15 +63,23 @@ export default {
             title: '',
             description:'',
             selectedFile:'',
+            alerts: {
+                title: false,
+                description: false
+            },
             showCropper: false,
         }
     },
     methods:{
         confirm(){
             console.log('in confirm')
-            this.$store.commit('getTitle', this.title)
-            this.$store.commit('getDescription', this.description)
-            this.$emit('handleShowConfirm')
+            this.descriptionTitleCheck()
+            console.log(this.alerts.title, this.alerts.description)
+            if(this.alerts.title==false&&this.alerts.description==false){
+                this.$store.commit('getTitle', this.title)
+                this.$store.commit('getDescription', this.description)
+                this.$emit('handleShowConfirm')
+            }
         },
         // resize(e){
         //     e.target.style.height = 'auto'
@@ -82,19 +99,31 @@ export default {
             await console.log(this.image)
             this.handleShowCropper()
         },
+        resetNotifications(){
+            this.alerts.description = false
+            this.alerts.title = false
+        },
+        descriptionTitleCheck(){
+            if(this.description==''){
+                this.alerts.description = true
+                setTimeout(this.resetNotifications, 3000)
+            }
+            if(this.title==''){
+                this.alerts.title = true
+                setTimeout(this.resetNotifications, 3000)
+            }
+        },
     }    
 }
 </script>
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-.l-wrapper{
-    // animation: l-wrapper 2s
-}
 .l-container{
     animation: l-container 3s;
     display: flex;
     flex-direction: column;
+    position: relative;
     // justify-content: center;
     align-items: center;
     .title-black{

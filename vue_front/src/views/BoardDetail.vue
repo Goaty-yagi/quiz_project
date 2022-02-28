@@ -317,6 +317,7 @@ export default {
                 color: rgb(221, 36, 221);
                 margin-left: 0.5rem;
                 margin-right: 0.3rem;
+                margin-top: 0.1rem;
             }
             .viewed{
                 margin-left: 1rem;
@@ -446,6 +447,7 @@ export default {
             width: 100%;
             justify-content: center;
             align-items: center;
+            margin-top: 0.5rem;
             // .line-flex:last-of-type{
             //     border-bottom: none;
             // }

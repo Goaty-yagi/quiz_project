@@ -15,9 +15,10 @@
                 <i class="fas fa-search"></i>
                 <input class='search' type="text">
             </div>
-            <div class="question-box" @click='handleShowCreateQuestion'>
+            <div class="question-box">
                 <p class='word'>わからない事があったら質問してみよう。</p>
-                <button class='btn-base-white-db-sq'>質問する</button>
+                <button class='btn-base-white-db-sq' 
+                 @click='handleShowCreateQuestion'>質問する</button>
             </div>
             <!-- <button @click="handleNotifications">unko</button> -->
             <div class=select-wrapper>

@@ -19,17 +19,16 @@
                 </div>
                 <textarea class='form-text' v-model='description' placeholder="回答"/>
             </div>
-            <div class="image">
-
-            </div>
-            <div class="button-group">
-                <p @click="$emit('handleShowReplyPage')">キャンセル</p>
-                <button class="btn-tr-black-base-sq" @click="addAnswer">回答する</button>
-            </div>
             <div v-if="alert" :class="{'notification-red':alert}">
                 <div class="notification-text">
                     文章を入力してください。
                 </div>
+            </div>
+            <div class="button-group">
+                <p @click="$emit('handleShowReplyPage')">キャンセル</p>
+                <button class="btn-tr-black-base-sq"
+                 @click="addAnswer" 
+                 :disabled='alert'>回答する</button>
             </div>
         </div>
     </div>
@@ -41,6 +40,7 @@ export default {
     data(){
         return{
             description:'',
+            alert: false,
         }
     },
     props:[
@@ -52,35 +52,9 @@ export default {
         console.log('answerMounted',this.reply)
     },
     methods:{
-        addAnswer(){
-            console.log('start add')
-            axios({
-                method: 'post',
-                url: '/api/board/reply/create/',
-                data: {
-                    description: this.description,
-                    user: this.$store.state.signup.user.uid,
-                    answer: this.answerId
-                }
-              })
-              console.log('end add')
-              this.$emit('handleNotifications','reply')
-              this.$emit('getDetail')
-              this.$emit('handleShowReplyPage')
-            //   this.$emit('handleshowAnswerPage')
-            //   this.$router.go({path: this.$router.currentRoute.path, force: true})
-         },
-        //  esetNotifications(){
-        //     this.alert = false
-        // },
-        // descriptionCheck(){
-        //     if(this.description==''){
-        //         this.alert = true
-        //         setTimeout(this.resetNotifications, 3000)
-        //     }
-        // },
-        // async replyPost(){
-        //     await axios({
+        // addAnswer(){
+        //     console.log('start add')
+        //     axios({
         //         method: 'post',
         //         url: '/api/board/reply/create/',
         //         data: {
@@ -89,20 +63,46 @@ export default {
         //             answer: this.answerId
         //         }
         //       })
-        // },
-        // addAnswer(){
-        //     console.log('start add')
-        //     this.descriptionCheck()
-        //     if(this.alert==false){
-        //         this.replyPost
-        //         this.$emit('handleNotifications','reply')
-        //         this.$emit('getDetail')
-        //         this.$emit('handleShowReplyPage')
-        //         console.log('end-reply')
-        //     }
+        //       console.log('end add')
+        //       this.$emit('handleNotifications','reply')
+        //       this.$emit('getDetail')
+        //       this.$emit('handleShowReplyPage')
         //     //   this.$emit('handleshowAnswerPage')
         //     //   this.$router.go({path: this.$router.currentRoute.path, force: true})
         //  },
+         resetNotifications(){
+            this.alert = false
+        },
+        descriptionCheck(){
+            if(this.description==''){
+                this.alert = true
+                setTimeout(this.resetNotifications, 3000)
+            }
+        },
+        async replyPost(){
+            await axios({
+                method: 'post',
+                url: '/api/board/reply/create/',
+                data: {
+                    description: this.description,
+                    user: this.$store.state.signup.user.uid,
+                    answer: this.answerId
+                }
+            })
+        },
+        addAnswer(){
+            console.log('start add')
+            this.descriptionCheck()
+            if(this.alert==false){
+                this.replyPost()
+                this.$emit('handleNotifications','reply')
+                this.$emit('getDetail')
+                this.$emit('handleShowReplyPage')
+                console.log('end-reply')
+            }
+            //   this.$emit('handleshowAnswerPage')
+            //   this.$router.go({path: this.$router.currentRoute.path, force: true})
+         },
     }
 }
 </script>
@@ -112,20 +112,30 @@ export default {
 .l-container{
     animation: l-container 3s;
     padding:1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .reply-wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     .title-black{
         margin: 1rem;
     }
     .comment-wrapper{
         background: rgb(235, 235, 235);
         padding: 0.5rem;
+        width: 90%;
         // margin:0.5rem;
         text-align: left;
         white-space: pre-wrap;
     }
 }
 .answer-wrapper{
+    width: 90%;
     .title-black{
         margin: 1rem;
     }
