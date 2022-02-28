@@ -147,10 +147,13 @@ export default {
             showReplyPage: false,
             questionTitle:'',
             questionDescription:'',
-            questionId:'',
+            questionSlug:'',
             answerId:'',
+            viewed:0,
             questionStatus:'未解決',
             reply:'',
+            questionUser: '',
+            questionUserBoolean: false,
             notifications:{
                 reply: false,
                 answer: false,
@@ -159,14 +162,11 @@ export default {
             ]
         }
     },
-    beforeMount(){
-        // this.currentUserId = this.$store.state.signup.user.uid
-    },
     mounted() {
         // this.currentUserId = this.$store.state.signup.user.uid
-        console.log(this.currentUserId)
+        console.log('detail', this.questionId)
         // console.log('mounted at detail', this.$store.state.signup.user.uid) 
-        this.getDetail() 
+        this.getDetail()
     },
     methods: {
         async getDetail() {
@@ -178,7 +178,12 @@ export default {
                     this.question = response.data
                     this.questionTitle = this.question.title
                     this.questionDescription = this.question.description
-                    this.questionId = this.question.id})
+                    this.questionSlug = this.question.slug
+                    console.log(this.questionSlug)
+                    this.questionUser = this.question.user.UID
+                    this.viewed = this.question.viewed
+                    this.countUpViewed()
+                    })
                 .catch(error => {
                     console.log(error)
             })
@@ -226,6 +231,22 @@ export default {
                 setTimeout(this.resetNotifications, 3000)
                 console.log(this.notifications.answer)
             }            
+        },
+        // handleViewed(questionId){
+        //     if(questionId==this.$store.state.signup.user.uid){
+        //         this.questionUserBoolean = true
+        //         return this.viewed
+        //     }
+        //     return this.viewed + 1
+        // },
+        countUpViewed(){
+            console.log('in count')
+            if(this.questionUserBoolean == false){
+                console.log('count', this.questionSlug)
+                axios.patch(`/api/board/question/${this.questionSlug}`,
+                {viewed: this.viewed + 1
+                }) 
+            }
         },
         // falseNotifications(elem){
         //     if(elem == "answer"){
