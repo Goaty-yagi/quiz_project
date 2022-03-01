@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from user.models import User
-from board.serializers import BoardAnswerReadSerializer, BoardQuestionListSerializer
+from board.serializers import BoardAnswerReadSerializer, BoardQuestionListSerializer, BoardLikedReadSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     question = BoardQuestionListSerializer(many=True, required=False)
     answer = BoardAnswerReadSerializer(many=True, required=False)
+    liked_num = BoardLikedReadSerializer(many=True, required=False)
     
     class Meta:
         model = User
@@ -15,5 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
                   "thumbnail", 
                   "country",
                   "question", 
-                  "answer"]
+                  "answer",
+                  "liked_num"
+                  ]
         # read_only_field = []

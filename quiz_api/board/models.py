@@ -76,16 +76,15 @@ class BoardReply(models.Model):
         return self.description
 
 
-# class BoardLiked(models.Model):
-#     user = models.ForeignKey(User, related_name='liked', on_delete=models.CASCADE)
-#     question = models.ForeignKey(BoardQuestion, related_name='liked', on_delete=models.CASCADE)
-#     answer = models.ForeignKey(BoardAnswer, related_name='liked', on_delete=models.CASCADE)
-#     good = models.IntegerField(default=0)
-
-
-#     class Meta:
-#         ordering = ['created_on',]
-
+class BoardQuestionLiked(models.Model):
+    user = models.ManyToManyField(User, default=None, related_name='liked_num')
+    question = models.ForeignKey(BoardQuestion, related_name='liked_num', on_delete=models.CASCADE)
+    # answer = models.ForeignKey(BoardAnswer, related_name='liked', on_delete=models.CASCADE)
+    liked_num = models.IntegerField(default=0)
+    
+    def liked_count(self):
+        return len(self.user)
         
-#     def __str__(self):
-#         return self.description
+
+    def __str__(self):
+        return self.question.title

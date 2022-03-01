@@ -35,8 +35,9 @@
                         <p class='question-description'> {{ question.description}} </p>
                     </div>
                     <div class="question-box-footer">
-                        <i class="far fa-heart"></i>
-                        <p class="good"> {{ question.good}} </p>
+                        <i v-if="addedLiked==false" @click="addLikedNum" class="far fa-heart" ></i>
+                        <i v-if="addedLiked" class="fas fa-heart"></i>
+                        <p class="good" v-if="question.liked_num[0]">{{ liked_num }} </p>
                         <p class="viewed"> viewed {{ question.viewed}} </p>
                     </div>
                     <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
@@ -154,6 +155,9 @@ export default {
             reply:'',
             questionUser: '',
             questionUserBoolean: false,
+            liked_num: '',
+            addedLiked: false,
+            likedUserId:'',
             notifications:{
                 reply: false,
                 answer: false,
@@ -162,11 +166,9 @@ export default {
             ]
         }
     },
-    mounted() {
-        // this.currentUserId = this.$store.state.signup.user.uid
-        console.log('detail', this.questionId)
-        // console.log('mounted at detail', this.$store.state.signup.user.uid) 
+    mounted() { 
         this.getDetail()
+        console.log(this.addedLiked)
     },
     methods: {
         async getDetail() {
@@ -179,10 +181,15 @@ export default {
                     this.questionTitle = this.question.title
                     this.questionDescription = this.question.description
                     this.questionSlug = this.question.slug
-                    console.log(this.questionSlug)
+                    this.liked_num = this.question.liked_num[0].liked_num
+                    this.likedUserId = this.question.liked_num[0].user[0].UID
+                    console.log('userID',this.likedUserId)
                     this.questionUser = this.question.user.UID
                     this.viewed = this.question.viewed
+                    // this.addedLiked = false
                     this.countUpViewed()
+                    this.checkUserLiked()
+                    console.log('after',this.addedLiked)
                     })
                 .catch(error => {
                     console.log(error)
@@ -232,15 +239,34 @@ export default {
                 console.log(this.notifications.answer)
             }            
         },
-        // handleViewed(questionId){
-        //     if(questionId==this.$store.state.signup.user.uid){
-        //         this.questionUserBoolean = true
-        //         return this.viewed
-        //     }
-        //     return this.viewed + 1
+        // getLikedNum(liked_num){
+        //     this.liked_num = liked_num
+        //     return this.liked_num
         // },
+        addLikedNum(){
+            this.liked_num += 1
+            this.addedLiked = true
+            this.countUpLiked()
+        },
+        checkUserLiked(){
+            console.log('check',this.$store.state.signup.user.uid, this.question.liked_num[0].user.UID)
+            if(this.$store.state.signup.user.uid==this.likedUserId){
+                this.addedLiked = true
+            }
+        },
+        countUpLiked(){
+            // console.log('in countUPLiked',this.question.liked_num[0].id ,this.addedLiked)
+            if(this.addedLiked){
+                axios.patch(`/api/board/question-liked/${this.question.liked_num[0].id}/`,
+                {
+                    user: [this.$store.state.signup.user.uid],
+                    liked_num: this.liked_num
+                })
+                console.log('done')
+            }
+        },
         countUpViewed(){
-            console.log('in count')
+            // console.log('in count')
             if(this.questionUserBoolean == false){
                 console.log('count', this.questionSlug)
                 axios.patch(`/api/board/question/${this.questionSlug}`,
@@ -340,6 +366,9 @@ export default {
                 margin-right: 0.3rem;
                 margin-top: 0.1rem;
             }
+            // .added{
+            //     background: pink;
+            // }
             .viewed{
                 margin-left: 1rem;
                 margin-right: 0.5rem;

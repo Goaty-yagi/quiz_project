@@ -37,7 +37,7 @@
                         <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
-                            <div class="good">{{ question.good }}</div>
+                            <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
                             <div class="date">作成日：{{ remove_T_Z(question.created_on) }}</div>
                         </div>
                     </div>        
@@ -90,7 +90,7 @@ export default {
     },
     mounted() {
         // this.getQuestion()
-        console.log('mounted at community',this.cestions) 
+        console.log('mounted at community',typeof []) 
     },
     methods: {
         async getQuestion() {
