@@ -157,7 +157,8 @@ export default {
             questionUserBoolean: false,
             liked_num: '',
             addedLiked: false,
-            likedUserId:'',
+            likedUserIdList:'',
+            checkedLikedUserList:[],
             notifications:{
                 reply: false,
                 answer: false,
@@ -182,8 +183,8 @@ export default {
                     this.questionDescription = this.question.description
                     this.questionSlug = this.question.slug
                     this.liked_num = this.question.liked_num[0].liked_num
-                    this.likedUserId = this.question.liked_num[0].user[0].UID
-                    console.log('userID',this.likedUserId)
+                    this.likedUserIdList = this.question.liked_num[0].user
+                    console.log('userID',Array.isArray(this.likedUserIdList))
                     this.questionUser = this.question.user.UID
                     this.viewed = this.question.viewed
                     // this.addedLiked = false
@@ -246,12 +247,17 @@ export default {
         addLikedNum(){
             this.liked_num += 1
             this.addedLiked = true
+            for(let i=0; i<this.likedUserIdList.length; i++){
+                this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+            }
+            this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
             this.countUpLiked()
         },
         checkUserLiked(){
-            console.log('check',this.$store.state.signup.user.uid, this.question.liked_num[0].user.UID)
-            if(this.$store.state.signup.user.uid==this.likedUserId){
+            for(let i of this.likedUserIdList){
+                if(i.UID == this.$store.state.signup.user.uid){
                 this.addedLiked = true
+                }
             }
         },
         countUpLiked(){
@@ -259,7 +265,7 @@ export default {
             if(this.addedLiked){
                 axios.patch(`/api/board/question-liked/${this.question.liked_num[0].id}/`,
                 {
-                    user: [this.$store.state.signup.user.uid],
+                    user: this.checkedLikedUserList,
                     liked_num: this.liked_num
                 })
                 console.log('done')
