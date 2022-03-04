@@ -85,9 +85,9 @@ export default {
             if(this.alert==false){
                await this.answerPost()
                 this.$emit('getDetail')
-                this.$emit('handleNotifications','answer')
+                this.$store.dispatch("handleNotifications", 'answer')
                 this.$emit('handleShowAnswerPage')
-                console.log('end reply')
+                console.log("end_answer",this.$store.state.board.notifications)
             }
             //   this.$router.go({path: this.$router.currentRoute.path, force: true})
          },

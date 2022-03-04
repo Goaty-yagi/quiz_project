@@ -70,7 +70,7 @@ export default {
         //     //   this.$emit('handleshowAnswerPage')
         //     //   this.$router.go({path: this.$router.currentRoute.path, force: true})
         //  },
-         resetNotifications(){
+        resetNotifications(){
             this.alert = false
         },
         descriptionCheck(){
@@ -95,7 +95,8 @@ export default {
             this.descriptionCheck()
             if(this.alert==false){
                 this.replyPost()
-                this.$emit('handleNotifications','reply')
+                this.$store.dispatch("handleNotifications", 'reply')
+                // this.$emit('handleNotifications','reply')
                 this.$emit('getDetail')
                 this.$emit('handleShowReplyPage')
                 console.log('end-reply')

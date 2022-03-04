@@ -29,7 +29,7 @@
                     <div class='confirm-message'>この内容で投稿しますか。
                     </div>
                     <div class="button-group">
-                            <div @click="this.$emit('handleShowConfirm')">戻る</div>
+                            <div @click="this.$store.commit('handleShowConfirm')">戻る</div>
                             <button class="btn-tr-black-base-sq" @click='publish'>投稿する</button>
                     </div>            
                 </div>
@@ -62,12 +62,14 @@ export default {
                     title: this.$store.state.title,
                     description: this.$store.state.description,
                     user: this.$store.state.signup.user.uid,
-                    slug: this.uuid
+                    slug: this.uuid,
+                    liked_num:{}
                 },
                 
             })
             // this.$emit('handleNotifications')
             this.$emit('getDetail',this.uuid)
+            this.$store.dispatch("handleNotifications", 'post')
             // this.$emit('handleShowConfirm')
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
         }

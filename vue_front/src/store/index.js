@@ -3,6 +3,7 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import {router} from "../main.js"
 import  signup  from './modules/signup'
+import  board  from './modules/board'
 
 let getDefaultState = () => {
   return {
@@ -24,6 +25,7 @@ let getDefaultState = () => {
 export default createStore({
   modules: {
     signup,
+    board,
   },
   state: getDefaultState(),
   plugins: [

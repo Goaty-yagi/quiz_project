@@ -7,14 +7,19 @@
             </div>
             <div class="question-wrapper" v-if="question">
                 <p class='title-white'>質問板</p>
-                <div v-if="notifications.reply" :class="{'notification-blue':notifications.reply}">
+                <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
                     <div class="notification-text">
                         返信しました。
                     </div>
                 </div>
-                <div v-if="notifications.answer" :class="{'notification-blue':notifications.answer}">
+                <div v-if="$store.state.board.notifications.answer" :class="{'notification-blue':$store.state.board.notifications.answer}">
                     <div class="notification-text">
                         回答しました。
+                    </div>
+                </div>
+                <div v-if="$store.state.board.notifications.post" :class="{'notification-blue':$store.state.board.notifications.post}">
+                    <div class="notification-text">
+                        投稿しました。
                     </div>
                 </div>
                 <div class='question-box'> 
@@ -104,7 +109,6 @@
         <Answer v-if='showAnswerPage'
          @handleShowAnswerPage='handleShowAnswerPage'
          @getDetail="getDetail"
-         @handleNotifications="handleNotifications"
          :questionTitle='questionTitle'
          :questionDescription='questionDescription'
          :questionId='questionId'
@@ -112,7 +116,6 @@
         <Reply v-if='showReplyPage'
          @handleShowReplyPage='handleShowReplyPage'
          @getDetail="getDetail"
-         @handleNotifications="handleNotifications"
          :answerId='answerId'
          :reply="reply"
          />
@@ -164,15 +167,11 @@ export default {
             addedLiked: false,
             likedUserIdList:'',
             checkedLikedUserList:[],
-            notifications:{
-                reply: false,
-                answer: false,
-            },
         }
     },
     mounted() { 
         this.getDetail()
-        console.log(this.addedLiked)
+        console.log("detail",this.$store.state.board.notifications)
     },
     methods: {
         async getDetail() {
@@ -188,17 +187,11 @@ export default {
                     this.questionId = this.question.id
                     this.liked_num = this.question.liked_num[0].liked_num
                     this.likedUserIdList = this.question.liked_num[0].user
-                    console.log('userID',Array.isArray(this.likedUserIdList))
                     this.questionUser = this.question.user.UID
                     this.allAnswer = this.question.answer
-                    console.log(this.allAnswer)
                     this.viewed = this.question.viewed
-                    // this.addedLiked = false
                     this.countUpViewed()
                     this.makeAnswerDict()
-                    // this.checkUserLiked()
-                    // this.setAnswerBoolean()
-                    console.log('after',this.addedLiked)
                     })
                 .catch(error => {
                     console.log(error)
@@ -227,27 +220,22 @@ export default {
             this.questionAnswerUser.push(reply)
             this.questionAnswerUser.push(question)
         },
-        resetNotifications(){
-            this.notifications.answer = false
-            this.notifications.reply = false
-        },
-        handleNotifications(elem){
-            // this.notifications.reply = false
-            // this.notifications.answer = false
-            // console.log('inhanglenotu',elem)
-            // console.log(this.notifications.answer)
-            if(elem == "reply"){
-                this.notifications.reply = true
-                setTimeout(this.resetNotifications, 3000)
+        // resetNotifications(){
+        //     this.notifications.answer = false
+        //     this.notifications.reply = false
+        // },
+        // handleNotifications(elem){
+        //     if(elem == "reply"){
+        //         this.notifications.reply = true
+        //         setTimeout(this.resetNotifications, 3000)
                 
-            }
-            if(elem == "answer"){
-                console.log("in answer")
-                this.notifications.answer = true
-                setTimeout(this.resetNotifications, 3000)
-                console.log(this.notifications.answer)
-            }            
-        },
+        //     }
+        //     if(elem == "answer"){
+        //         console.log("in answer")
+        //         this.notifications.answer = true
+        //         setTimeout(this.resetNotifications, 3000)
+        //     }            
+        // },
         // getLikedNum(liked_num){
         //     this.liked_num = liked_num
         //     return this.liked_num
@@ -269,9 +257,8 @@ export default {
                 }
             }
             // this is for answer like
-            console.log("start_answer",this.answerDict)
             for(let answerId in this.answerDict){
-                console.log(Array.isArray(this.answerDict[answerId].likedUsers))
+                // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
                 for( let user of this.answerDict[answerId].likedUsers[0]){
                     if(user == this.$store.state.signup.user.uid){
                         this.answerDict[answerId].addedAnswerLiked = true
@@ -315,7 +302,7 @@ export default {
                     "likedUsers":[answer.liked_answer[0].user]
                 }
             }
-            console.log('dict',this.answerDict[83].likedUsers)
+            // console.log('dict',this.answerDict[83].likedUsers)
             this.checkUserLiked()
         },
         addAnsweerLikedNum(answerId){
