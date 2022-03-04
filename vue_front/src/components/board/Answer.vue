@@ -67,13 +67,15 @@ export default {
              }
          },
         async answerPost(){
+            console.log("this.questionId",this.questionId)
             await axios({
                 method: 'post',
                 url: '/api/board/answer/create',
                 data: {
                     description: this.description,
                     user: this.$store.state.signup.user.uid,
-                    question: this.questionId
+                    question: this.questionId,
+                    liked_answer:[]
                 }
             })
         },

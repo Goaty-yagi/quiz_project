@@ -78,13 +78,20 @@ class BoardReply(models.Model):
 
 class BoardQuestionLiked(models.Model):
     user = models.ManyToManyField(User, default=None, related_name='liked_num')
-    question = models.ForeignKey(BoardQuestion, related_name='liked_num', on_delete=models.CASCADE)
-    # answer = models.ForeignKey(BoardAnswer, related_name='liked', on_delete=models.CASCADE)
+    question = models.ForeignKey(BoardQuestion, default=None, related_name='liked_num', on_delete=models.CASCADE)
+    # answer = models.ForeignKey(BoardAnswer, default=None, related_name='liked', on_delete=models.CASCADE)
     liked_num = models.IntegerField(default=0)
-    
-    def liked_count(self):
-        return len(self.user)
         
 
     def __str__(self):
         return self.question.title
+
+
+class BoardAnswerLiked(models.Model):
+    user = models.ManyToManyField(User, default=None, related_name='liked_answer')
+    answer = models.ForeignKey(BoardAnswer, related_name='liked_answer', on_delete=models.CASCADE)
+    liked_num = models.IntegerField(default=0)
+    
+
+    # def __str__(self):
+    #     return self.question.title

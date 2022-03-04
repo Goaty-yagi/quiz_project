@@ -65,8 +65,9 @@
                         </div>
                         <p class="answer-description-container">{{ answer.description }} </p>
                         <div class="answer-box-footer">
-                            <i class="far fa-heart"></i>
-                            <p class="good"> {{ answer.good}} </p>
+                            <i v-if="answerDict[answer.id].addedAnswerLiked==false" @click="addAnsweerLikedNum(answer.id)" class="far fa-heart" ></i>
+                            <i v-if="answerDict[answer.id].addedAnswerLiked" class="fas fa-heart"></i>
+                            <p class="good"> {{ answerDict[answer.id].liked_num }} </p>
                         </div>
                         <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
                          class='btn-base-white-db-sq' 
@@ -149,7 +150,11 @@ export default {
             questionTitle:'',
             questionDescription:'',
             questionSlug:'',
+            questionId:'',
             answerId:'',
+            allAnswer:'',
+            answerDict:{},
+            addedAnswerLiked:{},
             viewed:0,
             questionStatus:'未解決',
             reply:'',
@@ -163,8 +168,6 @@ export default {
                 reply: false,
                 answer: false,
             },
-            questionAnswerUser:[
-            ]
         }
     },
     mounted() { 
@@ -182,14 +185,19 @@ export default {
                     this.questionTitle = this.question.title
                     this.questionDescription = this.question.description
                     this.questionSlug = this.question.slug
+                    this.questionId = this.question.id
                     this.liked_num = this.question.liked_num[0].liked_num
                     this.likedUserIdList = this.question.liked_num[0].user
                     console.log('userID',Array.isArray(this.likedUserIdList))
                     this.questionUser = this.question.user.UID
+                    this.allAnswer = this.question.answer
+                    console.log(this.allAnswer)
                     this.viewed = this.question.viewed
                     // this.addedLiked = false
                     this.countUpViewed()
-                    this.checkUserLiked()
+                    this.makeAnswerDict()
+                    // this.checkUserLiked()
+                    // this.setAnswerBoolean()
                     console.log('after',this.addedLiked)
                     })
                 .catch(error => {
@@ -254,9 +262,20 @@ export default {
             this.countUpLiked()
         },
         checkUserLiked(){
+            // this is for question like
             for(let i of this.likedUserIdList){
                 if(i.UID == this.$store.state.signup.user.uid){
                 this.addedLiked = true
+                }
+            }
+            // this is for answer like
+            console.log("start_answer",this.answerDict)
+            for(let answerId in this.answerDict){
+                console.log(Array.isArray(this.answerDict[answerId].likedUsers))
+                for( let user of this.answerDict[answerId].likedUsers[0]){
+                    if(user == this.$store.state.signup.user.uid){
+                        this.answerDict[answerId].addedAnswerLiked = true
+                    }
                 }
             }
         },
@@ -280,6 +299,44 @@ export default {
                 }) 
             }
         },
+        // setAnswerBoolean(){
+        //     for(let answer of this.allAnswer){
+        //         this.addedAnswerLiked[answer.id] = false
+        //     }
+        //     console.log('boo',this.addedAnswerLiked)
+        // },
+        makeAnswerDict(){
+            for(let answer of this.allAnswer){
+                // console.log(answer.liked_answer)
+                this.answerDict[answer.id] = {
+                    "liked_id":answer.liked_answer[0].id,
+                    "liked_num":answer.liked_answer[0].liked_num,
+                    "addedAnswerLiked":false,
+                    "likedUsers":[answer.liked_answer[0].user]
+                }
+            }
+            console.log('dict',this.answerDict[83].likedUsers)
+            this.checkUserLiked()
+        },
+        addAnsweerLikedNum(answerId){
+            this.answerDict[answerId].liked_num += 1
+            this.answerDict[answerId].addedAnswerLiked = true
+            // for(let i=0; i<this.likedUserIdList.length; i++){
+            //     this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+            // }
+            this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
+            this.countUpLikedAnswer(answerId)
+        },
+        countUpLikedAnswer(answerId){
+            if(this.addedLiked){
+                axios.patch(`/api/board/answer-liked/${this.answerDict[answerId].liked_id}/`,
+                {
+                    user: this.answerDict[answerId].likedUsers[0],
+                    liked_num: this.answerDict[answerId].liked_num
+                })
+                console.log('done')
+            }
+        }
         // falseNotifications(elem){
         //     if(elem == "answer"){
         //         this.notifications.answer = false
@@ -448,6 +505,7 @@ export default {
                 color: rgb(221, 36, 221);
                 margin-left: 1rem;
                 margin-right: 0.3rem;
+                margin-top: 0.1rem;
             }
         }
         .btn-base-white-db-sq{

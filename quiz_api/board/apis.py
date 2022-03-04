@@ -1,6 +1,6 @@
 from rest_framework import generics
-from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked
-from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer
+from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked
+from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer, AnswerLikedReadSerializer
 
 
 class BoardQuestionList(generics.ListAPIView):
@@ -42,6 +42,11 @@ class BoardReplyCreate(generics.CreateAPIView):
 class QuestionLikedRead(generics.RetrieveUpdateDestroyAPIView):
     queryset = BoardQuestionLiked.objects.all()
     serializer_class = BoardLikedCreateSerializer
+
+
+class AnswerLikedRead(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BoardAnswerLiked.objects.all()
+    serializer_class = AnswerLikedReadSerializer
 
 # class QuestionLikedRead(generics.ListAPIView):
 #     queryset = BoardQuestionLiked.objects.all()
