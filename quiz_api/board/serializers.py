@@ -1,10 +1,44 @@
 from gettext import install
 from pickletools import read_long1
 from rest_framework import serializers
-from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked
+from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag
 
 # from user.models import User
 # from user.serializers import UserSerializer
+
+class UserTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "user",
+				  "used_num",
+				  ]
+		read_only_field = ['tag','user']
+
+
+class CenterTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardCenterTag
+		fields = ["id",
+				  "tag",
+				  "question",
+				  "user",
+				  "used_num",
+				  "parent_tag" 
+				  ]
+		read_only_field = ['center_tag','user','question']
+
+
+class ParentTagSerializer(serializers.ModelSerializer):
+	center_tag = CenterTagSerializer(many=True)
+	class Meta:
+		model = BoardParentCenterTag
+		fields = ["id",
+				  "parent_tag",
+				  "center_tag"
+				  ]
+		read_only_field = ['center_tag']
 
 
 class AnswerLikedCreateSerializer(serializers.ModelSerializer):

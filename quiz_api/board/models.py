@@ -1,4 +1,8 @@
+from logging import raiseExceptions
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from datetime import datetime
 import secrets
 import dateutil.parser
@@ -95,3 +99,60 @@ class BoardAnswerLiked(models.Model):
 
     # def __str__(self):
     #     return self.question.title
+
+class BoardParentCenterTag(models.Model):
+    parent_tag = models.CharField(max_length=200)
+        
+
+    def __str__(self):
+        return self.parent_tag
+
+
+class BoardCenterTag(models.Model):
+    tag = models.CharField(max_length=200)
+    question = models.ManyToManyField(BoardQuestion, related_name="cnter_tag", default=None, blank=True)
+    user = models.ManyToManyField(User, default=None, related_name="cnter_tag", blank=True)
+    used_num = models.IntegerField(default=0)
+    parent_tag = models.OneToOneField(BoardParentCenterTag, related_name="cnter_tag", on_delete=models.CASCADE)
+        
+
+    def __str__(self):
+        return self.tag
+
+
+class BoardUserTag(models.Model):
+    tag = models.ForeignKey(BoardCenterTag, default=None, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
+    used_num = models.IntegerField(default=0)
+
+
+    def save(self, *args, **kwargs):
+        self.used_num +=1
+        super().save(*args, **kwargs)
+    #     print("insave",self.tag.id,self.user.UID)
+    #     try:
+    #         OBJ = BoardUserTag.objects.get(user=self.user.UID)
+    #         print(OBJ)
+    #         self.used_num +=1
+    #         self.save()
+    #         print("tryend")
+    #     except:
+    #         print("except")
+    #         # super().save(*args, **kwargs)
+        
+
+    def __str__(self):
+        return self.tag.tag
+
+
+@receiver(post_save, sender=BoardUserTag)
+def add_used_num(sender, instance, created, **kwargs):
+    print(kwargs["signal"].__dict__, 'instance',instance.tag.id, 'sender',sender)  
+    try:
+        center_tag_id = instance.tag.id
+        center_tag_object = BoardCenterTag.objects.get(id=center_tag_id)
+        center_tag_object.used_num +=1
+        instance.used_num +=1
+        center_tag_object.save()
+    except:
+        raise Exception("unko")
