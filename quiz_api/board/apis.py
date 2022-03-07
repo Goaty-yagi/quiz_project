@@ -68,6 +68,11 @@ class UsertagCreate(generics.CreateAPIView):
     serializer_class = UserTagSerializer
 
 
+class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BoardUserTag.objects.all()
+    serializer_class = UserTagSerializer
+
+
 # class UserTagCreateApi(APIView):
 #     def post(self, request, format=None):
 #         print("self",self.__dict__)

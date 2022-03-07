@@ -1,4 +1,3 @@
-from logging import raiseExceptions
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,6 +7,51 @@ import secrets
 import dateutil.parser
 from user.models import User
 
+
+class BoardParentCenterTag(models.Model):
+    parent_tag = models.CharField(max_length=200)
+        
+
+    def __str__(self):
+        return self.parent_tag
+
+
+class BoardCenterTag(models.Model):
+    tag = models.CharField(max_length=200)
+    # question = models.ManyToManyField(BoardQuestion, related_name="cnter_tag", default=None, blank=True)
+    user = models.ManyToManyField(User, default=None, related_name="cnter_tag", blank=True)
+    used_num = models.IntegerField(default=0)
+    parent_tag = models.ForeignKey(BoardParentCenterTag, related_name="cnter_tag", on_delete=models.CASCADE)
+        
+
+    def __str__(self):
+        return self.tag
+
+
+class BoardUserTag(models.Model):
+    tag = models.ForeignKey(BoardCenterTag, default=None, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
+    used_num = models.IntegerField(default=0)
+
+
+    def save(self, *args, **kwargs):
+        self.used_num +=1
+        super().save(*args, **kwargs)
+    #     print("insave",self.tag.id,self.user.UID)
+    #     try:
+    #         OBJ = BoardUserTag.objects.get(user=self.user.UID)
+    #         print(OBJ)
+    #         self.used_num +=1
+    #         self.save()
+    #         print("tryend")
+    #     except:
+    #         print("except")
+    #         # super().save(*args, **kwargs)
+        
+
+    def __str__(self):
+        return self.tag.tag
+
  
 class BoardQuestion(models.Model):
     title = models.CharField(max_length=100)
@@ -16,8 +60,8 @@ class BoardQuestion(models.Model):
     user = models.ForeignKey(User, related_name='question', default=None, on_delete=models.CASCADE)
     solved = models.BooleanField(default=False)
     good = models.IntegerField(default=0)
-    tag = models.CharField(max_length=20, blank=True)
     vote = models.IntegerField(default=0)
+    tag = models.ManyToManyField(BoardCenterTag, related_name='question')
     img = models.ImageField(blank=True, null=True)
     viewed = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -100,49 +144,7 @@ class BoardAnswerLiked(models.Model):
     # def __str__(self):
     #     return self.question.title
 
-class BoardParentCenterTag(models.Model):
-    parent_tag = models.CharField(max_length=200)
-        
 
-    def __str__(self):
-        return self.parent_tag
-
-
-class BoardCenterTag(models.Model):
-    tag = models.CharField(max_length=200)
-    question = models.ManyToManyField(BoardQuestion, related_name="cnter_tag", default=None, blank=True)
-    user = models.ManyToManyField(User, default=None, related_name="cnter_tag", blank=True)
-    used_num = models.IntegerField(default=0)
-    parent_tag = models.OneToOneField(BoardParentCenterTag, related_name="cnter_tag", on_delete=models.CASCADE)
-        
-
-    def __str__(self):
-        return self.tag
-
-
-class BoardUserTag(models.Model):
-    tag = models.ForeignKey(BoardCenterTag, default=None, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
-    used_num = models.IntegerField(default=0)
-
-
-    def save(self, *args, **kwargs):
-        self.used_num +=1
-        super().save(*args, **kwargs)
-    #     print("insave",self.tag.id,self.user.UID)
-    #     try:
-    #         OBJ = BoardUserTag.objects.get(user=self.user.UID)
-    #         print(OBJ)
-    #         self.used_num +=1
-    #         self.save()
-    #         print("tryend")
-    #     except:
-    #         print("except")
-    #         # super().save(*args, **kwargs)
-        
-
-    def __str__(self):
-        return self.tag.tag
 
 
 @receiver(post_save, sender=BoardUserTag)

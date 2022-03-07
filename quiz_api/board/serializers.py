@@ -6,39 +6,6 @@ from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLi
 # from user.models import User
 # from user.serializers import UserSerializer
 
-class UserTagSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardUserTag
-		fields = ["id",
-				  "tag",
-				  "user",
-				  "used_num",
-				  ]
-		read_only_field = ['tag','user']
-
-
-class CenterTagSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardCenterTag
-		fields = ["id",
-				  "tag",
-				  "question",
-				  "user",
-				  "used_num",
-				  "parent_tag" 
-				  ]
-		read_only_field = ['center_tag','user','question']
-
-
-class ParentTagSerializer(serializers.ModelSerializer):
-	center_tag = CenterTagSerializer(many=True)
-	class Meta:
-		model = BoardParentCenterTag
-		fields = ["id",
-				  "parent_tag",
-				  "center_tag"
-				  ]
-		read_only_field = ['center_tag']
 
 
 class AnswerLikedCreateSerializer(serializers.ModelSerializer):
@@ -135,7 +102,7 @@ class BoardAnswerReadSerializer(serializers.ModelSerializer):
 				  "liked_answer"
 				  ]
 		read_only_field = ['questions', "liked_answer"]
-		depth=3
+		# depth=3
 
 class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 	# user = serializers.StringRelatedField(allow_null=False)
@@ -220,7 +187,6 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 				  "img",
 				  "viewed",
 				  "liked_num",
-				  "created_on", 
 				#   "viewed_count",
 				#   'replay_count'
 				  ]
@@ -229,10 +195,47 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 			print('in__create')
 			liked_num_data = validated_data.pop('liked_num')
+			tag_data = validated_data.pop('tag')
 			liked_num_data = {}
 			question = BoardQuestion.objects.create(**validated_data)
-			print("unko",liked_num_data)
-			# if liked_num_data.__dict__.values() == {"question"}:
+			print(tag_data)
+			for tag in tag_data:
+				question.tag.add(tag)
 			BoardQuestionLiked.objects.create(question=question, **liked_num_data)
-				# return question
 			return question
+
+
+class UserTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "user",
+				  "used_num",
+				  ]
+		read_only_field = ['tag','user']
+
+
+class CenterTagSerializer(serializers.ModelSerializer):
+	question = BoardQuestionCreateSerializer(many=True)
+	class Meta:
+		model = BoardCenterTag
+		fields = ["id",
+				  "tag",
+				  "question",
+				  "user",
+				  "used_num",
+				  "parent_tag" 
+				  ]
+		read_only_field = ['center_tag','user','question']
+
+
+class ParentTagSerializer(serializers.ModelSerializer):
+	center_tag = CenterTagSerializer(many=True)
+	class Meta:
+		model = BoardParentCenterTag
+		fields = ["id",
+				  "parent_tag",
+				  "center_tag"
+				  ]
+		read_only_field = ['center_tag']
