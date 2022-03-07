@@ -19,9 +19,9 @@ class BoardParentCenterTag(models.Model):
 class BoardCenterTag(models.Model):
     tag = models.CharField(max_length=200)
     # question = models.ManyToManyField(BoardQuestion, related_name="cnter_tag", default=None, blank=True)
-    user = models.ManyToManyField(User, default=None, related_name="cnter_tag", blank=True)
+    user = models.ManyToManyField(User, default=None, related_name="center_tag", blank=True)
     used_num = models.IntegerField(default=0)
-    parent_tag = models.ForeignKey(BoardParentCenterTag, related_name="cnter_tag", on_delete=models.CASCADE)
+    parent_tag = models.ForeignKey(BoardParentCenterTag, related_name="center_tag", on_delete=models.CASCADE)
         
 
     def __str__(self):

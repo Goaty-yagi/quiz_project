@@ -16,7 +16,28 @@
                          <p>TITLE</p>
                     </div>
                     <input class='question-title' maxlength="20" type="text" v-model='title' placeholder="20字以内">
-                    <!-- 文字数　{{ title.length}} -->
+                </div>
+                <div class="tag-container">
+                    <div class="tag-select">
+                        <div class="tag-comment">
+                            <p v-if="showParentTag==false">タグを選んでください</p>
+                        </div>
+                        <div class="tag-angle">
+                             <i @click="handleShowParentTag" class="fas fa-angle-down"></i>
+                        </div>
+                    </div>
+                    <div class="tag-pull-down">
+                        <div class="tag-loop"
+                        v-for="(parentTag,tagindex) in parentTags"
+                        v-bind:key="tagindex"
+                        :label="parentTag.parent_tag">
+                            <div class="tag-parent" v-if="showParentTag">
+                                {{ parentTag.parent_tag }}
+                                <div class="tag-child">   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="line"></div>
@@ -28,6 +49,19 @@
                     <textarea class='form-text' v-model='description'>
                      </textarea>
                 </div>
+                <!-- <v-select :options="parentTagList"> -->
+                    <!-- <optgroup
+                     class="select-wrapper"
+                     v-for="(parentTag,tagindex) in parentTags"
+                     v-bind:key="tagindex"
+                     :label="parentTag.parent_tag"
+                     >{{parentTag.parent_tag}}
+                     <option
+                      v-for="(tag,tagindex) in parentTag.center_tag"
+                      v-bind:key="tagindex"
+                      :label="tag.tag">{{ tag.tag}}</option>
+                    </optgroup> -->
+                <!-- </v-select> -->
                 <!-- <label class="image">
                     <input class="label" type="file" @change='getImage' enctype="multipart/form-data">
                     <i class="fas fa-camera"></i>
@@ -57,18 +91,28 @@ import CropperField from '@/components/board/CropperField.vue'
 export default {
     components: {
         CropperField,
-  },
+    },
+    props:[
+        'parentTags',
+        // 'parentTagList'
+    ],
     data(){
         return{
             title: '',
+            unko:["chinko","manko"],
             description:'',
             selectedFile:'',
+            showParentTag: false,
+            showChildTag: false,
             alerts: {
                 title: false,
                 description: false
             },
             showCropper: false,
         }
+    },
+    mounted(){
+        console.log("CQmounted",this.parentTags)
     },
     methods:{
         confirm(){
@@ -113,6 +157,9 @@ export default {
                 setTimeout(this.resetNotifications, 3000)
             }
         },
+        handleShowParentTag(){
+            this.showParentTag = !this.showParentTag
+        }
     }    
 }
 </script>
@@ -135,6 +182,7 @@ export default {
         flex-direction: column;
         // justify-content: center;
         align-items: center;
+        position:relative;
         .question-title-container{
             width:100%;
             display: flex;
@@ -150,6 +198,35 @@ export default {
                 height: 2.5rem;
                 background: $back-white;
                 padding-left: 1rem;                
+            }
+        }
+        .tag-container{
+            border: solid $base-color;
+            border-radius: 0.5rem;
+            width: 80%;
+            margin-top: 0.5rem;
+            .tag-select{
+                display: flex;
+                align-items: center;
+                .tag-comment{
+                    flex-basis:90%;
+                    margin:0.3rem;
+                    height: 1.5rem;
+                    p{
+
+                    }
+                }
+                .tag-angle{
+                    flex-basis:10%;
+                    display: flex;
+                    align-items: center;
+                    // justify-content: flex-end;
+                }
+            }
+            .tag-pull-down{
+                position: fixed;
+                background:whitesmoke;
+                border: solid $base-color;
             }
         }
         .line{

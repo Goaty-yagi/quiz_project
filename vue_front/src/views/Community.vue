@@ -30,8 +30,12 @@
                 v-for="(question,questionindex) in questions"
                 v-bind:key="questionindex">
                     <div class='question-list' @click="getDetail(question.slug)">
-                        <div class="tag-wrapper">
-                            <div class="tag">tag:{{ question.tag }}</div>
+                        <div 
+                         class="tag-wrapper">
+                            <div 
+                             class="tag"
+                             v-for="(tag,tagindex) in question.tag" 
+                             v-bind:key="tagindex">{{ tag.tag }}</div>
                         </div>
                         <div class="question-title">{{ question.title }}</div>
                         <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
@@ -44,6 +48,8 @@
                 </div>
                     <CreateQuestion
                      v-if='showCreateQuestion'
+                     :parentTags="parentTags"
+                     :parentTagList="parentTagList"
                      @handleShowConfirm='handleShowConfirm'
                      @handleShowCreateQuestion='handleShowCreateQuestion'/>
                     <Confirm
@@ -70,6 +76,8 @@ export default {
     data(){
         return{
             questions:'',
+            parentTags:'',
+            parentTagList:[],            
             showCreateQuestion: false,
             showConfirm: false,
             scrollFixed: false,
@@ -83,12 +91,13 @@ export default {
         }
     },
     created(){
-        this.getQuestion() 
     },
     beforeMount(){
         // this.getQuestion() 
     },
     mounted() {
+        
+        this.getQuestion() 
         // this.getQuestion()
         console.log('mounted at community',typeof []) 
     },
@@ -107,9 +116,29 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-
+            this.getParentTag()
             this.$store.commit('setIsLoading', false)
         },
+        async getParentTag(){
+            console.log('in_get_parentTag')
+            await axios
+                .get('/api/board/parent-tag')
+                .then(response => {
+                    this.parentTags = response.data
+                    console.log("parentTag",this.parentTags)
+                    // this.getParentTagList()
+                    // document.title = this.product.name + ' | Djackets'
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        // getParentTagList(){
+        //     for (let i of this.parentTags){
+        //         this.parentTagList.push(i.parent_tag)
+        //     }
+        //     console.log("tagList",this.parentTagList)
+        // },
         handleShowCreateQuestion(){
             console.log('showCreate')
             this.showCreateQuestion = !this.showCreateQuestion
@@ -233,11 +262,13 @@ export default {
             .question-list{
                 border: solid $base-color;
                 margin-bottom: 0.5rem;
+                width:100%;
                 background: rgb(252, 252, 252);
                 display: flex;
                 flex-direction: column;
                 .tag-wrapper{
                     display: flex;
+                    width: 100%;
                     .tag{
                         border: solid black;
                         border-radius: 50vh;
@@ -247,7 +278,7 @@ export default {
                         padding: 0.5rem;
                     }
                 }
-                 .good-like-wrapper{
+                .good-like-wrapper{
                     display: flex;
                     .fa-heart{
                         color: rgb(221, 36, 221);

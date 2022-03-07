@@ -16,7 +16,7 @@ urlpatterns = [
   path('answer-liked/<pk>/', AnswerLikedRead.as_view()),
   path('parent-tag/', ParetTagList.as_view()),
   path('center-tag/', CenterTagList.as_view()),  
-  path('user_tag/create/', UsertagCreate.as_view()),
-  path('user_tag/<pk>/', UsertagRead.as_view()),
+  path('user-tag/create/', UsertagCreate.as_view()),
+  path('user-tag/<pk>/', UsertagRead.as_view()),
 
 ]
