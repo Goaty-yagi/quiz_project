@@ -19,23 +19,58 @@
                 </div>
                 <div class="tag-container">
                     <div class="tag-select">
-                        <div class="tag-comment">
-                            <p v-if="showParentTag==false">タグを選んでください</p>
-                        </div>
-                        <div class="tag-angle">
-                             <i @click="handleShowParentTag" class="fas fa-angle-down"></i>
-                        </div>
-                    </div>
-                    <div class="tag-pull-down">
-                        <div class="tag-loop"
-                        v-for="(parentTag,tagindex) in parentTags"
-                        v-bind:key="tagindex"
-                        :label="parentTag.parent_tag">
-                            <div class="tag-parent" v-if="showParentTag">
-                                {{ parentTag.parent_tag }}
-                                <div class="tag-child">   
+                        <div
+                         class="tag-comment">
+                            <p v-if="showParentTag==false&&showSelectedTagList==false&&selectedTagList==false">タグを選んでください</p>
+                            <p v-if="showParentTag&&selectedTagList==false">最大３つまで選べます</p>
+                            <div class="tag-group-container" v-if="selectedTagList[0]">
+                                <div class="tag-group">
+                                    <div>{{ selectedTagList[0] }}</div>
+                                    <div class="circle" @click="deleteTag(selectedTagList[0])">
+                                         <p>×</p>
+                                    </div>
+                                </div>
+                                 <div class="tag-group" v-if="selectedTagList[1]">
+                                    <div>{{ selectedTagList[1] }}</div>
+                                    <div class="circle" @click="deleteTag(selectedTagList[1])">
+                                         <p>×</p>
+                                    </div>
+                                </div>
+                                 <div class="tag-group" v-if="selectedTagList[2]">
+                                    <div>{{ selectedTagList[2] }}</div>
+                                    <div class="circle" @click="deleteTag(selectedTagList[2])">
+                                         <p>×</p>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="tag-angle"
+                         @click="handleShowParentTag">
+                             <i class="fas fa-angle-down"></i>
+                        </div>
+                    </div>
+                    <div class="tag-pull-down" v-if="showParentTag">
+                        <div class="tag-loop"
+                        v-for="(parentTag,tagindex) in Object.keys(parentTagDict)"
+                        v-bind:key="tagindex"
+                        @click="getCenterTag(parentTag)">
+                            <div
+                             class="tag-parent">
+                                <p >{{ parentTag }}</p>
+                            </div>
+                            <div class="angle-right">
+                                <i class="fas fa-angle-right"></i>
+                            </div>
+                        </div>
+                        <div
+                            class="tag-child"
+                            v-show="showChildTag">
+                            <p
+                             v-for="(tag,tagindex) in centerTagList"
+                             v-bind:key="tagindex"
+                             @click="addTags(tag)">
+                                {{ tag }}
+                            </p> 
                         </div>
                     </div>
                 </div>
@@ -49,19 +84,7 @@
                     <textarea class='form-text' v-model='description'>
                      </textarea>
                 </div>
-                <!-- <v-select :options="parentTagList"> -->
-                    <!-- <optgroup
-                     class="select-wrapper"
-                     v-for="(parentTag,tagindex) in parentTags"
-                     v-bind:key="tagindex"
-                     :label="parentTag.parent_tag"
-                     >{{parentTag.parent_tag}}
-                     <option
-                      v-for="(tag,tagindex) in parentTag.center_tag"
-                      v-bind:key="tagindex"
-                      :label="tag.tag">{{ tag.tag}}</option>
-                    </optgroup> -->
-                <!-- </v-select> -->
+                
                 <!-- <label class="image">
                     <input class="label" type="file" @change='getImage' enctype="multipart/form-data">
                     <i class="fas fa-camera"></i>
@@ -73,12 +96,15 @@
                     <button class='btn-tr-black-base-sq' @click='confirm'>確認</button>
                 </div>                
             </form>
-            <div v-if="alerts.title||alerts.description" :class="{'notification-red':alerts.title||alerts.description}">
+            <div v-if="alerts.title||alerts.description||alerts.tag" :class="{'notification-red':alerts.title||alerts.description||alerts.tag}">
                 <div v-if="alerts.title" class="notification-text">
                     タイトルを入力してください。
                 </div>
                 <div v-if="alerts.description" class="notification-text">
                     文章を入力してください。
+                </div>
+                <div alerts.tag class="notification-text">
+                    最低タグを１つ選んでください。
                 </div>
             </div>
         </div>
@@ -93,36 +119,64 @@ export default {
         CropperField,
     },
     props:[
-        'parentTags',
+        'parentTagDict',
         // 'parentTagList'
     ],
     data(){
         return{
             title: '',
-            unko:["chinko","manko"],
+            centerTagList:[],
+            selectedTagList:[],
+            selectedTagDict:{},
             description:'',
             selectedFile:'',
             showParentTag: false,
             showChildTag: false,
+            showSelectedTagList: false,
+            alart: false,
             alerts: {
                 title: false,
-                description: false
+                description: false,
+                tag:false
             },
             showCropper: false,
         }
     },
     mounted(){
-        console.log("CQmounted",this.parentTags)
+        console.log("CQmounted",this.parentTagDict)
+        // this.de()
+    },
+    watch:{
+        selectedTagList: {
+            handler(a){
+                if (this.selectedTagList.length == 3){
+                    console.log('3dayo')
+                    this.showSelectedTagList = true
+                    this.showParentTag = false
+                    this.showChildTag = false
+                }
+            },deep:true          
+        } 
     },
     methods:{
         confirm(){
             console.log('in confirm')
             this.descriptionTitleCheck()
             console.log(this.alerts.title, this.alerts.description)
-            if(this.alerts.title==false&&this.alerts.description==false){
+            if(this.alerts.title==false&&this.alerts.description==false&&this.alerts.tag==false){
                 this.$store.commit('getTitle', this.title)
                 this.$store.commit('getDescription', this.description)
+                this.$store.commit('getSelectedTagList', this.selectedTagList)
                 this.$emit('handleShowConfirm')
+            }
+        },
+        getCenterTag(parentTag){
+            this.handleShowChildTag()
+            if (this.centerTagList[0]){
+                this.centerTagList = []
+            }
+            for(let i of this.parentTagDict[parentTag]){
+                this.centerTagList.push(i.tag)
             }
         },
         // resize(e){
@@ -143,9 +197,31 @@ export default {
             await console.log(this.image)
             this.handleShowCropper()
         },
+        addTags(tag){
+            console.log('tag',tag)
+            if(this.selectedTagList.length >= 3){
+                if (this.selectedTagList.includes(tag)){
+                    this.selectedTagList = this.selectedTagList.filter(item => item!=tag)
+                    console.log('idesu',this.selectedTagList)
+                // this.selectedTagList.pop(tag)
+                }
+                this.alart = true
+                return
+            }
+            if (this.selectedTagList.includes(tag)){
+                this.selectedTagList.pop(tag)
+                return
+            }
+            this.selectedTagList.push(tag)
+            console.log(this.selectedTagList)
+        },
+        deleteTag(tag){
+            this.selectedTagList = this.selectedTagList.filter(item => item!=tag)
+        },
         resetNotifications(){
             this.alerts.description = false
             this.alerts.title = false
+            this.alerts.tag = false
         },
         descriptionTitleCheck(){
             if(this.description==''){
@@ -156,9 +232,17 @@ export default {
                 this.alerts.title = true
                 setTimeout(this.resetNotifications, 3000)
             }
+            if(this.selectedTagList==false){
+                this.alerts.tag = true
+                setTimeout(this.resetNotifications, 3000)
+            }
         },
         handleShowParentTag(){
             this.showParentTag = !this.showParentTag
+        },
+        handleShowChildTag(){
+            this.showChildTag = true
+            console.log('inhandle',this.showChildTag)
         }
     }    
 }
@@ -212,8 +296,38 @@ export default {
                     flex-basis:90%;
                     margin:0.3rem;
                     height: 1.5rem;
-                    p{
-
+                    .tag-group-container{
+                        display: flex;
+                        .tag-group{
+                            border: solid gray;
+                            border-radius: 50vh;
+                            width: auto;
+                            min-width: 3rem;
+                            margin-right: 0.5rem;
+                            display: inline-block;
+                            align-items: center;
+                            padding-top:0.1rem;
+                            padding-bottom: 0.1rem;
+                            padding-left: 0.5rem;
+                            padding-right: 0.5rem;
+                            font-size:0.8rem;
+                            div{
+                                // flex-basis:60%;
+                                display: inline-block;
+                            }
+                            .circle{
+                                // border-radius: 50vh;
+                                flex-basis:40%;
+                                display: inline-block;
+                                align-items: center;
+                                justify-content: center;
+                                margin-left:0.5rem;
+                                p{
+                                    font-weight: bold;
+                                    color: $dark-blue;
+                            }
+                            }
+                        }
                     }
                 }
                 .tag-angle{
@@ -224,9 +338,32 @@ export default {
                 }
             }
             .tag-pull-down{
-                position: fixed;
-                background:whitesmoke;
+                position: absolute;
+                background: $back-tr-white;
                 border: solid $base-color;
+                width: inherit;
+                display: flex;
+                flex-direction: column;
+                padding:0.5rem;
+                .tag-loop{
+                    display: flex;
+                    .tag-parent{
+                        flex-basis:40%;
+                        display: flex;
+                        p{}
+                    }
+                    .fa-angle-right{
+                        flex-basis:60%;
+                    }
+                }
+                .tag-child{
+                    position:absolute;
+                    background: $back-tr-white;
+                    width:60%;
+                    right:0;
+                    display: flex;
+                    flex-direction: column;
+                }
             }
         }
         .line{

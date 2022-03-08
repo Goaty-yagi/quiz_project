@@ -48,8 +48,7 @@
                 </div>
                     <CreateQuestion
                      v-if='showCreateQuestion'
-                     :parentTags="parentTags"
-                     :parentTagList="parentTagList"
+                     :parentTagDict="parentTagDict"
                      @handleShowConfirm='handleShowConfirm'
                      @handleShowCreateQuestion='handleShowCreateQuestion'/>
                     <Confirm
@@ -76,8 +75,7 @@ export default {
     data(){
         return{
             questions:'',
-            parentTags:'',
-            parentTagList:[],            
+            parentTagDict:{},       
             showCreateQuestion: false,
             showConfirm: false,
             scrollFixed: false,
@@ -124,8 +122,8 @@ export default {
             await axios
                 .get('/api/board/parent-tag')
                 .then(response => {
-                    this.parentTags = response.data
-                    console.log("parentTag",this.parentTags)
+                    let parentTags = response.data
+                    this.getParentTagDict(parentTags)
                     // this.getParentTagList()
                     // document.title = this.product.name + ' | Djackets'
                 })
@@ -133,12 +131,11 @@ export default {
                     console.log(error)
                 })
         },
-        // getParentTagList(){
-        //     for (let i of this.parentTags){
-        //         this.parentTagList.push(i.parent_tag)
-        //     }
-        //     console.log("tagList",this.parentTagList)
-        // },
+        getParentTagDict(parentTags){
+            for (let i of parentTags){
+                this.parentTagDict[i.parent_tag] = i.center_tag
+            }
+        },
         handleShowCreateQuestion(){
             console.log('showCreate')
             this.showCreateQuestion = !this.showCreateQuestion

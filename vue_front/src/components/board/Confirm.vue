@@ -10,10 +10,18 @@
                         <div class='title-flex'>
                             <p>TITLE</p>
                         </div>
-                        <div class="question-title">
+                        <div
+                         class="question-title">
                             <p> {{ $store.state.title }} </p>
                         </div>
                         <!-- <input class='question-title' type="text" v-model='title' :placeholder="$store.state.title"> -->
+                    </div>
+                    <div classs='tag-group-container'>
+                        <div v-for="(tag,tagindex) in $store.state.board.selectedTagList"
+                        v-bind:key="tagindex"
+                        class="tag-group">
+                            <p>{{ tag }}</p>  
+                        </div>
                     </div>
 
                     <div class="line"></div>
@@ -29,7 +37,7 @@
                     <div class='confirm-message'>この内容で投稿しますか。
                     </div>
                     <div class="button-group">
-                            <div @click="this.$store.commit('handleShowConfirm')">戻る</div>
+                            <div @click="this.$emit('handleShowConfirm')">戻る</div>
                             <button class="btn-tr-black-base-sq" @click='publish'>投稿する</button>
                     </div>            
                 </div>
@@ -63,14 +71,15 @@ export default {
                     description: this.$store.state.description,
                     user: this.$store.state.signup.user.uid,
                     slug: this.uuid,
-                    liked_num:{}
+                    liked_num:{},
+                    tag:[]
                 },
                 
             })
             // this.$emit('handleNotifications')
             this.$emit('getDetail',this.uuid)
             this.$store.dispatch("handleNotifications", 'post')
-            // this.$emit('handleShowConfirm')
+            this.$emit('handleShowConfirm')
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
         }
         //     axios.post(
@@ -144,6 +153,25 @@ export default {
                     padding-left: 0.5rem;
                     text-align: left;
                     font-size: 0.8rem;            
+                }
+            }
+            .tag-group-container{
+                width:80%;
+                display: flex;
+                border: solid pink;
+                .tag-group{
+                    border: solid gray;
+                    border-radius: 50vh;
+                    width: auto;
+                    min-width: 3rem;
+                    margin-right: 0.5rem;
+                    display: inline-block;
+                    align-items: center;
+                    padding-top:0.1rem;
+                    padding-bottom: 0.1rem;
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                    font-size:0.8rem;
                 }
             }
             .line{

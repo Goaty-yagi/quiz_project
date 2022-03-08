@@ -28,6 +28,7 @@ class AnswerLikedReadSerializer(serializers.ModelSerializer):
 				  "liked_num",
 				  ]
 		read_only_field = ['user']
+		
 
 		# def liked_count(self, instance):
 		# 	return instance.liked_count()
@@ -126,7 +127,7 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 		liked_answer_data = validated_data.pop('liked_answer')
 		answer = BoardAnswer.objects.create(**validated_data)
 		print("unko",liked_answer_data)
-		BoardAnswerLiked.objects.create(answer=answer)
+		BoardAnswerLiked.objects.create(answer=answer, **liked_answer_data)
 		return answer
 
 	# def create(self, validated_data):
