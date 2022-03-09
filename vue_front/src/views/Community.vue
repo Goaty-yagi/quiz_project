@@ -1,5 +1,5 @@
 <template>
-    <div  :style="{ top:scroll_position, position: '100'}" class="community-wrapper">
+    <div class="community-wrapper">
         <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
             <!-- <i class="fas fa-cog"></i> -->
             <div class="lds-dual-ring"></div>
@@ -270,9 +270,11 @@ export default {
                         border: solid black;
                         border-radius: 50vh;
                         background: rgb(230, 230, 230);
-                        margin-top: 0.3rem;
+                        margin-top: 0.5rem;
                         margin-left: 0.3rem;
+                        margin-bottom: 0.5rem;
                         padding: 0.5rem;
+                        min-width: 3rem;
                     }
                 }
                 .good-like-wrapper{

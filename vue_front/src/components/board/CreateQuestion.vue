@@ -103,7 +103,7 @@
                 <div v-if="alerts.description" class="notification-text">
                     文章を入力してください。
                 </div>
-                <div alerts.tag class="notification-text">
+                <div v-if="alerts.tag" class="notification-text">
                     最低タグを１つ選んでください。
                 </div>
             </div>

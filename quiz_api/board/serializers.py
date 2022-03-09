@@ -125,9 +125,10 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 		print('in__create')
 		print("valid",validated_data)
 		liked_answer_data = validated_data.pop('liked_answer')
+		print("liked_answer_data:",liked_answer_data)
 		answer = BoardAnswer.objects.create(**validated_data)
 		print("unko",liked_answer_data)
-		BoardAnswerLiked.objects.create(answer=answer, **liked_answer_data)
+		BoardAnswerLiked.objects.create(answer=answer)
 		return answer
 
 	# def create(self, validated_data):

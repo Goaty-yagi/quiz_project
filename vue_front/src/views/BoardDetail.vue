@@ -35,6 +35,15 @@
                             <p class="question-status"> {{ questionStatus }} </p>
                         </div>
                     </div>
+                    <div
+                     class="tag-container">
+                        <div
+                         class="tag"
+                         v-for="(tag,questionindex) in question.tag"
+                         v-bind:key="questionindex">
+                            {{ tag.tag }}
+                        </div>
+                    </div>
                     <div class="title-question">
                         <p class="question-title">  {{ question.title }} </p>        
                         <p class='question-description'> {{ question.description}} </p>
@@ -278,7 +287,6 @@ export default {
             }
         },
         countUpViewed(){
-            // console.log('in count')
             if(this.questionUserBoolean == false){
                 console.log('count', this.questionSlug)
                 axios.patch(`/api/board/question/${this.questionSlug}`,
@@ -293,8 +301,9 @@ export default {
         //     console.log('boo',this.addedAnswerLiked)
         // },
         makeAnswerDict(){
+            console.log("in make dict",this.allAnswer)
             for(let answer of this.allAnswer){
-                // console.log(answer.liked_answer)
+                console.log(answer)
                 this.answerDict[answer.id] = {
                     "liked_id":answer.liked_answer[0].id,
                     "liked_num":answer.liked_answer[0].liked_num,
@@ -302,7 +311,7 @@ export default {
                     "likedUsers":[answer.liked_answer[0].user]
                 }
             }
-            // console.log('dict',this.answerDict[83].likedUsers)
+            console.log('dict',this.answerDict)
             this.checkUserLiked()
         },
         addAnsweerLikedNum(answerId){
@@ -393,6 +402,17 @@ export default {
                 }
             }
         }
+        .tag-container{
+            display: flex;
+            width: 100%;
+            padding-left: 1rem;
+            .tag{
+                margin-right: 0.5rem;
+                border: solid gray;
+                border-radius: 1rem;
+                padding:0.5rem; 
+            }
+        }
         .title-question{
             padding:1rem;
             .question-title{
@@ -406,10 +426,12 @@ export default {
                 text-align: left;
                 padding: 1rem; 
                 background: rgb(236, 236, 236);
+                white-space: pre-wrap;
             }
         }
         .question-box-footer{
             display: flex;
+            margin-bottom: 0.5rem;
             .fa-heart{
                 color: rgb(221, 36, 221);
                 margin-left: 0.5rem;
