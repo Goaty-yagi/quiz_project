@@ -21,23 +21,23 @@
                     <div class="tag-select">
                         <div
                          class="tag-comment">
-                            <p v-if="showParentTag==false&&showSelectedTagList==false&&selectedTagList==false">タグを選んでください</p>
+                            <p v-if="showParentTag==false&&showSelectedTagList==false&&selectedTagList==false" @click="handleShowParentTag">タグを選んでください</p>
                             <p v-if="showParentTag&&selectedTagList==false">最大３つまで選べます</p>
                             <div class="tag-group-container" v-if="selectedTagList[0]">
                                 <div class="tag-group">
-                                    <div>{{ selectedTagList[0] }}</div>
+                                    <div>{{ selectedTagList[0].tag }}</div>
                                     <div class="circle" @click="deleteTag(selectedTagList[0])">
                                          <p>×</p>
                                     </div>
                                 </div>
                                  <div class="tag-group" v-if="selectedTagList[1]">
-                                    <div>{{ selectedTagList[1] }}</div>
+                                    <div>{{ selectedTagList[1].tag }}</div>
                                     <div class="circle" @click="deleteTag(selectedTagList[1])">
                                          <p>×</p>
                                     </div>
                                 </div>
                                  <div class="tag-group" v-if="selectedTagList[2]">
-                                    <div>{{ selectedTagList[2] }}</div>
+                                    <div>{{ selectedTagList[2].tag }}</div>
                                     <div class="circle" @click="deleteTag(selectedTagList[2])">
                                          <p>×</p>
                                     </div>
@@ -68,8 +68,8 @@
                             <p
                              v-for="(tag,tagindex) in centerTagList"
                              v-bind:key="tagindex"
-                             @click="addTags(tag)">
-                                {{ tag }}
+                             @click="addTags(tag.tag, tag.id)">
+                                {{ tag.tag }}
                             </p> 
                         </div>
                     </div>
@@ -155,18 +155,24 @@ export default {
                     this.showParentTag = false
                     this.showChildTag = false
                 }
+                if(this.selectedTagList.length == 0){
+                    this.showParentTag = false
+                    this.showSelectedTagList = false
+                    this.showChildTag = false
+                }
             },deep:true          
         } 
     },
     methods:{
         confirm(){
             console.log('in confirm')
-            this.descriptionTitleCheck()
+            this.formCheck()
             console.log(this.alerts.title, this.alerts.description)
             if(this.alerts.title==false&&this.alerts.description==false&&this.alerts.tag==false){
                 this.$store.commit('getTitle', this.title)
                 this.$store.commit('getDescription', this.description)
-                this.$store.commit('getSelectedTagList', this.selectedTagList)
+                console.log(this.selectedTagList)
+                this.$store.commit('getTagList', this.selectedTagList)
                 this.$emit('handleShowConfirm')
             }
         },
@@ -176,9 +182,17 @@ export default {
                 this.centerTagList = []
             }
             for(let i of this.parentTagDict[parentTag]){
-                this.centerTagList.push(i.tag)
+                this.centerTagList.push({"id":i.id, "tag":i.tag})
             }
+            console.log('center.tag',this.centerTagList)
         },
+        // getTagId(){
+        //     const tagIdList = []
+        //     for(let i of this.selectedTagList){
+        //         tagIdList.push(i.id)
+        //     }
+        //     return tagIdList
+        // },
         // resize(e){
         //     e.target.style.height = 'auto'
         //     e.target.style.height = `$(e.target.scrollHeight)px`
@@ -197,33 +211,39 @@ export default {
             await console.log(this.image)
             this.handleShowCropper()
         },
-        addTags(tag){
-            console.log('tag',tag)
-            if(this.selectedTagList.length >= 3){
-                if (this.selectedTagList.includes(tag)){
-                    this.selectedTagList = this.selectedTagList.filter(item => item!=tag)
-                    console.log('idesu',this.selectedTagList)
-                // this.selectedTagList.pop(tag)
+        addTags(tag,id){
+            console.log('tag',tag,'id',id)
+            if(this.selectedTagList.length > 0){
+                console.log("something")
+                for(let selectedTag of this.selectedTagList){
+                    if(selectedTag.tag == tag){
+                        this.selectedTagList = this.selectedTagList.filter(item => item!=selectedTag)
+                        return
+                    }
                 }
+            }
+            if (this.selectedTagList.length >= 3){
                 this.alart = true
                 return
             }
-            if (this.selectedTagList.includes(tag)){
-                this.selectedTagList.pop(tag)
-                return
-            }
-            this.selectedTagList.push(tag)
+            this.selectedTagList.push({"tag":tag, "id":id})
             console.log(this.selectedTagList)
         },
         deleteTag(tag){
             this.selectedTagList = this.selectedTagList.filter(item => item!=tag)
+            console.log(tag,'is deleted')
+            if(this.selectedTagList.length == 0){
+                console.log("0dayo")
+                this.showParentTag = false
+                this.showSelectedTagList = false
+            }
         },
         resetNotifications(){
             this.alerts.description = false
             this.alerts.title = false
             this.alerts.tag = false
         },
-        descriptionTitleCheck(){
+        formCheck(){
             if(this.description==''){
                 this.alerts.description = true
                 setTimeout(this.resetNotifications, 3000)
@@ -310,7 +330,8 @@ export default {
                             padding-bottom: 0.1rem;
                             padding-left: 0.5rem;
                             padding-right: 0.5rem;
-                            font-size:0.8rem;
+                            font-size:0.7rem;
+                            font-weight: bold;
                             div{
                                 // flex-basis:60%;
                                 display: inline-block;

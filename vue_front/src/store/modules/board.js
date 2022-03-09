@@ -3,13 +3,13 @@ import store from '..'
 export default {
     namespace: true,
     state: {
+        title:'',
+        description:'',
+        selectedTagList:'',
         notifications:{
             reply: false,
             answer: false,
             post: false,
-            title:'',
-            description:'',
-            selectedTagList:''
         },
     },
     mutations:{
@@ -27,9 +27,13 @@ export default {
             state.description = payload
             console.log('Got description',state.description)
         },
-        getSelectedTagList(state, payload){
-            state.selectedTagList = payload
-        }
+        // getSelectedTagList(state, payload){
+        //     state.selectedTagList = payload
+        // },
+        getTagList(state, payload){
+                state.selectedTagList = payload
+                console.log('Got tagID',state.selectedTagList)
+        },
     },
     
     actions:{

@@ -16,11 +16,11 @@
                         </div>
                         <!-- <input class='question-title' type="text" v-model='title' :placeholder="$store.state.title"> -->
                     </div>
-                    <div classs='tag-group-container'>
+                    <div class='tag-group-container'>
                         <div v-for="(tag,tagindex) in $store.state.board.selectedTagList"
                         v-bind:key="tagindex"
                         class="tag-group">
-                            <p>{{ tag }}</p>  
+                            <p>{{ tag.tag }}</p>  
                         </div>
                     </div>
 
@@ -58,6 +58,7 @@ export default {
         }
     },
     mounted(){
+        console.log(this.$store.state.selectedTagId)
         this.title=this.$store.state.title
     },
     methods:{
@@ -72,7 +73,7 @@ export default {
                     user: this.$store.state.signup.user.uid,
                     slug: this.uuid,
                     liked_num:{},
-                    tag:[]
+                    tag: this.getTagId()
                 },
                 
             })
@@ -81,6 +82,13 @@ export default {
             this.$store.dispatch("handleNotifications", 'post')
             this.$emit('handleShowConfirm')
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
+        },
+        getTagId(){
+            const idList = []
+            for( let i of this.$store.state.board.selectedTagList){
+                idList.push(i.id)
+            }
+            return idList
         }
         //     axios.post(
         //         '/api/forum/question/',
@@ -158,7 +166,8 @@ export default {
             .tag-group-container{
                 width:80%;
                 display: flex;
-                border: solid pink;
+                justify-content: center;
+                padding-top: 0.5rem;
                 .tag-group{
                     border: solid gray;
                     border-radius: 50vh;
