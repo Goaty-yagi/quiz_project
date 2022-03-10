@@ -12,7 +12,7 @@
                         </div>
                         <div
                          class="question-title">
-                            <p> {{ $store.state.title }} </p>
+                            <p> {{ $store.state.board.title }} </p>
                         </div>
                         <!-- <input class='question-title' type="text" v-model='title' :placeholder="$store.state.title"> -->
                     </div>
@@ -31,7 +31,7 @@
                     </div>
                     <div class='text-field'>
                         <div class='form-text'>
-                            {{ $store.state.description }}
+                            {{ $store.state.board.description }}
                         </div>
                     </div>
                     <div class='confirm-message'>この内容で投稿しますか。
@@ -58,8 +58,7 @@ export default {
         }
     },
     mounted(){
-        console.log(this.$store.state.selectedTagId)
-        this.title=this.$store.state.title
+        console.log("mounted_confirm",this.$store.state.board.title)
     },
     methods:{
         async publish(){
@@ -68,8 +67,8 @@ export default {
                 method: 'post',
                 url: '/api/board/question/create',
                 data: {
-                    title: this.$store.state.title,
-                    description: this.$store.state.description,
+                    title: this.$store.state.board.title,
+                    description: this.$store.state.board.description,
                     user: this.$store.state.signup.user.uid,
                     slug: this.uuid,
                     liked_num:{},

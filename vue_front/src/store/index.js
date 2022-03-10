@@ -17,8 +17,6 @@ let getDefaultState = () => {
     test:null,
     notice:false,
     step:1,
-    title:'',
-    description:'',
   }}
 
 
@@ -87,14 +85,6 @@ export default createStore({
     },
     stepClear(state){
       state.step = 1
-    },
-    getTitle(state,payload){
-      state.title = payload
-      console.log('Got title',state.title)
-    },
-    getDescription(state, payload){
-        state.description = payload
-        console.log('Got description',state.description)
     },
     // quizRouter(i,f,n){
     //   state.id = i

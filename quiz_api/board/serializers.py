@@ -1,5 +1,6 @@
 from gettext import install
 from pickletools import read_long1
+import secrets
 from rest_framework import serializers
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag
 
@@ -105,6 +106,7 @@ class BoardAnswerReadSerializer(serializers.ModelSerializer):
 		read_only_field = ['questions', "liked_answer"]
 		# depth=3
 
+
 class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 	# user = serializers.StringRelatedField(allow_null=False)
 	liked_answer = AnswerLikedCreateSerializer(required=False,many=True)
@@ -152,8 +154,10 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "title", 
 				  "description", 
 				  "slug", 
-				  "solved", 
-				  "good", 
+				  "solved",
+				  "select_best_on_going",
+				  "post_on_going",
+				  "vote_on_going",
 				  "tag", 
 				  "vote", 
 				  "user",
@@ -165,8 +169,7 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				#   "viewed_count",
 				#   'replay_count'
 				  ]
-		depth=3
-		
+		depth=3	
 
 class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 	answer = BoardAnswerReadSerializer(many=True, required=False)
@@ -181,7 +184,9 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 				  "description", 
 				  "slug", 
 				  "solved", 
-				  "good", 
+				  "select_best_on_going",
+				  "post_on_going",
+				  "vote_on_going",
 				  "tag", 
 				  "vote", 
 				  "user",
@@ -192,7 +197,7 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 				#   "viewed_count",
 				#   'replay_count'
 				  ]
-	
+
 
 	def create(self, validated_data):
 			print('in__create')

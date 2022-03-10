@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import Http404
 
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag
 from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer, AnswerLikedReadSerializer, ParentTagSerializer, UserTagSerializer, CenterTagSerializer
@@ -71,6 +72,34 @@ class UsertagCreate(generics.CreateAPIView):
 class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
     queryset = BoardUserTag.objects.all()
     serializer_class = UserTagSerializer
+
+
+class RelatedQuestionList(APIView):
+# this is for all indicate quiz, field and module
+    def get(self, request, format=None):
+        print("request dayo",request.query_params)
+        try:
+            
+            queryset = BoardQuestion.objects.filter(tag=request.query_params['tag'],
+            # field=request.query_params['field'],
+            # module=request.query_params['module'])
+            # quiz_num = int(request.query_params['num']
+            )
+            queryset_len = BoardQuestion.objects.filter(tag=request.query_params['tag']).count()
+            print(queryset_len)
+            # question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+            question = queryset
+            serializer = BoardQuestionListSerializer(question, many=True)
+            return Response(serializer.data)
+        except BoardQuestion.DoesNotExist:
+            raise Http404
+
+
+
+# class RelatedQuestion(generics.ListAPIView):
+#     queryset = BoardQuestion.objects.fi()
+#     serializer_class = BoardQuestionListSerializer
+#     lookup_field = 'slug'
 
 
 # class UserTagCreateApi(APIView):

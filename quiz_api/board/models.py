@@ -3,6 +3,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from datetime import datetime
+import asyncio
+
 import secrets
 import dateutil.parser
 from user.models import User
@@ -59,13 +61,20 @@ class BoardQuestion(models.Model):
     slug = models.SlugField(null=False)
     user = models.ForeignKey(User, related_name='question', default=None, on_delete=models.CASCADE)
     solved = models.BooleanField(default=False)
-    good = models.IntegerField(default=0)
+    post_on_going = models.BooleanField(default=True)
+    select_best_on_going = models.BooleanField(default=False)
+    vote_on_going = models.BooleanField(default=False)
     vote = models.IntegerField(default=0)
     tag = models.ManyToManyField(BoardCenterTag, related_name='question')
     img = models.ImageField(blank=True, null=True)
     viewed = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
 
+
+    # def handle_post_on_going(self):
+    #     self.post_on_going = False
+	# 	# self.save()
+    #     print('post_on_going')
 
     # def save(self, *args, **kwargs):
     #     if not self.slug:
@@ -84,7 +93,7 @@ class BoardQuestion(models.Model):
 
     
     class Meta:
-        ordering = ['created_on',]
+        ordering = ['-created_on',]
 
         
     def __str__(self):
@@ -158,3 +167,21 @@ def add_used_num(sender, instance, created, **kwargs):
         center_tag_object.save()
     except:
         raise Exception("unko")
+
+
+# @receiver(post_save, sender=BoardQuestion)
+# async def start_post_on_going(sender, instance, created, **kwargs):
+#     print("receiver_dayo",kwargs["signal"].__dict__, 'instance',instance, 'sender',sender)  
+#     if created:
+#         schedOBJ = sched.scheduler()
+#         week = 604800
+#         schedOBJ.enter(20,1, instance.handle_post_on_going)
+#         schedOBJ.run()
+    # try:
+    #     center_tag_id = instance.tag.id
+    #     center_tag_object = BoardCenterTag.objects.get(id=center_tag_id)
+    #     center_tag_object.used_num +=1
+    #     instance.used_num +=1
+    #     center_tag_object.save()
+    # except:
+    #     raise Exception("unko")
