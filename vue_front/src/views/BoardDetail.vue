@@ -5,7 +5,7 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class="question-wrapper" v-if="question">
+            <div class="question-wrapper" v-if="question&&relatedQuestion">
                 <p class='title-white'>質問板</p>
                 <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
                     <div class="notification-text">
@@ -59,6 +59,17 @@
                 </div>
                 <div class="relative-box">
                     <p>関連した質問</p>
+                    <div
+                     v-for="(question,questionindex) in slicedRelatedQuestion"
+                     v-bind:key="questionindex">
+                        <div class='question-list' @click="getRelatedSlug(question.slug)">
+                            <div 
+                                class="tag-wrapper">
+                                <div class="question-title">{{ question.title }}</div>
+                                <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
+                            </div>
+                        </div>
+                    </div>
                     <p>もっと見る></p>
                 </div>
                 <div class="answer-box" v-if='question.answer[0]'>
@@ -146,6 +157,7 @@
 
 <script>
 import axios from 'axios'
+import {router} from "../main.js"
 import  Answer from '@/components/board/Answer.vue'
 import  Reply from '@/components/board/Reply.vue'
 export default {
@@ -177,6 +189,7 @@ export default {
             likedUserIdList:'',
             checkedLikedUserList:[],
             relatedQuestion:'',
+            slicedRelatedQuestion:'',
             questionTags:[]
         }
     },
@@ -212,30 +225,40 @@ export default {
             // this.$store.commit('setIsLoading', false)
         },
         async getRelatedQuestion() {
+            // relatedQuestion Start from here.
+            // => deleteSameQuestion to delete the same question in RQ as detail Q.
+            // => makeRandomSlicedArray to make random sliced RQ array
+            // => makeRandomArray is to make sliced RQ in list to show about 3 Q
+            // => RandArray in makeRandomArray to get random Q form RQ return slicedRelatedQuestion for HTML
             this.$store.commit('setIsLoading', true)
-            console.log("ingetQ", this.questionTags.length)
+            console.log("ingetRQ", this.questionTags.length)
             try{
                 if(this.questionTags.length == 1){
                     await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}`)
                     .then(response => {
                     this.relatedQuestion = response.data
+                    console.log("1", this.relatedQuestion)
                     })
                 }
                 if(this.questionTags.length == 2){
                     await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`)
                     .then(response => {
                     this.relatedQuestion = response.data
+                    console.log("2", this.relatedQuestion)
                     })
                 }
                 if(this.questionTags.length == 3){
                     await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`)
                     .then(response => {
                     this.relatedQuestion = response.data
+                    console.log("3", this.relatedQuestion)
                     })
                 }}
                 catch{(error => {
                     console.log(error)
             })}
+            this.deleteSameQuestion()
+            this.makeRandomSlicedArray()
             console.log("relatedquestion",this.relatedQuestion)
             this.$store.commit('setIsLoading', false)
         },
@@ -274,6 +297,52 @@ export default {
                 this.questionTags.push(tag.id)
             }
         },
+        // G-method return a value from array invoked
+        // RandArray(array){
+        //     var rand = Math.random()*array.length | 0;
+        //     var rValue = array[rand];
+        //     console.log("RAndA", rValue)
+        //     return rValue;
+        // },
+        makeRandomSlicedArray(){
+            let num = 3
+            if (this.relatedQuestion.lendth < 3){
+                num = this.relatedQuestion.lendth
+            }
+            this.getRandomQuestion(this.relatedQuestion)
+            this.slicedRelatedQuestion = this.relatedQuestion.slice(0,num)
+            console.log(this.slicedRelatedQuestion)
+        },
+        deleteSameQuestion(){
+            console.log("first",this.relatedQuestion)
+            console.log("inDE",this.question.id)
+            for(let q of this.relatedQuestion){
+                console.log("loop", q.id)
+                if (q.id == this.question.id){
+                    console.log("before",this.relatedQuestion)
+                    this.relatedQuestion.splice(this.relatedQuestion.indexOf(q),1)
+                    console.log('after',this.relatedQuestion)
+                    break
+                }
+                
+            }
+        },
+        getRandomQuestion(array){
+            for (let i = array.length - 1; i >= 0; i--) {
+                let r = Math.floor(Math.random() * (i + 1))
+                let tmp = array[i]
+                array[i] = array[r]
+                array[r] = tmp
+                }
+            for ( let k =0; k < array.length; k++){
+                for (let i = array[k].answer.length - 1; i >= 0; i--) {
+                let r = Math.floor(Math.random() * (i + 1))
+                let tmp = array[k].answer[i]
+                array[k].answer[i] = array[k].answer[r]
+                array[k].answer[r] = tmp
+                }}
+                return array
+            },
         // resetNotifications(){
         //     this.notifications.answer = false
         //     this.notifications.reply = false
@@ -294,6 +363,11 @@ export default {
         //     this.liked_num = liked_num
         //     return this.liked_num
         // },
+        getRelatedSlug(slug){
+            console.log('slug',slug)
+            // this.$store.commit('getSlug',slug)
+            router.push(`/board-detail/${slug}` )
+        },
         addLikedNum(){
             this.liked_num += 1
             this.addedLiked = true

@@ -151,7 +151,7 @@ export default {
             return time
         },
         getDetail(slug){
-            console.log('slug',slug)
+            console.log('slugdayo',slug)
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
         },
