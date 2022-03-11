@@ -102,9 +102,9 @@ class RelatedQuestionList(APIView):
 # set 3 unsolved questions and 12 solved questions
 def set_random_object(solved_queryset, unsolved_queryset):
     print("in set_random")
-    random_id_list = list()
-    max_solved_queryset_id = solved_queryset.aggregate(max_id=Max("id"))['max_id']
-    max_unsolved_queryset_id = unsolved_queryset.aggregate(max_id=Max("id"))['max_id']
+    unsolevd_list = [i for i in unsolved_queryset]
+    solved_list = [i for i in solved_queryset]
+    
     if len(solved_queryset) >= 12:
         solved_queryset_num = 12
     else:
@@ -115,19 +115,11 @@ def set_random_object(solved_queryset, unsolved_queryset):
     else:
         unsolved_queryset_num = len(unsolved_queryset)
     # set 3 unsolved questions
-    while len(random_id_list) != unsolved_queryset_num:
-        pk = random.randint(0, max_unsolved_queryset_id)
-        unsolved_question = unsolved_queryset.filter(pk=pk)
-        if unsolved_question:
-            random_id_list.append(unsolved_question[0])
-     # set 12 solved questions
-    while len(random_id_list) != solved_queryset_num + unsolved_queryset_num:
-        print("loop2 start", len(random_id_list), solved_queryset_num)
-        pk = random.randint(0, max_solved_queryset_id)
-        solved_question = solved_queryset.filter(pk=pk)
-        if solved_question:
-            random_id_list.append(solved_question[0])
-            print("loop2 end")
+    random_id_list = random.sample(unsolevd_list, unsolved_queryset_num)
+    # set 12 solved questions
+    random_solved_list = random.sample(solved_list, solved_queryset_num)
+    for solved_question in random_solved_list:
+        random_id_list.append(solved_question)
     return random_id_list
 
 

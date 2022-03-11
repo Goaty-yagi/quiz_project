@@ -32,7 +32,7 @@
                             <p> {{ question.created_on }} </p>
                         </div>
                         <div class="question-status-container">
-                            <p class="question-status"> {{ questionStatus }} </p>
+                            <p class="question-status"> {{ handleQuestionStatus(question.solved) }} </p>
                         </div>
                     </div>
                     <div
@@ -168,7 +168,7 @@ export default {
             answerDict:{},
             addedAnswerLiked:{},
             viewed:0,
-            questionStatus:'未解決',
+            questionStatus:['未解決','解決'],
             reply:'',
             questionUser: '',
             questionUserBoolean: false,
@@ -176,6 +176,8 @@ export default {
             addedLiked: false,
             likedUserIdList:'',
             checkedLikedUserList:[],
+            relatedQuestion:'',
+            questionTags:[]
         }
     },
     mounted() { 
@@ -201,10 +203,40 @@ export default {
                     this.viewed = this.question.viewed
                     this.countUpViewed()
                     this.makeAnswerDict()
+                    this.getQuestionTagList(this.question.tag)
+                    this.getRelatedQuestion()
                     })
                 .catch(error => {
                     console.log(error)
             })
+            // this.$store.commit('setIsLoading', false)
+        },
+        async getRelatedQuestion() {
+            this.$store.commit('setIsLoading', true)
+            console.log("ingetQ", this.questionTags.length)
+            try{
+                if(this.questionTags.length == 1){
+                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}`)
+                    .then(response => {
+                    this.relatedQuestion = response.data
+                    })
+                }
+                if(this.questionTags.length == 2){
+                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`)
+                    .then(response => {
+                    this.relatedQuestion = response.data
+                    })
+                }
+                if(this.questionTags.length == 3){
+                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`)
+                    .then(response => {
+                    this.relatedQuestion = response.data
+                    })
+                }}
+                catch{(error => {
+                    console.log(error)
+            })}
+            console.log("relatedquestion",this.relatedQuestion)
             this.$store.commit('setIsLoading', false)
         },
         handleShowAnswerPage(){
@@ -228,6 +260,19 @@ export default {
         getReplyUserAndQuestionUser(reply, question){
             this.questionAnswerUser.push(reply)
             this.questionAnswerUser.push(question)
+        },
+        handleQuestionStatus(status){
+            if(status==true){
+                return this.questionStatus[1]
+            }
+            else{
+                return this.questionStatus[0]
+            }
+        },
+        getQuestionTagList(questionTags){
+            for(let tag of questionTags){
+                this.questionTags.push(tag.id)
+            }
         },
         // resetNotifications(){
         //     this.notifications.answer = false
