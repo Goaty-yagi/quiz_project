@@ -2,6 +2,8 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Max
+import random
 from django.http import Http404
 
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag
@@ -77,23 +79,56 @@ class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
 class RelatedQuestionList(APIView):
 # this is for all indicate quiz, field and module
     def get(self, request, format=None):
-        print("request dayo",request.query_params)
+        request_tag_list = request.query_params.getlist("tag")
         try:
-            
-            queryset = BoardQuestion.objects.filter(tag=request.query_params['tag'],
-            # field=request.query_params['field'],
-            # module=request.query_params['module'])
-            # quiz_num = int(request.query_params['num']
-            )
-            queryset_len = BoardQuestion.objects.filter(tag=request.query_params['tag']).count()
-            print(queryset_len)
-            # question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-            question = queryset
+            solved_queryset = BoardQuestion.objects.filter(
+                tag__in = request_tag_list,
+                solved = True
+            ).distinct()
+            print("solved_queryset", solved_queryset)
+            unsolved_queryset = BoardQuestion.objects.filter(
+                tag__in = request_tag_list,
+                solved = False
+            ).distinct()
+            question = set_random_object(solved_queryset, unsolved_queryset)
+            # question = solved_queryset
+            print(question)
             serializer = BoardQuestionListSerializer(question, many=True)
             return Response(serializer.data)
         except BoardQuestion.DoesNotExist:
             raise Http404
 
+
+# set 3 unsolved questions and 12 solved questions
+def set_random_object(solved_queryset, unsolved_queryset):
+    print("in set_random")
+    random_id_list = list()
+    max_solved_queryset_id = solved_queryset.aggregate(max_id=Max("id"))['max_id']
+    max_unsolved_queryset_id = unsolved_queryset.aggregate(max_id=Max("id"))['max_id']
+    if len(solved_queryset) >= 12:
+        solved_queryset_num = 12
+    else:
+        solved_queryset_num = len(solved_queryset)
+
+    if len(unsolved_queryset) >= 3:
+        unsolved_queryset_num = 3
+    else:
+        unsolved_queryset_num = len(unsolved_queryset)
+    # set 3 unsolved questions
+    while len(random_id_list) != unsolved_queryset_num:
+        pk = random.randint(0, max_unsolved_queryset_id)
+        unsolved_question = unsolved_queryset.filter(pk=pk)
+        if unsolved_question:
+            random_id_list.append(unsolved_question[0])
+     # set 12 solved questions
+    while len(random_id_list) != solved_queryset_num + unsolved_queryset_num:
+        print("loop2 start", len(random_id_list), solved_queryset_num)
+        pk = random.randint(0, max_solved_queryset_id)
+        solved_question = solved_queryset.filter(pk=pk)
+        if solved_question:
+            random_id_list.append(solved_question[0])
+            print("loop2 end")
+    return random_id_list
 
 
 # class RelatedQuestion(generics.ListAPIView):
