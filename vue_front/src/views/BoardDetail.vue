@@ -60,17 +60,28 @@
                 <div class="relative-box">
                     <p>関連した質問</p>
                     <div
-                     v-for="(question,questionindex) in slicedRelatedQuestion"
-                     v-bind:key="questionindex">
+                        class="question-wrapper"
+                        v-for="(question,questionindex) in slicedRelatedQuestion"
+                        v-bind:key="questionindex">
                         <div class='question-list' @click="getRelatedSlug(question.slug)">
-                            <div 
-                                class="tag-wrapper">
-                                <div class="question-title">{{ question.title }}</div>
-                                <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
+                            <div class="tag-wrapper">
+                                <div 
+                                class="tag"
+                                v-for="(tag,tagindex) in question.tag" 
+                                v-bind:key="tagindex">{{ tag.tag }}</div>
                             </div>
-                        </div>
+                            <!-- <div class="question-title">{{ question.title }}</div> -->
+                            <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
+                            <div class='good-like-wrapper'>
+                                <i class="far fa-heart"></i>
+                                <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
+                                <div class="date">投稿日：{{ question.created_on }}</div>
+                            </div>
+                        </div>        
                     </div>
-                    <p>もっと見る></p>
+                    <div class="see-more">
+                        <p>もっと見る></p>
+                    </div>
                 </div>
                 <div class="answer-box" v-if='question.answer[0]'>
                     <div class="answer-box-title">
@@ -195,68 +206,87 @@ export default {
     },
     mounted() { 
         this.getDetail()
-        console.log("detail",this.$store.state.board.notifications)
+        console.log("mounted_detail",this.$route.params.slug)
     },
     methods: {
-        async getDetail() {
+        async getDetail(slug="") {
             this.$store.commit('setIsLoading', true)
+            this.scrollTop()
             console.log('inthegetdetail')
-            await axios
-                .get(`/api/board/question/${this.$route.params.slug}`)
-                .then(response => {
-                    this.question = response.data
-                    this.questionTitle = this.question.title
-                    this.questionDescription = this.question.description
-                    this.questionSlug = this.question.slug
-                    this.questionId = this.question.id
-                    this.liked_num = this.question.liked_num[0].liked_num
-                    this.likedUserIdList = this.question.liked_num[0].user
-                    this.questionUser = this.question.user.UID
-                    this.allAnswer = this.question.answer
-                    this.viewed = this.question.viewed
-                    this.countUpViewed()
-                    this.makeAnswerDict()
-                    this.getQuestionTagList(this.question.tag)
-                    this.getRelatedQuestion()
-                    })
-                .catch(error => {
-                    console.log(error)
-            })
+            if(slug==""){
+                await axios
+                    .get(`/api/board/question/${this.$route.params.slug}`)
+                    .then(response => {
+                        this.question = response.data
+                        this.questionTitle = this.question.title
+                        this.questionDescription = this.question.description
+                        this.questionSlug = this.question.slug
+                        this.questionId = this.question.id
+                        this.liked_num = this.question.liked_num[0].liked_num
+                        this.likedUserIdList = this.question.liked_num[0].user
+                        this.questionUser = this.question.user.UID
+                        this.allAnswer = this.question.answer
+                        this.viewed = this.question.viewed
+                        this.countUpViewed()
+                        this.makeAnswerDict()
+                        this.getQuestionTagList(this.question.tag)
+                        this.getRelatedQuestion()
+                        })
+                    .catch(error => {
+                        console.log(error)
+                })
+            }else{
+                await axios
+                    .get(`/api/board/question/${slug}`)
+                    .then(response => {
+                        this.question = response.data
+                        this.questionTitle = this.question.title
+                        this.questionDescription = this.question.description
+                        this.questionSlug = this.question.slug
+                        this.questionId = this.question.id
+                        this.liked_num = this.question.liked_num[0].liked_num
+                        this.likedUserIdList = this.question.liked_num[0].user
+                        this.questionUser = this.question.user.UID
+                        this.allAnswer = this.question.answer
+                        this.viewed = this.question.viewed
+                        this.countUpViewed()
+                        this.makeAnswerDict()
+                        this.getQuestionTagList(this.question.tag)
+                        this.getRelatedQuestion()
+                        })
+                    .catch(error => {
+                        console.log(error)
+                })
+            }
             // this.$store.commit('setIsLoading', false)
         },
         async getRelatedQuestion() {
             // relatedQuestion Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
-            // => makeRandomArray is to make sliced RQ in list to show about 3 Q
-            // => RandArray in makeRandomArray to get random Q form RQ return slicedRelatedQuestion for HTML
             this.$store.commit('setIsLoading', true)
             console.log("ingetRQ", this.questionTags.length)
+            if(this.questionTags.length == 1){
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
+            }
+            if(this.questionTags.length == 2){
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
+            }
+            if(this.questionTags.length == 3){
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
+            }
+            console.log("url:",url)
             try{
-                if(this.questionTags.length == 1){
-                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}`)
+                await axios.get(url)
                     .then(response => {
                     this.relatedQuestion = response.data
                     console.log("1", this.relatedQuestion)
                     })
                 }
-                if(this.questionTags.length == 2){
-                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`)
-                    .then(response => {
-                    this.relatedQuestion = response.data
-                    console.log("2", this.relatedQuestion)
-                    })
-                }
-                if(this.questionTags.length == 3){
-                    await axios.get(`/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`)
-                    .then(response => {
-                    this.relatedQuestion = response.data
-                    console.log("3", this.relatedQuestion)
-                    })
-                }}
-                catch{(error => {
+            catch{(error => {
                     console.log(error)
             })}
+            
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
             console.log("relatedquestion",this.relatedQuestion)
@@ -293,6 +323,7 @@ export default {
             }
         },
         getQuestionTagList(questionTags){
+            this.questionTags = []
             for(let tag of questionTags){
                 this.questionTags.push(tag.id)
             }
@@ -364,9 +395,11 @@ export default {
         //     return this.liked_num
         // },
         getRelatedSlug(slug){
-            console.log('slug',slug)
+            console.log('inrelated-slug:',slug)
             // this.$store.commit('getSlug',slug)
-            router.push(`/board-detail/${slug}` )
+            // router.push(`/board-detail/${slug}` )
+            this.getDetail(slug)
+            this.$forceUpdate();
         },
         addLikedNum(){
             this.liked_num += 1
@@ -379,11 +412,13 @@ export default {
         },
         checkUserLiked(){
             // this is for question like
+            this.addedLiked = false
             for(let i of this.likedUserIdList){
                 if(i.UID == this.$store.state.signup.user.uid){
                 this.addedLiked = true
                 }
             }
+            console.log("liked",this.addedLiked)
             // this is for answer like
             for(let answerId in this.answerDict){
                 // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
@@ -443,6 +478,7 @@ export default {
             this.countUpLikedAnswer(answerId)
         },
         countUpLikedAnswer(answerId){
+            console.log("countUpLikedAnswer",this.addedLiked)
             if(this.addedLiked){
                 axios.patch(`/api/board/answer-liked/${this.answerDict[answerId].liked_id}/`,
                 {
@@ -451,7 +487,13 @@ export default {
                 })
                 console.log('done')
             }
-        }
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                // behavior: "smooth"
+            });
+        },
         // falseNotifications(elem){
         //     if(elem == "answer"){
         //         this.notifications.answer = false
@@ -469,6 +511,7 @@ export default {
 
 <style lang='scss' scoped>
 @import "style/_variables.scss";
+@import "style/_board.scss";
 .scroll{
     position:fixed;
 }
@@ -582,6 +625,57 @@ export default {
         width: 95%;
         margin-top: 1rem;
         margin-bottom: 1rem;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        P{
+            margin-bottom: 0.5rem;
+        }
+        .question-wrapper{
+            width: 100%;
+            display: flex;
+            .question-list{
+                border-bottom: solid rgb(236, 234, 234);
+                margin-bottom: 0.5rem;
+                width:100%;
+                padding: 0.2rem;
+                // background: rgb(236, 234, 234);
+                display: flex;
+                flex-direction: column;
+                .tag-wrapper{
+                    display: flex;
+                    width: 100%;
+                    .tag{
+                        border: solid rgb(230, 230, 230);
+                        margin-left: 0.3rem;
+                        min-width: 2rem;
+                    }
+                }
+                .good-like-wrapper{
+                    display: flex;
+                    font-size: 0.7rem;
+                    .fa-heart{
+                        // color: rgb(221, 36, 221);
+                        margin-left: 0.5rem;
+                        margin-right: 0.3rem;
+                        margin-top: 0.2rem;
+                    }
+                    .date{
+                        margin-left: 0.5rem;
+                    }
+                }
+            }
+            .question-list:hover{
+                background: rgb(230, 230, 230);
+            }
+        }
+        .see-more{
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+
+        }
     }
     .answer-box{
         border: solid $base-color;
