@@ -214,50 +214,31 @@ export default {
             this.scrollTop()
             console.log('inthegetdetail')
             if(slug==""){
-                await axios
-                    .get(`/api/board/question/${this.$route.params.slug}`)
-                    .then(response => {
-                        this.question = response.data
-                        this.questionTitle = this.question.title
-                        this.questionDescription = this.question.description
-                        this.questionSlug = this.question.slug
-                        this.questionId = this.question.id
-                        this.liked_num = this.question.liked_num[0].liked_num
-                        this.likedUserIdList = this.question.liked_num[0].user
-                        this.questionUser = this.question.user.UID
-                        this.allAnswer = this.question.answer
-                        this.viewed = this.question.viewed
-                        this.countUpViewed()
-                        this.makeAnswerDict()
-                        this.getQuestionTagList(this.question.tag)
-                        this.getRelatedQuestion()
-                        })
-                    .catch(error => {
-                        console.log(error)
-                })
+                var url = `/api/board/question/${this.$route.params.slug}`
             }else{
-                await axios
-                    .get(`/api/board/question/${slug}`)
-                    .then(response => {
-                        this.question = response.data
-                        this.questionTitle = this.question.title
-                        this.questionDescription = this.question.description
-                        this.questionSlug = this.question.slug
-                        this.questionId = this.question.id
-                        this.liked_num = this.question.liked_num[0].liked_num
-                        this.likedUserIdList = this.question.liked_num[0].user
-                        this.questionUser = this.question.user.UID
-                        this.allAnswer = this.question.answer
-                        this.viewed = this.question.viewed
-                        this.countUpViewed()
-                        this.makeAnswerDict()
-                        this.getQuestionTagList(this.question.tag)
-                        this.getRelatedQuestion()
-                        })
-                    .catch(error => {
-                        console.log(error)
-                })
+                var url = `/api/board/question/${slug}`
             }
+            await axios
+                .get(url)
+                .then(response => {
+                    this.question = response.data
+                    this.questionTitle = this.question.title
+                    this.questionDescription = this.question.description
+                    this.questionSlug = this.question.slug
+                    this.questionId = this.question.id
+                    this.liked_num = this.question.liked_num[0].liked_num
+                    this.likedUserIdList = this.question.liked_num[0].user
+                    this.questionUser = this.question.user.UID
+                    this.allAnswer = this.question.answer
+                    this.viewed = this.question.viewed
+                    this.countUpViewed()
+                    this.makeAnswerDict()
+                    this.getQuestionTagList(this.question.tag)
+                    this.getRelatedQuestion()
+                    })
+                .catch(error => {
+                    console.log(error)
+            })
             // this.$store.commit('setIsLoading', false)
         },
         async getRelatedQuestion() {
@@ -410,15 +391,21 @@ export default {
             this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
             this.countUpLiked()
         },
+        clearAllLiked(){
+            this.addedLiked = false
+            for(let i in this.answerDict){
+                this.answerDict[i].addedAnswerLiked = false
+            }
+        },
         checkUserLiked(){
             // this is for question like
-            this.addedLiked = false
+            this.clearAllLiked()
             for(let i of this.likedUserIdList){
                 if(i.UID == this.$store.state.signup.user.uid){
                 this.addedLiked = true
                 }
             }
-            console.log("liked",this.addedLiked)
+            console.log("likedhere",this.addedLiked)
             // this is for answer like
             for(let answerId in this.answerDict){
                 // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
@@ -455,6 +442,8 @@ export default {
         //     console.log('boo',this.addedAnswerLiked)
         // },
         makeAnswerDict(){
+            // liked_answer start from here to make each answer dict
+            // to hold information
             console.log("in make dict",this.allAnswer)
             for(let answer of this.allAnswer){
                 console.log(answer)
@@ -465,28 +454,29 @@ export default {
                     "likedUsers":[answer.liked_answer[0].user]
                 }
             }
-            console.log('dict',this.answerDict)
+            console.log('answer-dict',this.answerDict)
             this.checkUserLiked()
         },
         addAnsweerLikedNum(answerId){
+            // add answer id start from here. answerDict has each answers liked num.
+            // invoke answerId to att liked num, then addedAnswerLiked = true  
             this.answerDict[answerId].liked_num += 1
             this.answerDict[answerId].addedAnswerLiked = true
             // for(let i=0; i<this.likedUserIdList.length; i++){
             //     this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
             // }
             this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
+            console.log("is addliked",this.answerDict)
             this.countUpLikedAnswer(answerId)
         },
         countUpLikedAnswer(answerId){
-            console.log("countUpLikedAnswer",this.addedLiked)
-            if(this.addedLiked){
+            console.log("countUpLikedAnswer")
                 axios.patch(`/api/board/answer-liked/${this.answerDict[answerId].liked_id}/`,
                 {
                     user: this.answerDict[answerId].likedUsers[0],
                     liked_num: this.answerDict[answerId].liked_num
                 })
                 console.log('done')
-            }
         },
         scrollTop(){
             window.scrollTo({
