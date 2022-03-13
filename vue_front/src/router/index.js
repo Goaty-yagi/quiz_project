@@ -9,6 +9,7 @@ import Login from '../views/Login.vue'
 import Policy from '../views/Policy.vue'
 import Community from '../views/Community.vue'
 import BoardDetail from '../views/BoardDetail.vue'
+import RelatedQuestion from '../views/board/RelatedQuestion.vue'
 import store from '../store'
 
 const routes = [
@@ -42,6 +43,11 @@ const routes = [
     path: '/board',
     name: 'Community',
     component: Community
+  },
+  {
+    path: '/board/related',
+    name: 'RelatedQuestion',
+    component: RelatedQuestion
   },
   {
     path: '/board-detail/:slug',

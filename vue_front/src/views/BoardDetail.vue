@@ -80,7 +80,7 @@
                         </div>        
                     </div>
                     <div class="see-more">
-                        <p>もっと見る></p>
+                        <router-link :to="{name:'RelatedQuestion'}">もっと見る></router-link>
                     </div>
                 </div>
                 <div class="answer-box" v-if='question.answer[0]'>
@@ -191,7 +191,7 @@ export default {
             answerDict:{},
             addedAnswerLiked:{},
             viewed:0,
-            questionStatus:['未解決','解決'],
+            questionStatus:['回答受付中','解決済み'],
             reply:'',
             questionUser: '',
             questionUserBoolean: false,
@@ -261,13 +261,13 @@ export default {
                 await axios.get(url)
                     .then(response => {
                     this.relatedQuestion = response.data
-                    console.log("1", this.relatedQuestion)
+                    console.log(this.relatedQuestion.length,this.relatedQuestion)
                     })
                 }
             catch{(error => {
                     console.log(error)
             })}
-            
+            this.$store.commit('getRelatedQuestion', this.relatedQuestion)
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
             console.log("relatedquestion",this.relatedQuestion)

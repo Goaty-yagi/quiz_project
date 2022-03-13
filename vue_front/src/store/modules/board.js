@@ -6,6 +6,7 @@ export default {
         title:'',
         description:'',
         selectedTagList:'',
+        relatedQuestion:'',
         notifications:{
             reply: false,
             answer: false,
@@ -30,6 +31,10 @@ export default {
         // getSelectedTagList(state, payload){
         //     state.selectedTagList = payload
         // },
+        getRelatedQuestion(state, payload){
+            state.relatedQuestion = payload
+            console.log("commited relatedQ",state.relatedQuestion )
+        },
         getTagList(state, payload){
                 state.selectedTagList = payload
                 console.log('Got tagID',state.selectedTagList)
