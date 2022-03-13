@@ -1,6 +1,7 @@
 from gettext import install
 from pickletools import read_long1
 import secrets
+from django.db.models import F
 from rest_framework import serializers
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag
 
@@ -205,9 +206,20 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 			tag_data = validated_data.pop('tag')
 			liked_num_data = {}
 			question = BoardQuestion.objects.create(**validated_data)
+			user = validated_data.pop('user')
 			print(tag_data)
 			for tag in tag_data:
 				question.tag.add(tag)
+				a = BoardUserTag.objects.filter(tag=tag,user=user).exists()
+				print("a dayo",a)
+				if BoardUserTag.objects.filter(tag=tag,user=user).exists():
+					BoardUserTag.objects.update_or_create(
+						tag=tag,
+						user=user,
+						defaults={'used_num':F('used_num') + 1})
+					print("if done")
+				else:
+					BoardUserTag.objects.create(tag=tag, user=user)
 			BoardQuestionLiked.objects.create(question=question, **liked_num_data)
 			return question
 

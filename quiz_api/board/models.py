@@ -33,12 +33,12 @@ class BoardCenterTag(models.Model):
 class BoardUserTag(models.Model):
     tag = models.ForeignKey(BoardCenterTag, default=None, on_delete=models.CASCADE)
     user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
-    used_num = models.IntegerField(default=0)
+    used_num = models.IntegerField(default=1)
 
 
-    def save(self, *args, **kwargs):
-        self.used_num +=1
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.used_num +=1
+    #     super().save(*args, **kwargs)
     #     print("insave",self.tag.id,self.user.UID)
     #     try:
     #         OBJ = BoardUserTag.objects.get(user=self.user.UID)
@@ -156,17 +156,17 @@ class BoardAnswerLiked(models.Model):
 
 
 
-@receiver(post_save, sender=BoardUserTag)
-def add_used_num(sender, instance, created, **kwargs):
-    print(kwargs["signal"].__dict__, 'instance',instance.tag.id, 'sender',sender)  
-    try:
-        center_tag_id = instance.tag.id
-        center_tag_object = BoardCenterTag.objects.get(id=center_tag_id)
-        center_tag_object.used_num +=1
-        instance.used_num +=1
-        center_tag_object.save()
-    except:
-        raise Exception("unko")
+# @receiver(post_save, sender=BoardUserTag)
+# def add_used_num(sender, instance, created, **kwargs):
+#     print(kwargs["signal"].__dict__, 'instance',instance.tag.id, 'sender',sender)  
+#     try:
+#         center_tag_id = instance.tag.id
+#         center_tag_object = BoardCenterTag.objects.get(id=center_tag_id)
+#         center_tag_object.used_num +=1
+#         instance.used_num +=1
+#         center_tag_object.save()
+#     except:
+#         raise Exception("unko")
 
 
 # @receiver(post_save, sender=BoardQuestion)
