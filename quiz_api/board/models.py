@@ -41,12 +41,13 @@ class BoardUserTag(models.Model):
     user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
     used_num = models.IntegerField(default=0)
     viewed_num = models.IntegerField(default=0)
+    total_num = models.IntegerField(default=0)
     # status_handle = models.CharField(max_length=100, choices=STATUS_CHOICES, default=None, null=True)
 
 
-    # def save(self, *args, **kwargs):
-    #     self.used_num +=1
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.total_num = self.viewed_num + self.used_num
+        super().save(*args, **kwargs)
     #     print("insave",self.tag.id,self.user.UID)
     #     try:
     #         OBJ = BoardUserTag.objects.get(user=self.user.UID)

@@ -1,6 +1,7 @@
 import createPersistedState from 'vuex-persistedstate'
 import { auth } from '@/firebase/config'
 import {router} from "@/main.js"
+import axios from 'axios'
 import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
@@ -27,6 +28,7 @@ export default {
         country:'',
         password:'',
         user: null,
+        djangoUser: null,
         emailVerified:null,
         authIsReady:false,
         checkedEmail:null,
@@ -69,6 +71,17 @@ export default {
         }
     },
     actions:{
+        async getDjangoUser({ state, commit }){
+            await axios
+            .get(`/api/user/${state.user.uid}`)
+            .then(response => {
+                state.djangoUser = response.data
+                console.log('inDUGet', state.djangoUser)
+                })
+            .catch(error => {
+                console.log(error)
+            })
+        },
         async signup(context, {email,password}){
             console.log('signup in')
             try {
@@ -160,6 +173,7 @@ const unsub = onAuthStateChanged(auth,(user) =>{
     store.commit('setAuthIsReady',true)
     store.commit('setUser',user)
     if(user){
+        store.dispatch('getDjangoUser')
         store.commit('emailVerifiedHandler',user.emailVerified)
     }
     unsub()

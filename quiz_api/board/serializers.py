@@ -228,7 +228,8 @@ class UserTagSerializer(serializers.ModelSerializer):
 				  "tag",
 				  "user",
 				  "used_num",
-				  "viewed_num"
+				  "viewed_num",
+				  "total_num"
 				  ]
 		read_only_field = ['tag','user']
 

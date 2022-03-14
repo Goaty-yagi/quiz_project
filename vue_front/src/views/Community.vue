@@ -6,6 +6,7 @@
         </div>
         <div class="main-wrapper"  v-if="questions">
             <h1 class='title-white'>質問板</h1>
+            {{ getUserTags }}
             <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
                     <div class="notification-text">
                         投稿しました。
@@ -80,6 +81,7 @@ export default {
             showConfirm: false,
             scrollFixed: false,
             scroll_position: '100',
+            userTagList: [],
             // notifications:false,
             fixed: '',
             styles:{
@@ -99,12 +101,42 @@ export default {
         // this.getQuestion()
         console.log('mounted at community',typeof []) 
     },
+    computed:{
+        getUserTags(){
+            let checkDict = {}  
+            // let checkedDict = {}
+            let checkedList = []
+            let checkedlist2 = []
+            for(let i of this.$store.state.signup.djangoUser.user_tag){
+                checkDict[i.tag] = i.total_num
+                checkedList.push(i.tag)
+            }
+            console.log("computed",checkDict)
+            if(Object.keys(checkDict).length <= 3){
+                return checkedList
+            }
+            if(Object.keys(checkDict).length > 3){
+                for(let m=0; m < 3; m++){
+                    const aryMax = function (a, b) {return Math.max(a, b);}
+                    let max = Object.values(checkDict).reduce(aryMax);
+                    const result = Object.keys(checkDict).reduce( (r, key) => { 
+                        return checkDict[key] === max ? key : r 
+                        }, null);
+                    // checkedDict[result] = max
+                    delete checkDict[result]
+                    checkedlist2.push(result)
+                }
+                return checkedlist2
+            }
+            // this.userTags = this.$store.state.signup.djangoUser.user_tag
+            // console.log("this.userTags",this.userTags)
+            // return this.userTags
+        }
+
+    },
     methods: {
         async getQuestion() {
             this.$store.commit('setIsLoading', true)
-
-            // const category_slug = this.$route.params.category_slug
-            // const product_slug = this.$route.params.product_slug
             await axios
                 .get('/api/board/question/list')
                 .then(response => {
@@ -124,13 +156,43 @@ export default {
                 .then(response => {
                     let parentTags = response.data
                     this.getParentTagDict(parentTags)
-                    // this.getParentTagList()
-                    // document.title = this.product.name + ' | Djackets'
                 })
                 .catch(error => {
                     console.log(error)
                 })
         },
+        // async getRelatedQuestion() {
+        //     // relatedQuestion Start from here.
+        //     // => deleteSameQuestion to delete the same question in RQ as detail Q.
+        //     // => makeRandomSlicedArray to make random sliced RQ array
+        //     this.$store.commit('setIsLoading', true)
+        //     console.log("ingetRQ", this.questionTags.length)
+        //     if(this.questionTags.length == 1){
+        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
+        //     }
+        //     if(this.questionTags.length == 2){
+        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
+        //     }
+        //     if(this.questionTags.length == 3){
+        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
+        //     }
+        //     console.log("url:",url)
+        //     try{
+        //         await axios.get(url)
+        //             .then(response => {
+        //             this.relatedQuestion = response.data
+        //             console.log(this.relatedQuestion.length,this.relatedQuestion)
+        //             })
+        //         }
+        //     catch{(error => {
+        //             console.log(error)
+        //     })}
+        //     this.$store.commit('getRelatedQuestion', this.relatedQuestion)
+        //     this.deleteSameQuestion()
+        //     this.makeRandomSlicedArray()
+        //     console.log("relatedquestion",this.relatedQuestion)
+        //     this.$store.commit('setIsLoading', false)
+        // },
         getParentTagDict(parentTags){
             for (let i of parentTags){
                 this.parentTagDict[i.parent_tag] = i.center_tag
