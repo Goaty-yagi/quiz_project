@@ -199,7 +199,7 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 				#   'replay_count'
 				  ]
 
-
+	# BoardUserTag part is not relevent to BoardUserTag.create
 	def create(self, validated_data):
 			print('in__create')
 			liked_num_data = validated_data.pop('liked_num')
@@ -207,19 +207,16 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 			liked_num_data = {}
 			question = BoardQuestion.objects.create(**validated_data)
 			user = validated_data.pop('user')
-			print(tag_data)
 			for tag in tag_data:
 				question.tag.add(tag)
-				a = BoardUserTag.objects.filter(tag=tag,user=user).exists()
-				print("a dayo",a)
-				if BoardUserTag.objects.filter(tag=tag,user=user).exists():
+				if BoardUserTag.objects.filter(tag=tag, user=user).exists():
 					BoardUserTag.objects.update_or_create(
 						tag=tag,
 						user=user,
 						defaults={'used_num':F('used_num') + 1})
 					print("if done")
 				else:
-					BoardUserTag.objects.create(tag=tag, user=user)
+					BoardUserTag.objects.create(tag=tag, user=user, used_num=1)
 			BoardQuestionLiked.objects.create(question=question, **liked_num_data)
 			return question
 
@@ -231,9 +228,22 @@ class UserTagSerializer(serializers.ModelSerializer):
 				  "tag",
 				  "user",
 				  "used_num",
+				  "viewed_num"
 				  ]
 		read_only_field = ['tag','user']
 
+	# this create work only from 'user-tag/create/' 
+	def create(self, validated_data):
+		tag = validated_data.pop('tag')
+		user = validated_data.pop('user')
+		if BoardUserTag.objects.filter(tag=tag,user=user).exists():
+					return BoardUserTag.objects.update_or_create(
+						tag=tag,
+						user=user,
+						defaults={'viewed_num':F('viewed_num') + 1})
+		else:
+			return BoardUserTag.objects.create(tag=tag, user=user, viewed_num = 1)
+			
 
 class CenterTagSerializer(serializers.ModelSerializer):
 	question = BoardQuestionCreateSerializer(many=True)

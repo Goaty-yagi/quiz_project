@@ -30,10 +30,18 @@ class BoardCenterTag(models.Model):
         return self.tag
 
 
+# STATUS_CHOICES = (
+#     ("used", "used"),
+#     ("viewed", "viewed"),
+# )
+
+
 class BoardUserTag(models.Model):
     tag = models.ForeignKey(BoardCenterTag, default=None, on_delete=models.CASCADE)
     user = models.ForeignKey(User, default=None, related_name='user_tag', on_delete=models.CASCADE)
-    used_num = models.IntegerField(default=1)
+    used_num = models.IntegerField(default=0)
+    viewed_num = models.IntegerField(default=0)
+    # status_handle = models.CharField(max_length=100, choices=STATUS_CHOICES, default=None, null=True)
 
 
     # def save(self, *args, **kwargs):
