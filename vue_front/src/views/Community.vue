@@ -23,12 +23,23 @@
             </div>
             <!-- <button @click="handleNotifications">unko</button> -->
             <div class=select-wrapper>
-                <button class='btn-tr-black-baselite-cir'>最近の投稿</button>
-                <button class='btn-tr-white-base-cir'>おすすめの<wbr>投稿</button>
+                <button class='btn-tr-black-baselite-cir' @click="questionHandler('recent')">最近の投稿</button>
+                <button class='btn-tr-white-base-cir' @click="questionHandler('reccomend')">おすすめの<wbr>投稿</button>
             </div>
             <div class="question-wrapper">
+                <CreateQuestion
+                    v-if='showCreateQuestion'
+                    :parentTagDict="parentTagDict"
+                    @handleShowConfirm='handleShowConfirm'
+                    @handleShowCreateQuestion='handleShowCreateQuestion'/>
+                <Confirm
+                    v-if='showConfirm'
+                    @handleShowConfirm='handleShowConfirm'
+                    @getDetail='getDetail'
+                    @handleNotifications='handleNotifications'
+                />
                 <div
-                v-for="(question,questionindex) in questions"
+                v-for="(question,questionindex) in handleQuestions"
                 v-bind:key="questionindex">
                     <div class='question-list' @click="getDetail(question.slug)">
                         <div 
@@ -47,17 +58,6 @@
                         </div>
                     </div>        
                 </div>
-                    <CreateQuestion
-                     v-if='showCreateQuestion'
-                     :parentTagDict="parentTagDict"
-                     @handleShowConfirm='handleShowConfirm'
-                     @handleShowCreateQuestion='handleShowCreateQuestion'/>
-                    <Confirm
-                     v-if='showConfirm'
-                     @handleShowConfirm='handleShowConfirm'
-                     @getDetail='getDetail'
-                     @handleNotifications='handleNotifications'
-                    />
             </div>
         </div>
     </div>
@@ -82,8 +82,13 @@ export default {
             scrollFixed: false,
             scroll_position: '100',
             userTagList: [],
+            reccomendedQuestion: [],
             // notifications:false,
             fixed: '',
+            showQuestionStatus:{
+                recent: true,
+                reccomend: false
+            },
             styles:{
                 position:'',
                 top:'',
@@ -96,8 +101,8 @@ export default {
         // this.getQuestion() 
     },
     mounted() {
-        
-        this.getQuestion() 
+        this.getQuestion()
+        this.getRelatedQuestion()
         // this.getQuestion()
         console.log('mounted at community',typeof []) 
     },
@@ -128,11 +133,18 @@ export default {
                 }
                 return checkedlist2
             }
-            // this.userTags = this.$store.state.signup.djangoUser.user_tag
-            // console.log("this.userTags",this.userTags)
-            // return this.userTags
+        },
+        handleQuestions(){
+            console.log("in handlequestion")
+            if(this.showQuestionStatus.recent){
+                console.log("return_recen:",this.questions)
+                return this.questions
+            }
+            if(this.showQuestionStatus.reccomend){
+                console.log("return_reco:",this.reccomendedQuestion)
+                return this.reccomendedQuestion
+            }
         }
-
     },
     methods: {
         async getQuestion() {
@@ -161,38 +173,31 @@ export default {
                     console.log(error)
                 })
         },
-        // async getRelatedQuestion() {
-        //     // relatedQuestion Start from here.
-        //     // => deleteSameQuestion to delete the same question in RQ as detail Q.
-        //     // => makeRandomSlicedArray to make random sliced RQ array
-        //     this.$store.commit('setIsLoading', true)
-        //     console.log("ingetRQ", this.questionTags.length)
-        //     if(this.questionTags.length == 1){
-        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
-        //     }
-        //     if(this.questionTags.length == 2){
-        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
-        //     }
-        //     if(this.questionTags.length == 3){
-        //         var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
-        //     }
-        //     console.log("url:",url)
-        //     try{
-        //         await axios.get(url)
-        //             .then(response => {
-        //             this.relatedQuestion = response.data
-        //             console.log(this.relatedQuestion.length,this.relatedQuestion)
-        //             })
-        //         }
-        //     catch{(error => {
-        //             console.log(error)
-        //     })}
-        //     this.$store.commit('getRelatedQuestion', this.relatedQuestion)
-        //     this.deleteSameQuestion()
-        //     this.makeRandomSlicedArray()
-        //     console.log("relatedquestion",this.relatedQuestion)
-        //     this.$store.commit('setIsLoading', false)
-        // },
+        async getRelatedQuestion() {
+            // this.$store.commit('setIsLoading', true)
+            console.log("ingetRQ",this.getUserTags)
+            if(this.getUserTags.length == 1){
+                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}`
+            }
+            if(this.getUserTags.length == 2){
+                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}`
+            }
+            if(this.getUserTags.length == 3){
+                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}&tag=${this.getUserTags[2]}`
+            }
+            console.log("url:",url)
+            try{
+                await axios.get(url)
+                    .then(response => {
+                    this.reccomendedQuestion = response.data
+                    console.log(this.reccomendedQuestion.length,this.reccomendedQuestion)
+                    })
+                }
+            catch{(error => {
+                    console.log(error)
+            })}
+            // this.$store.commit('setIsLoading', false)
+        },
         getParentTagDict(parentTags){
             for (let i of parentTags){
                 this.parentTagDict[i.parent_tag] = i.center_tag
@@ -216,6 +221,16 @@ export default {
             console.log('slugdayo',slug)
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
+        },
+        questionHandler(key){
+            for(let i of Object.keys(this.showQuestionStatus)){
+                if(i == key){
+                    this.showQuestionStatus[i] = true                    
+                }else{
+                    this.showQuestionStatus[i] = false
+                }
+            }
+            // this.showQuestionStatus[key] = true
         },
          handleScrollFixed(){
             this.scrollFixed = !this.scrollFixed

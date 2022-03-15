@@ -238,10 +238,10 @@ class UserTagSerializer(serializers.ModelSerializer):
 		tag = validated_data.pop('tag')
 		user = validated_data.pop('user')
 		if BoardUserTag.objects.filter(tag=tag,user=user).exists():
-					return BoardUserTag.objects.update_or_create(
-						tag=tag,
-						user=user,
-						defaults={'viewed_num':F('viewed_num') + 1})
+				return BoardUserTag.objects.update_or_create(
+					tag=tag,
+					user=user,
+					defaults={'viewed_num':F('viewed_num') + 1})
 		else:
 			return BoardUserTag.objects.create(tag=tag, user=user, viewed_num = 1)
 			
