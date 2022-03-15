@@ -6,7 +6,6 @@
         </div>
         <div class="main-wrapper"  v-if="questions">
             <h1 class='title-white'>質問板</h1>
-            {{ getUserTags }}
             <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
                     <div class="notification-text">
                         投稿しました。
@@ -23,8 +22,13 @@
             </div>
             <!-- <button @click="handleNotifications">unko</button> -->
             <div class=select-wrapper>
-                <button class='btn-tr-black-baselite-cir' @click="questionHandler('recent')">最近の投稿</button>
-                <button class='btn-tr-white-base-cir' @click="questionHandler('reccomend')">おすすめの<wbr>投稿</button>
+                <button
+                 @click="questionHandler('recent')"
+                 :class="{'btn-tr-white-base-cir':showQuestionStatus.recent==false,'btn-tr-black-baselite-cir':showQuestionStatus.recent}"
+                 >最近の投稿</button>
+                <button
+                  @click="questionHandler('reccomend')"
+                  :class="{'btn-tr-white-base-cir':showQuestionStatus.reccomend==false,'btn-tr-black-baselite-cir':showQuestionStatus.reccomend}">おすすめの<wbr>投稿</button>
             </div>
             <div class="question-wrapper">
                 <CreateQuestion

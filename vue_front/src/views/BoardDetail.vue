@@ -204,7 +204,7 @@ export default {
             questionTags:[]
         }
     },
-    mounted() { 
+    mounted() {
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
@@ -235,6 +235,7 @@ export default {
                     this.makeAnswerDict()
                     this.getQuestionTagList(this.question.tag)
                     this.getRelatedQuestion()
+                    this.countViewedNumUp()
                     })
                 .catch(error => {
                     console.log(error)
@@ -272,6 +273,21 @@ export default {
             this.makeRandomSlicedArray()
             console.log("relatedquestion",this.relatedQuestion)
             this.$store.commit('setIsLoading', false)
+        },
+        async countViewedNumUp(){
+            console.log('in_count_viewed',this.question.tag)
+            for (let i =0; i < this.question.tag.length; i++){
+                await axios({
+                method: 'post',
+                url: '/api/board/user-tag/create/',
+                data: {
+                    user: this.$store.state.signup.user.uid,
+                    tag: this.question.tag[i].id
+                },
+                
+            })
+
+            }
         },
         handleShowAnswerPage(){
             this.showAnswerPage = !this.showAnswerPage
