@@ -11,10 +11,10 @@
                         投稿しました。
                     </div>
                 </div> -->
-            <div class='search-wrapper'>
+            <form class='search-wrapper' @submit.prevent='splitSearch()'>
                 <i class="fas fa-search"></i>
-                <input class='search' type="text">
-            </div>
+                <input class='search' v-model='search' type="text">
+            </form>
             <div class="question-box">
                 <p class='word'>わからない事があったら質問してみよう。</p>
                 <button class='btn-base-white-db-sq' 
@@ -80,6 +80,8 @@ export default {
     data(){
         return{
             questions:'',
+            search:'',
+            wordList: [],
             parentTagDict:{},       
             showCreateQuestion: false,
             showConfirm: false,
@@ -201,6 +203,30 @@ export default {
                     console.log(error)
             })}
             // this.$store.commit('setIsLoading', false)
+        },
+        splitSearch(){
+            this.wordList = []
+            let letterList = []
+            console.log(this.search)
+            let trimedList = this.search.trim()
+            this.search = trimedList.split('')
+            console.log("splited",this.search)
+            for(let i of this.search){
+                console.log(i === ' ')
+                if(i === ' '|| i === '　'){
+                    this.wordList.push(letterList.join(''))
+                    letterList = []
+                    console.log("added", this.wordList)
+                }                
+                else{
+                    letterList.push(i)
+                }
+                console.log('NONE')
+            }
+            this.wordList.push(letterList.join(''))
+            letterList = []
+            this.search = []
+            console.log(this.wordList)
         },
         getParentTagDict(parentTags){
             for (let i of parentTags){
