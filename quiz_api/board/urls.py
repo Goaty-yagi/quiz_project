@@ -1,7 +1,8 @@
 from django.urls import path, include
 # from rest_framework import routers
 from rest_framework_nested import routers
-from board.apis import BoardQuestionList, BoardQuestionDetail, BoardAnswerRead, BoardAnswerCreate, BoardReplyCreate, BoardReplyRead, BoardQuestionCreate, QuestionLikedRead, AnswerLikedRead, ParetTagList, UsertagCreate, CenterTagList, UsertagRead, RelatedQuestionList
+
+from board.apis import BoardQuestionList, BoardQuestionDetail, BoardAnswerRead, BoardAnswerCreate, BoardReplyCreate, BoardReplyRead, BoardQuestionCreate, QuestionLikedRead, AnswerLikedRead, ParetTagList, UsertagCreate, CenterTagList, UsertagRead, RelatedQuestionList,SearchQuestionList
 
 
 urlpatterns = [
@@ -9,6 +10,7 @@ urlpatterns = [
   path('question/filter-list', RelatedQuestionList.as_view()),
   path('question/create', BoardQuestionCreate.as_view()),
   path('question/<slug>', BoardQuestionDetail.as_view()),
+  path('question/search/',SearchQuestionList.as_view()),
   path('answer/read', BoardAnswerRead.as_view()),
   path('answer/create', BoardAnswerCreate.as_view()),
   path('reply/read/', BoardReplyRead.as_view()),
