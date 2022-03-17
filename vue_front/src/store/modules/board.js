@@ -1,4 +1,5 @@
 import store from '..'
+import axios from 'axios'
 
 export default {
     namespace: true,
@@ -7,6 +8,7 @@ export default {
         description:'',
         selectedTagList:'',
         relatedQuestion:'',
+        searchedQuestions:'',
         notifications:{
             reply: false,
             answer: false,
@@ -39,6 +41,9 @@ export default {
                 state.selectedTagList = payload
                 console.log('Got tagID',state.selectedTagList)
         },
+        // getWordList(state, payload){
+        //     state.wordList = payload
+        // }
     },
     
     actions:{
@@ -56,7 +61,33 @@ export default {
                 context.state.notifications.post = true
                 setTimeout(context.commit, 3000,"resetNotifications")
             }
-        }           
+        },
+        async getSearchQuestion(state,payload){
+            console.log('Gsearch',payload)
+            
+            await axios
+                .get(`/api/board/question/search/?keyword=${payload}`)
+                .then(response => {
+                    state.searchedQuestions = response.data
+                    console.log("response_searched",state.searchedQuestions)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },          
+        // async getSearchQuestion({ state, commit }){
+        //     await axios({
+        //         method: 'get',
+        //         url: `/api/board/question/search/`,
+        //         data: {
+        //             keyword: state.searchKeywords
+        //         },
+        //     })
+        //     .then()
+        //     .catch(error => {
+        //         console.log(error)
+        //     })
+        // },          
     }
 
 

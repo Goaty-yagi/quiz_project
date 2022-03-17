@@ -5,7 +5,7 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class="question-wrapper" v-if="question&&relatedQuestion">
+            <div class="question-wrapper" v-if="question&&relatedQuestion&&$store.state.isLoading==false">
                 <p class='title-white'>質問板</p>
                 <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
                     <div class="notification-text">
@@ -526,6 +526,7 @@ export default {
     display: flex;
     justify-content: center;
     width: 100vw;
+    min-height: 80vh;
     align-items: center;
 }
 .question-wrapper{

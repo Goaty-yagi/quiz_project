@@ -10,6 +10,7 @@ import Policy from '../views/Policy.vue'
 import Community from '../views/Community.vue'
 import BoardDetail from '../views/BoardDetail.vue'
 import RelatedQuestion from '../views/board/RelatedQuestion.vue'
+import BoardAccount from '../views/board/BoardAccount.vue'
 import store from '../store'
 
 const routes = [
@@ -48,6 +49,11 @@ const routes = [
     path: '/board/related',
     name: 'RelatedQuestion',
     component: RelatedQuestion
+  },
+  {
+    path: '/board/account',
+    name: 'BoardAccount',
+    component: BoardAccount
   },
   {
     path: '/board-detail/:slug',

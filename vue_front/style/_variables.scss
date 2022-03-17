@@ -91,7 +91,11 @@ body{
     font-size: 1.5rem;
     font-weight: bold;
 }
-
+.title-blue{
+    color: b$dark-blue;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
 
 /* button */
 /* btn-backgroundcolor-textcolor-border-radius */
@@ -126,6 +130,11 @@ body{
     border: 0.1rem solid  $base-color;
     border-radius:50vh;
 }
+
+// input style
+input[type="text"]:focus {
+    outline: none;
+    }
 // notification
 // add notification to the css as a value like notification-blue below
 @keyframes notification {

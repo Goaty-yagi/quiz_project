@@ -115,8 +115,8 @@ class SearchQuestionList(APIView):
     if con't find any, forth key will be searched in the second round question list
     if fond forth one will be searched in the third list with."""
     def get(self, request, format=None):
-        keywords = request.data.pop("keyword")
-        print("search dayo",request.data,keywords)
+        keywords = request.query_params.getlist("keyword")[0]
+        keywords = keywords.split(',')
         all_question = BoardQuestion.objects.all()
         count = 0
         if len(keywords) < 2:
@@ -141,7 +141,6 @@ class SearchQuestionList(APIView):
                 question = question1 | question2
                 print(question.exists())
                 if question.exists() == False:
-                    print("checking2",question) 
                     question1 = all_question.filter(
                     Q(title__icontains=keywords[0]) | Q(title__icontains=keywords[keynum]) 
                     ).distinct()
@@ -151,7 +150,6 @@ class SearchQuestionList(APIView):
                     question = question1 | question2
                 submit_question = copy.deepcopy(question)
                 count += 1
-                print("question_second",question)
             elif count >= 2:
                 temporary_question = copy.deepcopy(submit_question)
                 submit_question = submit_question.filter(Q(title__icontains=keynum) | Q(description__icontains=keywords[keynum])).distinct()
