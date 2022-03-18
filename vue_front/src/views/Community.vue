@@ -5,7 +5,11 @@
             <div class="lds-dual-ring"></div>
         </div>
         <div class="main-wrapper"  v-if="questions">
-            <h1 class='title-white'>質問板</h1>
+            <div class="header-flex">
+                <h1 class='title-white'>質問板</h1>
+                <i @click="goAccount()" class="fas fa-user user-font"></i>
+                <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
+            </div>
             <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
                     <div class="notification-text">
                         投稿しました。
@@ -14,6 +18,8 @@
             <form class='search-wrapper' @submit.prevent='splitSearch()'>
                 <i class="fas fa-search"><input class='search' v-model='search' type="text"></i>
             </form>
+           
+            
             <div class="question-box" v-if='showSearch==false' >
                 <p class='word'>わからない事があったら質問してみよう。</p>
                 <button class='btn-base-white-db-sq' 
@@ -143,7 +149,8 @@ export default {
     created(){
     },
     beforeMount(){
-        // this.getQuestion() 
+        // this.getQuestion()
+        console.log('mounted',this.user)
     },
     mounted() {
         this.getQuestion()
@@ -152,12 +159,15 @@ export default {
         console.log('mounted at community',typeof []) 
     },
     computed:{
+        user(){
+            return this.$store.state.signup.djangoUser
+        },
         getUserTags(){
             let checkDict = {}  
             // let checkedDict = {}
             let checkedList = []
             let checkedlist2 = []
-            for(let i of this.$store.state.signup.djangoUser.user_tag){
+            for(let i of this.user.user_tag){
                 checkDict[i.tag] = i.total_num
                 checkedList.push(i.tag)
             }
@@ -325,6 +335,9 @@ export default {
             router.push("/")
             this.$store.commit('reset')
         },
+        goAccount(){
+            router.push("/board/account")
+        },
         // resetNotifications(){
         //     this.notifications = false
             
@@ -370,6 +383,20 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        .header-flex{
+            display: flex;
+            justify-content: center;
+            position:relative;
+            width:100%;
+            .user-font{
+                position:absolute;
+                right:0;
+                margin-right: 1rem;
+                margin-top: 1rem;
+                font-size: 2rem;
+                color: $dark-blue
+            }
+        }
         .search-wrapper{
             border: solid $base-color;
             border-radius: 50vh;

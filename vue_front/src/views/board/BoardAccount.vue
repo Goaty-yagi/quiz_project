@@ -1,7 +1,7 @@
 <template>
     <div  class="board-account-wrapper">
         <div class="main-wrapper">
-            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': user==false}">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
@@ -20,27 +20,27 @@
                 </div>
                 <div class="tag-container">
                     <div>関係するタグ</div>
-                    <div v-for="(tag,questionindex) in user.user_tag"
+                    <div v-for="(tag,questionindex) in handleQuestion"
                          v-bind:key="questionindex">
                          <!-- do somethig laler -->
                     </div>
                     <p>編集する></p>
                 </div>
                 <div class="nav-ber">
-                    <div>質問</div>
-                    <div>回答</div>
-                    <div>おすすめ</div>
-                    <div>メッセージ</div>
+                    <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
+                    <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
+                    <div :class="{'selected': showQuestion.questionType.favorite}">おすすめ</div>
+                    <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div>
                 </div>
                 <div class="selecter">
-                    <div class="select-item">解決</div>
-                    <div class="select-item">未解決</div>
-                    <div class="select-item">投票中</div>
+                    <div :class="{'option-selected': showQuestion.questionStatus.solved}" @click="handleQuestionStatus('solved')" class="select-item">解決</div>
+                    <div :class="{'option-selected': showQuestion.questionStatus.unsolved}" @click="handleQuestionStatus('unsolved')" class="select-item">未解決</div>
+                    <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
                     <div class="select-item">ベスト</div>
                 </div>
                 <div
                     class='question-container'
-                    v-for="(question,questionindex) in user.question"
+                    v-for="(question,questionindex) in handleQuestion"
                     v-bind:key="questionindex">
                     <div class='question-list' @click="getDetail(question.slug)">
                         <div 
@@ -51,10 +51,10 @@
                                 v-bind:key="tagindex">{{ tag.tag }}</div>
                         </div>
                         <div class="question-title">{{ question.title }}</div>
-                        <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div>
+                        <!-- <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div> -->
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
-                            <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
+                            <!-- <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div> -->
                             <div class="date">作成日：{{ question.created_on }}</div>
                         </div>
                     </div>   
@@ -65,19 +65,133 @@
 </template>
 
 <script>
+import {router} from "/src/main.js"
 export default {
     data(){
         return{
-
+            showQuestion:{
+                questionType:{
+                    question: true,
+                    answered: false,
+                    reccomend: false,
+                    favorite: false,
+                    message:false
+                    },
+                questionStatus:{
+                    all: true,
+                    solved: false,
+                    unsolved: false,
+                    onVoting: false,
+                    best: false,
+                }
+            }
         }
     },
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
-        }
+        },
+        handleQuestion(){
+            const handledQuestion= []
+            console.log("questiontype",this.showQuestion.questionType)
+            if(this.showQuestion.questionType.question){
+                return this.handleStatus(this.user.question)
+            }
+            else if(this.showQuestion.questionType.answered){
+                console.log('answered',this.user.answer)
+                const answeredquiz = []
+                Object.values(this.user.answer).forEach(value =>{
+                    answeredquiz.push(value.question)
+                })
+                return this.handleStatus(answeredquiz)
+            }
+        },
     },
     mounted(){
         console.log('mounted',this.user)
+    },
+    methods:{
+        getDetail(slug){
+            router.push(`/board-detail/${slug}` )
+        },
+        handleStatus(question){
+            console.log("handle",question)
+            const handledQuestion= []
+            if(this.showQuestion.questionStatus.all){
+                console.log('just_return__dayo')
+                    return question
+                }
+                else if(this.showQuestion.questionStatus.solved){
+                    console.log('solved_dayo')
+                    for(let i of question){
+                        if(i.solved){
+                            handledQuestion.push(i)
+                        }
+                    }
+                    return handledQuestion
+                }else if(this.showQuestion.questionStatus.unsolved){
+                    for(let i of question){
+                        console.log(i.title)
+                        if(i.solved==false){
+                            handledQuestion.push(i)
+                        }
+                    }
+                    return handledQuestion
+                }else if(this.showQuestion.questionStatus.onVoting){
+                    console.log('on_going_dayo')
+                    for(let i of question){
+                        if(i.vote_on_going==true){
+                            handledQuestion.push(i)
+                        }
+                    }
+                    return handledQuestion
+                }
+        },
+        // handleQuestion(){
+        //     if(this.showQuestion.questionType.question){
+        //         // console.log("return_recen:",this.questions)
+        //         return this.user.questions
+        //     }
+        //     else if(this.showQuestion.questionType.answered){
+        //         // console.log("return_reco:",this.reccomendedQuestion)
+        //         return this.user.answer.question
+        //     }
+        // },
+        handleQuestionStatus(status){
+            console.log('status',status)
+            if(this.showQuestion.questionStatus[status]){
+                console.log('same')
+                ;
+            }
+            else{
+                console.log('not the same')
+                Object.keys(this.showQuestion.questionStatus).forEach(key =>{
+                    this.showQuestion.questionStatus[key] = false
+                })
+                this.showQuestion.questionStatus[status] = true
+                console.log(this.showQuestion.questionStatus)
+            }
+        },
+        handleQuestionType(type){
+            if(this.showQuestion.questionType[type]){
+                console.log('same')
+                ;
+            }
+            else{
+                console.log('not the same')
+                Object.keys(this.showQuestion.questionType).forEach(key =>{
+                    this.showQuestion.questionType[key] = false
+                })
+                this.showQuestion.questionType[type] = true
+            }
+            // if(type == question){
+                
+                // }
+                // for(let i=0; i<Object.keys(this.showQuestion.questionType.length); i++){
+
+                // }
+            
+        }
     }
 }
 </script>
@@ -155,6 +269,11 @@ export default {
             background: linear-gradient(rgba(91, 117, 159, 0.9),rgba(28, 37, 76, 0.9));
             transition:0.5s;
         }
+        .selected{
+            background: $base-color;
+            font-weight: bold;
+            color: black;
+        }
     }
     .selecter{
         width:100%;
@@ -174,6 +293,12 @@ export default {
             padding-right:0.1rem;
             padding: 0.2rem;
             transition:0.5s;
+        }
+        .option-selected{
+            color: black;
+            font-weight: bold;
+            background: $base-lite;
+            border:0.1rem solid $dark-blue;
         }
     }
     .question-container{

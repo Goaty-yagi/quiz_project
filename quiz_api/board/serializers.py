@@ -105,7 +105,7 @@ class BoardAnswerReadSerializer(serializers.ModelSerializer):
 				  "liked_answer"
 				  ]
 		read_only_field = ['questions', "liked_answer"]
-		depth=1
+		depth=2
 
 
 class BoardAnswerCreateSerializer(serializers.ModelSerializer):
@@ -170,7 +170,7 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				#   "viewed_count",
 				#   'replay_count'
 				  ]
-		depth=3	
+		depth=3
 
 class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 	answer = BoardAnswerReadSerializer(many=True, required=False)
