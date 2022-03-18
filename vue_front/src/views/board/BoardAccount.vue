@@ -29,7 +29,7 @@
                 <div class="nav-ber">
                     <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
                     <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
-                    <div :class="{'selected': showQuestion.questionType.favorite}">おすすめ</div>
+                    <div :class="{'selected': showQuestion.questionType.reccomend}" @click="handleQuestionType('reccomend')">おすすめ</div>
                     <div :class="{'selected': showQuestion.questionType.favorite}">お気に入り</div>
                     <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div>
                 </div>
@@ -119,6 +119,9 @@ export default {
                     })
                     return this.handleStatus(answeredquiz)   
                 }
+            }else if(this.showQuestion.questionType.reccomend){
+                this.$store.dispatch('getRelatedQuestion')
+                return this.handleStatus(this.$store.state.board.reccomendedQuestion)
             }
         },
     },
