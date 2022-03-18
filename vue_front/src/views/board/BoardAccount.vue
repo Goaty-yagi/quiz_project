@@ -30,13 +30,15 @@
                     <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
                     <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
                     <div :class="{'selected': showQuestion.questionType.favorite}">おすすめ</div>
+                    <div :class="{'selected': showQuestion.questionType.favorite}">お気に入り</div>
                     <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div>
                 </div>
                 <div class="selecter">
+                    <div :class="{'option-selected': showQuestion.questionStatus.all}" @click="handleQuestionStatus('all')" class="select-item">ALL</div>
                     <div :class="{'option-selected': showQuestion.questionStatus.solved}" @click="handleQuestionStatus('solved')" class="select-item">解決</div>
                     <div :class="{'option-selected': showQuestion.questionStatus.unsolved}" @click="handleQuestionStatus('unsolved')" class="select-item">未解決</div>
                     <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
-                    <div class="select-item">ベスト</div>
+                    <div v-if="showQuestion.questionType.answered" :class="{'option-selected': showQuestion.questionStatus.best}" @click="handleQuestionStatus('best')" class="select-item">ベスト</div>
                 </div>
                 <div
                     class='question-container'
@@ -98,12 +100,25 @@ export default {
                 return this.handleStatus(this.user.question)
             }
             else if(this.showQuestion.questionType.answered){
-                console.log('answered',this.user.answer)
                 const answeredquiz = []
-                Object.values(this.user.answer).forEach(value =>{
-                    answeredquiz.push(value.question)
-                })
-                return this.handleStatus(answeredquiz)
+                console.log("in_quiz",this.showQuestion.questionStatus.best )
+                if(this.showQuestion.questionStatus.best){
+                    console.log('make_best_answered')
+                    Object.values(this.user.answer).forEach(value =>{
+                        console.log("loop",value)
+                        if(value.best == true){
+                            answeredquiz.push(value.question)}
+                    })
+                    console.log(answeredquiz)
+                    return answeredquiz
+                }
+                else{
+                    console.log('answered',this.user.answer)
+                    Object.values(this.user.answer).forEach(value =>{
+                        answeredquiz.push(value.question)
+                    })
+                    return this.handleStatus(answeredquiz)   
+                }
             }
         },
     },
@@ -158,6 +173,10 @@ export default {
         //     }
         // },
         handleQuestionStatus(status){
+            // handle questionStatus start from here by click.
+            // change all status = false then invocation = true
+            // then handleQuestion on computed will be triggered
+            // which make question from answer to return question to handleStatus
             console.log('status',status)
             if(this.showQuestion.questionStatus[status]){
                 console.log('same')
@@ -280,6 +299,7 @@ export default {
         display: flex;
         justify-content: center;
         margin-top: 1rem;
+        transition: 0.5s;
         .select-item{
             font-size:0.8rem;
             color: white;
