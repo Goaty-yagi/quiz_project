@@ -316,6 +316,7 @@ export default {
             router.push(`/board-detail/${slug}` )
         },
         questionHandler(key){
+            // recieve "recent" or "reccomend" to change status
             for(let i of Object.keys(this.showQuestionStatus)){
                 if(i == key){
                     this.showQuestionStatus[i] = true                    

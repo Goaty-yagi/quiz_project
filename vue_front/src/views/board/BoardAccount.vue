@@ -72,6 +72,7 @@ export default {
     data(){
         return{
             showQuestion:{
+                reccomendedQuestion:'',
                 questionType:{
                     question: true,
                     answered: false,
@@ -120,13 +121,14 @@ export default {
                     return this.handleStatus(answeredquiz)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
-                this.$store.dispatch('getRelatedQuestion')
                 return this.handleStatus(this.$store.state.board.reccomendedQuestion)
             }
         },
     },
     mounted(){
         console.log('mounted',this.user)
+        this.reccomendedQuestion = this.$store.dispatch('getRelatedQuestion')
+        console.log('mounted',this.reccomendedQuestion)
     },
     methods:{
         getDetail(slug){
