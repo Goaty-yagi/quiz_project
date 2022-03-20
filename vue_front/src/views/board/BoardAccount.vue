@@ -53,10 +53,10 @@
                                 v-bind:key="tagindex">{{ tag.tag }}</div>
                         </div>
                         <div class="question-title">{{ question.title }}</div>
-                        <!-- <div class="question-description">{{ question.description.substr(0,10)+'...' }}</div> -->
+                        <div class="question-description" v-if="question.description">{{ question.description.substr(0,10)+'...' }}</div>
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
-                            <!-- <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div> -->
+                            <div class="good" v-if="question.liked_num">{{ question.liked_num[0].liked_num }}</div>
                             <div class="date">作成日：{{ question.created_on }}</div>
                         </div>
                     </div>   
@@ -127,7 +127,8 @@ export default {
     },
     mounted(){
         console.log('mounted',this.user)
-        this.reccomendedQuestion = this.$store.dispatch('getRelatedQuestion')
+        this.$store.dispatch('getRelatedQuestion')
+        this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         console.log('mounted',this.reccomendedQuestion)
     },
     methods:{
@@ -194,6 +195,7 @@ export default {
                 })
                 this.showQuestion.questionStatus[status] = true
                 console.log(this.showQuestion.questionStatus)
+                this.scrollTop()
             }
         },
         handleQuestionType(type){
@@ -207,6 +209,7 @@ export default {
                     this.showQuestion.questionType[key] = false
                 })
                 this.showQuestion.questionType[type] = true
+                this.scrollTop()
             }
             // if(type == question){
                 
@@ -215,7 +218,13 @@ export default {
 
                 // }
             
-        }
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        },
     }
 }
 </script>

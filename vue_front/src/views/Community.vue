@@ -153,42 +153,44 @@ export default {
         console.log('mounted',this.user)
     },
     mounted() {
+        this.$store.dispatch('getRelatedQuestion')
+        this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         this.getQuestion()
-        this.getRelatedQuestion()
+        // this.getRelatedQuestion()
         // this.getQuestion()
-        console.log('mounted at community',typeof []) 
+        console.log('mounted at community',this.reccomendedQuestion) 
     },
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
         },
-        getUserTags(){
-            let checkDict = {}  
-            // let checkedDict = {}
-            let checkedList = []
-            let checkedlist2 = []
-            for(let i of this.user.user_tag){
-                checkDict[i.tag] = i.total_num
-                checkedList.push(i.tag)
-            }
-            console.log("computed",checkDict)
-            if(Object.keys(checkDict).length <= 3){
-                return checkedList
-            }
-            if(Object.keys(checkDict).length > 3){
-                for(let m=0; m < 3; m++){
-                    const aryMax = function (a, b) {return Math.max(a, b);}
-                    let max = Object.values(checkDict).reduce(aryMax);
-                    const result = Object.keys(checkDict).reduce( (r, key) => { 
-                        return checkDict[key] === max ? key : r 
-                        }, null);
-                    // checkedDict[result] = max
-                    delete checkDict[result]
-                    checkedlist2.push(result)
-                }
-                return checkedlist2
-            }
-        },
+        // getUserTags(){
+        //     let checkDict = {}  
+        //     // let checkedDict = {}
+        //     let checkedList = []
+        //     let checkedlist2 = []
+        //     for(let i of this.user.user_tag){
+        //         checkDict[i.tag] = i.total_num
+        //         checkedList.push(i.tag)
+        //     }
+        //     console.log("computed",checkDict)
+        //     if(Object.keys(checkDict).length <= 3){
+        //         return checkedList
+        //     }
+        //     if(Object.keys(checkDict).length > 3){
+        //         for(let m=0; m < 3; m++){
+        //             const aryMax = function (a, b) {return Math.max(a, b);}
+        //             let max = Object.values(checkDict).reduce(aryMax);
+        //             const result = Object.keys(checkDict).reduce( (r, key) => { 
+        //                 return checkDict[key] === max ? key : r 
+        //                 }, null);
+        //             // checkedDict[result] = max
+        //             delete checkDict[result]
+        //             checkedlist2.push(result)
+        //         }
+        //         return checkedlist2
+        //     }
+        // },
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
@@ -228,31 +230,31 @@ export default {
                     console.log(error)
                 })
         },
-        async getRelatedQuestion() {
-            // this.$store.commit('setIsLoading', true)
-            console.log("ingetRQ",this.getUserTags)
-            if(this.getUserTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}`
-            }
-            if(this.getUserTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}`
-            }
-            if(this.getUserTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}&tag=${this.getUserTags[2]}`
-            }
-            console.log("url:",url)
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    this.reccomendedQuestion = response.data
-                    console.log(this.reccomendedQuestion.length,this.reccomendedQuestion)
-                    })
-                }
-            catch{(error => {
-                    console.log(error)
-            })}
-            // this.$store.commit('setIsLoading', false)
-        },
+        // async getRelatedQuestion() {
+        //     // this.$store.commit('setIsLoading', true)
+        //     console.log("ingetRQ",this.getUserTags)
+        //     if(this.getUserTags.length == 1){
+        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}`
+        //     }
+        //     if(this.getUserTags.length == 2){
+        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}`
+        //     }
+        //     if(this.getUserTags.length == 3){
+        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}&tag=${this.getUserTags[2]}`
+        //     }
+        //     console.log("url:",url)
+        //     try{
+        //         await axios.get(url)
+        //             .then(response => {
+        //             this.reccomendedQuestion = response.data
+        //             console.log(this.reccomendedQuestion.length,this.reccomendedQuestion)
+        //             })
+        //         }
+        //     catch{(error => {
+        //             console.log(error)
+        //     })}
+        //     // this.$store.commit('setIsLoading', false)
+        // },
         async getSearchQuestion(){
             console.log('Gsearch')
             await axios

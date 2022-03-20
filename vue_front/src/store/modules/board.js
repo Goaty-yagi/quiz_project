@@ -126,7 +126,6 @@ export default {
                     .then(response => {
                     state.reccomendedQuestion = response.data
                     console.log(state.reccomendedQuestion.length,state.reccomendedQuestion)
-                    return state.reccomendedQuestion
                     })
                 }
             catch{(error => {

@@ -11,7 +11,7 @@ import operator
 import copy
 from django.http import Http404
 
-from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag
+from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag, User
 from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer, AnswerLikedReadSerializer, ParentTagSerializer, UserTagSerializer, CenterTagSerializer
 
 
@@ -79,6 +79,30 @@ class UsertagCreate(generics.CreateAPIView):
 class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
     queryset = BoardUserTag.objects.all()
     serializer_class = UserTagSerializer
+    
+
+# class AnsweredQuestionList(generics.ListAPIView):
+    # serializer_class = BoardQuestionListSerializer
+
+    # def get_queryset(self):
+    #     user = User.objects.filter(user=self.request.user)
+    #     return BoardQuestion.objects.filter(UID=user)
+
+class AnsweredQuestionList(APIView):
+# get questions from user UID in answer
+    def get(self, request, format=None):
+        print("answered in")
+        user = request.query_params.getlist("user")
+        print(user)
+        try:
+            question  = BoardQuestion.objects.filter(
+                answer__user = user,
+            ).distinct()
+            print(question)
+            serializer = BoardQuestionListSerializer(question, many=True)
+            return Response(serializer.data)
+        except BoardQuestion.DoesNotExist:
+            raise Http404
 
 
 class RelatedQuestionList(APIView):
