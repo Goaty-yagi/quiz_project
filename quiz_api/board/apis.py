@@ -91,14 +91,11 @@ class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
 class AnsweredQuestionList(APIView):
 # get questions from user UID in answer
     def get(self, request, format=None):
-        print("answered in")
         user = request.query_params.getlist("user")
-        print(user)
         try:
             question  = BoardQuestion.objects.filter(
-                answer__user = user,
+                answer__user = user[0],
             ).distinct()
-            print(question)
             serializer = BoardQuestionListSerializer(question, many=True)
             return Response(serializer.data)
         except BoardQuestion.DoesNotExist:

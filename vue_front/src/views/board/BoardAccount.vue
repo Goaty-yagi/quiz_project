@@ -1,11 +1,11 @@
 <template>
     <div  class="board-account-wrapper">
         <div class="main-wrapper">
-            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': user==false}">
+            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading}">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class='main-container' v-if="user">
+            <div class='main-container' v-if="this.answeredQuestion">
                 <h1 class='title-white'>質問板</h1>
                 <div class="user-info">
                     <div class="header">
@@ -68,11 +68,13 @@
 
 <script>
 import {router} from "/src/main.js"
+import axios from 'axios'
 export default {
     data(){
         return{
+            reccomendedQuestion:'',
+            answeredQuestion:'',
             showQuestion:{
-                reccomendedQuestion:'',
                 questionType:{
                     question: true,
                     answered: false,
@@ -102,23 +104,22 @@ export default {
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
-                console.log("in_quiz",this.showQuestion.questionStatus.best )
                 if(this.showQuestion.questionStatus.best){
                     console.log('make_best_answered')
-                    Object.values(this.user.answer).forEach(value =>{
+                    Object.values(this.answeredQuestion).forEach(value =>{
                         console.log("loop",value)
-                        if(value.best == true){
+                        if(value.answer.best == true){
                             answeredquiz.push(value.question)}
                     })
                     console.log(answeredquiz)
                     return answeredquiz
                 }
                 else{
-                    console.log('answered',this.user.answer)
-                    Object.values(this.user.answer).forEach(value =>{
-                        answeredquiz.push(value.question)
-                    })
-                    return this.handleStatus(answeredquiz)   
+                    // console.log('answered',this.user.answer)
+                    // Object.values(this.user.answer).forEach(value =>{
+                    //     answeredquiz.push(value.question)
+                    // })
+                    return this.handleStatus(this.answeredQuestion)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
                 return this.handleStatus(this.$store.state.board.reccomendedQuestion)
@@ -127,11 +128,28 @@ export default {
     },
     mounted(){
         console.log('mounted',this.user)
+        this.getAnsweredQuestion()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
-        console.log('mounted',this.reccomendedQuestion)
+        console.log('mounted',this.answeredQuestion)
     },
     methods:{
+        async getAnsweredQuestion() {
+            this.$store.commit('setIsLoading', true)
+            console.log("ingetRQ in account")
+            var url = `/api/board/question-answered?user=${this.user.UID}`
+            try{
+                await axios.get(url)
+                    .then(response => {
+                    this.answeredQuestion = response.data
+                    })
+                    console.log("answeredQuestion",this.answeredQuestion)
+                }
+            catch{(error => {
+                    console.log(error)
+            })}
+            this.$store.commit('setIsLoading', false)
+        },
         getDetail(slug){
             router.push(`/board-detail/${slug}` )
         },
