@@ -163,6 +163,14 @@ class BoardAnswerLiked(models.Model):
     #     return self.question.title
 
 
+class UserFavoriteQuestion(models.Model):
+    user = models.ForeignKey(User, default=None, related_name='favorite_question', on_delete=models.CASCADE)
+    question = models.ManyToManyField(BoardQuestion, blank=False, related_name='favorite_question')
+    
+
+
+    # def __str__(self):
+    #     return self.user
 
 
 # @receiver(post_save, sender=BoardUserTag)

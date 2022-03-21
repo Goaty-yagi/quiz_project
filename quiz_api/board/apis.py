@@ -11,8 +11,8 @@ import operator
 import copy
 from django.http import Http404
 
-from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag, User
-from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer, AnswerLikedReadSerializer, ParentTagSerializer, UserTagSerializer, CenterTagSerializer
+from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardUserTag, BoardCenterTag, User ,UserFavoriteQuestion
+from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerializer, BoardAnswerCreateSerializer, BoardReplyCreateSerializer, BoardReplyReadSerializer, BoardQuestionCreateSerializer, BoardLikedCreateSerializer, BoardLikedReadSerializer, AnswerLikedReadSerializer, ParentTagSerializer, UserTagSerializer, CenterTagSerializer, FavoriteQuestionSerializer
 
 
 class BoardQuestionList(generics.ListAPIView):
@@ -79,6 +79,16 @@ class UsertagCreate(generics.CreateAPIView):
 class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
     queryset = BoardUserTag.objects.all()
     serializer_class = UserTagSerializer
+
+
+class FavoriteQuestionUpdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserFavoriteQuestion.objects.all()
+    serializer_class = FavoriteQuestionSerializer
+
+
+class FavoriteQuestionCreate(generics.CreateAPIView):
+    queryset = UserFavoriteQuestion.objects.all()
+    serializer_class = FavoriteQuestionSerializer
     
 
 # class AnsweredQuestionList(generics.ListAPIView):

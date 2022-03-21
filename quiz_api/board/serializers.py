@@ -1,9 +1,9 @@
 from gettext import install
-from pickletools import read_long1
+from pickletools import read_floatnl, read_long1
 import secrets
 from django.db.models import F
 from rest_framework import serializers
-from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag
+from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag, UserFavoriteQuestion
 
 # from user.models import User
 # from user.serializers import UserSerializer
@@ -269,3 +269,30 @@ class ParentTagSerializer(serializers.ModelSerializer):
 				  "center_tag"
 				  ]
 		read_only_field = ['center_tag']
+
+
+class FavoriteQuestionSerializer(serializers.ModelSerializer):
+	# question = BoardQuestionListSerializer(many=True)
+	class Meta:
+		model = UserFavoriteQuestion
+		fields = ["id",
+				  "user",
+				  "question",
+				  ]
+		# read_only_field = ['user','question']
+
+	def create(self, validated_data):
+		# this create is that recieve data of ManytoMany field and data of foregnkey field
+		# update_or_create only with user(foregnkey) and add many data late
+		# update_or_create returns tuple include object and boolean true(for create) or false(for update)
+		print('in__create')
+		print("valid",validated_data)
+		user = validated_data.pop('user')
+		question = validated_data.pop('question')
+		favorite_question = UserFavoriteQuestion.objects.update_or_create(
+			user=user
+			)
+		for Q in question:
+				favorite_question[0].question.add(Q)
+		return favorite_question[0]
+		
