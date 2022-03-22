@@ -30,7 +30,7 @@
                     <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
                     <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
                     <div :class="{'selected': showQuestion.questionType.reccomend}" @click="handleQuestionType('reccomend')">おすすめ</div>
-                    <div :class="{'selected': showQuestion.questionType.favorite}">お気に入り</div>
+                    <div :class="{'selected': showQuestion.questionType.favorite}" @click="handleQuestionType('favorite')">お気に入り</div>
                     <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div>
                 </div>
                 <div class="selecter">
@@ -123,11 +123,14 @@ export default {
                 }
             }else if(this.showQuestion.questionType.reccomend){
                 return this.handleStatus(this.$store.state.board.reccomendedQuestion)
+            }else if(this.showQuestion.questionType.favorite){
+                console.log('gonna favorite',this.user.favorite_question.question)
+                return this.handleStatus(this.user.favorite_question[0].question)
             }
         },
     },
     mounted(){
-        console.log('mounted',this.user)
+        console.log('mounted',this.user.favorite_question)
         this.getAnsweredQuestion()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion

@@ -49,10 +49,21 @@
                         <p class='question-description'> {{ question.description}} </p>
                     </div>
                     <div class="question-box-footer">
-                        <i v-if="addedLiked==false" @click="addLikedNum" class="far fa-heart" ></i>
-                        <i v-if="addedLiked" class="fas fa-heart"></i>
-                        <p class="good" v-if="question.liked_num[0]">{{ liked_num }} </p>
-                        <p class="viewed"> viewed {{ question.viewed}} </p>
+                        <div class="like-wrapper">
+                            <i v-if="addedLiked==false" @click="addLikedNum" class="far fa-heart" ></i>
+                            <i v-if="addedLiked" class="fas fa-heart"></i>
+                            <p class="good" v-if="question.liked_num[0]">{{ liked_num }} </p>
+                        </div>
+                        <div class="viewed-wrapper">
+                            <p class="viewed"> viewed {{ question.viewed}} </p>
+                        </div>
+                        <div class="favorite">
+                            <i v-if="addedFavorite==false" @click="createFavorite()" class="far fa-star"></i>
+                            <div  v-if="addedFavorite" class="added-favorite">
+                                <i class="far fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
                     </div>
                     <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
                     <!-- <button @click="handleNotifications('reply')" >unko</button> -->
@@ -197,6 +208,7 @@ export default {
             questionUserBoolean: false,
             liked_num: '',
             addedLiked: false,
+            addedFavorite: false,
             likedUserIdList:'',
             checkedLikedUserList:[],
             relatedQuestion:'',
@@ -236,6 +248,7 @@ export default {
                     this.getQuestionTagList(this.question.tag)
                     this.getRelatedQuestion()
                     this.countViewedNumUp()
+                    this.favoriteCheck()
                     })
                 .catch(error => {
                     console.log(error)
@@ -247,7 +260,6 @@ export default {
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
             this.$store.commit('setIsLoading', true)
-            console.log("ingetRQ", this.questionTags.length)
             if(this.questionTags.length == 1){
                 var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
             }
@@ -262,7 +274,6 @@ export default {
                 await axios.get(url)
                     .then(response => {
                     this.relatedQuestion = response.data
-                    console.log(this.relatedQuestion.length,this.relatedQuestion)
                     })
                 }
             catch{(error => {
@@ -271,11 +282,20 @@ export default {
             this.$store.commit('getRelatedQuestion', this.relatedQuestion)
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
-            console.log("relatedquestion",this.relatedQuestion)
             this.$store.commit('setIsLoading', false)
         },
+        async createFavorite(){
+            this.addedFavorite=true
+            await axios({
+                method: 'post',
+                url: '/api/board/favorite-question-create/',
+                data: {
+                    user: this.$store.state.signup.user.uid,
+                    question: [this.question.id]
+                },
+            })
+        },
         async countViewedNumUp(){
-            console.log('in_count_viewed',this.question.tag)
             for (let i =0; i < this.question.tag.length; i++){
                 await axios({
                 method: 'post',
@@ -342,14 +362,9 @@ export default {
             console.log(this.slicedRelatedQuestion)
         },
         deleteSameQuestion(){
-            console.log("first",this.relatedQuestion)
-            console.log("inDE",this.question.id)
             for(let q of this.relatedQuestion){
-                console.log("loop", q.id)
                 if (q.id == this.question.id){
-                    console.log("before",this.relatedQuestion)
                     this.relatedQuestion.splice(this.relatedQuestion.indexOf(q),1)
-                    console.log('after',this.relatedQuestion)
                     break
                 }
                 
@@ -392,9 +407,6 @@ export default {
         //     return this.liked_num
         // },
         getRelatedSlug(slug){
-            console.log('inrelated-slug:',slug)
-            // this.$store.commit('getSlug',slug)
-            // router.push(`/board-detail/${slug}` )
             this.getDetail(slug)
             this.$forceUpdate();
         },
@@ -429,6 +441,15 @@ export default {
                     if(user == this.$store.state.signup.user.uid){
                         this.answerDict[answerId].addedAnswerLiked = true
                     }
+                }
+            }
+        },
+        favoriteCheck(){
+            this.addedFavorite = false
+            for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
+                if(this.question.id==i.id){
+                    this.addedFavorite = true
+                    break
                 }
             }
         },
@@ -601,18 +622,52 @@ export default {
         .question-box-footer{
             display: flex;
             margin-bottom: 0.5rem;
-            .fa-heart{
+            width:100%;
+            .like-wrapper{
+                flex-basis: 10%;
+                display: flex;
+                .fa-heart{
                 color: rgb(221, 36, 221);
                 margin-left: 0.5rem;
                 margin-right: 0.3rem;
                 margin-top: 0.1rem;
+                // flex-basis: 10%;
+                }
             }
-            // .added{
-            //     background: pink;
-            // }
-            .viewed{
+            .viewed-wrapper{
+                flex-basis: 40%;
+                .viewed{
                 margin-left: 1rem;
                 margin-right: 0.5rem;
+                }
+            }
+            .favorite{
+                display: flex;
+                position:relative;
+                justify-content:flex-end;
+                flex-basis: 50%;
+                margin-top: 0.1rem;
+                margin-right: 1rem;
+                box-sizing: border-box;
+                position:relative;
+                .far{
+                    position: absolute;
+                    right: 0.1rem;
+                }
+                .added-favorite{
+                    position: relative;
+                    .far{
+                        position: absolute;
+                        z-index:2;
+                        right: 0.1rem;
+                    }
+                    .fas{
+                        position: absolute;
+                        color: yellow;
+                        right: 0.1rem;
+                        z-index:1;
+                    }
+                }
             }
         }
         .btn-base-white-db-sq{

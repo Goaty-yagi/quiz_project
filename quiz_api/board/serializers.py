@@ -271,6 +271,18 @@ class ParentTagSerializer(serializers.ModelSerializer):
 		read_only_field = ['center_tag']
 
 
+class FavoriteQuestionReadSerializer(serializers.ModelSerializer):
+	# question = BoardQuestionListSerializer(many=True)
+	class Meta:
+		model = UserFavoriteQuestion
+		fields = ["id",
+				  "user",
+				  "question",
+				  ]
+		# read_only_field = ['user','question']
+		depth=1
+
+
 class FavoriteQuestionSerializer(serializers.ModelSerializer):
 	# question = BoardQuestionListSerializer(many=True)
 	class Meta:
@@ -283,7 +295,7 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		# this create is that recieve data of ManytoMany field and data of foregnkey field
-		# update_or_create only with user(foregnkey) and add many data late
+		# update_or_create only with user(foregnkey) and add many data later
 		# update_or_create returns tuple include object and boolean true(for create) or false(for update)
 		print('in__create')
 		print("valid",validated_data)
