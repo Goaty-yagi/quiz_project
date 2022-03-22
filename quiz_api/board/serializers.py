@@ -283,6 +283,13 @@ class FavoriteQuestionReadSerializer(serializers.ModelSerializer):
 		depth=1
 
 
+	# def update(self, instance, validated_data):
+	# 	print("updatedayo")
+	# 	question_data = validated_data.pop("question")
+	# 	question = instance.question
+
+
+
 class FavoriteQuestionSerializer(serializers.ModelSerializer):
 	# question = BoardQuestionListSerializer(many=True)
 	class Meta:
@@ -305,6 +312,10 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 			user=user
 			)
 		for Q in question:
-				favorite_question[0].question.add(Q)
+			print("Q",Q.id)
+			if UserFavoriteQuestion.objects.filter(user=user,question__id=Q.id).exists():
+				favorite_question[0].question.remove(Q)
+				return favorite_question[0]
+		favorite_question[0].question.add(Q)
 		return favorite_question[0]
 		
