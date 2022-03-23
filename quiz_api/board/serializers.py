@@ -100,6 +100,7 @@ class BoardAnswerReadSerializer(serializers.ModelSerializer):
 				  "description", 
 				  "user",
 				  "created_on",
+				  "on_reply",
 				  "best",
 				  "reply",
 				  "liked_answer"
@@ -118,6 +119,7 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 				  "description", 
 				  "user",
 				  "created_on",
+				  "on_reply",
 				  "liked_answer",
 				  "best",
 				  ]
@@ -130,7 +132,6 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 		liked_answer_data = validated_data.pop('liked_answer')
 		print("liked_answer_data:",liked_answer_data)
 		answer = BoardAnswer.objects.create(**validated_data)
-		print("unko",liked_answer_data)
 		BoardAnswerLiked.objects.create(answer=answer)
 		return answer
 
@@ -159,6 +160,7 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "select_best_on_going",
 				  "post_on_going",
 				  "vote_on_going",
+				  "on_answer",
 				  "tag", 
 				  "vote", 
 				  "user",
@@ -188,6 +190,7 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 				  "select_best_on_going",
 				  "post_on_going",
 				  "vote_on_going",
+				  "on_answer",
 				  "tag", 
 				  "vote", 
 				  "user",

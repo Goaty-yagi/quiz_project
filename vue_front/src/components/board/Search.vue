@@ -5,7 +5,7 @@
         </div>
         <div class="main-wrapper">
             <h1 class='title-white'>質問板</h1>
-            <div class="related-title" @click="unko()">検索結果</div>
+            <div class="related-title">検索結果</div>
             <div class="question-wrapper">
                 <div
                 v-for="(question,questionindex) in searchedQuestion"

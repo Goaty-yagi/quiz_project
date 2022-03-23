@@ -1,9 +1,11 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.http import Http404
 
 from datetime import datetime
 import asyncio
+
 
 import secrets
 import dateutil.parser
@@ -73,6 +75,7 @@ class BoardQuestion(models.Model):
     post_on_going = models.BooleanField(default=True)
     select_best_on_going = models.BooleanField(default=False)
     vote_on_going = models.BooleanField(default=False)
+    on_answer = models.BooleanField(default=False)
     vote = models.IntegerField(default=0)
     tag = models.ManyToManyField(BoardCenterTag, related_name='question')
     img = models.ImageField(blank=True, null=True)
@@ -115,6 +118,7 @@ class BoardAnswer(models.Model):
     description = models.CharField(max_length=200)
     user = models.ForeignKey(User, default=None, related_name='answer', on_delete=models.CASCADE)
     best = models.BooleanField(null=True)
+    on_reply = models.BooleanField(default=False)
     good = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
 
@@ -173,17 +177,31 @@ class UserFavoriteQuestion(models.Model):
     #     return self.user
 
 
-# @receiver(post_save, sender=BoardUserTag)
-# def add_used_num(sender, instance, created, **kwargs):
-#     print(kwargs["signal"].__dict__, 'instance',instance.tag.id, 'sender',sender)  
-#     try:
-#         center_tag_id = instance.tag.id
-#         center_tag_object = BoardCenterTag.objects.get(id=center_tag_id)
-#         center_tag_object.used_num +=1
-#         instance.used_num +=1
-#         center_tag_object.save()
-#     except:
-#         raise Exception("unko")
+@receiver(post_save, sender=BoardAnswer)
+def handle_on_answer(sender, instance, created, **kwargs):
+    print("kwargs",kwargs["signal"].__dict__, 'instance',instance,'created',created, 'sender',sender)  
+    if created == True:
+        try:
+            question = BoardQuestion.objects.filter(id=instance.question.id)
+            for q in question:
+                q.on_answer = True
+                print('answeron',q.on_answer)
+                q.save()
+        except:
+            raise Http404
+
+
+@receiver(post_save, sender=BoardReply)
+def handle_on_reply(sender, instance, created, **kwargs):
+    print("kwargs",kwargs["signal"].__dict__, 'instance',instance,'created',created, 'sender',sender)  
+    if created == True:
+        try:
+            answer = BoardAnswer.objects.filter(id=instance.answer.id)
+            for q in answer:
+                q.on_reply = True
+                q.save()
+        except:
+            raise Http404
 
 
 # @receiver(post_save, sender=BoardQuestion)
