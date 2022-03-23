@@ -10,6 +10,7 @@ export default {
         relatedQuestion:'',
         searchedQuestions:'',
         reccomendedQuestion:'',
+        // favoriteQuestion:'',
         notifications:{
             reply: false,
             answer: false,
@@ -133,6 +134,21 @@ export default {
             })}
             // this.$store.commit('setIsLoading', false)
         },
+        // async getFavoriteQuestion({ state , getters }, payload){
+        //     const questionId = []
+        //     for(let i of getters.user.question){
+        //         questionId.push(i.id)
+        //     }
+        //     await axios
+        //     .get(`/api/board/question-favorite?question_id=${questionId}`)
+        //     .then(response => {
+        //         state.favoriteQuestion = response.data
+        //         console.log('GetFQ', state.favoriteQuestion)
+        //         })
+        //     .catch(error => {
+        //         console.log(error)
+        //     })
+        // },
         // async getSearchQuestion({ state, commit }){
         //     await axios({
         //         method: 'get',

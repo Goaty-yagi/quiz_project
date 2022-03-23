@@ -112,6 +112,22 @@ class AnsweredQuestionList(APIView):
             raise Http404
 
 
+class favoriteQuestionList(APIView):
+# get questions from user UID in answer
+    def get(self, request, format=None):
+        print("request",request)
+        question_id = request.query_params.getlist("question_id")[0].split(",")
+        print(type(question_id),question_id)
+        try:
+            question  = BoardQuestion.objects.filter(
+                id__in = question_id
+            ).distinct()
+            serializer = BoardQuestionListSerializer(question, many=True)
+            return Response(serializer.data)
+        except BoardQuestion.DoesNotExist:
+            raise Http404
+
+
 class RelatedQuestionList(APIView):
 # this is for all indicate quiz, field and module
     def get(self, request, format=None):

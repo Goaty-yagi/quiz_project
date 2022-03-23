@@ -29,6 +29,7 @@ export default {
         password:'',
         user: null,
         djangoUser: null,
+        fasvoriteQuestion:'',
         emailVerified:null,
         authIsReady:false,
         checkedEmail:null,
@@ -77,6 +78,22 @@ export default {
             .then(response => {
                 state.djangoUser = response.data
                 console.log('inDUGet', state.djangoUser)
+                store.dispatch('getFavoriteQuestion')
+                })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+        async getFavoriteQuestion({ state, commit }){
+            const questionId = []
+            for(let i of state.djangoUser.favorite_question[0].question){
+                questionId.push(i.id)
+            }
+            await axios
+            .get(`/api/board/question-favorite?question_id=${questionId}`)
+            .then(response => {
+                state.favoriteQuestion = response.data
+                console.log('inDUGet', state.favoriteQuestion)
                 })
             .catch(error => {
                 console.log(error)

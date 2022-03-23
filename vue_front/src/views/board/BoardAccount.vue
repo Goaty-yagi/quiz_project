@@ -124,8 +124,8 @@ export default {
             }else if(this.showQuestion.questionType.reccomend){
                 return this.handleStatus(this.$store.state.board.reccomendedQuestion)
             }else if(this.showQuestion.questionType.favorite){
-                console.log('gonna favorite',this.user.favorite_question.question)
-                return this.handleStatus(this.user.favorite_question[0].question)
+                console.log('gonna favorite')
+                return this.handleStatus(this.$store.state.signup.favoriteQuestion)
             }
         },
     },

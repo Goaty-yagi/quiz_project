@@ -57,8 +57,8 @@
                         <div class="viewed-wrapper">
                             <p class="viewed"> viewed {{ question.viewed}} </p>
                         </div>
-                        <div class="favorite">
-                            <i v-if="addedFavorite==false" @click="createFavorite()" class="far fa-star"></i>
+                        <div class="favorite" @click="handleAddedFavorite()">
+                            <i v-if="addedFavorite==false" class="far fa-star"></i>
                             <div  v-if="addedFavorite" class="added-favorite">
                                 <i class="far fa-star"></i>
                                 <i class="fas fa-star"></i>
@@ -285,7 +285,6 @@ export default {
             this.$store.commit('setIsLoading', false)
         },
         async createFavorite(){
-            this.addedFavorite=true
             await axios({
                 method: 'post',
                 url: '/api/board/favorite-question-create/',
@@ -294,6 +293,10 @@ export default {
                     question: [this.question.id]
                 },
             })
+        },
+        handleAddedFavorite(){
+            this.addedFavorite=!this.addedFavorite
+            this.createFavorite()
         },
         async countViewedNumUp(){
             for (let i =0; i < this.question.tag.length; i++){
