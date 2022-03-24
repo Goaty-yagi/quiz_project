@@ -5,7 +5,17 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
+            {{onNotification.onReply }}
+            {{ onNotification.onAnswer }}
             <div class='main-container' v-if="this.answeredQuestion">
+                <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
+                    <div class="notification-text text1" v-if="onNotification.onAnswer">
+                        新しい回答があります。
+                    </div>
+                    <div class="notification-text text2" v-if="onNotification.onReply">
+                        新しい返信があります。
+                    </div>
+                </div>
                 <h1 class='title-white'>質問板</h1>
                 <div class="user-info">
                     <div class="header">
@@ -31,7 +41,7 @@
                     <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
                     <div :class="{'selected': showQuestion.questionType.reccomend}" @click="handleQuestionType('reccomend')">おすすめ</div>
                     <div :class="{'selected': showQuestion.questionType.favorite}" @click="handleQuestionType('favorite')">お気に入り</div>
-                    <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div>
+                    <!-- <div :class="{'selected': showQuestion.questionType.message}">メッセージ</div> -->
                 </div>
                 <div class="selecter">
                     <div :class="{'option-selected': showQuestion.questionStatus.all}" @click="handleQuestionStatus('all')" class="select-item">ALL</div>
@@ -45,12 +55,20 @@
                     v-for="(question,questionindex) in handleQuestion"
                     v-bind:key="questionindex">
                     <div class='question-list' @click="getDetail(question.slug)">
-                        <div 
-                            class="tag-wrapper">
+                        <div class="tag-wrapper">
                             <div 
                                 class="tag"
                                 v-for="(tag,tagindex) in question.tag" 
-                                v-bind:key="tagindex">{{ tag.tag }}</div>
+                                v-bind:key="tagindex">{{ tag.tag }}
+                            </div>
+                            <div class="on-answer-container">
+                                <div class="on-answer" v-if="handleOnAnswer(question.on_answer)">
+                                    <span class="span1"> NEW</span><span class="span2">ANSWER</span>
+                                </div>
+                                <div class="on-answer" v-if="onReplayCheck(question.answer)">
+                                    <span class="span1"> NEW</span><span class="span2">REPLY</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="question-title">{{ question.title }}</div>
                         <div class="question-description" v-if="question.description">{{ question.description.substr(0,10)+'...' }}</div>
@@ -74,6 +92,10 @@ export default {
         return{
             reccomendedQuestion:'',
             answeredQuestion:'',
+            onNotification:{
+                onReply:false,
+                onAnswer:false,
+            },
             showQuestion:{
                 questionType:{
                     question: true,
@@ -129,9 +151,12 @@ export default {
             }
         },
     },
+    beforeMount(){
+        console.log("beforeMounyed")
+        this.getAnsweredQuestion()
+    },
     mounted(){
         console.log('mounted',this.user.favorite_question)
-        this.getAnsweredQuestion()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         console.log('mounted',this.answeredQuestion)
@@ -146,7 +171,7 @@ export default {
                     .then(response => {
                     this.answeredQuestion = response.data
                     })
-                    console.log("answeredQuestion",this.answeredQuestion)
+                    this.handleOnReply()
                 }
             catch{(error => {
                     console.log(error)
@@ -240,6 +265,39 @@ export default {
                 // }
             
         },
+        handleOnReply(){
+            console.log("handleOnREPLY", this.answeredQuestion)
+            for(let question of this.answeredQuestion){
+                console.log("first loop",question.answer)
+                for(let answer of question.answer){
+                    console.log("second loop",answer)
+                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                        this.onNotification.onReply = true
+                    }
+                }
+            }
+            console.log("end")
+        },
+        handleOnAnswer(onAnswer){
+            if(onAnswer){
+                this.onNotification.onAnswer = true
+                return true      
+            }else{
+                return false
+            }
+        },
+        onReplayCheck(questionAnswer){
+            console.log("onreplycheck")
+            for(let answer of questionAnswer){
+                if(answer.on_reply==true){
+                    if(answer.user.UID==this.user.UID){
+                    return true
+                    }
+                }else{
+                    return false
+                }
+            }
+        },
         scrollTop(){
             window.scrollTo({
                 top: 0,
@@ -265,6 +323,18 @@ export default {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    .notification-blue{
+        display: flex;
+        flex-direction: column;
+        .text1{
+            border-bottom: solid rgb(26, 209, 255);
+            padding-bottom:0.5rem;
+            width:100%;
+        }
+        .text2{
+            margin-top: 0.5rem;
+        }
+    }
     .user-info{
         border: solid $base-color;
         border-radius: 0.5rem;
@@ -377,6 +447,28 @@ export default {
                 margin-bottom: 0.5rem;
                 padding: 0.5rem;
                 min-width: 3rem;
+            }
+            .on-answer-container{
+                position:relative;
+                width:100%;
+                .on-answer{
+                    display: flex;
+                    position: absolute;
+                    right: 0;
+                    flex-direction: column;
+                    width:3.7rem;
+                    margin-top: 0.5rem;
+                    margin-right: 0.3rem;
+                    padding-right:0.2rem;
+                    padding-left:0.2rem;
+                    color: red;
+                    border: solid red;
+                    border-radius: 0.5rem;
+                    .span2{
+                        margin-top: -0.5rem;
+                        font-size: 0.6rem;                   
+                    }
+                }
             }
         }
         .good-like-wrapper{

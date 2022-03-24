@@ -255,6 +255,20 @@ export default {
             })
             // this.$store.commit('setIsLoading', false)
         },
+        async patchOnAnswer(){
+            if(slug==""){
+                var url = `/api/board/question/${this.$route.params.slug}`
+            }else{
+                var url = `/api/board/question/${slug}`
+            }
+            await axios({
+                method: 'patch',
+                url: url,
+                data: {
+                    on_answer: false,
+                },
+            })
+        },
         async getRelatedQuestion() {
             // relatedQuestion Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.

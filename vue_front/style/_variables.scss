@@ -160,7 +160,8 @@ input[type="text"]:focus {
     background: rgba(202, 250, 240, 0.8);
     position: fixed;
     bottom: 5rem;
-    height: 3rem;
+    min-height: 3rem;
+    height: auto;
     width: 80%;
     max-width: 550px;
     padding: 1rem;
