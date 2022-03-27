@@ -8,6 +8,7 @@
             <div class="header-flex">
                 <h1 class='title-white'>質問板</h1>
                 <i @click="goAccount()" class="fas fa-user user-font"></i>
+                <i v-if="$store.getters.handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
                 <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
             </div>
             <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
@@ -134,6 +135,7 @@ export default {
             userTagList: [],
             reccomendedQuestion: [],
             searchedQuestion:'',
+            onAnswerOrReply:false,
             // notifications:false,
             fixed: '',
             showQuestionStatus:{
@@ -147,18 +149,21 @@ export default {
         }
     },
     created(){
+        console.log('created')
     },
     beforeMount(){
         // this.getQuestion()
-        console.log('mounted',this.user)
+        console.log('before-mounted')
     },
     mounted() {
+        this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
+        this.$store.dispatch('getDjangoUser')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         this.getQuestion()
         // this.getRelatedQuestion()
         // this.getQuestion()
-        console.log('mounted at community',this.reccomendedQuestion) 
+        console.log('mounted at community',this.$store.getters.getUserTag,this.$store.state.board.userTag,this.$store.getters.getUID,this.reccomendedQuestion) 
     },
     computed:{
         user(){
@@ -229,6 +234,11 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        handleOnAnswerOrReply(){
+            if(this.$store.getters.handleOnAnswer||this.$store.getters.handleOnReply){
+                this.onAnswerOrReply = true
+            }
         },
         // async getRelatedQuestion() {
         //     // this.$store.commit('setIsLoading', true)
@@ -398,6 +408,24 @@ export default {
                 margin-top: 1rem;
                 font-size: 2rem;
                 color: $dark-blue
+            }
+            .fa-exclamation{
+                position:absolute;
+                right:0;
+                margin-right: 0.6rem;
+                margin-top: 0.5rem;
+                font-size: 0.2rem;
+                border: solid red;
+                border-radius: 50vh;
+                // padding: 0.3rem;
+                padding-top: 0.1rem;
+                padding-bottom: 0.1rem;
+                padding-left: 0.3rem;
+                padding-right: 0.3rem;
+                color: red;
+                background: $back-white;
+
+
             }
         }
         .search-wrapper{

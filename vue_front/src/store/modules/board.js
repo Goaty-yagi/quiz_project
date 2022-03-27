@@ -34,7 +34,6 @@ export default {
                 checkDict[i.tag] = i.total_num
                 checkedList.push(i.tag)
             }
-            console.log("computed",checkDict)
             if(Object.keys(checkDict).length <= 3){
                 return checkedList
             }
@@ -51,7 +50,38 @@ export default {
                 }
                 return checkedlist2
             }
-        }
+        },
+        handleOnReplyAndOnAnswer(state, getters, rootState){
+            // this is for community_page to display if user have notifications
+            for(let question of getters.gettersAnsweredQuestions){
+                for(let answer of question.answer){
+                    if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
+                        return  true
+                    }else{
+                        for(let question2 of getters.user.question){
+                            if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
+                                return true
+                            }else{
+                                return false
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        // handleOnReplyAndOnAnswer(state, getters, rootState){
+        //     console.log("handleOnREPLY")
+        //     for(let question of getters.gettersAnsweredQuestions){
+        //         for(let answer of question.answer){
+        //             if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
+        //                 return  true
+        //             }else{
+        //                 return false
+        //             }
+        //         }
+        //     }
+        //     console.log("end")
+        // },
     },
     mutations:{
         resetNotifications(state){
@@ -86,7 +116,6 @@ export default {
     
     actions:{
         handleNotifications(context, payload){
-            console.log("in_handle",payload)
             if(payload == "reply"){
                 context.state.notifications.reply = true
                 setTimeout(context.commit, 3000,"resetNotifications")      
@@ -100,14 +129,11 @@ export default {
                 setTimeout(context.commit, 3000,"resetNotifications")
             }
         },
-        async getSearchQuestion(state,payload){
-            console.log('Gsearch',payload)
-            
+        async getSearchQuestion(state,payload){            
             await axios
                 .get(`/api/board/question/search/?keyword=${payload}`)
                 .then(response => {
                     state.searchedQuestions = response.data
-                    console.log("response_searched",state.searchedQuestions)
                 })
                 .catch(error => {
                     console.log(error)
@@ -115,7 +141,6 @@ export default {
         },
         async getRelatedQuestion({ state , getters }, payload) {
             // this.$store.commit('setIsLoading', true)
-            console.log("ingetRQ in store")
             if(getters.getUserTags.length == 1){
                 var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}`
             }
@@ -125,12 +150,10 @@ export default {
             if(getters.getUserTags.length == 3){
                 var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}`
             }
-            console.log("url:",url)
             try{
                 await axios.get(url)
                     .then(response => {
                     state.reccomendedQuestion = response.data
-                    console.log(state.reccomendedQuestion.length,state.reccomendedQuestion)
                     })
                 }
             catch{(error => {

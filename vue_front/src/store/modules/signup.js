@@ -42,7 +42,6 @@ export default {
     },
     getters:{
         getUID(state){
-            console.log("getters in signup")
             return state.UID
         },
         getDjangouser(state){
