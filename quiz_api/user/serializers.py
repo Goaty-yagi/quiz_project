@@ -28,24 +28,24 @@ class UserSerializer(serializers.ModelSerializer):
         # read_only_field = []
 
 
-# class UserDetailSerializer(serializers.ModelSerializer):
-#     question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
-#     answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey
-#     liked_num = BoardLikedReadSerializer(many=True, required=False) #ManyToManyField
-#     liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
-#     user_tag = UserTagSerializer(many=True, required=False) #ForeignKey
-#     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
+class UserStrageSerializer(serializers.ModelSerializer):
+    question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
+    answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey
+    liked_num = BoardLikedReadSerializer(many=True, required=False) #ManyToManyField
+    liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
+    user_tag = UserTagSerializer(many=True, required=False) #ForeignKey
+    favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     
-#     class Meta:
-#         model = User
-#         fields = ["UID",
-#                   "name", 
-#                   "grade", 
-#                   "thumbnail", 
-#                   "question", 
-#                   "answer",
-#                   "liked_num",
-#                   "liked_answer",
-#                   "user_tag",
-#                   "favorite_question"
-#                   ]
+    class Meta:
+        model = User
+        fields = ["UID",
+                  "name", 
+                  "grade", 
+                  "thumbnail", 
+                  "question", 
+                  "answer",
+                  "liked_num",
+                  "liked_answer",
+                  "user_tag",
+                  "favorite_question"
+                  ]

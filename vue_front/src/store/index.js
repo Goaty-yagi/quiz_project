@@ -29,7 +29,7 @@ export default createStore({
   plugins: [
     createPersistedState({
       key: 'quizkey',  // 設定しなければ'vuex'
-      paths: ['id','num','test',"signup.UID"],  // 保存するモジュール：設定しなければ全部。
+      paths: ['id','num','test',"signup.djangoUser"],  // 保存するモジュール：設定しなければ全部。
       storage: window.sessionStorage,  // 設定しなければlocalStorage
     })],
   getters:{

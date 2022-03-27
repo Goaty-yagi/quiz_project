@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.http import Http404
 
 from user.models import User
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer,UserStrageSerializer
 
 
 class UserList(generics.ListCreateAPIView):
@@ -19,7 +19,7 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateAPIView ):
     parser_classes = (MultiPartParser, FormParser)
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserStrageSerializer
     lookup_field = 'UID'
 
 

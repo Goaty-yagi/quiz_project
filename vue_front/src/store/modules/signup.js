@@ -65,7 +65,6 @@ export default {
         setUser(state,payload){
             state.user = payload
             state.UID = state.user.uid
-            console.log("uid",state.UID)
             console.log('user state changed:',state.user)
         },
         setAuthIsReady(state,payload){
