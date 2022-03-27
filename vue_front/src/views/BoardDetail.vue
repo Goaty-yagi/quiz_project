@@ -217,6 +217,7 @@ export default {
         }
     },
     mounted() {
+        this.patchOnAnswer()
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
@@ -255,7 +256,7 @@ export default {
             })
             // this.$store.commit('setIsLoading', false)
         },
-        async patchOnAnswer(){
+        async patchOnAnswer(slug=""){
             if(slug==""){
                 var url = `/api/board/question/${this.$route.params.slug}`
             }else{

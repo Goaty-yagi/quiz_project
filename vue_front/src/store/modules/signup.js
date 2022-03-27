@@ -15,12 +15,12 @@ import store from '..'
 
 export default {
     namespace: true,
-    plugins: [
-        createPersistedState({
-          key: 'signupKey',  // 設定しなければ'vuex'
-          paths: ['username','email','email2','country'],  // 保存するモジュール：設定しなければ全部。
-          storage: window.sessionStorage,  // 設定しなければlocalStorage
-        })],
+    // plugins: [
+    //     createPersistedState({
+    //       key: 'signupKey',  // 設定しなければ'vuex'
+    //       paths: ['username','email','email2','country',"UID"],  // 保存するモジュール：設定しなければ全部。
+    //       storage: window.sessionStorage,  // 設定しなければlocalStorage
+    //     })],
     state: {
         username: '',
         email:'',
@@ -29,6 +29,7 @@ export default {
         password:'',
         user: null,
         djangoUser: null,
+        UID:'',
         fasvoriteQuestion:'',
         emailVerified:null,
         authIsReady:false,
@@ -38,6 +39,12 @@ export default {
             url: null,
             handleCodeInApp: true
                 }
+    },
+    getters:{
+        getUID(state){
+            console.log("getters in signup")
+            return state.UID
+        }
     },
     mutations:{
         getUsername(state,item){
@@ -57,6 +64,8 @@ export default {
         },
         setUser(state,payload){
             state.user = payload
+            state.UID = state.user.uid
+            console.log("uid",state.UID)
             console.log('user state changed:',state.user)
         },
         setAuthIsReady(state,payload){
