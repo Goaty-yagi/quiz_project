@@ -44,6 +44,9 @@ export default {
         getUID(state){
             console.log("getters in signup")
             return state.UID
+        },
+        getDjangouser(state){
+            return state.djangoUser
         }
     },
     mutations:{

@@ -7,7 +7,7 @@
             </div>
             {{onNotification.onReply }}
             {{ onNotification.onAnswer }}
-            <div class='main-container' v-if="this.answeredQuestion">
+            <div class='main-container'>
                 <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
                     <div class="notification-text text1" v-if="onNotification.onAnswer">
                         新しい回答があります。
@@ -116,7 +116,14 @@ export default {
     },
     computed:{
         user(){
-            return this.$store.state.signup.djangoUser
+            return this.$store.getters.getDjangouser
+        },
+        getUserQuestion(){
+            return this.$store.getters.gettersUserQuestion
+        },
+        getAnsweredQuestion(){
+            console.log("getdazeAQ")
+            return this.$store.getters.gettersAnsweredQuestions
         },
         handleQuestion(){
             const handledQuestion= []
@@ -127,8 +134,8 @@ export default {
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
                 if(this.showQuestion.questionStatus.best){
-                    console.log('make_best_answered')
-                    Object.values(this.answeredQuestion).forEach(value =>{
+                    console.log('make_best_answered',this.getAnsweredQuestion)
+                    Object.values(this.getAnsweredQuestion).forEach(value =>{
                         console.log("loop",value)
                         if(value.answer.best == true){
                             answeredquiz.push(value.question)}
@@ -141,7 +148,7 @@ export default {
                     // Object.values(this.user.answer).forEach(value =>{
                     //     answeredquiz.push(value.question)
                     // })
-                    return this.handleStatus(this.answeredQuestion)   
+                    return this.handleStatus(this.getAnsweredQuestion)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
                 return this.handleStatus(this.$store.state.board.reccomendedQuestion)
@@ -151,33 +158,34 @@ export default {
             }
         },
     },
-    beforeMount(){
-        console.log("beforeMounyed")
-        this.getAnsweredQuestion()
+    async beforeMount(){
+        console.log("beforeMounted")
+        await this.$store.dispatch("getAnsweredQuestion")
     },
     mounted(){
         console.log('mounted',this.user.favorite_question)
+        this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
-        console.log('mounted',this.answeredQuestion)
+        console.log('mounted2',this.$store.gettersAnsweredQuestions)
     },
     methods:{
-        async getAnsweredQuestion() {
-            this.$store.commit('setIsLoading', true)
-            console.log("ingetRQ in account")
-            var url = `/api/board/question-answered?user=${this.user.UID}`
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    this.answeredQuestion = response.data
-                    })
-                    this.handleOnReply()
-                }
-            catch{(error => {
-                    console.log(error)
-            })}
-            this.$store.commit('setIsLoading', false)
-        },
+        // async getAnsweredQuestion() {
+        //     this.$store.commit('setIsLoading', true)
+        //     console.log("ingetRQ in account")
+        //     var url = `/api/board/question-answered?user=${this.user.UID}`
+        //     try{
+        //         await axios.get(url)
+        //             .then(response => {
+        //             getAnsweredQuestion = response.data
+        //             })
+        //             this.handleOnReply()
+        //         }
+        //     catch{(error => {
+        //             console.log(error)
+        //     })}
+        //     this.$store.commit('setIsLoading', false)
+        // },
         getDetail(slug){
             router.push(`/board-detail/${slug}` )
         },
@@ -266,8 +274,8 @@ export default {
             
         },
         handleOnReply(){
-            console.log("handleOnREPLY", this.answeredQuestion)
-            for(let question of this.answeredQuestion){
+            console.log("handleOnREPLY", this.getAnsweredQuestion)
+            for(let question of this.getAnsweredQuestion){
                 console.log("first loop",question.answer)
                 for(let answer of question.answer){
                     console.log("second loop",answer)

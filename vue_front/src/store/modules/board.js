@@ -22,6 +22,9 @@ export default {
         user(state, getters, rootState){
             return rootState.signup.djangoUser
         },
+        gettersAnsweredQuestions(state){
+            return state.answeredQuestion
+        },
         getUserTags(state, getters){
             let checkDict = {}  
             // let checkedDict = {}
