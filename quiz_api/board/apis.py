@@ -41,6 +41,12 @@ class BoardAnswerCreate(generics.CreateAPIView):
     serializer_class = BoardAnswerCreateSerializer
 
 
+class BoardAnswerDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BoardAnswer.objects.all()
+    serializer_class = BoardAnswerCreateSerializer
+    lookup_field = 'id'
+
+
 class BoardReplyRead(generics.ListAPIView):
     queryset = BoardReply.objects.all()
     serializer_class = BoardReplyReadSerializer

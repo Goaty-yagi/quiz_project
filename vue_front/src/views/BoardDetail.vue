@@ -244,6 +244,7 @@ export default {
                     this.questionUser = this.question.user.UID
                     this.allAnswer = this.question.answer
                     this.viewed = this.question.viewed
+                    this.patchOnReply()
                     this.countUpViewed()
                     this.makeAnswerDict()
                     this.getQuestionTagList(this.question.tag)
@@ -269,6 +270,22 @@ export default {
                     on_answer: false,
                 },
             })
+        },
+        async patchOnReply(){
+            console.log("patchOnReply")
+            for(let answer of this.allAnswer){
+                console.log("answer",answer)
+                if(answer.on_reply==true&&answer.user.UID==this.$store.getters.user.UID){
+                    var url = `/api/board/answer-detail/${answer.id}`
+                    await axios({
+                        method: 'patch',
+                        url: url,
+                        data: {
+                            on_reply: false,
+                        },
+                    }) 
+                }
+            }
         },
         async getRelatedQuestion() {
             // relatedQuestion Start from here.

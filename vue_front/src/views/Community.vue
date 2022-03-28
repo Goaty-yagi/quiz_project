@@ -8,7 +8,7 @@
             <div class="header-flex">
                 <h1 class='title-white'>質問板</h1>
                 <i @click="goAccount()" class="fas fa-user user-font"></i>
-                <i v-if="$store.getters.handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
+                <i v-if="handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
                 <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
             </div>
             <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
@@ -150,15 +150,17 @@ export default {
     },
     created(){
         console.log('created')
+        this.$store.dispatch('getDjangoUser')
     },
     beforeMount(){
         // this.getQuestion()
         console.log('before-mounted')
     },
     mounted() {
+        console.log('notification', this.handleOnReplyAndOnAnswer)
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
-        this.$store.dispatch('getDjangoUser')
+        // this.$store.dispatch('getDjangoUser')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         this.getQuestion()
         // this.getRelatedQuestion()
@@ -168,6 +170,57 @@ export default {
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
+        },
+        notification(){
+            return 
+        },
+        handleOnReplyAndOnAnswer(){
+            // this is for community_page to display if user have notifications
+            console.log('inHandleAR in community', this.$store.getters.gettersAnsweredQuestions)
+            for(let question2 of this.user.question){
+                if(question2.on_answer==true&&question2.user.UID==this.user.UID){
+                    console.log("onAnswer_dayo")
+                    return true
+                }
+            }
+            console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
+            let answeredQuestion = this.$store.getters.gettersAnsweredQuestions
+            for(let question of answeredQuestion){
+                console.log(question)
+                for(let answer of question.answer){
+                    console.log(answer.id)
+                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                        console.log("onreply_dayo")
+                        return  true
+                    }
+                }
+            }return false
+            // Object.keys(answeredQuestion).forEach(key =>{
+            //     console.log(key)
+            //     for(let answer of answeredQuestion[key].answer){
+            //         if(answer.on_reply==true){
+            //             return true
+            //         }
+            //     }
+            //     // this.showQuestion.questionStatus[key] = false
+            // })
+            // for(let question of getters.gettersAnsweredQuestions){
+            //     console.log(question)
+            //     for(let answer of question.answer){
+            //         console.log(answer.id)
+            //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
+            //             return  true
+            //         }
+            //     for(let question2 of getters.user.question){
+            //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
+            //                 return true
+            //             }else{
+            //                 return false
+            //             }
+            //         }
+            //     }
+                
+            // }
         },
         // getUserTags(){
         //     let checkDict = {}  
@@ -221,6 +274,7 @@ export default {
                     console.log(error)
                 })
             this.getParentTag()
+            console.log("getQ", this.$store.getters.handleOnReplyAndOnAnswer)
             this.$store.commit('setIsLoading', false)
         },
         async getParentTag(){

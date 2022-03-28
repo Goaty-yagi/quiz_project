@@ -2,7 +2,7 @@ from django.urls import path, include
 # from rest_framework import routers
 from rest_framework_nested import routers
 
-from board.apis import BoardQuestionList, BoardQuestionDetail, BoardAnswerRead, BoardAnswerCreate, BoardReplyCreate, BoardReplyRead, BoardQuestionCreate, QuestionLikedRead, AnswerLikedRead, ParetTagList, UsertagCreate, CenterTagList, UsertagRead, RelatedQuestionList,SearchQuestionList, AnsweredQuestionList, FavoriteQuestionUpdate, FavoriteQuestionCreate, favoriteQuestionList
+from board.apis import BoardQuestionList, BoardQuestionDetail, BoardAnswerRead, BoardAnswerCreate, BoardReplyCreate, BoardReplyRead, BoardQuestionCreate, QuestionLikedRead, AnswerLikedRead, ParetTagList, UsertagCreate, CenterTagList, UsertagRead, RelatedQuestionList,SearchQuestionList, AnsweredQuestionList, FavoriteQuestionUpdate, FavoriteQuestionCreate, favoriteQuestionList,BoardAnswerDetail
 
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
   path('question-favorite', favoriteQuestionList.as_view()),
   path('answer/read', BoardAnswerRead.as_view()),
   path('answer/create', BoardAnswerCreate.as_view()),
+  path('answer-detail/<id>', BoardAnswerDetail.as_view()),
   path('reply/read/', BoardReplyRead.as_view()),
   path('reply/create/', BoardReplyCreate.as_view()),
   path('question-liked/<pk>/', QuestionLikedRead.as_view()),
