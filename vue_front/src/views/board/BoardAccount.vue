@@ -129,7 +129,7 @@ export default {
             const handledQuestion= []
             console.log("questiontype",this.showQuestion.questionType)
             if(this.showQuestion.questionType.question){
-                return this.handleStatus(this.user.question)
+                return this.handleStatus(this.HandleQuestionOnanswerOrder(this.user.question))
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
@@ -221,6 +221,25 @@ export default {
                     }
                     return handledQuestion
                 }
+        },
+        HandleQuestionOnanswerOrder(question){
+            const questionList = []
+            var questionList2 = []
+            for(let i of question){
+                if(i.on_answer==true){
+                    questionList.push(i)
+                }else{
+                    questionList2.push(i)
+                }
+            }
+            if(questionList){
+                for(let o of questionList2){
+                    questionList.push(o)
+                }
+                return questionList
+            }
+            return question
+
         },
         // handleQuestion(){
         //     if(this.showQuestion.questionType.question){
