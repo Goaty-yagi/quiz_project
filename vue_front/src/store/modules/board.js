@@ -25,6 +25,9 @@ export default {
         gettersAnsweredQuestions(state){
             return state.answeredQuestion
         },
+        gettersReccomendedQuestion(state){
+            return state.reccomendedQuestion
+        },
         getUserTags(state, getters){
             let checkDict = {}  
             // let checkedDict = {}
@@ -51,36 +54,36 @@ export default {
                 return checkedlist2
             }
         },
-        handleOnReplyAndOnAnswer(state, getters, rootState){
-            // this is for community_page to display if user have notifications
-            console.log('inHandleAR', getters.gettersAnsweredQuestions)
-            Object.keys(getters.gettersAnsweredQuestions).forEach(key =>{
-                console.log(key)
-                for(let answer of getters.gettersAnsweredQuestions[key].answer){
-                    if(answer.on_reply==true){
-                        return true
-                    }
-                }
-                // this.showQuestion.questionStatus[key] = false
-            })
-            // for(let question of getters.gettersAnsweredQuestions){
-            //     console.log(question)
-            //     for(let answer of question.answer){
-            //         console.log(answer.id)
-            //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
-            //             return  true
-            //         }
-            //     for(let question2 of getters.user.question){
-            //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
-            //                 return true
-            //             }else{
-            //                 return false
-            //             }
-            //         }
-            //     }
+        // handleOnReplyAndOnAnswer(state, getters, rootState){
+        //     // this is for community_page to display if user have notifications
+        //     console.log('inHandleAR', getters.gettersAnsweredQuestions)
+        //     Object.keys(getters.gettersAnsweredQuestions).forEach(key =>{
+        //         console.log(key)
+        //         for(let answer of getters.gettersAnsweredQuestions[key].answer){
+        //             if(answer.on_reply==true){
+        //                 return true
+        //             }
+        //         }
+        //         // this.showQuestion.questionStatus[key] = false
+        //     })
+        //     // for(let question of getters.gettersAnsweredQuestions){
+        //     //     console.log(question)
+        //     //     for(let answer of question.answer){
+        //     //         console.log(answer.id)
+        //     //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
+        //     //             return  true
+        //     //         }
+        //     //     for(let question2 of getters.user.question){
+        //     //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
+        //     //                 return true
+        //     //             }else{
+        //     //                 return false
+        //     //             }
+        //     //         }
+        //     //     }
                 
-            // }
-        },
+        //     // }
+        // },
         // handleOnReplyAndOnAnswer(state, getters, rootState){
         //     console.log("handleOnREPLY")
         //     for(let question of getters.gettersAnsweredQuestions){

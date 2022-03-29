@@ -133,7 +133,7 @@ export default {
             scrollFixed: false,
             scroll_position: '100',
             userTagList: [],
-            reccomendedQuestion: [],
+            // reccomendedQuestion: [],
             searchedQuestion:'',
             onAnswerOrReply:false,
             // notifications:false,
@@ -161,7 +161,7 @@ export default {
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         // this.$store.dispatch('getDjangoUser')
-        this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
+        // this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
         this.getQuestion()
         // this.getRelatedQuestion()
         // this.getQuestion()
@@ -173,6 +173,9 @@ export default {
         },
         notification(){
             return 
+        },
+        reccomendedQuestion(){
+            return this.$store.getters.gettersReccomendedQuestion
         },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications

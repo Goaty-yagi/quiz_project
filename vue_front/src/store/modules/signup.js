@@ -82,9 +82,10 @@ export default {
         }
     },
     actions:{
-        async getDjangoUser({ state, commit }){
+        async getDjangoUser({ state, getters,commit }){
+            console.log(getters.getUID)
             await axios
-            .get(`/api/user/${state.user.uid}`)
+            .get(`/api/user/${getters.getUID}`)
             .then(response => {
                 state.djangoUser = response.data
                 console.log('inDUGet', state.djangoUser)
