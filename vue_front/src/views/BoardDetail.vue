@@ -221,6 +221,11 @@ export default {
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
+    computed:{
+        user(){
+            return this.$store.state.signup.djangoUser
+        }
+    },
     methods: {
         async getDetail(slug="") {
             this.$store.commit('setIsLoading', true)
@@ -293,13 +298,13 @@ export default {
             // => makeRandomSlicedArray to make random sliced RQ array
             this.$store.commit('setIsLoading', true)
             if(this.questionTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
             }
             if(this.questionTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&uid=${this.user.UID}`
             }
             if(this.questionTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
+                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
             }
             console.log("url:",url)
             try{

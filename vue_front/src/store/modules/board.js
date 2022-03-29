@@ -157,13 +157,13 @@ export default {
         async getRelatedQuestion({ state , getters }, payload) {
             // this.$store.commit('setIsLoading', true)
             if(getters.getUserTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}`
+                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&uid=${getters.user.UID}`
             }
             if(getters.getUserTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}`
+                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&uid=${getters.user.UID}`
             }
             if(getters.getUserTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}`
+                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}&uid=${getters.user.UID}`
             }
             try{
                 await axios.get(url)

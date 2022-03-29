@@ -135,16 +135,20 @@ class favoriteQuestionList(APIView):
 
 
 class RelatedQuestionList(APIView):
-# this is for all indicate quiz, field and module
+    """recieve 1 ~ 3 tag_ids and UID. get queryset exclude UID question 
+    and filtered tag_id and solved status. then go to set_random_question function"""
     def get(self, request, format=None):
+        print("request",request)
         request_tag_list = request.query_params.getlist("tag")
+        uid = request.query_params.getlist("uid")[0]
+        print("uid",uid)
         try:
-            solved_queryset = BoardQuestion.objects.filter(
+            solved_queryset = BoardQuestion.objects.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = True
             ).distinct()
             print("solved_queryset", solved_queryset)
-            unsolved_queryset = BoardQuestion.objects.filter(
+            unsolved_queryset = BoardQuestion.objects.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = False
             ).distinct()
