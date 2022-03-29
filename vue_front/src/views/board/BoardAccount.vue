@@ -5,8 +5,6 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            {{onNotification.onReply }}
-            {{ onNotification.onAnswer }}
             <div class='main-container'>
                 <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
                     <div class="notification-text text1" v-if="onNotification.onAnswer">
@@ -144,10 +142,24 @@ export default {
                     return answeredquiz
                 }
                 else{
-                    // console.log('answered',this.user.answer)
-                    // Object.values(this.user.answer).forEach(value =>{
-                    //     answeredquiz.push(value.question)
-                    // })
+                    console.log("not best")
+                    var answeredquiz2 = []
+                    // for(let i of this.answeredQuestion){
+                        Object.values(this.getAnsweredQuestion).forEach(value =>{
+                            console.log("value",value.answer[0])
+                            if(value.answer[0].on_reply==true&&value.answer[0].user.UID==this.user.UID){
+                                answeredquiz.push(value)
+                            }else{
+                                answeredquiz2.push(value)
+                            }
+                        })
+                        console.log(answeredquiz,answeredquiz2)
+                        if(answeredquiz){
+                            for(let i of answeredquiz2){
+                                answeredquiz.push(i)
+                            }
+                            return this.handleStatus(answeredquiz)
+                        }
                     return this.handleStatus(this.getAnsweredQuestion)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
@@ -163,7 +175,7 @@ export default {
         await this.$store.dispatch("getAnsweredQuestion")
     },
     mounted(){
-        console.log('mounted',this.user.favorite_question)
+        console.log('mounted')
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
