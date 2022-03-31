@@ -6,7 +6,7 @@
       
       
       
-        <section class="main-section">
+        <section class="main-section" :class="{'scrll-fixed':$store.state.isLoading}">
           <router-view
             id='router'/>
            <!-- <div v-if='user&&emailVerified==false&&this.$store.state.step==1'>

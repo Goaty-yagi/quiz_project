@@ -301,7 +301,6 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 				  "user",
 				  "question",
 				  ]
-		depth=1
 		# read_only_field = ['user','question']
 
 	def create(self, validated_data):

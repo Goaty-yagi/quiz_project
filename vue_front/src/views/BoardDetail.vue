@@ -1,5 +1,6 @@
 <template>
-    <div  class="board-detail-wrapper">
+<!-- this scroll fixed should be change -->
+    <div  class="board-detail-wrapper" :class="{'scrll-fixed':showAnswerPage||showReplyPage}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
