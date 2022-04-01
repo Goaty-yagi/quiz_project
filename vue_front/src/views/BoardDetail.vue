@@ -218,7 +218,6 @@ export default {
         }
     },
     mounted() {
-        this.patchOnAnswer()
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
@@ -251,6 +250,7 @@ export default {
                     this.allAnswer = this.question.answer
                     this.viewed = this.question.viewed
                     this.patchOnReply()
+                    this.patchOnAnswer()
                     this.countUpViewed()
                     this.makeAnswerDict()
                     this.getQuestionTagList(this.question.tag)
@@ -269,13 +269,16 @@ export default {
             }else{
                 var url = `/api/board/question/${slug}`
             }
-            await axios({
-                method: 'patch',
-                url: url,
-                data: {
-                    on_answer: false,
-                },
-            })
+            console.log("gonna if patch answer",this.question.on_answer==true&&this.question.user.UID==this.user.UID)
+            if(this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+                console.log('PatchAnswer')
+                axios.patch(
+                    url,
+                    { on_answer: false }) 
+                console.log("go store AQ and DU")
+                await this.$store.dispatch('getDjangoUser')
+                await this.$store.dispatch('getAnsweredQuestion')
+            }
         },
         async patchOnReply(){
             console.log("patchOnReply")
@@ -289,7 +292,9 @@ export default {
                         data: {
                             on_reply: false,
                         },
-                    }) 
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
                 }
             }
         },

@@ -116,9 +116,9 @@ export default {
         user(){
             return this.$store.getters.getDjangouser
         },
-        getUserQuestion(){
-            return this.$store.getters.gettersUserQuestion
-        },
+        // getUserQuestion(){
+        //     return this.$store.getters.gettersUserQuestion
+        // },
         getAnsweredQuestion(){
             console.log("getdazeAQ")
             return this.$store.getters.gettersAnsweredQuestions
@@ -318,6 +318,7 @@ export default {
             console.log("end")
         },
         handleOnAnswer(onAnswer){
+            console.log("onanswer")
             if(onAnswer){
                 this.onNotification.onAnswer = true
                 return true      
@@ -326,7 +327,6 @@ export default {
             }
         },
         onReplayCheck(questionAnswer){
-            console.log("onreplycheck")
             for(let answer of questionAnswer){
                 if(answer.on_reply==true){
                     if(answer.user.UID==this.user.UID){

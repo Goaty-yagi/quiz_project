@@ -2,6 +2,8 @@ from this import d
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+
 
 from django.db.models import Q
 from rest_framework import status
@@ -16,65 +18,209 @@ from board.serializers import BoardQuestionListSerializer, BoardAnswerReadSerial
 
 
 class BoardQuestionList(generics.ListAPIView):
-    queryset = BoardQuestion.objects.all()
+    queryset = BoardQuestion.objects.prefetch_related(
+        "tag", 
+        "tag__parent_tag",
+        "tag__user",
+        'answer',
+        'answer__question',
+        'answer__question__user',
+        'answer__question__tag',
+        'answer__question__tag__parent_tag',
+        'answer__question__tag__user',
+        'answer__user',
+        'answer__liked_answer',
+        'liked_num',
+        'liked_num__user',
+        'liked_num__question',
+        'liked_num__question__user',
+        ).select_related(
+            'user'
+        ).distinct()
     serializer_class = BoardQuestionListSerializer
+    pagination_class = PageNumberPagination
 
 
 class BoardQuestionCreate(generics.CreateAPIView):
-    queryset = BoardQuestion.objects.all()
     serializer_class = BoardQuestionCreateSerializer
+    queryset = BoardQuestion.objects.prefetch_related(
+        "tag", 
+        "tag__parent_tag",
+        "tag__user",
+        'answer',
+        'answer__question',
+        'answer__question__user',
+        'answer__question__tag',
+        'answer__question__tag__parent_tag',
+        'answer__question__tag__user',
+        'answer__user',
+        'answer__liked_answer',
+        'liked_num',
+        'liked_num__user',
+        'liked_num__question',
+        'liked_num__question__user',
+        ).select_related(
+            'user'
+        ).distinct()
 
 
 class BoardQuestionDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BoardQuestion.objects.all()
+    queryset = BoardQuestion.objects.prefetch_related(
+        "tag", 
+        "tag__parent_tag",
+        "tag__user",
+        'answer',
+        'answer__question',
+        'answer__question__user',
+        'answer__question__tag',
+        'answer__question__tag__parent_tag',
+        'answer__question__tag__user',
+        'answer__user',
+        'answer__liked_answer',
+        'liked_num',
+        'liked_num__user',
+        'liked_num__question',
+        'liked_num__question__user',
+        ).select_related(
+            'user'
+        ).distinct()
     serializer_class = BoardQuestionListSerializer
     lookup_field = 'slug'
 
 
 class BoardAnswerRead(generics.ListAPIView):
-    queryset = BoardAnswer.objects.all()
+    queryset = BoardAnswer.objects.select_related(
+        'user',
+        'question',
+        ).prefetch_related(
+            'question__tag',
+            'reply',
+            'reply__answer',
+            'reply__user',
+            'liked_answer',
+            'liked_answer__user',
+            'liked_answer__answer')
+
     serializer_class = BoardAnswerReadSerializer
+    pagination_class = None
 
 
 class BoardAnswerCreate(generics.CreateAPIView):
-    queryset = BoardAnswer.objects.all()
+    queryset = BoardAnswer.objects.select_related(
+        'user',
+        'question',
+        ).prefetch_related(
+            'question__tag',
+            'reply',
+            'reply__answer',
+            'reply__user',
+            'liked_answer',
+            'liked_answer__user',
+            'liked_answer__answer')
     serializer_class = BoardAnswerCreateSerializer
 
 
 class BoardAnswerDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BoardAnswer.objects.all()
+    queryset = BoardAnswer.objects.select_related(
+        'user',
+        'question',
+        ).prefetch_related(
+            'question__tag',
+            'reply',
+            'reply__answer',
+            'reply__user',
+            'liked_answer',
+            'liked_answer__user',
+            'liked_answer__answer')
     serializer_class = BoardAnswerCreateSerializer
     lookup_field = 'id'
 
 
 class BoardReplyRead(generics.ListAPIView):
-    queryset = BoardReply.objects.all()
+    queryset = BoardReply.objects.select_related(
+        'user',
+        'answer',
+        )
     serializer_class = BoardReplyReadSerializer
+    pagination_class = None
 
 
 class BoardReplyCreate(generics.CreateAPIView):
-    queryset = BoardReply.objects.all()
+    queryset = BoardReply.objects.select_related(
+        'user',
+        'answer',
+        )
     serializer_class = BoardReplyCreateSerializer
 
 
 class QuestionLikedRead(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BoardQuestionLiked.objects.all()
+    queryset = BoardQuestionLiked.objects.select_related(
+        'question',
+        ).prefetch_related(
+            'user'
+        )
     serializer_class = BoardLikedCreateSerializer
 
 
 class AnswerLikedRead(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BoardAnswerLiked.objects.all()
+    queryset = BoardAnswerLiked.objects.select_related(
+        'answer',
+        ).prefetch_related(
+            'user'
+        )
     serializer_class = AnswerLikedReadSerializer
     
 
-class ParetTagList(generics.ListAPIView):
-    queryset = BoardParentCenterTag.objects.all()
+class ParentTagList(generics.ListAPIView):
+    queryset = BoardParentCenterTag.objects.prefetch_related(
+            'center_tag',
+            'center_tag__question',
+            'center_tag__question__tag',
+            # 'center_tag__question__user',
+            'center_tag__question__answer',
+            'center_tag__question__answer__question',
+            # 'center_tag__question__answer__question__user',
+            'center_tag__question__answer__question__tag',
+            'center_tag__question__answer__user',
+            'center_tag__question__answer__reply',
+            'center_tag__question__answer__reply__answer',
+            'center_tag__question__answer__reply__answer__user',
+            'center_tag__question__answer__reply__user',
+            'center_tag__question__answer__liked_answer',
+            'center_tag__question__answer__liked_answer__user',
+            'center_tag__question__answer__liked_answer__answer',
+            'center_tag__question__liked_num',
+            'center_tag__user',
+            'center_tag__parent_tag',
+        )
     serializer_class = ParentTagSerializer
+    pagination_class = None
 
 
 class CenterTagList(generics.ListAPIView):
-    queryset = BoardCenterTag.objects.all()
+    queryset = BoardCenterTag.objects.select_related(
+        'parent_tag',
+        ).prefetch_related(
+            'user',
+            'question',
+            'question__tag',
+            'question__user',
+            'question__answer',
+            'question__answer__question',
+            'question__answer__question__user',
+            'question__answer__question__tag',
+            'question__answer__user',
+            'question__answer__reply',
+            'question__answer__reply__answer',
+            # 'question__answer__reply__answer__user',
+            'question__answer__reply__user',
+            'question__answer__liked_answer',
+            'question__answer__liked_answer__user',
+            'question__answer__liked_answer__answer',
+            'question__liked_num',
+            )
     serializer_class = CenterTagSerializer
+    pagination_class = None
 
 
 class UsertagCreate(generics.CreateAPIView):
@@ -83,17 +229,17 @@ class UsertagCreate(generics.CreateAPIView):
 
 
 class UsertagRead(generics.RetrieveUpdateDestroyAPIView):
-    queryset = BoardUserTag.objects.all()
+    queryset = BoardUserTag.objects.select_related('tag','user')
     serializer_class = UserTagSerializer
 
 
 class FavoriteQuestionUpdate(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserFavoriteQuestion.objects.all()
+    queryset = UserFavoriteQuestion.objects.select_related('user').prefetch_related('question')
     serializer_class = FavoriteQuestionSerializer
 
 
 class FavoriteQuestionCreate(generics.CreateAPIView):
-    queryset = UserFavoriteQuestion.objects.all()
+    queryset = UserFavoriteQuestion.objects.select_related('user').prefetch_related('question')
     serializer_class = FavoriteQuestionSerializer
     
 

@@ -106,6 +106,7 @@
                             </div>
                         </div>        
                     </div>
+                    <button>unko</button>
                 </div>
             </div>
         </div>
@@ -140,7 +141,7 @@ export default {
             searchedQuestion:'',
             onAnswerOrReply:false,
             // notifications:false,
-            fixed: '',
+            next: '',
             showQuestionStatus:{
                 recent: true,
                 reccomend: false
@@ -154,6 +155,7 @@ export default {
     created(){
         console.log('created')
         this.$store.dispatch('getDjangoUser')
+        this.$store.dispatch('getAnsweredQuestion')
     },
     beforeMount(){
         // this.getQuestion()
@@ -268,7 +270,8 @@ export default {
             await axios
                 .get('/api/board/question/list')
                 .then(response => {
-                    this.questions = response.data
+                    this.questions = response.data.results
+                    this.next = response.data.next
                     // document.title = this.product.name + ' | Djackets'
                 })
                 .catch(error => {
@@ -283,6 +286,7 @@ export default {
                 .get('/api/board/parent-tag')
                 .then(response => {
                     let parentTags = response.data
+                    console.log('parentTags',parentTags)
                     this.getParentTagDict(parentTags)
                 })
                 .catch(error => {

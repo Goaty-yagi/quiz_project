@@ -179,7 +179,7 @@ class UserFavoriteQuestion(models.Model):
 
 @receiver(post_save, sender=BoardAnswer)
 def handle_on_answer(sender, instance, created, **kwargs):
-    print("kwargs",kwargs["signal"].__dict__, 'instance',instance,'created',created, 'sender',sender)  
+    print('reciever from answer create')  
     if created == True:
         try:
             question = BoardQuestion.objects.filter(id=instance.question.id)
