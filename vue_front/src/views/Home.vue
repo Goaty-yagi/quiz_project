@@ -4,7 +4,9 @@
     <!-- <p class='has-text-white'>{{ this.$store.state.id }}</p> -->
     <div class='wrapper'>
       <img class='is-image' src="@/assets/logo.png">
-      <p class='home-text'>日本語クイズ</p>      
+      <p class='home-text'>日本語クイズ</p>
+      unko{{$store.getters.gettersAnswer}}
+      {{$store.getters.gettersReply}}    
       <div  @click="onClick()">
           <button id='or-button' @click='showCompoHandler'>SRART</button>
       </div>
@@ -40,7 +42,8 @@ export default {
     }
   },
   mounted(){
-    this.$store.dispatch("getAnsweredQuestion")
+    // this.$store.dispatch("getAnsweredQuestion")
+    this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
   },
   methods:{
     unko(){

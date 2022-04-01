@@ -250,8 +250,8 @@ export default {
                     this.allAnswer = this.question.answer
                     this.viewed = this.question.viewed
                     this.patchOnReply()
-                    this.patchOnAnswer()
-                    this.countUpViewed()
+                    // this.patchOnAnswer()
+                    this.questionPatch()
                     this.makeAnswerDict()
                     this.getQuestionTagList(this.question.tag)
                     this.getRelatedQuestion()
@@ -263,25 +263,25 @@ export default {
             })
             // this.$store.commit('setIsLoading', false)
         },
-        async patchOnAnswer(slug=""){
-            if(slug==""){
-                var url = `/api/board/question/${this.$route.params.slug}`
-            }else{
-                var url = `/api/board/question/${slug}`
-            }
-            console.log("gonna if patch answer",this.question.on_answer==true&&this.question.user.UID==this.user.UID)
-            if(this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-                console.log('PatchAnswer')
-                axios.patch(
-                    url,
-                    { on_answer: false }) 
-                console.log("go store AQ and DU")
-                await this.$store.dispatch('getDjangoUser')
-                await this.$store.dispatch('getAnsweredQuestion')
-            }
-        },
+        // async patchOnAnswer(slug=""){
+        //     if(slug==""){
+        //         var url = `/api/board/question/${this.$route.params.slug}`
+        //     }else{
+        //         var url = `/api/board/question/${slug}`
+        //     }
+        //     console.log("gonna if patch answer",this.question.on_answer==true&&this.question.user.UID==this.user.UID)
+        //     if(this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+        //         console.log('PatchAnswer url',url)
+        //         axios.patch(
+        //             url,
+        //             { on_answer: false }) 
+        //         console.log("go store AQ and DU")
+        //         await this.$store.dispatch('getDjangoUser')
+        //         await this.$store.dispatch('getAnsweredQuestion')
+        //     }
+        // },
         async patchOnReply(){
-            console.log("patchOnReply")
+            console.log("patchOnReply",this.allAnswer)
             for(let answer of this.allAnswer){
                 console.log("answer",answer)
                 if(answer.on_reply==true&&answer.user.UID==this.$store.getters.user.UID){
@@ -510,12 +510,20 @@ export default {
                 console.log('done')
             }
         },
-        countUpViewed(){
-            if(this.questionUserBoolean == false){
+        async questionPatch(){
+            // patch view count_up and on_answer
+            if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
                 console.log('count', this.questionSlug)
-                axios.patch(`/api/board/question/${this.questionSlug}`,
-                {viewed: this.viewed + 1
-                }) 
+                await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                    viewed: this.viewed + 1,
+                    on_answer: false
+                })
+                this.$store.dispatch('getDjangoUser')
+                this.$store.dispatch('getAnsweredQuestion')
+            }else if(this.questionUserBoolean == false){
+                axios.patch(`/api/board/question/${this.questionSlug}`,{
+                    viewed: this.viewed + 1
+                })
             }
         },
         // setAnswerBoolean(){

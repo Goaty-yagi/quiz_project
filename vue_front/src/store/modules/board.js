@@ -12,6 +12,10 @@ export default {
         reccomendedQuestion:'',
         answeredQuestion:'',
         // favoriteQuestion:'',
+        showNoticeOnAcount:{
+            answer:false,
+            reply:false,
+        },
         notifications:{
             reply: false,
             answer: false,
@@ -27,6 +31,12 @@ export default {
         },
         gettersReccomendedQuestion(state){
             return state.reccomendedQuestion
+        },
+        gettersAnswer(state){
+            return state.showNoticeOnAcount.answer
+        },
+        gettersReply(state){
+            return state.showNoticeOnAcount.reply
         },
         getUserTags(state, getters){
             let checkDict = {}  
@@ -54,36 +64,7 @@ export default {
                 return checkedlist2
             }
         },
-        // handleOnReplyAndOnAnswer(state, getters, rootState){
-        //     // this is for community_page to display if user have notifications
-        //     console.log('inHandleAR', getters.gettersAnsweredQuestions)
-        //     Object.keys(getters.gettersAnsweredQuestions).forEach(key =>{
-        //         console.log(key)
-        //         for(let answer of getters.gettersAnsweredQuestions[key].answer){
-        //             if(answer.on_reply==true){
-        //                 return true
-        //             }
-        //         }
-        //         // this.showQuestion.questionStatus[key] = false
-        //     })
-        //     // for(let question of getters.gettersAnsweredQuestions){
-        //     //     console.log(question)
-        //     //     for(let answer of question.answer){
-        //     //         console.log(answer.id)
-        //     //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
-        //     //             return  true
-        //     //         }
-        //     //     for(let question2 of getters.user.question){
-        //     //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
-        //     //                 return true
-        //     //             }else{
-        //     //                 return false
-        //     //             }
-        //     //         }
-        //     //     }
-                
-        //     // }
-        // },
+        
         // handleOnReplyAndOnAnswer(state, getters, rootState){
         //     console.log("handleOnREPLY")
         //     for(let question of getters.gettersAnsweredQuestions){
@@ -124,12 +105,37 @@ export default {
                 state.selectedTagList = payload
                 console.log('Got tagID',state.selectedTagList)
         },
+        handleOnReplyAndOnAnswer(state, getters){
+            // this is for community_page to display if user have notifications
+            console.log('inHandleAR in store')
+            for(let question2 of getters.question){
+                if(question2.on_answer==true&&question2.user.UID==getters.UID){
+                    console.log("onAnswer_dayo")
+                    state.showNoticeOnAcount.answer = true
+                }
+            }
+            console.log("answercheck start")
+            let answeredQuestion = getters.question
+            for(let question of answeredQuestion){
+                console.log(question)
+                for(let answer of question.answer){
+                    console.log(answer.id)
+                    if(answer.on_reply==true&&answer.user.UID==getters.UID){
+                        console.log("onreply_dayo")
+                        state.showNoticeOnAcount.reply = true
+                    }
+                }
+            }
+        }
         // getWordList(state, payload){
         //     state.wordList = payload
         // }
     },
     
     actions:{
+        commitHandleOnReplyAndOnAnswer({commit,getters}){
+            commit('handleOnReplyAndOnAnswer', getters.user)
+        },
         handleNotifications(context, payload){
             if(payload == "reply"){
                 context.state.notifications.reply = true
