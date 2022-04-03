@@ -8,6 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 from rest_framework import status
 from django.db.models import Max
+from django.db.models import Prefetch
+
 import random
 import operator
 import copy
@@ -99,7 +101,7 @@ class BoardAnswerRead(generics.ListAPIView):
             'reply__user',
             'liked_answer',
             'liked_answer__user',
-            'liked_answer__answer')
+            'liked_answer__answer',)
 
     serializer_class = BoardAnswerReadSerializer
     pagination_class = None
@@ -320,7 +322,25 @@ class SearchQuestionList(APIView):
     def get(self, request, format=None):
         keywords = request.query_params.getlist("keyword")[0]
         keywords = keywords.split(',')
-        all_question = BoardQuestion.objects.all()
+        all_question = BoardQuestion.objects.prefetch_related(
+            "tag", 
+            "tag__parent_tag",
+            "tag__user",
+            'answer',
+            'answer__question',
+            'answer__question__user',
+            'answer__question__tag',
+            'answer__question__tag__parent_tag',
+            'answer__question__tag__user',
+            'answer__user',
+            'answer__liked_answer',
+            'liked_num',
+            'liked_num__user',
+            'liked_num__question',
+            'liked_num__question__user',
+            ).select_related(
+                'user'
+            ).distinct().all()
         count = 0
         if len(keywords) < 2:
             question1 = all_question.filter(Q(title__icontains=keywords[0]) | Q(description__icontains=keywords[0])).distinct()

@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div class="community-wrapper" :class="{'scrll-fixed':showCreateQuestion}">
+    <div class="community-wrapper scroll_area" :class="{'scrll-fixed':showCreateQuestion}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -27,6 +27,7 @@
                     <p class='word'>わからない事があったら質問してみよう。</p>
                     <button class='btn-base-white-db-sq' 
                     @click='handleShowCreateQuestion'>質問する</button>
+                    {{  scrollY }}
                 </div>
                 <!-- <button @click="handleNotifications">unko</button> -->
 
@@ -106,7 +107,14 @@
                             </div>
                         </div>        
                     </div>
-                    <button>unko</button>
+                    <div class="question-list-dammy">
+                        <div class="tag-wrapper-dammy">
+                            <div class="tag-dammy"></div>
+                        </div>
+                        <div class="question-title-dammy"></div>
+                        <div class="questiondescroption-dammy"></div>
+                        <div class="footer-dammy"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,6 +148,7 @@ export default {
             // reccomendedQuestion: [],
             searchedQuestion:'',
             onAnswerOrReply:false,
+            scrollY: 0,
             // notifications:false,
             next: '',
             showQuestionStatus:{
@@ -162,11 +171,15 @@ export default {
         console.log('before-mounted')
     },
     mounted() {
+        window.addEventListener('scroll', this.handleScroll)
         this.scrollTop()
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
     },
+    // watch:{
+    //     scrollY:function(v) {this.scrollY = window.scrollY }
+    //     },
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
@@ -177,6 +190,12 @@ export default {
         reccomendedQuestion(){
             return this.$store.getters.gettersReccomendedQuestion
         },
+        // unko(){
+        //     return element.scrollHeight;
+        // },
+        // scrollY(){
+        //    return window.scrollY
+        // },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
             console.log('inHandleAR in community', this.$store.getters.gettersAnsweredQuestions)
@@ -414,6 +433,17 @@ export default {
                 top: 0,
             });
         },
+        handleScroll(){
+            console.log("inSCROLL")
+            var doch = document.querySelector('.scroll_area').scrollHeight
+            var winh = window.innerHeight; //ウィンドウの高さ
+            var bottom = doch - winh; //ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
+            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',window.scrollTop)
+            if (bottom+100 <= this.scrollY) {
+            //一番下までスクロールした時に実行
+            console.log("最底辺！");
+            }
+        },
         // resetNotifications(){
         //     this.notifications = false
             
@@ -606,6 +636,46 @@ export default {
                         .date{
                             margin-left: 0.5rem;
                         }
+                    }
+                }
+                .question-list-dammy{
+                    background: gray;
+                    display: flex;
+                    width: 100%;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    .tag-wrapper-dammy{
+                        display: flex;
+                        width: 100%;
+                        .tag-dammy{
+                            border-radius: 50vh;
+                            background: rgb(92, 92, 92);
+                            margin-top: 0.5rem;
+                            margin-left: 0.3rem;
+                            margin-bottom: 0.5rem;
+                            padding: 0.5rem;
+                            min-width: 3rem;
+                            min-height: 1.5rem;
+                        }
+                    }
+                    .question-title-dammy{
+                        background: rgb(92, 92, 92);
+                        padding: 0.5rem;
+                        width: 80%;
+                    }
+                    .questiondescroption-dammy{
+                        background: rgb(92, 92, 92);
+                        padding: 0.5rem;
+                        width: 80%;
+                        margin-top: 0.5rem;
+                    }
+                    .footer-dammy{
+                        background: rgb(92, 92, 92);
+                        padding: 0.5rem;
+                        width: 80%;
+                        margin-top: 0.5rem;
+                        margin-bottom: 1rem;
                     }
                 }
             }
