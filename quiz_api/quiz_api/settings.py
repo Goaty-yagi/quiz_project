@@ -59,7 +59,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE':10,
+    'PAGE_SIZE':3,
 }
 
 CORS_ALLOWED_ORIGINS = [

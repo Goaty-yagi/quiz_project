@@ -27,7 +27,6 @@
                     <p class='word'>わからない事があったら質問してみよう。</p>
                     <button class='btn-base-white-db-sq' 
                     @click='handleShowCreateQuestion'>質問する</button>
-                    {{  scrollY }}
                 </div>
                 <!-- <button @click="handleNotifications">unko</button> -->
 
@@ -107,7 +106,7 @@
                             </div>
                         </div>        
                     </div>
-                    <div class="question-list-dammy">
+                    <div v-if="scrollBottom" class="question-list-dammy">
                         <div class="tag-wrapper-dammy">
                             <div class="tag-dammy"></div>
                         </div>
@@ -149,6 +148,9 @@ export default {
             searchedQuestion:'',
             onAnswerOrReply:false,
             scrollY: 0,
+            scrollHeight:'',
+            scrollBottom: false, 
+            bottomScrollActionHandler:true,
             // notifications:false,
             next: '',
             showQuestionStatus:{
@@ -172,11 +174,25 @@ export default {
     },
     mounted() {
         window.addEventListener('scroll', this.handleScroll)
+        window.addEventListener('scroll', this.getScrollY)
+        this.bottomScrollActionHandler = true
+        this.scrollBottom = false, 
         this.scrollTop()
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
     },
+    beforeUnmount(){
+        console.log("BD")
+        window.removeEventListener('scroll', this.handleScroll)
+        window.removeEventListener('scroll', this.getScrollY)
+        console.log("removed")
+    },
+    // unmounted(){
+    //     console.log("DSTROY")
+    //     window.removeEventListener('scroll', this.handleScroll)
+    //     window.removeEventListener('scroll', this.getScrollY)
+    // },
     // watch:{
     //     scrollY:function(v) {this.scrollY = window.scrollY }
     //     },
@@ -298,6 +314,27 @@ export default {
                 })
             this.$store.commit('setIsLoading', false)
             this.getParentTag()
+        },
+        async getAdditionalQuestion(){
+            console.log("addQ",this.next)
+            if(this.next!=null){
+                await axios
+                .get(this.next)
+                .then(response => {
+                    for(let i of response.data.results){
+                        this.questions.push(i)
+                    }
+                    this.next = response.data.next
+                    this.bottomScrollActionHandler = true
+                    if(this.next==null){
+                        this.bottomScrollActionHandler = false
+                        this.scrollBottom = false
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            }
         },
         async getParentTag(){
             console.log('in_get_parentTag')
@@ -433,17 +470,30 @@ export default {
                 top: 0,
             });
         },
+        getScrollY(){
+            this.scrollY = window.scrollY
+        },
         handleScroll(){
             console.log("inSCROLL")
             var doch = document.querySelector('.scroll_area').scrollHeight
             var winh = window.innerHeight; //ウィンドウの高さ
             var bottom = doch - winh; //ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
-            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',window.scrollTop)
-            if (bottom+100 <= this.scrollY) {
-            //一番下までスクロールした時に実行
-            console.log("最底辺！");
+            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',this.scrollY,this.bottomScrollActionHandler)
+            if (bottom+100 <= this.scrollY&&this.bottomScrollActionHandler) {
+                this.bottomScrollActionHandler = false
+                this.scrollBottom = true
+                console.log("shitadayo",this.scrollBottom)
+                this.getAdditionalQuestion()
+                // this.scrollBottom = false
+                // this.next==null
+                if(this.next==null){
+                    this.scrollBottom = false
+                }
             }
         },
+        // dammySetTime(){
+        //     this.scrollBottom = false
+        // },
         // resetNotifications(){
         //     this.notifications = false
             
