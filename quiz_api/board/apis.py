@@ -253,16 +253,22 @@ class FavoriteQuestionCreate(generics.CreateAPIView):
     #     user = User.objects.filter(user=self.request.user)
     #     return BoardQuestion.objects.filter(UID=user)
 
-class AnsweredQuestionList(APIView):
+class AnsweredQuestionList(GenericAPIView):
 # get questions from user UID in answer
+    pagination_class = PageNumberPagination
+    serializer_class = BoardQuestionListSerializer
+    queryset = BoardQuestion.objects.all()
     def get(self, request, format=None):
         user = request.query_params.getlist("user")
         try:
-            question  = BoardQuestion.objects.filter(
+            question_queryset  = BoardQuestion.objects.filter(
                 answer__user = user[0],
             ).distinct()
-            serializer = BoardQuestionListSerializer(question, many=True)
-            return Response(serializer.data)
+            page = self.paginate_queryset(question_queryset)
+            serializer = self.get_serializer(page, many=True)
+            result = self.get_paginated_response(serializer.data)
+            data = result.data
+            return Response(data)
         except BoardQuestion.DoesNotExist:
             raise Http404
 

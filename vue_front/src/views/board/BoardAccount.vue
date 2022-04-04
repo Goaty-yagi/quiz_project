@@ -149,9 +149,9 @@ export default {
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
+                this.questions = this.getAnsweredQuestion
                 if(this.showQuestion.questionStatus.best){
-                    console.log('make_best_answered',this.getAnsweredQuestion)
-                    Object.values(this.getAnsweredQuestion).forEach(value =>{
+                    Object.values(this.questions.results).forEach(value =>{
                         console.log("loop",value)
                         if(value.answer.best == true){
                             answeredquiz.push(value.question)}
@@ -163,8 +163,8 @@ export default {
                     console.log("not best")
                     var answeredquiz2 = []
                     // for(let i of this.answeredQuestion){
-                        Object.values(this.getAnsweredQuestion).forEach(value =>{
-                            console.log("value",value.answer[0])
+                        Object.values(this.questions.results).forEach(value =>{
+                            console.log("value",value.answer)
                             if(value.answer[0].on_reply==true&&value.answer[0].user.UID==this.user.UID){
                                 answeredquiz.push(value)
                             }else{
@@ -178,7 +178,7 @@ export default {
                             }
                             return this.handleStatus(answeredquiz)
                         }
-                    return this.handleStatus(this.getAnsweredQuestion)   
+                    return this.handleStatus(this.getAnsweredQuestion.results)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
                 this.questions = this.$store.state.board.reccomendedQuestion
@@ -367,7 +367,7 @@ export default {
         },
         handleOnReply(){
             console.log("handleOnREPLY", this.getAnsweredQuestion)
-            for(let question of this.getAnsweredQuestion){
+            for(let question of this.getAnsweredQuestion.results){
                 console.log("first loop",question.answer)
                 for(let answer of question.answer){
                     console.log("second loop",answer)

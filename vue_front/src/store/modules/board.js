@@ -112,6 +112,8 @@ export default {
                 if(question2.on_answer==true&&question2.user.UID==getters.UID){
                     console.log("onAnswer_dayo")
                     state.showNoticeOnAcount.answer = true
+                }else{
+                    state.showNoticeOnAcount.answer = false
                 }
             }
             console.log("answercheck start")

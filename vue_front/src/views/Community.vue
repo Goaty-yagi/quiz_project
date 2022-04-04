@@ -223,7 +223,7 @@ export default {
                 }
             }
             console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
-            let answeredQuestion = this.$store.getters.gettersAnsweredQuestions
+            let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
             for(let question of answeredQuestion){
                 console.log(question)
                 for(let answer of question.answer){
