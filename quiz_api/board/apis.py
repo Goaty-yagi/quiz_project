@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import GenericAPIView
 
 
 from django.db.models import Q
@@ -282,29 +283,36 @@ class favoriteQuestionList(APIView):
             raise Http404
 
 
-class RelatedQuestionList(APIView):
+class RelatedQuestionList(GenericAPIView):
     """recieve 1 ~ 3 tag_ids and UID. get queryset exclude UID question 
     and filtered tag_id and solved status. then go to set_random_question function"""
+    pagination_class = PageNumberPagination
+    serializer_class = BoardQuestionListSerializer
+    queryset = BoardQuestion.objects.all()
+
     def get(self, request, format=None):
         print("request",request)
         request_tag_list = request.query_params.getlist("tag")
         uid = request.query_params.getlist("uid")[0]
         print("uid",uid)
         try:
-            solved_queryset = BoardQuestion.objects.exclude(user__UID=uid).filter(
+            solved_queryset = self.queryset.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = True
             ).distinct()
             print("solved_queryset", solved_queryset)
-            unsolved_queryset = BoardQuestion.objects.exclude(user__UID=uid).filter(
+            unsolved_queryset = self.queryset.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = False
             ).distinct()
             question = set_random_object(solved_queryset, unsolved_queryset)
-            # question = solved_queryset
-            print(question)
-            serializer = BoardQuestionListSerializer(question, many=True)
-            return Response(serializer.data)
+            page = self.paginate_queryset(question)
+            print('page',self.queryset)
+            serializer = self.get_serializer(page, many=True)
+            result = self.get_paginated_response(serializer.data)
+            data = result.data
+            # serializer = BoardQuestionListSerializer(question, many=True)
+            return Response(data)
         except BoardQuestion.DoesNotExist:
             raise Http404
 

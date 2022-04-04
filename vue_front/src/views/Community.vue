@@ -106,7 +106,7 @@
                             </div>
                         </div>        
                     </div>
-                    <div v-if="scrollBottom" class="question-list-dammy">
+                    <div v-if="scrollBottom&&questions.next" class="question-list-dammy">
                         <div class="tag-wrapper-dammy">
                             <div class="tag-dammy"></div>
                         </div>
@@ -135,6 +135,7 @@ export default {
     data(){
         return{
             questions:'',
+            temporaryQuestion:'',
             search:'',
             wordList: [],
             parentTagDict:{},       
@@ -181,6 +182,7 @@ export default {
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
+        console.log('mounted',this.reccomendedQuestion)
     },
     beforeUnmount(){
         console.log("BD")
@@ -214,7 +216,6 @@ export default {
         // },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
-            console.log('inHandleAR in community', this.$store.getters.gettersAnsweredQuestions)
             for(let question2 of this.user.question){
                 if(question2.on_answer==true&&question2.user.UID==this.user.UID){
                     console.log("onAnswer_dayo")
@@ -290,12 +291,15 @@ export default {
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
-                console.log("return_recen:",this.questions)
-                return this.questions
+                console.log("return_recen:",this.temporaryQuestion)
+                this.questions = this.temporaryQuestion
+                console.log("Q_resilts",this.questions.results)
+                return this.questions.results
             }
             if(this.showQuestionStatus.reccomend){
                 console.log("return_reco:",this.reccomendedQuestion)
-                return this.reccomendedQuestion
+                this.questions = this.reccomendedQuestion
+                return this.questions.results
             }
         }
     },
@@ -305,8 +309,8 @@ export default {
             await axios
                 .get('/api/board/question/list')
                 .then(response => {
-                    this.questions = response.data.results
-                    this.next = response.data.next
+                    this.temporaryQuestion = response.data
+                    // this.next = response.data.next
                     // document.title = this.product.name + ' | Djackets'
                 })
                 .catch(error => {
@@ -315,20 +319,22 @@ export default {
             this.$store.commit('setIsLoading', false)
             this.getParentTag()
         },
-        async getAdditionalQuestion(){
-            console.log("addQ",this.next)
-            if(this.next!=null){
+        async getAdditionalQuestion(next){
+            console.log("addQ",next)
+            if(next!=null){
                 await axios
-                .get(this.next)
+                .get(next)
                 .then(response => {
                     for(let i of response.data.results){
-                        this.questions.push(i)
+                        this.questions.results.push(i)
                     }
-                    this.next = response.data.next
+                    this.questions.next= response.data.next
                     this.bottomScrollActionHandler = true
-                    if(this.next==null){
+                    if(this.questions.next==null){
                         this.bottomScrollActionHandler = false
                         this.scrollBottom = false
+                        // window.removeEventListener('scroll', this.handleScroll)
+                        // window.removeEventListener('scroll', this.getScrollY)
                     }
                 })
                 .catch(error => {
@@ -441,8 +447,12 @@ export default {
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
         },
+        // nextHandlar(next){
+        //     return next
+        // },
         questionHandler(key){
             // recieve "recent" or "reccomend" to change status
+            this.bottomScrollActionHandler = true
             for(let i of Object.keys(this.showQuestionStatus)){
                 if(i == key){
                     this.showQuestionStatus[i] = true                    
@@ -482,8 +492,8 @@ export default {
             if (bottom+100 <= this.scrollY&&this.bottomScrollActionHandler) {
                 this.bottomScrollActionHandler = false
                 this.scrollBottom = true
-                console.log("shitadayo",this.scrollBottom)
-                this.getAdditionalQuestion()
+                console.log("shitadayo",this.scrollBottom,this.questions.next)
+                this.getAdditionalQuestion(this.questions.next)
                 // this.scrollBottom = false
                 // this.next==null
                 if(this.next==null){
