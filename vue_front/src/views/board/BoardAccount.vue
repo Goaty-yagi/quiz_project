@@ -163,16 +163,16 @@ export default {
                     return this.handleStatus(this.getAnsweredQuestion)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
-                return this.handleStatus(this.$store.state.board.reccomendedQuestion)
+                return this.handleStatus(this.$store.state.board.reccomendedQuestion.results)
             }else if(this.showQuestion.questionType.favorite){
                 console.log('gonna favorite')
                 return this.handleStatus(this.$store.state.signup.favoriteQuestion)
             }
         },
     },
-    async beforeMount(){
+    beforeMount(){
         console.log("beforeMounted")
-        await this.$store.dispatch("getAnsweredQuestion")
+        this.$store.dispatch("getAnsweredQuestion")
     },
     mounted(){
         console.log('mounted')

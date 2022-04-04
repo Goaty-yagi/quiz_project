@@ -316,7 +316,7 @@ export default {
             try{
                 await axios.get(url)
                     .then(response => {
-                    this.relatedQuestion = response.data
+                    this.relatedQuestion = response.data.results
                     })
                 }
             catch{(error => {
