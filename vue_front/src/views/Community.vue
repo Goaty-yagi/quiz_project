@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div class="community-wrapper scroll_area" :class="{'scrll-fixed':showCreateQuestion}">
+    <div class="community-wrapper scroll_area" :class="{'scrll-fixed':showCreateQuestion, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -535,16 +535,20 @@ export default {
 .scroll{
     position:fixed;
 }
+.laoding-center{
+    display: flex;
 
+    justify-content: center;
+}
 .community-wrapper{
     // background: linear-gradient(#5B759F,#1C254C);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    // justify-content: center;
     height: auto;
     min-height: 80vh;
     width: 100vw;
-    align-items: center;
+    // align-items: center;
     .main-wrapper{
         .community-container{
             display: flex;

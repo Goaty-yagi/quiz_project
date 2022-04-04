@@ -78,6 +78,11 @@ body{
 .scrll-fixed{
     position: fixed;
 }
+// this is for loading bar centered
+.laoding-center{
+    display: flex;
+    justify-content: center;
+}
 
 // module
 .title-white{

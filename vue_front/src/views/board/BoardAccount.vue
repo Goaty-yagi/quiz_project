@@ -1,5 +1,5 @@
 <template>
-    <div  class="board-account-wrapper scroll_area">
+    <div  class="board-account-wrapper scroll_area" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading}">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -435,18 +435,16 @@ export default {
 @import "style/_variables.scss";
 .board-account-wrapper{
     display: flex;
-    justify-content: center;
     height: auto;
     min-height: 80vh;
     width: 100vw;
+    flex-direction: column;
     align-items: center;
 }
 .main-container{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    flex-direction: column;
     .notification-blue{
         display: flex;
         flex-direction: column;
