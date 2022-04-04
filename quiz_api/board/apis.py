@@ -261,7 +261,7 @@ class AnsweredQuestionList(GenericAPIView):
     def get(self, request, format=None):
         user = request.query_params.getlist("user")
         try:
-            question_queryset  = BoardQuestion.objects.filter(
+            question_queryset  = self.queryset.filter(
                 answer__user = user[0],
             ).distinct()
             page = self.paginate_queryset(question_queryset)
@@ -273,18 +273,25 @@ class AnsweredQuestionList(GenericAPIView):
             raise Http404
 
 
-class favoriteQuestionList(APIView):
+class favoriteQuestionList(GenericAPIView):
 # get questions from user UID in answer
-    def get(self, request, format=None):
+    pagination_class = PageNumberPagination
+    serializer_class = BoardQuestionListSerializer
+    queryset = BoardQuestion.objects.all()
+
+    def get(self, request):
         print("request",request)
         question_id = request.query_params.getlist("question_id")[0].split(",")
         print(type(question_id),question_id)
         try:
-            question  = BoardQuestion.objects.filter(
+            question_queryset  = self.queryset.filter(
                 id__in = question_id
             ).distinct()
-            serializer = BoardQuestionListSerializer(question, many=True)
-            return Response(serializer.data)
+            page = self.paginate_queryset(question_queryset)
+            serializer = self.get_serializer(page, many=True)
+            result = self.get_paginated_response(serializer.data)
+            data = result.data
+            return Response(data)
         except BoardQuestion.DoesNotExist:
             raise Http404
 

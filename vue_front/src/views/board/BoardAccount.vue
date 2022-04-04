@@ -184,8 +184,8 @@ export default {
                 this.questions = this.$store.state.board.reccomendedQuestion
                 return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.favorite){
-                console.log('gonna favorite')
-                return this.handleStatus(this.$store.state.signup.favoriteQuestion)
+                this.questions = this.$store.state.signup.favoriteQuestion
+                return this.handleStatus(this.questions.results)
             }
         },
     },
@@ -205,6 +205,10 @@ export default {
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
+    },
+    beforeUnmount(){
+        window.removeEventListener('scroll', this.handleScroll)
+        window.removeEventListener('scroll', this.getScrollY)
     },
     methods:{
         // async getAnsweredQuestion() {
