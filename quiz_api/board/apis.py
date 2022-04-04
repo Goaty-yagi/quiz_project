@@ -283,6 +283,28 @@ class favoriteQuestionList(APIView):
             raise Http404
 
 
+class UserQuestionList(GenericAPIView):
+    pagination_class = PageNumberPagination
+    serializer_class = BoardQuestionListSerializer
+    queryset = BoardQuestion.objects.all()
+
+    def get(self, request):
+        print("request",request)
+        uid = request.query_params.getlist("uid")[0]
+        print("uid",uid)
+        try:
+            user_question_queryset = self.queryset.filter(
+                user__UID=uid
+            )
+            page = self.paginate_queryset(user_question_queryset)
+            serializer = self.get_serializer(page, many=True)
+            result = self.get_paginated_response(serializer.data)
+            data = result.data
+            return Response(data)
+        except BoardQuestion.DoesNotExist:
+            raise Http404
+
+
 class RelatedQuestionList(GenericAPIView):
     """recieve 1 ~ 3 tag_ids and UID. get queryset exclude UID question 
     and filtered tag_id and solved status. then go to set_random_question function"""

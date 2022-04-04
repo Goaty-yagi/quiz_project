@@ -1,11 +1,11 @@
 <template>
-    <div  class="board-account-wrapper">
+    <div  class="board-account-wrapper scroll_area">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading}">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class='main-container'>
+            <div v-if="$store.state.isLoading==false" class='main-container'>
                 <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
                     <div class="notification-text text1" v-if="onNotification.onAnswer">
                         新しい回答があります。
@@ -77,6 +77,15 @@
                         </div>
                     </div>   
                 </div>
+                <!-- v-if="scrollBottom&&questions.next" -->
+                <div v-if="questions.next&&scrollBottom" class="question-list-dammy shine">
+                    <div class="tag-wrapper-dammy">
+                        <div class="tag-dammy"></div>
+                    </div>
+                    <div class="question-title-dammy"></div>
+                    <div class="questiondescroption-dammy"></div>
+                    <div class="footer-dammy"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -88,8 +97,12 @@ import axios from 'axios'
 export default {
     data(){
         return{
+            questions:'',
             reccomendedQuestion:'',
             answeredQuestion:'',
+            userQuestion:'',
+            bottomScrollActionHandler: true,
+            scrollBottom: false,
             onNotification:{
                 onReply:false,
                 onAnswer:false,
@@ -127,7 +140,12 @@ export default {
             const handledQuestion= []
             console.log("questiontype",this.showQuestion.questionType)
             if(this.showQuestion.questionType.question){
-                return this.handleStatus(this.HandleQuestionOnanswerOrder(this.user.question))
+                try{
+                    this.questions = this.userQuestion
+                    console.log("UQR",this.questions.results)
+                    return this.handleStatus(this.HandleQuestionOnanswerOrder(this.questions.results))
+                }catch{
+                }
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
@@ -163,7 +181,8 @@ export default {
                     return this.handleStatus(this.getAnsweredQuestion)   
                 }
             }else if(this.showQuestion.questionType.reccomend){
-                return this.handleStatus(this.$store.state.board.reccomendedQuestion.results)
+                this.questions = this.$store.state.board.reccomendedQuestion
+                return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.favorite){
                 console.log('gonna favorite')
                 return this.handleStatus(this.$store.state.signup.favoriteQuestion)
@@ -172,14 +191,20 @@ export default {
     },
     beforeMount(){
         console.log("beforeMounted")
+        this.getUserQuestion()
+        this.scrollTop()
         this.$store.dispatch("getAnsweredQuestion")
     },
     mounted(){
         console.log('mounted')
+        this.getUserQuestion()
+        window.addEventListener('scroll', this.handleScroll)
+        window.addEventListener('scroll', this.getScrollY)
+        this.bottomScrollActionHandler = true
+        this.scrollBottom = false, 
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
-        console.log('mounted2',this.$store.gettersAnsweredQuestions)
     },
     methods:{
         // async getAnsweredQuestion() {
@@ -200,6 +225,41 @@ export default {
         // },
         getDetail(slug){
             router.push(`/board-detail/${slug}` )
+        },
+        async getAdditionalQuestion(next){
+            console.log("addQ",next)
+            if(next!=null){
+                await axios
+                .get(next)
+                .then(response => {
+                    for(let i of response.data.results){
+                        this.questions.results.push(i)
+                    }
+                    this.questions.next= response.data.next
+                    this.bottomScrollActionHandler = true
+                    if(this.questions.next==null){
+                        this.bottomScrollActionHandler = false
+                        this.scrollBottom = false
+                        // window.removeEventListener('scroll', this.handleScroll)
+                        // window.removeEventListener('scroll', this.getScrollY)
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            }
+        },
+        async getUserQuestion(){
+            this.$store.commit('setIsLoading', true)
+            await axios
+                .get(`/api/board/question-user-question?uid=${this.user.UID}`)
+                .then(response => {
+                    this.userQuestion = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            this.$store.commit('setIsLoading', false)
         },
         handleStatus(question){
             console.log("handle",question)
@@ -284,6 +344,7 @@ export default {
             }
         },
         handleQuestionType(type){
+            this.bottomScrollActionHandler = true
             if(this.showQuestion.questionType[type]){
                 console.log('same')
                 ;
@@ -343,6 +404,25 @@ export default {
                 behavior: "smooth"
             });
         },
+        getScrollY(){
+            this.scrollY = window.scrollY
+        },
+        handleScroll(){
+            console.log("inSCROLL")
+            var doch = document.querySelector('.scroll_area').scrollHeight
+            var winh = window.innerHeight; //ウィンドウの高さ
+            var bottom = doch - winh; //ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
+            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',this.scrollY,this.bottomScrollActionHandler)
+            if (bottom+100 <= this.scrollY&&this.bottomScrollActionHandler) {
+                this.bottomScrollActionHandler = false
+                this.scrollBottom = true
+                console.log("shitadayo",this.scrollBottom,this.questions.next)
+                this.getAdditionalQuestion(this.questions.next)
+                // if(this.next==null){
+                //     this.scrollBottom = false
+                // }
+            }
+        },
     }
 }
 </script>
@@ -352,9 +432,10 @@ export default {
 .board-account-wrapper{
     display: flex;
     justify-content: center;
-    width: 100vw;
+    height: auto;
     min-height: 80vh;
-    // align-items: center;
+    width: 100vw;
+    align-items: center;
 }
 .main-container{
     display: flex;
@@ -523,6 +604,46 @@ export default {
             }
         }
     }
+    }
+    .question-list-dammy{
+        background: gray;
+        display: flex;
+        width: 90%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .tag-wrapper-dammy{
+            display: flex;
+            width: 100%;
+            .tag-dammy{
+                border-radius: 50vh;
+                background: rgb(92, 92, 92);
+                margin-top: 0.5rem;
+                margin-left: 0.3rem;
+                margin-bottom: 0.5rem;
+                padding: 0.5rem;
+                min-width: 3rem;
+                min-height: 1.5rem;
+            }
+        }
+        .question-title-dammy{
+            background: rgb(92, 92, 92);
+            padding: 0.5rem;
+            width: 80%;
+        }
+        .questiondescroption-dammy{
+            background: rgb(92, 92, 92);
+            padding: 0.5rem;
+            width: 80%;
+            margin-top: 0.5rem;
+        }
+        .footer-dammy{
+            background: rgb(92, 92, 92);
+            padding: 0.5rem;
+            width: 80%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
     }
 }
 

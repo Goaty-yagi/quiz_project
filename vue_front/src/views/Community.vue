@@ -462,7 +462,7 @@ export default {
             }
             // this.showQuestionStatus[key] = true
         },
-         handleScrollFixed(){
+        handleScrollFixed(){
             this.scrollFixed = !this.scrollFixed
         },
         showSearcheFalse(){
@@ -741,37 +741,5 @@ export default {
             }
         }
     }
-}
-.shine{
-    /*キラッと光る基点とするためrelativeを指定*/
-	position: relative;
-    /*ボタンの形状*/	
-	display:inline-block;
-    background: #333;
-    color: #fff;
-    padding: 10px 20px;
-    text-decoration: none;
-    outline: none;
-    overflow: hidden;
-}
-
-/*キラッと光る*/
-.shine::before {
-	content: '';
-    /*絶対配置でキラッと光るの位置を決める*/
-	position: absolute;
-	top: 0;
-	left: -75%;
-    /*キラッと光る形状*/
-    width: 50%;
-	height: 100%;
-	background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,.3) 100%);
-	transform: skewX(-25deg);
-    animation: shine 1.6s linear infinite;
-}
-@keyframes shine {
-	100% {
-		left: 125%;
-	}
 }
 </style>
