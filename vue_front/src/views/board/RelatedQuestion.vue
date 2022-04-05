@@ -52,11 +52,20 @@ export default {
 
 <style lang="scss" scoped>
 @import "style/_variables.scss";
+
+.related-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .main-wrapper{
         display: flex;
         flex-direction: column;
         align-items: center;
         .related-title{
+            font-size: 1.2rem;
+            font-weight: bold;
             margin-top: 2rem;
             color: $dark-blue;
             // border-bottom: solid $dark-blue;

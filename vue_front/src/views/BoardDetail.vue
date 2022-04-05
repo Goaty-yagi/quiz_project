@@ -1,12 +1,12 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div  class="board-detail-wrapper" :class="{'scrll-fixed':showAnswerPage||showReplyPage}">
+    <div  class="board-detail-wrapper" :class="{'scrll-fixed':showAnswerPage||showReplyPage,'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class="question-wrapper" v-if="question&&relatedQuestion&&$store.state.isLoading==false">
+            <div class="question-wrapper" v-if="question&&relatedQuestion.results&&$store.state.isLoading==false">
                 <p class='title-white'>質問板</p>
                 <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
                     <div class="notification-text">
@@ -299,7 +299,7 @@ export default {
             }
         },
         async getRelatedQuestion() {
-            // relatedQuestion Start from here.
+            // relatedQuestion.results Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
             this.$store.commit('setIsLoading', true)
@@ -316,13 +316,13 @@ export default {
             try{
                 await axios.get(url)
                     .then(response => {
-                    this.relatedQuestion = response.data.results
+                    this.relatedQuestion = response.data
                     })
                 }
             catch{(error => {
                     console.log(error)
             })}
-            this.$store.commit('getRelatedQuestion', this.relatedQuestion)
+            this.$store.commit('getRelatedQuestion', this.relatedQuestion.results)
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
             this.$store.commit('setIsLoading', false)
@@ -400,17 +400,19 @@ export default {
         // },
         makeRandomSlicedArray(){
             let num = 3
-            if (this.relatedQuestion.lendth < 3){
-                num = this.relatedQuestion.lendth
+            console.log("MRSA")
+            if (this.relatedQuestion.results.lendth < 3){
+                num = this.relatedQuestion.results.lendth
             }
-            this.getRandomQuestion(this.relatedQuestion)
-            this.slicedRelatedQuestion = this.relatedQuestion.slice(0,num)
+            console.log("MRSA2")
+            this.getRandomQuestion(this.relatedQuestion.results)
+            this.slicedRelatedQuestion = this.relatedQuestion.results.slice(0,num)
             console.log(this.slicedRelatedQuestion)
         },
         deleteSameQuestion(){
-            for(let q of this.relatedQuestion){
+            for(let q of this.relatedQuestion.results){
                 if (q.id == this.question.id){
-                    this.relatedQuestion.splice(this.relatedQuestion.indexOf(q),1)
+                    this.relatedQuestion.results.splice(this.relatedQuestion.results.indexOf(q),1)
                     break
                 }
                 

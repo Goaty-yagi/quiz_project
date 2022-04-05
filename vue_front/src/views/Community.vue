@@ -23,14 +23,14 @@
                 </form>
             
                 
-                <div class="question-box" v-if='showSearch==false' >
+                <div class="question-box" v-if='showQuestionStatus.search==false' >
                     <p class='word'>わからない事があったら質問してみよう。</p>
                     <button class='btn-base-white-db-sq' 
                     @click='handleShowCreateQuestion'>質問する</button>
                 </div>
                 <!-- <button @click="handleNotifications">unko</button> -->
 
-                <div class=select-wrapper v-if='showSearch==false'>
+                <div class=select-wrapper v-if='showQuestionStatus.search==false'>
                     <button
                     @click="questionHandler('recent')"
                     :class="{'btn-tr-white-base-cir':showQuestionStatus.recent==false,'btn-tr-black-baselite-cir':showQuestionStatus.recent}"
@@ -53,17 +53,17 @@
                     />
 
                     <!-- here is for searched questions -->
-                    <div v-if='showSearch'>
+                    <div v-if='showQuestionStatus.search'>
                         <div class="search-title title-blue">検索結果</div>
-                        <div class="no-found" v-if="searchedQuestion==false">
+                        <div class="no-found" v-if="questions.results==false">
                             <p>お探しの質問は見つかりませんでした。</p>
                             <div class="route">
                                 <div @click="goHome()"><i class="fas fa-home" ></i><p>ホームへ戻る</p></div>
-                                <div @click="showSearcheFalse()"><i class="far fa-comments"></i><p>質問板へ戻る</p></div>
+                                <div @click="handleShowQuestionStatusSearch()"><i class="far fa-comments"></i><p>質問板へ戻る</p></div>
                             </div>
                         </div>
                         <div
-                        v-for="(question,questionindex) in searchedQuestion"
+                        v-for="(question,questionindex) in questions.results"
                         v-bind:key="questionindex">
                             <div class='question-list' @click="getDetail(question.slug)">
                                 <div 
@@ -89,7 +89,7 @@
                     v-for="(question,questionindex) in handleQuestions"
                     v-bind:key="questionindex"
                     >
-                        <div class='question-list' v-if='showSearch==false' @click="getDetail(question.slug)">
+                        <div class='question-list' v-if='showQuestionStatus.search==false' @click="getDetail(question.slug)">
                             <div 
                             class="tag-wrapper">
                                 <div 
@@ -141,7 +141,6 @@ export default {
             parentTagDict:{},       
             showCreateQuestion: false,
             showConfirm: false,
-            showSearch: false,
             scrollFixed: false,
             scroll_position: '100',
             userTagList: [],
@@ -156,7 +155,8 @@ export default {
             next: '',
             showQuestionStatus:{
                 recent: true,
-                reccomend: false
+                reccomend: false,
+                search: false
             },
             styles:{
                 position:'',
@@ -296,9 +296,14 @@ export default {
                 console.log("Q_resilts",this.questions.results)
                 return this.questions.results
             }
-            if(this.showQuestionStatus.reccomend){
+            else if(this.showQuestionStatus.reccomend){
                 console.log("return_reco:",this.reccomendedQuestion)
                 this.questions = this.reccomendedQuestion
+                return this.questions.results
+            }
+            else if(this.showQuestionStatus.search){
+                console.log("return_search:")
+                this.questions = this.searchedQuestion
                 return this.questions.results
             }
         }
@@ -386,16 +391,20 @@ export default {
         //     // this.$store.commit('setIsLoading', false)
         // },
         async getSearchQuestion(){
+            this.$store.commit('setIsLoading', true)
             console.log('Gsearch')
             await axios
                 .get(`/api/board/question/search/?keyword=${this.wordList}`)
                 .then(response => {
                     this.searchedQuestion = response.data
-                    console.log('gotserchedQQ',this.searchedQuestion)
+                    console.log("SQ", this.searchedQuestion)
+                    this.questionHandler("search")
+                    console.log("status changed to :",this.showQuestionStatus.search)
                 })
                 .catch(error => {
                     console.log(error)
                 })
+            this.$store.commit('setIsLoading', false)
         },          
         async splitSearch(){
             if(this.search){
@@ -420,7 +429,6 @@ export default {
                 letterList = []
                 this.search = ''
                 await this.getSearchQuestion()
-                this.showSearch = true
             }
         },
         getParentTagDict(parentTags){
@@ -465,8 +473,8 @@ export default {
         handleScrollFixed(){
             this.scrollFixed = !this.scrollFixed
         },
-        showSearcheFalse(){
-            this.showSearch = false
+        handleShowQuestionStatusSearch(){
+            showQuestionStatus.search = false
         },
         goHome(){
             router.push("/")
@@ -535,11 +543,6 @@ export default {
 .scroll{
     position:fixed;
 }
-.laoding-center{
-    display: flex;
-
-    justify-content: center;
-}
 .community-wrapper{
     // background: linear-gradient(#5B759F,#1C254C);
     display: flex;
@@ -548,7 +551,7 @@ export default {
     height: auto;
     min-height: 80vh;
     width: 100vw;
-    // align-items: center;
+    align-items: center;
     .main-wrapper{
         .community-container{
             display: flex;

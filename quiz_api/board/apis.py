@@ -352,7 +352,7 @@ class RelatedQuestionList(GenericAPIView):
             raise Http404
 
 
-class SearchQuestionList(APIView):
+class SearchQuestionList(GenericAPIView):
     """ this is for search question.
     if len(request.data) == 1, search title, descroption, also 
     answer descrption and reply description 
@@ -362,36 +362,25 @@ class SearchQuestionList(APIView):
     after that, search in the question searched above with third key
     if con't find any, forth key will be searched in the second round question list
     if fond forth one will be searched in the third list with."""
+
+    pagination_class = PageNumberPagination
+    serializer_class = BoardQuestionListSerializer
+    queryset = BoardQuestion.objects.all()
+
     def get(self, request, format=None):
         keywords = request.query_params.getlist("keyword")[0]
         keywords = keywords.split(',')
-        all_question = BoardQuestion.objects.prefetch_related(
-            "tag", 
-            "tag__parent_tag",
-            "tag__user",
-            'answer',
-            'answer__question',
-            'answer__question__user',
-            'answer__question__tag',
-            'answer__question__tag__parent_tag',
-            'answer__question__tag__user',
-            'answer__user',
-            'answer__liked_answer',
-            'liked_num',
-            'liked_num__user',
-            'liked_num__question',
-            'liked_num__question__user',
-            ).select_related(
-                'user'
-            ).distinct().all()
+        all_question = self.queryset
         count = 0
         if len(keywords) < 2:
             question1 = all_question.filter(Q(title__icontains=keywords[0]) | Q(description__icontains=keywords[0])).distinct()
             question2 = all_question.filter(Q(answer__reply__description__icontains=keywords[0]) | Q(answer__description__icontains=keywords[0])).distinct()
             question = question1 | question2
-            print(question1 , question2 , question)
-            serializer = BoardQuestionListSerializer(question, many=True)
-            return Response(serializer.data)
+            page = self.paginate_queryset(question)
+            serializer = self.get_serializer(page, many=True)
+            result = self.get_paginated_response(serializer.data)
+            data = result.data
+            return Response(data)
         for keynum in range(len(keywords)):
             print(keywords[keynum])
             if count == 0:
@@ -425,8 +414,11 @@ class SearchQuestionList(APIView):
                     submit_question = temporary_question
                     if temporary_question.exists() == False:
                         submit_question = question
-        serializer = BoardQuestionListSerializer(submit_question, many=True)
-        return Response(serializer.data)
+        page = self.paginate_queryset(submit_question)
+        serializer = self.get_serializer(page, many=True)
+        result = self.get_paginated_response(serializer.data)
+        data = result.data
+        return Response(data)
 
 # class Conbine():
 #     def __init__(self, keywords=''):
