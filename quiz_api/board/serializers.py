@@ -235,6 +235,7 @@ class UserTagSerializer(serializers.ModelSerializer):
 				  "total_num"
 				  ]
 		read_only_field = ['tag','user']
+		depth=1
 
 	# this create work only from 'user-tag/create/' 
 	def create(self, validated_data):
@@ -261,6 +262,14 @@ class CenterTagSerializer(serializers.ModelSerializer):
 				  "parent_tag" 
 				  ]
 		read_only_field = ['center_tag','user','question']
+
+
+class CenterOnlyTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardCenterTag
+		fields = ["id",
+				  "tag",
+				  ]
 
 
 class ParentTagSerializer(serializers.ModelSerializer):

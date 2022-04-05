@@ -59,6 +59,8 @@ class UserDetail(generics.RetrieveUpdateAPIView ):
         'answer__liked_answer__answer',
         'user_tag',
         'user_tag__tag',
+        'user_tag__tag__parent_tag',
+        'user_tag__tag__user',
         'user_tag__user',
         'favorite_question',
         'favorite_question__user',

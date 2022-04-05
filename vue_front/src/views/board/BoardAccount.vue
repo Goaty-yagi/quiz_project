@@ -27,12 +27,15 @@
                     </div>
                 </div>
                 <div class="tag-container">
-                    <div>関係するタグ</div>
-                    <div v-for="(tag,questionindex) in handleQuestion"
-                         v-bind:key="questionindex">
-                         <!-- do somethig laler -->
+                    <div class="tag-text">よく使うタグ</div>
+                    <div class="tag-wrapper">
+                        <div class="tag"
+                            v-for="(tag,questionindex) in getThreeUsertag"
+                            v-bind:key="questionindex">
+                             {{ tag.tag.tag }}
+                        </div>
                     </div>
-                    <p>編集する></p>
+                    <!-- <p>編集する></p> -->
                 </div>
                 <div class="nav-ber">
                     <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
@@ -114,7 +117,7 @@ export default {
                     reccomend: false,
                     favorite: false,
                     message:false
-                    },
+                },
                 questionStatus:{
                     all: true,
                     solved: false,
@@ -129,9 +132,45 @@ export default {
         user(){
             return this.$store.getters.getDjangouser
         },
-        // getUserQuestion(){
-        //     return this.$store.getters.gettersUserQuestion
-        // },
+        getThreeUsertag(){
+            const _ = require('lodash');
+            let used_num_list = []
+            let userTag = _.cloneDeep(this.user.user_tag)
+            if(userTag){
+                if(userTag.length == 1){
+                    return userTag
+                }
+                else if(userTag.length == 2){
+                    used_num_list.push(userTag.reduce((a,b)=>a.used_num>b.used_num?a:b))
+                    used_num_list.push(userTag.reduce((a,b)=>a.used_num<b.used_num?a:b))
+                    return used_num_list
+                }
+                else if(userTag.length >= 3){
+                    while (used_num_list.length < 3){
+                        used_num_list.push(userTag.reduce((a,b)=>a.used_num>b.used_num?a:b))
+                        Object.values(userTag).forEach(value =>{
+                            if(value.id == used_num_list.slice(-1)[0].id)                   
+                                delete userTag[userTag.indexOf(value)]
+                        })
+                    }
+                    return used_num_list
+                }
+            }else{
+                
+            }
+            // console.log("GT",this.user.user_tag.reduce((a,b)=>a.used_num>b.used_num?a:b));
+            // let used_num_temp_list = []
+            // let used_num_list = []
+            // let counter = 0
+            // for(let i of this.user.user_tag){
+            //     if(counter == 0){
+            //         used_num_temp_list.push(i)
+            //         counter += 1
+            //     }else{
+
+            //     }
+            // }
+        },
         getAnsweredQuestion(){
             console.log("getdazeAQ")
             return this.$store.getters.gettersAnsweredQuestions
@@ -196,6 +235,7 @@ export default {
         this.$store.dispatch("getAnsweredQuestion")
     },
     mounted(){
+        console.log('THREE',this.getThreeUsertag)
         console.log('mounted')
         this.getUserQuestion()
         window.addEventListener('scroll', this.handleScroll)
@@ -493,6 +533,30 @@ export default {
         background: $back-lite-white;
         width: 90%;
         padding:0.5rem;
+        .tag-text{
+            font-size: 1.2rem;
+            margin: 0.5rem;
+        }
+        .tag-wrapper{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            .tag{
+                border: solid $dark-blue;
+                border-radius: 50vh;
+                background: $base-lite-2;
+                margin-top: 0.5rem;
+                margin-left: 0.5rem;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+                padding: 0.5rem;
+                min-width: 5rem;
+                font-size: 1rem;
+                font-weight: bold;
+                color:$dark-blue;
+            }
+        }
         p{
             text-align: right;
         }

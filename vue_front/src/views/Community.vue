@@ -208,12 +208,6 @@ export default {
         reccomendedQuestion(){
             return this.$store.getters.gettersReccomendedQuestion
         },
-        // unko(){
-        //     return element.scrollHeight;
-        // },
-        // scrollY(){
-        //    return window.scrollY
-        // },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
             for(let question2 of this.user.question){
@@ -434,6 +428,7 @@ export default {
         getParentTagDict(parentTags){
             for (let i of parentTags){
                 this.parentTagDict[i.parent_tag] = i.center_tag
+                console.log("PD",parentTags,this.parentTagDict)
             }
         },
         handleShowCreateQuestion(){

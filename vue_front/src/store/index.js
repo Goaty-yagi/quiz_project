@@ -36,7 +36,9 @@ export default createStore({
         "signup.djangoUser",
         "signup.UID",
         "board.answeredQuestion",
-        "board.reccomendedQuestion"],  // 保存するモジュール：設定しなければ全部。
+        "board.reccomendedQuestion",
+        "board.centerTag"
+      ],  // 保存するモジュール：設定しなければ全部。
       storage: window.sessionStorage,  // 設定しなければlocalStorage
     })],
   getters:{
