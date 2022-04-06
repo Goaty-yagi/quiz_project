@@ -56,12 +56,15 @@
                     <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
                     <div v-if="showQuestion.questionType.answered" :class="{'option-selected': showQuestion.questionStatus.best}" @click="handleQuestionStatus('best')" class="select-item">ベスト</div>
                 </div>
-                <i v-if="spinner" class="fas fa-cog"></i>
+                <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': spinner }">
+                <!-- <i class="fas fa-cog"></i> -->
+                <div class="lds-dual-ring"></div>
+            </div>
                 <div
                     class='question-container'
                     v-for="(question,questionindex) in handleQuestion"
                     v-bind:key="questionindex">
-                    <div class='question-list' @click="getDetail(question.slug)">
+                    <div class='question-list' v-if="spinner==false" @click="getDetail(question.slug)">
                         <div class="tag-wrapper">
                             <div 
                                 class="tag"
@@ -120,6 +123,7 @@ export default {
                 onReply:false,
                 onAnswer:false,
             },
+            temporaryStatus:'',
             showQuestion:{
                 questionType:{
                     question: true,
@@ -200,13 +204,17 @@ export default {
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
                 this.questions = this.getAnsweredQuestion
+                console.log("best",this.showQuestion.questionStatus.best)
                 if(this.showQuestion.questionStatus.best){
                     Object.values(this.questions.results).forEach(value =>{
-                        console.log("loop",value)
-                        if(value.answer.best == true){
-                            answeredquiz.push(value.question)}
+                        console.log("loop",value.answer)
+                        for(let answer of value.answer){
+                            if(answer.best==true&&answer.user.UID==this.user.UID){
+                                answeredquiz.push(value)
+                            }
+                        }
                     })
-                    console.log(answeredquiz)
+                    console.log("best list",answeredquiz)
                     return answeredquiz
                 }
                 else{
@@ -322,7 +330,7 @@ export default {
             this.$store.commit('setIsLoading', false)
         },
         async getTagQuestion(tagID, tag){
-            // this.$store.commit('setIsLoading', true)
+            this.spinner = true
             await axios
                 .get(`/api/board/tag-question?tag=${tagID}`)
                 .then(response => {
@@ -333,7 +341,7 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-            // this.$store.commit('setIsLoading', false)
+            this.spinner = false
         },
         handleStatus(question){
             console.log("handle",question)
@@ -418,9 +426,10 @@ export default {
             }
         },
         handleQuestionType(type){
+            console.log('got type', type)
             this.bottomScrollActionHandler = true
             if(this.showQuestion.questionType[type]){
-                console.log('same')
+                console.log('same',this.showQuestion.questionType)
                 ;
             }
             else{
@@ -429,7 +438,12 @@ export default {
                     this.showQuestion.questionType[key] = false
                 })
                 this.showQuestion.questionType[type] = true
+                console.log('after true',this.showQuestion.questionType)
                 this.scrollTop()
+                if(this.showQuestion.questionStatus.best==true){
+                    this.showQuestion.questionStatus.best==false
+                    this.handleQuestionStatus('all')
+                }
             }
             // if(type == question){
                 
@@ -499,9 +513,22 @@ export default {
         },
         handleTag(indexNum, tagID, tag){
             this.tag = !this.tag
+            console.log('inHT',this.showQuestion.questionType)
+            if(this.showQuestion.questionType.tag == false){
+                for(let i of Object.keys(this.showQuestion.questionType)){
+                    if(this.showQuestion.questionType[i]==true){
+                        this.temporaryStatus = i
+                        console.log('TMK',this.temporaryStatus)
+                    }
+                }
+            }
+            console.log('TMK2',this.temporaryStatus)
             if(this.active == indexNum){
                 this.active = null
                 this.tag = false
+                this.showQuestion.questionType.tag = false
+                console.log("before",this.showQuestion.questionType,this.temporaryStatus)
+                this.handleQuestionType(this.temporaryStatus)
             }else{
                 this.active = indexNum
                 this.tag = true

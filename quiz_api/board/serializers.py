@@ -224,7 +224,7 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 			return question
 
 
-class UserTagSerializer(serializers.ModelSerializer):
+class UserTagReadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BoardUserTag
 		fields = ["id",
@@ -237,6 +237,19 @@ class UserTagSerializer(serializers.ModelSerializer):
 		read_only_field = ['tag','user']
 		depth=1
 
+
+class UserTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "user",
+				  "used_num",
+				  "viewed_num",
+				  "total_num"
+				  ]
+		read_only_field = ['tag','user']
+		
 	# this create work only from 'user-tag/create/' 
 	def create(self, validated_data):
 		tag = validated_data.pop('tag')
@@ -264,12 +277,12 @@ class CenterTagSerializer(serializers.ModelSerializer):
 		read_only_field = ['center_tag','user','question']
 
 
-class CenterOnlyTagSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardCenterTag
-		fields = ["id",
-				  "tag",
-				  ]
+# class CenterOnlyTagSerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = BoardCenterTag
+# 		fields = ["id",
+# 				  "tag",
+# 				  ]
 
 
 class ParentTagSerializer(serializers.ModelSerializer):

@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from user.models import User
-from board.serializers import BoardAnswerReadSerializer, BoardQuestionListSerializer, BoardLikedReadSerializer, AnswerLikedCreateSerializer, UserTagSerializer, FavoriteQuestionReadSerializer
+from board.serializers import BoardAnswerReadSerializer, BoardQuestionListSerializer, BoardLikedReadSerializer, AnswerLikedCreateSerializer, UserTagReadSerializer, FavoriteQuestionReadSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
     answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey
     liked_num = BoardLikedReadSerializer(many=True, required=False) #ManyToManyField
     liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
-    user_tag = UserTagSerializer(many=True, required=False) #ForeignKey
+    user_tag = UserTagReadSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     
     class Meta:
@@ -33,7 +33,7 @@ class UserStrageSerializer(serializers.ModelSerializer):
     answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey
     liked_num = BoardLikedReadSerializer(many=True, required=False) #ManyToManyField
     liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
-    user_tag = UserTagSerializer(many=True, required=False) #ForeignKey
+    user_tag = UserTagReadSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     
     class Meta:
