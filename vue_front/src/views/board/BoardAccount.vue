@@ -29,15 +29,20 @@
                 <div class="tag-container">
                     <div class="tag-text">よく使うタグ</div>
                     <div class="tag-wrapper">
-                        <div class="tag"
+                        <div 
+                            @click="handleTag(questionindex,tag.id,'tag')"
+                            class="tag"
+                            :class="{'animation-tag':active==questionindex}" 
                             v-for="(tag,questionindex) in getThreeUsertag"
-                            v-bind:key="questionindex">
-                             {{ tag.tag.tag }}
+                            v-bind:key="questionindex"
+                            >
+                            {{ tag.tag.tag }}
                         </div>
+                        
                     </div>
-                    <!-- <p>編集する></p> -->
+                        <!-- <p>編集する></p> -->
                 </div>
-                <div class="nav-ber">
+                <div class="nav-ber" v-if="tag==false">
                     <div :class="{'selected': showQuestion.questionType.question}" @click="handleQuestionType('question')">質問</div>
                     <div :class="{'selected': showQuestion.questionType.answered}" @click="handleQuestionType('answered')">回答</div>
                     <div :class="{'selected': showQuestion.questionType.reccomend}" @click="handleQuestionType('reccomend')">おすすめ</div>
@@ -51,6 +56,7 @@
                     <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
                     <div v-if="showQuestion.questionType.answered" :class="{'option-selected': showQuestion.questionStatus.best}" @click="handleQuestionStatus('best')" class="select-item">ベスト</div>
                 </div>
+                <i v-if="spinner" class="fas fa-cog"></i>
                 <div
                     class='question-container'
                     v-for="(question,questionindex) in handleQuestion"
@@ -104,8 +110,12 @@ export default {
             reccomendedQuestion:'',
             answeredQuestion:'',
             userQuestion:'',
+            tagQuestion:'',
             bottomScrollActionHandler: true,
             scrollBottom: false,
+            tag:false,
+            active: null,
+            spinner:false,
             onNotification:{
                 onReply:false,
                 onAnswer:false,
@@ -116,7 +126,8 @@ export default {
                     answered: false,
                     reccomend: false,
                     favorite: false,
-                    message:false
+                    tag:false,
+
                 },
                 questionStatus:{
                     all: true,
@@ -225,7 +236,12 @@ export default {
             }else if(this.showQuestion.questionType.favorite){
                 this.questions = this.$store.state.signup.favoriteQuestion
                 return this.handleStatus(this.questions.results)
+            }else if(this.showQuestion.questionType.tag){
+                console.log('tagQuestion dayo' ,this.tagQuestion)
+                this.questions = this.tagQuestion
+                return this.handleStatus(this.questions.results)
             }
+            
         },
     },
     beforeMount(){
@@ -304,6 +320,20 @@ export default {
                     console.log(error)
                 })
             this.$store.commit('setIsLoading', false)
+        },
+        async getTagQuestion(tagID, tag){
+            // this.$store.commit('setIsLoading', true)
+            await axios
+                .get(`/api/board/tag-question?tag=${tagID}`)
+                .then(response => {
+                    this.tagQuestion = response.data
+                    console.log("GTQ",this.tagQuestion)
+                    this.handleQuestionType(tag)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            // this.$store.commit('setIsLoading', false)
         },
         handleStatus(question){
             console.log("handle",question)
@@ -467,12 +497,44 @@ export default {
                 // }
             }
         },
+        handleTag(indexNum, tagID, tag){
+            this.tag = !this.tag
+            if(this.active == indexNum){
+                this.active = null
+                this.tag = false
+            }else{
+                this.active = indexNum
+                this.tag = true
+                this.getTagQuestion(tagID, tag)
+            }
+        },
     }
 }
 </script>
 
 <style lang='scss' scoped>
 @import "style/_variables.scss";
+
+.animation-tag{
+    color: white;
+    background: $dark-blue;
+    animation-name: tag;
+    animation-timing-function:linear;
+    animation-duration:1s;
+    animation-iteration-count:1;
+    animation:tag  forwards;
+}
+@keyframes tag {
+  from   { opacity: 1;
+        } 
+  100% { 
+      color:white;
+      background: $dark-blue;
+      border: 0.1rem solid $base-color;
+      
+  }
+}
+
 .board-account-wrapper{
     display: flex;
     height: auto;
@@ -538,10 +600,10 @@ export default {
             margin: 0.5rem;
         }
         .tag-wrapper{
-            display: flex;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
             .tag{
                 border: solid $dark-blue;
                 border-radius: 50vh;
