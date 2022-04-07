@@ -23,8 +23,11 @@ class QuestionListApi(APIView):
             queryset = Question.objects.filter(quiz=request.query_params['quiz'],
             field=request.query_params['field'],
             module=request.query_params['module'])
+            print('before quiznum')
             quiz_num = int(request.query_params['num'])
+            print('After quiznum')
             question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+            print('random done')
             serializer = QuestionListSerializer(question, many=True)
             return Response(serializer.data)
         except Question.DoesNotExist:
@@ -61,6 +64,7 @@ class ModuleFilteredListApi(APIView):
         return Response(serializer.data)
     
 def pick_random_object(queryset,quiz_num):
+    print("in_random")
     num = quiz_num
     random_id_list = list()
     max_id = queryset.aggregate(max_id=Max("id"))['max_id']
@@ -82,12 +86,16 @@ class QuizListApi(generics.ListAPIView):
     serializer_class = QuizListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id',]
+    pagination_class = None
+
 
 class OneQuestionApi(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['label',]
+    pagination_class = None
+
 
     # def pick_random_object(self):
     #     max_id = Quiz.objects.all().aggregate(max_id=Max("id"))['max_id']
@@ -131,6 +139,8 @@ class OneQuestionApi(generics.ListAPIView):
 class AnswerListApi(generics.ListAPIView):
     queryset = Answer.objects
     serializer_class = AnswerListSerializer
+    pagination_class = None
+    
 
 # #  test   
 # class FieldModuleFiltersAPI(APIView):

@@ -174,6 +174,7 @@ export default {
     beforeMount(){
     },
     mounted(){
+      console.log('mounted',this.quizzes,this.questions)
       window.addEventListener('beforeunload', () => {
       this.$store.commit('reset')
     })
@@ -225,6 +226,7 @@ export default {
       });
     },
     onClicked(answer,question_field){
+      console.log('in_onclick',this.arreyCounter)
       if(this.showAnswerDetail == false)
       if (question_field != '並び替え'){
         this.selectedAnswer = [answer.label,answer.answer_id] 
@@ -325,12 +327,13 @@ export default {
       }
     },
     classHandler(sort,answer_label,selectedAnswer,question_field,answer_id,selectedAnswerArray,correct_answer,counter){
-      console.log(sort)
+      console.log("sort",sort, answer_id)
       if(this.showAnswerDetail==false){
         if (question_field !='並び替え'&& answer_label == selectedAnswer){
           return 'clicked'
           }
         else if (question_field =='並び替え'&&sort.includes(answer_id)){
+          console.log("sort OK")
           return 'clicked'
           }
         // detail

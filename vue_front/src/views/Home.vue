@@ -37,7 +37,7 @@ export default {
       field:'並び替え',
       // num:3,
       showCompo: false,
-      item:{status: 2,num:5,test:true},
+      item:{status: 1,num:5,test:true},
       // a:window.innerWidth
     }
   },

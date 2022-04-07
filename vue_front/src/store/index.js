@@ -8,9 +8,9 @@ import  board  from './modules/board'
 let getDefaultState = () => {
   return {
     isLoading: false,
-    id: 0,
+    id: 1,
     field:'',
-    num:0,
+    num:3,
     questions:[],
     quizzes:[],
     randomURL:'',
