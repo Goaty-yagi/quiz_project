@@ -1,24 +1,52 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
+from django.utils import timezone
+
+import uuid
+
+
+class ParentQuiz(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
 
 class Quiz(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
     description = models.CharField(max_length=70)
     image = models.ImageField(blank=True)
-    slug = models.SlugField(blank=True)
-    # roll_out = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(default=uuid.uuid4,)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
-    def save(self, *args, **kwargs):
-        self.slug = self.name
-        super(Quiz, self).save(*args, **kwargs)
     
     class Meta:
         ordering = ['timestamp',]
         verbose_name_plural = "Quizzes"
 
         
+    def __str__(self):
+        return self.description
+
+
+class ParentField(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class ParentStatus(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class QuestionType(models.Model):
+    name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
 
@@ -27,10 +55,11 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz, related_name='question', on_delete=models.CASCADE)
     label = models.CharField(max_length=100)
     image = models.ImageField(upload_to='quizzes/', blank=True, null=True)
-    order = models.IntegerField(default=False)
-    field = models.CharField(max_length= 50, blank=True)
-    module = models.CharField(max_length=50, blank=True)
+    field = models.ManyToManyField(ParentField)
+    question_type = models.ForeignKey(QuestionType, max_length=50, null=True, blank=True, on_delete=models.CASCADE)
+    status = models.ManyToManyField(ParentStatus, blank=True)
     correct_answer = models.JSONField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
     
 
     def __str__(self):
@@ -46,7 +75,9 @@ class Answer(models.Model):
     question = models.ForeignKey(Question,related_name='answer', on_delete=models.CASCADE)
     label = models.CharField(max_length=100)
     is_correct = models.BooleanField(default=False)
-    answer_id = models.IntegerField(default=1)
+    taken_num = models.IntegerField(default=0)
+    answer_id = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.label
@@ -61,7 +92,7 @@ class QuizTaker(models.Model):
     score = models.IntegerField(default=0)
     completed = models.BooleanField(default=False)
     data_finished = models.DateTimeField
-    timestamp = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.user.email
