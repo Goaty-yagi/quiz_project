@@ -1,8 +1,11 @@
 from django.db.models import Prefetch
 from django.db.models.query_utils import select_related_descend
 from django.shortcuts import render
+from django.db.models import Prefetch
 # import django_filters
 from django.db.models import Max
+from itertools import chain
+
 import random
 from django.http import Http404
 from rest_framework.response import Response
@@ -10,7 +13,7 @@ from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from quiz.models import Quiz,Question,Answer
-from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerListSerializer
+from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerListSerializer, QuizFilterSerializer
 
 # class FieldModuleFilterAPI(generics.ListAPIView):
     # queryset = Quiz.objects.prefetch_related(
@@ -64,22 +67,31 @@ class ModuleFilteredListApi(APIView):
         return Response(serializer.data)
     
 def pick_random_object(queryset,quiz_num):
+    """recive num and queryset which have specific range.
+    get all ids in queryset then make new list which include 
+    the num of ids to return.
+    you can use this method for invocation like
+    queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')"""
+
     print("in_random")
     num = quiz_num
     random_id_list = list()
-    max_id = queryset.aggregate(max_id=Max("id"))['max_id']
-    while True:
-        pk = random.randint(0, max_id)
-        question = queryset.filter(pk=pk).select_related('quiz').first()
-        if question:
-            if len(random_id_list) == num:
-                return random_id_list
-            elif len(random_id_list) <= 1:
-                random_id_list.append(question.id)
-            elif len(random_id_list) >= 2:
-                random_id_list.append(question.id)
-                a = set(random_id_list)
-                random_id_list = list(a)
+    random_id = [i.id for i in queryset]
+    # max_id = queryset.aggregate(max_id=Max("id"))['max_id']
+    # while True:
+        # pk = random.randint(0, max_id)
+    random_id_list = random.sample(random_id,num)
+    return random_id_list
+        # if question:
+        #     print(len(random_id_list))
+        #     if len(random_id_list) == num:
+        #         return random_id_list
+        #     elif len(random_id_list) <= 1:
+        #         random_id_list.append(question.id)
+        #     elif len(random_id_list) >= 2:
+        #         random_id_list.append(question.id)
+        #         a = set(random_id_list)
+        #         random_id_list = list(a)
 
 class QuizListApi(generics.ListAPIView):
     queryset = Quiz.objects.all()
@@ -95,6 +107,53 @@ class OneQuestionApi(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['label',]
     pagination_class = None
+
+
+class QuizApi(APIView):
+    def get(self, request):
+        print("request",request)
+        quiz_id = request.query_params['quiz']
+        num = int(request.query_params['num'])
+        field_list = request.query_params.getlist("field")[0].split(",")
+        try:
+            queryset = Question.objects.select_related(
+                'quiz', 
+                'question_type'
+                ).prefetch_related(
+                    'field', 
+                    'status', 
+                    'answer', 
+                    ).filter(field__in=field_list)
+            question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
+            quiz_queryset  = Quiz.objects.filter(
+                id = quiz_id,
+                )
+            print('got quiz_queryset')
+            # quizn_queryset  = Quiz.objects.filter(
+            #     answer__question__field__in = field_list
+            # ).distinct()
+            # union = list(chain(quiz_queryset, all_question))
+            serializer = QuizFilterSerializer(quiz_queryset, many=True)
+            serializer2 = QuestionListSerializer(question, many=True)
+            union = list(chain(serializer.data, serializer2.data))
+            return Response(union)
+        except Quiz.DoesNotExist:
+            raise Http404
+
+    # def get(self, request, format=None):
+    #     try:
+    #         queryset = Quiz.objects.filter(quiz=request.query_params['quiz'],
+    #         field=request.query_params['field'],
+    #         module=request.query_params['module'])
+    #         print('before quiznum')
+    #         quiz_num = int(request.query_params['num'])
+    #         print('After quiznum')
+    #         question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+    #         print('random done')
+    #         serializer = QuestionListSerializer(question, many=True)
+    #         return Response(serializer.data)
+    #     except Question.DoesNotExist:
+    #         raise Http404
 
 
     # def pick_random_object(self):

@@ -1,7 +1,15 @@
 from django.urls import path, include
 # from rest_framework import routers
 from rest_framework_nested import routers
-from quiz.apis import QuizListApi,QuestionListApi,AnswerListApi,FieldFilteredListApi,ModuleFilteredListApi,QuizFilteredListApi,OneQuestionApi
+from quiz.apis import (
+  QuizListApi, 
+  QuestionListApi, 
+  AnswerListApi, 
+  FieldFilteredListApi, 
+  ModuleFilteredListApi, 
+  QuizFilteredListApi, 
+  OneQuestionApi, 
+  QuizApi)
 
 
 # router = routers.SimpleRouter()
@@ -21,6 +29,7 @@ from quiz.apis import QuizListApi,QuestionListApi,AnswerListApi,FieldFilteredLis
 
 urlpatterns = [
   path('quizzes/', QuizListApi.as_view()),
+  path('quizzes-questions/', QuizApi.as_view()),
   path('questions/', QuestionListApi.as_view()),
   path('questions/quizzes/', QuizFilteredListApi.as_view()),
   path('questions/fields/', FieldFilteredListApi.as_view()),
