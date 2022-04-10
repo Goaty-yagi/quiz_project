@@ -4,6 +4,7 @@ import axios from 'axios'
 import {router} from "../main.js"
 import  signup  from './modules/signup'
 import  board  from './modules/board'
+import  quiz  from './modules/quiz'
 
 let getDefaultState = () => {
   return {
@@ -24,6 +25,7 @@ export default createStore({
   modules: {
     signup,
     board,
+    quiz
   },
   state: getDefaultState(),
   plugins: [
@@ -42,8 +44,8 @@ export default createStore({
       storage: window.sessionStorage,  // 設定しなければlocalStorage
     })],
   getters:{
-    questions:(state) => state.questions,
-    quizzes:(state) => state.quizzes
+    questions2:(state) => state.questions,
+    quizzes2:(state) => state.quizzes
   },
   mutations: {
     setIsLoading(state, status) {
@@ -103,7 +105,7 @@ export default createStore({
     // }
   },
   actions: {
-    async getquiz({ state, commit }){
+    async getquiz2({ state, commit }){
       let response = await axios.get(`/api/quizzes/?id=${state.id}`)
       .catch(error => {
         console.log('error',error.message)
@@ -112,7 +114,7 @@ export default createStore({
       console.log('action',response.data)
       console.log(state.isLoading)
       },
-    async getquestions({ state, commit }){
+    async getquestions2({ state, commit }){
       console.log('action2',state.num)
       try{
         let response2 = await axios.get(`/api/questions/quizzes/?quiz=${state.id}&num=${state.num}`)

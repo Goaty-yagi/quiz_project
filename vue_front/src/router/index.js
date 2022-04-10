@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Quiz from '../views/Quiz.vue'
+import QuizTest from '../views/quiz/QuizTest.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/NotFound.vue'
 import Signup from '../views/Signup.vue'
@@ -20,9 +21,16 @@ const routes = [
     component: Home
   },
   {
-    path: '/quiz/:id',
+    path: '/quiz',
+    // path: '/quiz/:id',
     name: 'Quiz',
     component: Quiz
+  },
+  {
+    path: '/quiz-test',
+    // path: '/quiz/:id',
+    name: 'QuizTest',
+    component: QuizTest
   },
   {
     path: '/test',
