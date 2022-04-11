@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from quiz.models import Quiz,Question,Answer
-from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerListSerializer, QuizFilterSerializer
+from quiz.models import Quiz, Question, Answer, QuestionType
+from quiz.serializers import QuizListSerializer,QuestionListSerializer,AnswerListSerializer, QuizFilterSerializer, QuestionTypeSerializer
 
 # class FieldModuleFilterAPI(generics.ListAPIView):
     # queryset = Quiz.objects.prefetch_related(
@@ -199,6 +199,12 @@ class QuizApi(APIView):
 class AnswerListApi(generics.ListAPIView):
     queryset = Answer.objects
     serializer_class = AnswerListSerializer
+    pagination_class = None
+
+
+class  QuestionTypeApi(generics.ListAPIView):
+    queryset = QuestionType.objects
+    serializer_class = QuestionTypeSerializer
     pagination_class = None
     
 

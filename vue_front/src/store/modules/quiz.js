@@ -7,10 +7,10 @@ let getDefaultState = () => {
     return {
         isLoading: false,
         quizID: 1,
-        numOfQuiz: 3,
+        numOfQuiz: 5,
         questionField: [1,2],
         questions:[],
-        quizzes:[],
+        quiz:[],
         randomURL:'',
         test:null,
         notice:false,
@@ -22,18 +22,18 @@ export default {
     namespace: true,
     state: getDefaultState(),
     getters:{
-        questions:(state) => state.questions
-        // quizzes:(state) => state.quizzes
+        questions:(state) => state.questions,
+        quiz:(state) => state.quiz
     },
     mutations:{
         getRandomQuestion(state,array){
             console.log('in randomQ', array)
-            for (let i = array.length - 1; i >= 0; i--) {
-                let r = Math.floor(Math.random() * (i + 1))
-                let tmp = array[i]
-                array[i] = array[r]
-                array[r] = tmp
-            }
+            // for (let i = array.length - 1; i >= 0; i--) {
+            //     let r = Math.floor(Math.random() * (i + 1))
+            //     let tmp = array[i]
+            //     array[i] = array[r]
+            //     array[r] = tmp
+            // }
             for ( let k =0; k < array.length; k++){
                 for (let i = array[k].answer.length - 1; i >= 0; i--) {
                     let r = Math.floor(Math.random() * (i + 1))
@@ -45,18 +45,21 @@ export default {
             return array
         },
         setQuestions:(state,questions) => (state.questions = questions),
+        getQuiz(state, payload){
+            state.quiz = payload
+            console.log(state.quiz)
+        }
     },
     actions:{
         async getquestions({ state, commit }){
             console.log('action2',state.num)
             
               let response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
-              console.log('response1',typeof(response.data))
-              commit('getRandomQuestion',response.data[1])
+              commit('getQuiz',response.data[0])
+              response.data.shift()
+              commit('getRandomQuestion',response.data)
               commit('setQuestions',response.data);
               commit('setIsLoading', false)
-              console.log('response',response)
             }
-            
     }
 }

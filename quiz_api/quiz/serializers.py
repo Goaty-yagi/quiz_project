@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from quiz.models import Quiz,Question,Answer
+from quiz.models import Quiz, Question, Answer, QuestionType
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -40,6 +40,13 @@ class QuizFilterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Quiz
 		fields = ["id", "name", "description", "image", "slug" ]
+
+
+class QuestionTypeSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = QuestionType
+		fields = ["id", "name"]
 
 
 	# def get_questions_count(self, obj):
