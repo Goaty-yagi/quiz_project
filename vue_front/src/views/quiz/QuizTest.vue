@@ -46,15 +46,16 @@
                                 </div>
                             </div>
                             <div class="selected-answer-bases">
-                                <div v-if="selectedOrderAnswer[answerindex+1]" class="selected-answer-order">
+                                <div v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==4" class="selected-answer-order">
                                     {{ selectedOrderAnswer[answerindex+1] }}
                                 </div>
+                                <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
                             </div>
                         </div>
                     </div>
                     <div class="button-container">
-                        <div class="btn-tr-white-base-sq">BACK</div>
-                        <div @click="nextQuestion" class="btn-tr-white-base-sq">NEXT ></div>
+                        <div v-if="questions.length==questionLengthCounter" class="btn-tr-white-base-sq">FINSH</div>
+                        <div v-if="questions.length!=questionLengthCounter" @click="nextQuestion" class="btn-tr-white-base-sq">NEXT ＞</div>
                     </div>
                 </div>
             </div>
@@ -68,6 +69,7 @@ import {mapGetters,mapActions} from 'vuex'
 export default {
     data(){
         return{
+            questionLengthCounter:1,
             pagination:{
                 a: 0,
                 b: 1,
@@ -99,6 +101,9 @@ export default {
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
+            this.selectedOrderAnswer = {}
+            this.selectAnserCounter = 0
+            this.questionLengthCounter += 1
         },
         onClick(answerindex, answer, question){
             if(question.question_type == 3){
@@ -107,7 +112,7 @@ export default {
                 }else{
                     this.selectedIndexNum = answerindex
                 }
-            }else if(question.question_type == 4){
+            }else if(question.question_type == 4 || 5){
                 if(this.selectedOrderAnswer[answerindex+1]&&
                 this.questions.length>=this.selectAnserCounter){
                     this.selectedOrderAnswer = 
@@ -245,6 +250,9 @@ export default {
                         .selected-answer-order{
                             font-size: 1.5rem;
                             font-weight: bold;
+                            color: gray;
+                        }
+                        .fa-check{
                             color: gray;
                         }
                     }
