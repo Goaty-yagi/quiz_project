@@ -5,7 +5,7 @@
                 <div class="lds-dual-ring"></div>
             </div>
             <p class="quiz-description title-white">{{ quiz.description }}</p>
-            <div class='quiz-countainer'>
+            <div v-if="showResult==false" class='quiz-countainer'>
                 <div
                 class="question-loop"
                 v-for="(question,questionindex) in questions.slice(pagination.a,pagination.b)"
@@ -51,26 +51,42 @@
                             </div>
                         </div>
                     </div>
-                    <div class="button-container">
-                        <div v-if="questions.length==questionLengthCounter" class="btn-tr-white-base-sq">FINSH</div>
+                    <div v-if="showNextOrFinishButton" class="button-container">
+                        <div v-if="questions.length==questionLengthCounter" @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div>
                         <div v-if="questions.length!=questionLengthCounter" @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
                     </div>
                 </div>
             </div>
+            <Result
+            v-if="showResult"
+            :SelectedAnswerInfo='SelectedAnswerInfo'
+            :question_length='questions.length'
+            />
+            <!-- <Result
+            v-if="showResult"
+            :question_length='questions.length'
+            :rerultAnswer='rerultAnswer'
+            @show='showDetail'/> -->
         </div>
     </div>
 </template>
 
 <script>
 import {mapGetters,mapActions} from 'vuex'
+import Result from '@/components/quiz_components/Result.vue'
 
 export default {
+    components: {
+    Result
+  },  
     data(){
         return{
             questionLengthCounter:1,
             SelectedAnswerInfo:{},
             selectedAnswer: {},
             answerIDAndOrder:{},
+            showResult: false,
+            showNextOrFinishButton:false,
             pagination:{
                 a: 0,
                 b: 1,
@@ -92,7 +108,7 @@ export default {
         this.getquestions()
     },
     mounted(){
-        this.currentQuiz
+        this.SelectedAnswerInfo = {}
     },
     computed: mapGetters(['questions','quiz']),
         
@@ -102,6 +118,7 @@ export default {
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
+            this.showNextOrFinishButton = false
             this.selectAnswerHandler(
                 questionType,
                 )
@@ -111,8 +128,16 @@ export default {
             this.questionLengthCounter += 1
             console.log(this.SelectedAnswerInfo)
         },
-        Finish(){
-            this.SelectedAnswerInfo = {}
+        Finish(questionType){
+            this.showResult = true
+            this.selectedIndexNum= null
+            this.selectAnswerHandler(
+                questionType,
+                )
+            this.selectedOrderAnswer = {}
+            this.selectedAnswer = {}
+            this.selectAnswerCounter = 0
+            console.log(this.SelectedAnswerInfo)
         },
         onClick(answerindex, answer, question){
             // this is for 2 things,
@@ -127,10 +152,12 @@ export default {
                 if(this.selectedIndexNum==answerindex){
                     this.selectedIndexNum = null
                     this.selectedAnswer = {}
+                    this.showNextOrFinishButton = false
                 }else{
                     this.selectedIndexNum = answerindex
                     this.selectedAnswer['answerID'] = answer.id
                     this.selectedAnswer['isCorrect'] = answer.is_correct
+                    this.handleShowNextOrFinishButton()
                 }
             }else if(question.question_type == 4){
                 if(this.selectedOrderAnswer[answerindex+1]&&
@@ -139,10 +166,16 @@ export default {
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
                     this.selectAnswerCounter -= 1
+                    this.showNextOrFinishButton = false
+                    
                 }else{
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
+                    console.log(Object.keys(this.selectedOrderAnswer).length, question.length)
+                    if(Object.keys(this.selectedOrderAnswer).length == this.questions.length){
+                    this.handleShowNextOrFinishButton()
+                    }
                 }
             }else if(question.question_type == 5){
                 if(this.selectedOrderAnswer[answerindex+1]&&
@@ -151,10 +184,14 @@ export default {
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
                     this.selectAnswerCounter -= 1
+                    if(Object.keys(this.selectedOrderAnswer).length == 0){
+                        this.showNextOrFinishButton = false
+                    }
                 }else{
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
+                    this.handleShowNextOrFinishButton()
                 }
             }
         },
@@ -232,6 +269,9 @@ export default {
                 this.selectedAnswer[id] = isCorrect
             }
         },
+        handleShowNextOrFinishButton(){
+            this.showNextOrFinishButton = true
+        }
         // resetCurrentQuestionType(){
         //     this.currentQuestionType.select = false
         //     this.currentQuestionType.order = false
