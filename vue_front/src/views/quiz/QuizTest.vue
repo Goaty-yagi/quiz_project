@@ -106,9 +106,10 @@ export default {
                 questionType,
                 )
             this.selectedOrderAnswer = {}
+            this.selectedAnswer = {}
             this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
-            console.log()
+            console.log(this.SelectedAnswerInfo)
         },
         Finish(){
             this.SelectedAnswerInfo = {}
@@ -123,7 +124,7 @@ export default {
                     this.selectedAnswer['answerID'] = answer.id
                     this.selectedAnswer['isCorrect'] = answer.is_correct
                 }
-            }else if(question.question_type == 4 || 5){
+            }else if(question.question_type == 4){
                 if(this.selectedOrderAnswer[answerindex+1]&&
                 this.questions.length>=this.selectAnswerCounter){
                     this.selectedOrderAnswer = 
@@ -134,6 +135,18 @@ export default {
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
+                }
+            }else if(question.question_type == 5){
+                if(this.selectedOrderAnswer[answerindex+1]&&
+                this.questions.length>=this.selectAnswerCounter){
+                    this.selectedOrderAnswer = 
+                    this.changeOrder(this.selectedOrderAnswer,answerindex+1)
+                    this.getIDAndIsCorrect(answer.id, answer.is_correct)
+                    this.selectAnswerCounter -= 1
+                }else{
+                    this.selectAnswerCounter += 1
+                    this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
+                    this.getIDAndIsCorrect(answer.id, answer.is_correct)
                 }
             }
         },
@@ -155,11 +168,9 @@ export default {
         selectAnswerHandler(questionType){
             if(questionType == 3){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
-                console.log(this.SelectedAnswerInfo[this.questionLengthCounter])
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
                 this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
                 this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = this.selectedAnswer.isCorrect
-                console.log(this.SelectedAnswerInfo)
             }
             else if(questionType == 4){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
@@ -173,11 +184,21 @@ export default {
                 }else{
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
                 }
-                console.log(this.SelectedAnswerInfo)
+            }else if(questionType == 5){
+                this.SelectedAnswerInfo[this.questionLengthCounter] = {}
+                this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
+                this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
+                Object.values(this.selectedAnswer).forEach(value =>{
+                    if(value == false){
+                        this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                    }else{
+                        this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                    }
+                })
             }
         },
         getAnswerIDAndOrder(answerID,orderNum){
-            console.log('inGAO')
+            // this is for collecting answer from order questions
             if(this.questionLengthCounter in this.answerIDAndOrder){
                 if(orderNum in this.answerIDAndOrder[this.questionLengthCounter]){
                     this.answerIDAndOrder[this.questionLengthCounter] =
@@ -192,7 +213,14 @@ export default {
                 this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID
                 console.log('added',this.answerIDAndOrder)
             }   
-        }
+        },
+        getIDAndIsCorrect(id, isCorrect){
+            if(this.selectedAnswer[id]){
+                delete this.selectedAnswer[id]
+            }else{
+                this.selectedAnswer[id] = isCorrect
+            }
+        },
         // resetCurrentQuestionType(){
         //     this.currentQuestionType.select = false
         //     this.currentQuestionType.order = false
