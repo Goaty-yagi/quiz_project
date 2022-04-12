@@ -115,6 +115,14 @@ export default {
             this.SelectedAnswerInfo = {}
         },
         onClick(answerindex, answer, question){
+            // this is for 2 things,
+            // first is for controling CSS return selectedIndexNum
+            // which used for questionType 3, and selectedOrderAnswer
+            // which used for questionType 4 and 5.
+            // second is for selected-answer and is_correct.
+            // return selectedAnswer for questionType 3.
+            // for questionType 4, use getAnswerIDAndOrder function.
+            // for questionType 5, use getIDAndIsCorrect function.
             if(question.question_type == 3){
                 if(this.selectedIndexNum==answerindex){
                     this.selectedIndexNum = null
@@ -166,6 +174,8 @@ export default {
         return dict
         },
         selectAnswerHandler(questionType){
+            // this is get informations about selected-answer for reflection page
+            // return SelectedAnswerInfo
             if(questionType == 3){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
@@ -198,7 +208,7 @@ export default {
             }
         },
         getAnswerIDAndOrder(answerID,orderNum){
-            // this is for collecting answer from order questions
+            // this is for collecting answer from questionType 4
             if(this.questionLengthCounter in this.answerIDAndOrder){
                 if(orderNum in this.answerIDAndOrder[this.questionLengthCounter]){
                     this.answerIDAndOrder[this.questionLengthCounter] =
@@ -215,6 +225,7 @@ export default {
             }   
         },
         getIDAndIsCorrect(id, isCorrect){
+            // this is for questionType 5 
             if(this.selectedAnswer[id]){
                 delete this.selectedAnswer[id]
             }else{
