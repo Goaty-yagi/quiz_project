@@ -1,8 +1,6 @@
 <template>
     <div class="quiz-wrapper">
         <div class="main-wrapper">
-            <!-- {{ typeof(questions) }}
-            {{ questions }} -->
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
@@ -55,7 +53,7 @@
                     </div>
                     <div class="button-container">
                         <div v-if="questions.length==questionLengthCounter" class="btn-tr-white-base-sq">FINSH</div>
-                        <div v-if="questions.length!=questionLengthCounter" @click="nextQuestion" class="btn-tr-white-base-sq">NEXT ＞</div>
+                        <div v-if="questions.length!=questionLengthCounter" @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
                     </div>
                 </div>
             </div>
@@ -70,6 +68,9 @@ export default {
     data(){
         return{
             questionLengthCounter:1,
+            SelectedAnswerInfo:{},
+            selectedAnswer: {},
+            answerIDAndOrder:{},
             pagination:{
                 a: 0,
                 b: 1,
@@ -82,7 +83,7 @@ export default {
             selectedIndexNum: null,
             showSelectNum: true,
             selectedOrderAnswer:{},
-            selectAnserCounter:0
+            selectAnswerCounter:0,
         }
     },
     created(){
@@ -97,34 +98,48 @@ export default {
         
     methods:{
         ...mapActions(['getquestions']),
-        nextQuestion(){
+        nextQuestion(questionType){
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
+            this.selectAnswerHandler(
+                questionType,
+                )
             this.selectedOrderAnswer = {}
-            this.selectAnserCounter = 0
+            this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
+            console.log()
+        },
+        Finish(){
+            this.SelectedAnswerInfo = {}
         },
         onClick(answerindex, answer, question){
             if(question.question_type == 3){
                 if(this.selectedIndexNum==answerindex){
                     this.selectedIndexNum = null
+                    this.selectedAnswer = {}
                 }else{
                     this.selectedIndexNum = answerindex
+                    this.selectedAnswer['answerID'] = answer.id
+                    this.selectedAnswer['isCorrect'] = answer.is_correct
                 }
             }else if(question.question_type == 4 || 5){
                 if(this.selectedOrderAnswer[answerindex+1]&&
-                this.questions.length>=this.selectAnserCounter){
+                this.questions.length>=this.selectAnswerCounter){
                     this.selectedOrderAnswer = 
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
-                    this.selectAnserCounter -=1
+                    this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
+                    this.selectAnswerCounter -= 1
                 }else{
-                    this.selectAnserCounter += 1
-                    this.selectedOrderAnswer[answerindex+1] = this.selectAnserCounter
+                    this.selectAnswerCounter += 1
+                    this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
+                    this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
                 }
             }
         },
         changeOrder(dict, index){
+            // if deleted, the num or nums before the deleted items order num
+            // change
             let orderNum = dict[index]
             delete dict[index]
             if(dict){
@@ -137,6 +152,47 @@ export default {
             }
         return dict
         },
+        selectAnswerHandler(questionType){
+            if(questionType == 3){
+                this.SelectedAnswerInfo[this.questionLengthCounter] = {}
+                console.log(this.SelectedAnswerInfo[this.questionLengthCounter])
+                this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
+                this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
+                this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = this.selectedAnswer.isCorrect
+                console.log(this.SelectedAnswerInfo)
+            }
+            else if(questionType == 4){
+                this.SelectedAnswerInfo[this.questionLengthCounter] = {}
+                this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
+                this.SelectedAnswerInfo[this.questionLengthCounter]['orderAnswer'] = this.answerIDAndOrder
+                let stringKeys = Object.keys(this.answerIDAndOrder[this.questionLengthCounter]).map(function(a){
+                    return Number(a)
+                })
+                if(JSON.stringify(stringKeys) == JSON.stringify(Object.values(this.answerIDAndOrder[this.questionLengthCounter]))){
+                    this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                }else{
+                    this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                }
+                console.log(this.SelectedAnswerInfo)
+            }
+        },
+        getAnswerIDAndOrder(answerID,orderNum){
+            console.log('inGAO')
+            if(this.questionLengthCounter in this.answerIDAndOrder){
+                if(orderNum in this.answerIDAndOrder[this.questionLengthCounter]){
+                    this.answerIDAndOrder[this.questionLengthCounter] =
+                    this.changeOrder(this.answerIDAndOrder[this.questionLengthCounter],orderNum)
+                    console.log('removed',this.answerIDAndOrder)
+                }else{
+                    this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID
+                    console.log('added',this.answerIDAndOrder)    
+                }
+            }else{
+                this.answerIDAndOrder[this.questionLengthCounter] = {}
+                this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID
+                console.log('added',this.answerIDAndOrder)
+            }   
+        }
         // resetCurrentQuestionType(){
         //     this.currentQuestionType.select = false
         //     this.currentQuestionType.order = false
