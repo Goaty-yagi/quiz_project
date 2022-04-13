@@ -11,7 +11,7 @@
                 v-for="(question,questionindex) in questions.slice(pagination.a,pagination.b)"
                 v-bind:key="questionindex">
                     <div class='question-wrapper'>
-                        <div class="question-header"><i class='q'>Q</i>第{{  }}問</div>
+                        <div class="question-header"><i class='q'>Q</i>第{{ questionLengthCounter }}問</div>
                         <div class='question-body'>{{ question.label }}</div>
                     </div>
                     
@@ -29,7 +29,7 @@
                         class="answer-loop"
                         :class="{'selected-answer':selectedIndexNum==answerindex||
                         answerindex+1 in selectedOrderAnswer}"
-                        @click="onClick(answerindex,answer,question)"
+                        @click="e => result==false && onClick(answerindex,answer,question)"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
                             <div class='answer-select-bases'>
@@ -51,9 +51,23 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="showNextOrFinishButton" class="button-container">
-                        <div v-if="questions.length==questionLengthCounter" @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div>
-                        <div v-if="questions.length!=questionLengthCounter" @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                    <div v-if="showNextOrFinishButton&&
+                    result==false" class="button-container">
+                        <div v-if="questions.length==questionLengthCounter"
+                         @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div>
+                        <div v-if="questions.length!=questionLengthCounter"
+                         @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                    </div>
+
+                    <!-- here for buttun in result -->
+                    <div v-if="result" class="buttun-in-result">
+                        <div v-if="questionLengthCounter!=1" 
+                        @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
+                        <div 
+                        @click="HandleShowResult()"
+                        class="btn-base-black-db-ov">結果画面</div>
+                        <div v-if="questions.length!=questionLengthCounter"
+                        @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
                     </div>
                 </div>
             </div>
@@ -61,6 +75,9 @@
             v-if="showResult"
             :SelectedAnswerInfo='SelectedAnswerInfo'
             :question_length='questions.length'
+            @handlePagination='handlePagination'
+            @HandleShowResult='HandleShowResult'
+            @handleResult='handleResult'
             />
             <!-- <Result
             v-if="showResult"
@@ -87,6 +104,7 @@ export default {
             answerIDAndOrder:{},
             showResult: false,
             showNextOrFinishButton:false,
+            result: false,
             pagination:{
                 a: 0,
                 b: 1,
@@ -127,9 +145,11 @@ export default {
             this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
             console.log(this.SelectedAnswerInfo)
+            this.scrollTop()
         },
         Finish(questionType){
             this.showResult = true
+            this.result = true
             this.selectedIndexNum= null
             this.selectAnswerHandler(
                 questionType,
@@ -138,6 +158,7 @@ export default {
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
             console.log(this.SelectedAnswerInfo)
+            this.scrollTop()
         },
         onClick(answerindex, answer, question){
             // this is for 2 things,
@@ -271,7 +292,38 @@ export default {
         },
         handleShowNextOrFinishButton(){
             this.showNextOrFinishButton = true
-        }
+        },
+        handlePagination(a,b){
+            // this is for result component
+            console.log("HP",a,b)
+            this.pagination.a = a
+            this.pagination.b = b
+            this.questionLengthCounter = b
+        },
+        HandleShowResult(){
+            this.showResult = !this.showResult          
+        },
+        handleResult(){
+            this.result = ! this.result
+        },
+        resultNext(){
+            this.pagination.a += 1 
+            this.pagination.b += 1
+            this.questionLengthCounter += 1
+            this.scrollTop()
+        },
+        resultBack(){
+            this.pagination.a -= 1 
+            this.pagination.b -= 1
+            this.questionLengthCounter -= 1
+            this.scrollTop()
+        },
+        scrollTop(){
+            window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+            });
+        },
         // resetCurrentQuestionType(){
         //     this.currentQuestionType.select = false
         //     this.currentQuestionType.order = false
@@ -406,6 +458,25 @@ export default {
                 div{
                     padding-right: 0.3rem;
                     padding-left: 0.3rem;
+                }
+            }
+            .buttun-in-result{
+                display: flex;
+                margin-top: 1rem;
+                .btn-base-black-db-ov{
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                    padding-top: 0.2rem;
+                    padding-bottom: 0.2rem;
+                    margin-right: 0.5rem;
+                    margin-left: 0.5rem;
+                    font-weight: bold;                    
+                }
+                .btn-tr-white-base-sq{
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                    padding-top: 0.2rem;
+                    padding-bottom: 0.2rem;
                 }
             }
         }

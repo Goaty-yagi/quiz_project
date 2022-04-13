@@ -18,7 +18,7 @@
                         <div class="question-num">{{ key }}問目</div>
                         <div v-if="value.isCorrect" class="results"><i class="far fa-circle"></i></div>
                         <div v-if="value.isCorrect==false" class="results"><i class="fas fa-times"></i></div>
-                        <div class="detail">詳細</div>
+                        <div @click="HandleResultPage(index,index+1)" class="detail">詳細</div>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,6 @@ export default {
             })
             return Math.round(trueNum/this.question_length * 100)
         },
-        
     },
     methods:{
         numOfTrue(answered_array){
@@ -64,17 +63,10 @@ export default {
                 }
             }return counter
         },
-        // getPercentage(){
-        //     let trueNum = 0
-        //     Object.values(SelectedAnswerInfo).forEach(value => {
-        //         if(value.inCorrect){
-        //             trueNum += 1
-        //         }
-        //     })
-        //     let percentage = Math.round(trueNum/question_length * 100)
-        //     console.log("%",percentage,"%")
-        //     return percentage
-        // },
+        HandleResultPage(a,b){
+            this.$emit('HandleShowResult')
+            this.$emit('handlePagination',a,b)
+        },
         getResultFont(result){
             if(result == true){
                 return "result-font-green"
