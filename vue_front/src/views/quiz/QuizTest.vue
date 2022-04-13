@@ -368,7 +368,7 @@ export default {
                 this.resultHandleDict.answerIDType5 = ''
                 Object.keys(this.SelectedAnswerInfo).forEach(key =>{
                     if(key==this.questionLengthCounter){
-                        if(this.SelectedAnswerInfo[key].isCorrect){
+                        if(this.SelectedAnswerInfo[key].isCorrect||this.SelectedAnswerInfo[key].isCorrect==null){
                             if(this.SelectedAnswerInfo[key].questionType==4){
                                 this.resultHandleDict.answerAllTrueType4 = true
                             }
@@ -389,7 +389,6 @@ export default {
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType4 = this.SelectedAnswerInfo[key].orderAnswer
-                                console.log('hello',this.resultHandleDict.answerIDType4)
                         }
                     }
                 })      
