@@ -31,10 +31,10 @@
                         answerindex+1 in selectedOrderAnswer,
                         'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct||
                         resultHandleDict.answerAllTrueType4||
-                        resultHandleDict.answerIDType4[answerindex+1],
+                        resultHandleDict.answerIDType4[answer.answer_id],
                         'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
                         resultHandleDict.answerIDType5[answer.id]==false||
-                        resultHandleDict.answerIDType4[answerindex+1]==false}"
+                        resultHandleDict.answerIDType4[answer.answer_id]==false}"
                         @click="e => result==false && onClick(answerindex,answer,question)"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
@@ -60,10 +60,10 @@
                                 </div>
                                 <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
                                 resultHandleDict.answerAllTrueType4||
-                                resultHandleDict.answerIDType4[answerindex+1]" class="far fa-circle"></i>
+                                resultHandleDict.answerIDType4[answer.answer_id]" class="far fa-circle"></i>
                                 <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
                                 resultHandleDict.answerIDType5[answer.id]==false||
-                                resultHandleDict.answerIDType4[answerindex+1]==false" class="fas fa-times"></i>
+                                resultHandleDict.answerIDType4[answer.answer_id]==false" class="fas fa-times"></i>
                             </div>
                         </div>
                     </div>
@@ -225,6 +225,7 @@ export default {
                     }
                 }
             }else if(question.question_type == 5){
+                this.getNumOfIscorrect(question.answer)
                 if(this.selectedOrderAnswer[answerindex+1]&&
                 this.questions.length>=this.selectAnswerCounter){
                     this.selectedOrderAnswer = 
@@ -282,13 +283,19 @@ export default {
             }else if(questionType == 5){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
+                let isCorrectCounter = 0
                 Object.values(this.selectedAnswer).forEach(value =>{
                     if(value == false){
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
                     }else{
-                        this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                        isCorrectCounter += 1
                     }
                 })
+                if(this.NumOfIscorrect == isCorrectCounter){
+                    this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                }else if('isCorrect' in this.SelectedAnswerInfo[this.questionLengthCounter]==false){
+                    this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
+                }
                 this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
             }
         },
@@ -337,6 +344,16 @@ export default {
                 this.selectedAnswer[id] = isCorrect
             }
         },
+        getNumOfIscorrect(answers){
+            // this is for questionType 5
+            if(this.NumOfIscorrect==false){
+                 Object.values(answers).forEach(value =>{
+                    if(value.is_correct){
+                        this.NumOfIscorrect += 1
+                    }
+                })
+            }
+        },
         handleShowNextOrFinishButton(){
             this.showNextOrFinishButton = true
         },
@@ -372,6 +389,7 @@ export default {
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType4 = this.SelectedAnswerInfo[key].orderAnswer
+                                console.log('hello',this.resultHandleDict.answerIDType4)
                         }
                     }
                 })      

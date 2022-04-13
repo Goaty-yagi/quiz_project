@@ -18,6 +18,7 @@
                         <div class="question-num">{{ key }}問目</div>
                         <div v-if="value.isCorrect" class="results"><i class="far fa-circle"></i></div>
                         <div v-if="value.isCorrect==false" class="results"><i class="fas fa-times"></i></div>
+                        <div v-if="value.isCorrect==null" class="results tri"><i class="fas fa-exclamation-triangle"></i></div>
                         <div @click="HandleResultPage(index,index+1)" class="detail">詳細</div>
                     </div>
                 </div>
@@ -170,6 +171,10 @@ export default {
                     }
                     .results{
                         flex-basis: 20%;
+                        font-size: 1.2rem;
+                    }
+                    .tri{
+                        color: rgb(204, 204, 7);
                         font-size: 1.2rem;
                     }
                     .fa-circle{
