@@ -28,7 +28,9 @@
                         <div 
                         class="answer-loop"
                         :class="{'selected-answer':selectedIndexNum==answerindex||
-                        answerindex+1 in selectedOrderAnswer}"
+                        answerindex+1 in selectedOrderAnswer,
+                        'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct,
+                        'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id}"
                         @click="e => result==false && onClick(answerindex,answer,question)"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
@@ -48,6 +50,8 @@
                                     {{ selectedOrderAnswer[answerindex+1] }}
                                 </div>
                                 <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
+                                <i v-if="resultHandleDict.isCorrect&&answer.is_correct" class="far fa-circle"></i>
+                                <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id" class="fas fa-times"></i>
                             </div>
                         </div>
                     </div>
@@ -77,6 +81,7 @@
             :question_length='questions.length'
             @handlePagination='handlePagination'
             @HandleShowResult='HandleShowResult'
+            @resultAnswerHandler='resultAnswerHandler'
             @handleResult='handleResult'
             />
             <!-- <Result
@@ -109,6 +114,11 @@ export default {
                 a: 0,
                 b: 1,
             },
+            resultHandleDict:{
+                isCorrect: false,
+                IsNotCorrect: false,
+                answerIDType3: ''
+            },
             // currentQuestionType:{
             //     select: false,
             //     manySelect: false,
@@ -129,7 +139,6 @@ export default {
         this.SelectedAnswerInfo = {}
     },
     computed: mapGetters(['questions','quiz']),
-        
     methods:{
         ...mapActions(['getquestions']),
         nextQuestion(questionType){
@@ -158,6 +167,7 @@ export default {
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
             console.log(this.SelectedAnswerInfo)
+            this.resultAnswerHandler()
             this.scrollTop()
         },
         onClick(answerindex, answer, question){
@@ -293,6 +303,26 @@ export default {
         handleShowNextOrFinishButton(){
             this.showNextOrFinishButton = true
         },
+        resultAnswerHandler(){
+            if(this.result){
+                this.resultHandleDict.isCorrect = false
+                this.resultHandleDict.isNotCorrect = false
+                this.resultHandleDict.answerIDType3 = ''
+                Object.keys(this.SelectedAnswerInfo).forEach(key =>{
+                    console.log(key)
+                    if(key==this.questionLengthCounter){
+                        if(this.SelectedAnswerInfo[key].isCorrect){
+                            this.resultHandleDict.isCorrect = true
+                        }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
+                            this.SelectedAnswerInfo[key].questionType==3){
+                                this.resultHandleDict.isCorrect = true
+                                this.resultHandleDict.isNotCorrect = true
+                                this.resultHandleDict.answerIDType3 = this.SelectedAnswerInfo[key].answerID
+                            }
+                    }
+                })      
+            }
+        },
         handlePagination(a,b){
             // this is for result component
             console.log("HP",a,b)
@@ -310,12 +340,14 @@ export default {
             this.pagination.a += 1 
             this.pagination.b += 1
             this.questionLengthCounter += 1
+            this.resultAnswerHandler()
             this.scrollTop()
         },
         resultBack(){
             this.pagination.a -= 1 
             this.pagination.b -= 1
             this.questionLengthCounter -= 1
+            this.resultAnswerHandler()
             this.scrollTop()
         },
         scrollTop(){
@@ -398,6 +430,9 @@ export default {
                 flex-direction: column;
                 align-items: center;
                 margin-top: 1rem;
+                .is-correct-answer{
+                    background: rgb(148, 255, 235);
+                }
                 .answer-loop{
                     width: 95%;
                     height: 3rem;
@@ -434,6 +469,9 @@ export default {
                     }
                     .selected-answer-bases{
                         flex-basis: 15%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         .selected-answer-order{
                             font-size: 1.5rem;
                             font-weight: bold;
@@ -442,7 +480,21 @@ export default {
                         .fa-check{
                             color: gray;
                         }
+                        .fa-circle{
+                            color: rgba(0, 84, 75, 0.839);
+                            font-size: 1.5rem;
+                        }
+                        .fa-times{
+                            color: rgba(244, 10, 10, 0.839);
+                            font-size: 1.5rem;
+                        }
                     }
+                }
+                .is-correct-answer{
+                    background: rgb(177, 243, 231);
+                }
+                .isnot-correct-answer{
+                    background: rgb(255, 147, 147)
                 }
                 .selected-answer{
                     background: $base-lite-3;

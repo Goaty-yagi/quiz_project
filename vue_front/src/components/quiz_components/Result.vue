@@ -66,6 +66,7 @@ export default {
         HandleResultPage(a,b){
             this.$emit('HandleShowResult')
             this.$emit('handlePagination',a,b)
+            this.$emit('resultAnswerHandler')
         },
         getResultFont(result){
             if(result == true){
