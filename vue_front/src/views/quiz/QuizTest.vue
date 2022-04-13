@@ -29,9 +29,12 @@
                         class="answer-loop"
                         :class="{'selected-answer':selectedIndexNum==answerindex||
                         answerindex+1 in selectedOrderAnswer,
-                        'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct,
+                        'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct||
+                        resultHandleDict.answerAllTrueType4||
+                        resultHandleDict.answerIDType4[answerindex+1],
                         'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
-                        resultHandleDict.answerIDType5[answer.id]==false}"
+                        resultHandleDict.answerIDType5[answer.id]==false||
+                        resultHandleDict.answerIDType4[answerindex+1]==false}"
                         @click="e => result==false && onClick(answerindex,answer,question)"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
@@ -50,10 +53,17 @@
                                 <div v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==4" class="selected-answer-order">
                                     {{ selectedOrderAnswer[answerindex+1] }}
                                 </div>
+                                <!-- for result -->
                                 <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
-                                <i v-if="resultHandleDict.isCorrect&&answer.is_correct" class="far fa-circle"></i>
+                                <div class="result-answer-order" v-if="resultHandleDict.questionType4">
+                                    {{ answer.answer_id}}
+                                </div>
+                                <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
+                                resultHandleDict.answerAllTrueType4||
+                                resultHandleDict.answerIDType4[answerindex+1]" class="far fa-circle"></i>
                                 <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
-                                resultHandleDict.answerIDType5[answer.id]==false" class="fas fa-times"></i>
+                                resultHandleDict.answerIDType5[answer.id]==false||
+                                resultHandleDict.answerIDType4[answerindex+1]==false" class="fas fa-times"></i>
                             </div>
                         </div>
                     </div>
@@ -120,6 +130,9 @@ export default {
                 isCorrect: false,
                 IsNotCorrect: false,
                 answerIDType3: '',
+                questionType4: false,
+                answerAllTrueType4: false,
+                answerIDType4: '',
                 answerIDType5: '',
             },
             // currentQuestionType:{
@@ -250,13 +263,12 @@ export default {
             if(questionType == 3){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
-                this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
                 this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = this.selectedAnswer.isCorrect
+                this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
             }
             else if(questionType == 4){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
-                this.SelectedAnswerInfo[this.questionLengthCounter]['orderAnswer'] = this.answerIDAndOrder
                 let stringKeys = Object.keys(this.answerIDAndOrder[this.questionLengthCounter]).map(function(a){
                     return Number(a)
                 })
@@ -265,10 +277,11 @@ export default {
                 }else{
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
                 }
+                this.makeOrderBoolean()
+                this.SelectedAnswerInfo[this.questionLengthCounter]['orderAnswer'] = this.answerIDAndOrder
             }else if(questionType == 5){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
-                this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
                 Object.values(this.selectedAnswer).forEach(value =>{
                     if(value == false){
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
@@ -276,6 +289,7 @@ export default {
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
                     }
                 })
+                this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
             }
         },
         getAnswerIDAndOrder(answerID,orderNum){
@@ -295,6 +309,26 @@ export default {
                 console.log('added',this.answerIDAndOrder)
             }   
         },
+        makeOrderBoolean(){
+            // this is for AnswerIDAndOrder{1:1} to be {1:true}
+            let newDict = {}
+            let IntegerKeys = Object.keys(this.answerIDAndOrder[this.questionLengthCounter]).map(function(a){
+                    return Number(a)
+                })
+            for(let i = 0; i < IntegerKeys.length; i++){
+                if(IntegerKeys[i] == Object.values(this.answerIDAndOrder[this.questionLengthCounter])[i]){
+                    newDict[i+1] = true
+                }else{
+                    newDict[i+1] = false
+                }
+            }
+            this.answerIDAndOrder = newDict
+            // stringKeys.forEach(num =>{
+            //     Object.values(this.answerIDAndOrder[this.questionLengthCounter]).forEach(value =>{
+            //         if(num == )
+            //     })
+            // })
+        },
         getIDAndIsCorrect(id, isCorrect){
             // this is for questionType 5 
             if(this.selectedAnswer[id]){
@@ -310,11 +344,17 @@ export default {
             if(this.result){
                 this.resultHandleDict.isCorrect = false
                 this.resultHandleDict.isNotCorrect = false
+                this.resultHandleDict.answerAllTrueType4 = false
+                this.resultHandleDict.questionType4 = false
                 this.resultHandleDict.answerIDType3 = ''
+                this.resultHandleDict.answerIDType4 = ''
                 this.resultHandleDict.answerIDType5 = ''
                 Object.keys(this.SelectedAnswerInfo).forEach(key =>{
                     if(key==this.questionLengthCounter){
                         if(this.SelectedAnswerInfo[key].isCorrect){
+                            if(this.SelectedAnswerInfo[key].questionType==4){
+                                this.resultHandleDict.answerAllTrueType4 = true
+                            }
                             this.resultHandleDict.isCorrect = true
                         }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
                             this.SelectedAnswerInfo[key].questionType==3){
@@ -326,6 +366,12 @@ export default {
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType5 = this.SelectedAnswerInfo[key].selectedAnswer
+                        }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
+                            this.SelectedAnswerInfo[key].questionType==4){
+                                this.resultHandleDict.questionType4 = true
+                                this.resultHandleDict.isCorrect = true
+                                this.resultHandleDict.isNotCorrect = true
+                                this.resultHandleDict.answerIDType4 = this.SelectedAnswerInfo[key].orderAnswer
                         }
                     }
                 })      
@@ -484,6 +530,12 @@ export default {
                             font-size: 1.5rem;
                             font-weight: bold;
                             color: gray;
+                        }
+                        .result-answer-order{
+                            font-size: 1.5rem;
+                            font-weight: bold;
+                            color: gray;
+                            margin-right: 0.5rem;
                         }
                         .fa-check{
                             color: gray;
