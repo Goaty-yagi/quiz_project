@@ -54,10 +54,10 @@
                                     {{ selectedOrderAnswer[answerindex+1] }}
                                 </div>
                                 <!-- for result -->
-                                <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
                                 <div class="result-answer-order" v-if="resultHandleDict.questionType4">
                                     {{ answer.answer_id}}
                                 </div>
+                                <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
                                 <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
                                 resultHandleDict.answerAllTrueType4||
                                 resultHandleDict.answerIDType4[answer.answer_id]" class="far fa-circle"></i>
@@ -548,23 +548,30 @@ export default {
                             font-size: 1.5rem;
                             font-weight: bold;
                             color: gray;
+                            flex-basis: 50%;
                         }
                         .result-answer-order{
                             font-size: 1.5rem;
                             font-weight: bold;
                             color: gray;
                             margin-right: 0.5rem;
+                            flex-basis: 50%;
                         }
                         .fa-check{
                             color: gray;
+                            flex-basis: 50%;
                         }
                         .fa-circle{
                             color: rgba(0, 84, 75, 0.839);
                             font-size: 1.5rem;
+                            flex-basis: 50%;
+                            margin-right: 0.1rem;
                         }
                         .fa-times{
                             color: rgba(244, 10, 10, 0.839);
                             font-size: 1.5rem;
+                            margin-right: 0.1rem;
+                            flex-basis: 50%;
                         }
                     }
                 }
