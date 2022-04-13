@@ -21,7 +21,9 @@ class QuestionListSerializer(serializers.ModelSerializer):
 			'field', 
 			'question_type',
 			'status',
-			'correct_answer','answer']
+			'correct_answer', 
+			'max_select',
+			'answer']
 
 	# def get_answers_count(self, obj):
 	# 	return obj.answer_set.all().count()

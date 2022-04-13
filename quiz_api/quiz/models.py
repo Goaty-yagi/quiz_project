@@ -59,6 +59,7 @@ class Question(models.Model):
     question_type = models.ForeignKey(QuestionType, max_length=50, null=True, blank=True, on_delete=models.CASCADE)
     status = models.ManyToManyField(ParentStatus, blank=True)
     correct_answer = models.JSONField(blank=True, null=True)
+    max_select = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     
 

@@ -226,20 +226,30 @@ export default {
                 }
             }else if(question.question_type == 5){
                 this.getNumOfIscorrect(question.answer)
-                if(this.selectedOrderAnswer[answerindex+1]&&
-                this.questions.length>=this.selectAnswerCounter){
+                if(this.selectedOrderAnswer[answerindex+1]){
                     this.selectedOrderAnswer = 
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
                     this.selectAnswerCounter -= 1
-                    if(Object.keys(this.selectedOrderAnswer).length == 0){
+                    if(question.max_select){
+                        if(Object.keys(this.selectedOrderAnswer).length < question.max_select){
+                            this.showNextOrFinishButton = false
+                        }
+                    }else if(Object.keys(this.selectedOrderAnswer).length == 0){
                         this.showNextOrFinishButton = false
                     }
                 }else{
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
-                    this.handleShowNextOrFinishButton()
+                    console.log('here1',answer)
+                    if(question.max_select){
+                        if(Object.keys(this.selectedOrderAnswer).length == question.max_select){
+                            this.handleShowNextOrFinishButton()
+                        }
+                    }else{
+                        this.handleShowNextOrFinishButton()
+                    }
                 }
             }
         },
@@ -259,7 +269,7 @@ export default {
         return dict
         },
         selectAnswerHandler(questionType){
-            // this is get informations about selected-answer for reflection page
+            // this is get informations about selected-answer for result component
             // return SelectedAnswerInfo
             if(questionType == 3){
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
