@@ -30,7 +30,8 @@
                         :class="{'selected-answer':selectedIndexNum==answerindex||
                         answerindex+1 in selectedOrderAnswer,
                         'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct,
-                        'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id}"
+                        'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
+                        resultHandleDict.answerIDType5[answer.id]==false}"
                         @click="e => result==false && onClick(answerindex,answer,question)"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
@@ -51,7 +52,8 @@
                                 </div>
                                 <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
                                 <i v-if="resultHandleDict.isCorrect&&answer.is_correct" class="far fa-circle"></i>
-                                <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id" class="fas fa-times"></i>
+                                <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
+                                resultHandleDict.answerIDType5[answer.id]==false" class="fas fa-times"></i>
                             </div>
                         </div>
                     </div>
@@ -117,7 +119,8 @@ export default {
             resultHandleDict:{
                 isCorrect: false,
                 IsNotCorrect: false,
-                answerIDType3: ''
+                answerIDType3: '',
+                answerIDType5: '',
             },
             // currentQuestionType:{
             //     select: false,
@@ -308,8 +311,8 @@ export default {
                 this.resultHandleDict.isCorrect = false
                 this.resultHandleDict.isNotCorrect = false
                 this.resultHandleDict.answerIDType3 = ''
+                this.resultHandleDict.answerIDType5 = ''
                 Object.keys(this.SelectedAnswerInfo).forEach(key =>{
-                    console.log(key)
                     if(key==this.questionLengthCounter){
                         if(this.SelectedAnswerInfo[key].isCorrect){
                             this.resultHandleDict.isCorrect = true
@@ -318,7 +321,12 @@ export default {
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType3 = this.SelectedAnswerInfo[key].answerID
-                            }
+                        }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
+                            this.SelectedAnswerInfo[key].questionType==5){
+                                this.resultHandleDict.isCorrect = true
+                                this.resultHandleDict.isNotCorrect = true
+                                this.resultHandleDict.answerIDType5 = this.SelectedAnswerInfo[key].selectedAnswer
+                        }
                     }
                 })      
             }
