@@ -25,7 +25,7 @@
                     ４ is '並び替え'
                     5 is '多答' -->
                     <div class='answer-wrapper'>
-                        <div 
+                        <button 
                         class="answer-loop"
                         :class="{'selected-answer':selectedIndexNum==answerindex||
                         answerindex+1 in selectedOrderAnswer,
@@ -36,6 +36,7 @@
                         resultHandleDict.answerIDType5[answer.id]==false||
                         resultHandleDict.answerIDType4[answer.answer_id]==false}"
                         @click="e => result==false && onClick(answerindex,answer,question)"
+                        :disabled="maxSelectReach&&answer.id in selectedAnswer==false"
                         v-for="(answer,answerindex) in question.answer"
                         v-bind:key="answerindex">
                             <div class='answer-select-bases'>
@@ -53,11 +54,17 @@
                                 <div v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==4" class="selected-answer-order">
                                     {{ selectedOrderAnswer[answerindex+1] }}
                                 </div>
-                                <!-- for result -->
-                                <div class="result-answer-order" v-if="resultHandleDict.questionType4">
-                                    {{ answer.answer_id}}
+                                <div class="result-answer-order">
+                                    <div class="order" v-if="resultHandleDict.questionType4">
+                                        {{ answer.answer_id}}
+                                    </div>
+                                    <div v-if="type3And5CheckResult(resultHandleDict.answerIDType5,resultHandleDict.answerIDType3,answer.id)&&question.question_type!=4">
+                                        <i class="fas fa-check"></i>
+                                    </div>
                                 </div>
                                 <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
+                                <!-- for result -->
+                                <!-- <i v-if="answer.id in resultHandleDict.answerIDType5&&question.question_type==5" class="fas fa-check"></i> -->
                                 <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
                                 resultHandleDict.answerAllTrueType4||
                                 resultHandleDict.answerIDType4[answer.answer_id]" class="far fa-circle"></i>
@@ -65,7 +72,7 @@
                                 resultHandleDict.answerIDType5[answer.id]==false||
                                 resultHandleDict.answerIDType4[answer.answer_id]==false" class="fas fa-times"></i>
                             </div>
-                        </div>
+                        </button>
                     </div>
                     <div v-if="showNextOrFinishButton&&
                     result==false" class="button-container">
@@ -135,6 +142,8 @@ export default {
                 answerIDType4: '',
                 answerIDType5: '',
             },
+            
+            maxSelectReach: false,
             // currentQuestionType:{
             //     select: false,
             //     manySelect: false,
@@ -144,6 +153,7 @@ export default {
             showSelectNum: true,
             selectedOrderAnswer:{},
             selectAnswerCounter:0,
+            NumOfIscorrect:0
         }
     },
     created(){
@@ -165,6 +175,8 @@ export default {
             this.selectAnswerHandler(
                 questionType,
                 )
+            this.NumOfIscorrect = 0
+            this.maxSelectReach = false
             this.selectedOrderAnswer = {}
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
@@ -179,6 +191,8 @@ export default {
             this.selectAnswerHandler(
                 questionType,
                 )
+            this.NumOfIscorrect = 0
+            this.maxSelectReach = false
             this.selectedOrderAnswer = {}
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
@@ -225,15 +239,18 @@ export default {
                     }
                 }
             }else if(question.question_type == 5){
+                console.log("on click_type5 question",question)
                 this.getNumOfIscorrect(question.answer)
                 if(this.selectedOrderAnswer[answerindex+1]){
                     this.selectedOrderAnswer = 
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
+                    // console.log('SOA',this.selectedOrderAnswer)
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
                     this.selectAnswerCounter -= 1
                     if(question.max_select){
                         if(Object.keys(this.selectedOrderAnswer).length < question.max_select){
                             this.showNextOrFinishButton = false
+                            this.maxSelectReach = false
                         }
                     }else if(Object.keys(this.selectedOrderAnswer).length == 0){
                         this.showNextOrFinishButton = false
@@ -242,10 +259,10 @@ export default {
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getIDAndIsCorrect(answer.id, answer.is_correct)
-                    console.log('here1',answer)
                     if(question.max_select){
                         if(Object.keys(this.selectedOrderAnswer).length == question.max_select){
                             this.handleShowNextOrFinishButton()
+                            this.maxSelectReach = true
                         }
                     }else{
                         this.handleShowNextOrFinishButton()
@@ -294,18 +311,26 @@ export default {
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
                 let isCorrectCounter = 0
+                var type5IsCorrect = true
                 Object.values(this.selectedAnswer).forEach(value =>{
                     if(value == false){
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                        type5IsCorrect = false
                     }else{
                         isCorrectCounter += 1
                     }
                 })
-                if(this.NumOfIscorrect == isCorrectCounter){
+                console.log('SAH',this.NumOfIscorrect, isCorrectCounter)
+                if(this.NumOfIscorrect == isCorrectCounter&&
+                type5IsCorrect){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
-                }else if('isCorrect' in this.SelectedAnswerInfo[this.questionLengthCounter]==false){
+                }else if(type5IsCorrect==false&&
+                isCorrectCounter > 0){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
                 }
+                // else if(this.maxSelectReach){
+                //     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
+                // }
                 this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
             }
         },
@@ -315,15 +340,12 @@ export default {
                 if(orderNum in this.answerIDAndOrder[this.questionLengthCounter]){
                     this.answerIDAndOrder[this.questionLengthCounter] =
                     this.changeOrder(this.answerIDAndOrder[this.questionLengthCounter],orderNum)
-                    console.log('removed',this.answerIDAndOrder)
                 }else{
-                    this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID
-                    console.log('added',this.answerIDAndOrder)    
+                    this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID   
                 }
             }else{
                 this.answerIDAndOrder[this.questionLengthCounter] = {}
                 this.answerIDAndOrder[this.questionLengthCounter][orderNum] = answerID
-                console.log('added',this.answerIDAndOrder)
             }   
         },
         makeOrderBoolean(){
@@ -348,15 +370,19 @@ export default {
         },
         getIDAndIsCorrect(id, isCorrect){
             // this is for questionType 5 
-            if(this.selectedAnswer[id]){
+            if(id in this.selectedAnswer){
                 delete this.selectedAnswer[id]
+                console.log(id,"deleted",this.selectedAnswer)
             }else{
                 this.selectedAnswer[id] = isCorrect
+                console.log(id,"added",this.selectedAnswer)
             }
         },
         getNumOfIscorrect(answers){
             // this is for questionType 5
+            console.log('inGNOI',this.NumOfIscorrect,answers)
             if(this.NumOfIscorrect==false){
+                console.log('Gp')
                  Object.values(answers).forEach(value =>{
                     if(value.is_correct){
                         this.NumOfIscorrect += 1
@@ -378,9 +404,12 @@ export default {
                 this.resultHandleDict.answerIDType5 = ''
                 Object.keys(this.SelectedAnswerInfo).forEach(key =>{
                     if(key==this.questionLengthCounter){
-                        if(this.SelectedAnswerInfo[key].isCorrect||this.SelectedAnswerInfo[key].isCorrect==null){
+                        console.log("currentType",this.SelectedAnswerInfo[key].questionType,this.SelectedAnswerInfo[key].isCorrect)
+                        if(this.SelectedAnswerInfo[key].isCorrect){
                             if(this.SelectedAnswerInfo[key].questionType==4){
                                 this.resultHandleDict.answerAllTrueType4 = true
+                            }else if(this.SelectedAnswerInfo[key].questionType==5){
+                                this.resultHandleDict.answerIDType5 = this.SelectedAnswerInfo[key].selectedAnswer
                             }
                             this.resultHandleDict.isCorrect = true
                         }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
@@ -388,11 +417,12 @@ export default {
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType3 = this.SelectedAnswerInfo[key].answerID
-                        }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
-                            this.SelectedAnswerInfo[key].questionType==5){
+                        }else if(this.SelectedAnswerInfo[key].questionType==5){
+                            console.log("in type5")
                                 this.resultHandleDict.isCorrect = true
                                 this.resultHandleDict.isNotCorrect = true
                                 this.resultHandleDict.answerIDType5 = this.SelectedAnswerInfo[key].selectedAnswer
+                                console.log("type5",this.resultHandleDict.answerIDType5)
                         }else if(this.SelectedAnswerInfo[key].isCorrect==false&&
                             this.SelectedAnswerInfo[key].questionType==4){
                                 this.resultHandleDict.questionType4 = true
@@ -402,6 +432,27 @@ export default {
                         }
                     }
                 })      
+            }
+        },
+        type3And5CheckResult(selectedAnswer5,selectedAnswer3, answerID){
+            // console.log(selectedAnswer, answerID)
+            if(this.result){
+                console.log("type",this.SelectedAnswerInfo[this.questionLengthCounter].questionType,"5",selectedAnswer5, "3",selectedAnswer3,answerID,this.questionLengthCounter)
+                if(this.SelectedAnswerInfo[this.questionLengthCounter].questionType==5){
+                    console.log("go")
+                    if(answerID in selectedAnswer5){
+                        return true
+                    }else{
+                        return false
+                    }
+                }
+                else if(this.SelectedAnswerInfo[this.questionLengthCounter].questionType==3){
+                    if(answerID == selectedAnswer3){
+                        return true
+                    }else{
+                        return false
+                    }
+                }
             }
         },
         handlePagination(a,b){
@@ -560,11 +611,13 @@ export default {
                             flex-basis: 50%;
                         }
                         .result-answer-order{
-                            font-size: 1.5rem;
-                            font-weight: bold;
-                            color: gray;
-                            margin-right: 0.5rem;
                             flex-basis: 50%;
+                            .order{
+                                font-size: 1.5rem;
+                                font-weight: bold;
+                                color: gray;
+                                margin-right: 0.5rem;
+                            }
                         }
                         .fa-check{
                             color: gray;
