@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Quiz from '../views/Quiz.vue'
 import QuizTest from '../views/quiz/QuizTest.vue'
 import QuizPractice from '../views/quiz/QuizPractice.vue'
+import QuizHome from '../views/quiz/QuizHome.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/NotFound.vue'
 import Signup from '../views/Signup.vue'
@@ -26,6 +27,11 @@ const routes = [
     // path: '/quiz/:id',
     name: 'Quiz',
     component: Quiz
+  },
+  {
+    path: '/quiz-home',
+    name: 'QuizHome',
+    component: QuizHome
   },
   {
     path: '/quiz-test',

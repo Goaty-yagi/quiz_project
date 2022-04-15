@@ -11,8 +11,8 @@ $dark-blue: #1C254C;
 $lite-blue: #5B759F;
 $buttongradient:linear-gradient(#F6F3E4 1%,#ff9933);
 $background:linear-gradient(#5B759F,#1C254C);
+$background-bottom-right:linear-gradient(to bottom right, #5B759F,#1C254C);
 $ORbackground: linear-gradient($base-lite,$base-color);
-
 $dull-red:rgb(255, 81, 81);
 
 
@@ -106,6 +106,7 @@ body{
     color: $dark-blue;
     font-size: 1.5rem;
     font-weight: bold;
+    
 }
 
 /* button */
