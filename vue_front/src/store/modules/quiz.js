@@ -59,13 +59,14 @@ export default {
     actions:{
         async getquestions({ state, commit }){
             console.log('action2',state.num)
+            commit('setIsLoading', true, {root:true})
             
               let response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
               commit('getQuiz',response.data[0])
               response.data.shift()
               commit('getRandomQuestion',response.data)
               commit('setQuestions',response.data);
-              commit('setIsLoading', false)
+              commit('setIsLoading', false,{root:true})
             }
     }
 }

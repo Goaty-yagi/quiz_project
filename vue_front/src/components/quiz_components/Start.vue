@@ -3,7 +3,7 @@
         <div class="main-wrapper">
             <div class="quiz-title-container">
                 <p class="start-title">初級・くだもの問題</p>
-                <p class="start-length">全10問</p>
+                <p class="start-length">全{{ questionLength }}問</p>
             </div>
             <div class="button-container">
                 <div @click="closeStart()" class="btn-base-black-db-ov">
@@ -23,7 +23,7 @@
 <script>
 export default {
     props:[
-        // 'quizzes',
+        'questionLength'
         // 'questions',
         // 'showQuiz'
     ],
@@ -31,13 +31,20 @@ export default {
         return{
         }
     },
+    mounted(){
+        this.questionLength
+    },
     methods:{
         goQuiz(){
             this.$emit('goQuiz')
         },
         closeStart(){
             this.$emit('closeStart')
-        }
+            // this.progressBar()
+        },
+        // progressBar(){
+        //     this.$emit('progressBar')
+        // }
         // handleSHowQuiz(){
         //     this.$emit('handle')
         // },

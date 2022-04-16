@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="buttons">
-            <div class="btn-tr-white-base-cir">戻る</div>
+            <div @click="backQuizHome()" class="btn-tr-white-base-cir">戻る</div>
             <div @click="playAgain()" class="btn-tr-black-baselite-cir">もう一度</div>
         </div>
     </div>
@@ -114,6 +114,9 @@ export default {
         },
         playAgain(){
             this.$emit('playAgain')
+        },
+        backQuizHome(){
+            this.$emit('backQuizHome')
         }
     }
 }

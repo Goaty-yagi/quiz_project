@@ -4,13 +4,14 @@
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
-            <Start v-if="startQuiz"
+            <Start v-if="startQuiz&&questionLength&&$store.state.isLoading==false"
+            :questionLength="questionLength"
             @closeStart="closeStart"/>
             <div v-if="startQuiz==false">
                 <p class="quiz-description title-white">{{ quiz.description }}</p>
                 <div class="progress-wrapper">
                     <div v-if="result==false" class="progress-bar-outer">
-                        <div id="progress" class="progress-bar-inner"></div>
+                        <div id="progress" style="width:0%" class="progress-bar-inner"></div>
                     </div>
                 </div>
 
@@ -112,6 +113,7 @@
                 @resultAnswerHandler='resultAnswerHandler'
                 @handleResult='handleResult'
                 @playAgain="playAgain"
+                @backQuizHome="backQuizHome"
                 />
             </div>
         </div>
@@ -131,6 +133,7 @@ export default {
     data(){
         return{
             questionLengthCounter:1,
+            questionLength:'',
             SelectedAnswerInfo:{},
             selectedAnswer: {},
             answerIDAndOrder:{},
@@ -138,6 +141,7 @@ export default {
             showNextOrFinishButton:false,
             result: false,
             startQuiz: false,
+            progressBarSwitch: false,
             pagination:{
                 a: 0,
                 b: 1,
@@ -165,17 +169,25 @@ export default {
         this.getquestions()
     },
     mounted(){
+        this.questionLength = this.questions.length
         this.startQuiz = true
-        console.log('m',this.startQuiz)
+        console.log('m',this.questions)
         this.SelectedAnswerInfo = {}
-        this.progressBar()
+        
     },
-    // watch:{
-    //     questions:function(v) {
-    //         let percentage = this.questionLengthCounter/(this.questions.length) * 100 
-    //         let a = document.getElementById('progress')
-    //         a.setAttribute('style',`width:${percentage}%`)},
-    // },
+    watch:{
+        questions:function(v) {
+            if(this.questions){
+                this.questionLength = this.questions.length
+            }
+        },
+        // startQuiz:function(v) {
+        //     if(v == false){
+        //         let percentage = this.questionLengthCounter/(this.questions.length) * 100 
+        //         let a = document.getElementById('progress')
+        //         a.setAttribute('style',`width:${percentage}%`)}
+        // }
+    },
     computed: mapGetters(['questions','quiz']),
     methods:{
         ...mapActions(['getquestions']),
@@ -193,7 +205,7 @@ export default {
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
-            this. progressBar()
+            // this. progressBar()
             this.scrollTop()
         },
         Finish(questionType){
@@ -220,6 +232,7 @@ export default {
             // return selectedAnswer for questionType 3.
             // for questionType 4, use getAnswerIDAndOrder function.
             // for questionType 5, use getIDAndIsCorrect function.
+            this.progressBar()
             if(question.question_type == 3){
                 if(this.selectedIndexNum==answerindex){
                     this.selectedIndexNum = null
@@ -509,8 +522,13 @@ export default {
             this.answerIDAndOrder = {}
             this.getquestions()
         },
+        backQuizHome(){
+            this.$emit('backQuizHome')
+            this.attributeReset()
+        },
         progressBar(){
             if(this.startQuiz == false){
+                this.progressBarSwitch = true
                 console.log(this.questionLengthCounter,(this.questions.length))
                 let percentage = this.questionLengthCounter/(this.questions.length) * 100 
                 let a = document.getElementById('progress')

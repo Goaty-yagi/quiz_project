@@ -2,7 +2,8 @@
     <div class="quiz-home-wrapper">
         <div class="main-wrapper">
             <QuizP
-            v-if="componentHandleDict.quiz"/>
+            v-if="componentHandleDict.quiz"
+            @backQuizHome="backQuizHome"/>
             <div v-if="componentHandleDict.quiz==false" class="title-white">クイズ</div>
             <!-- <Start
             v-if="componentHandleDict.start"
@@ -94,14 +95,10 @@
 </template>
 
 <script>
-import Start from '@/components/quiz_components/Start.vue'
-import Result from '@/components/quiz_components/Result.vue'
 import QuizP from '@/components/quiz_components/QuizP.vue'
 
 export default {
     components: {
-        Result,
-        Start,
         QuizP,
     },  
     data(){
@@ -150,9 +147,7 @@ export default {
             },
             // quizStart manage after start
             componentHandleDict:{
-                start: false,
                 quiz: false,
-                result: false,
                 quizStart: false,
             },
             showEachGrade: false,
@@ -195,6 +190,11 @@ export default {
             this.componentHandleDict.quizStart = true
             this.allReset()
         },
+        backQuizHome(){
+            this.componentHandleDict.quizStart = false
+            this.componentHandleDict.quiz = false
+            this.allReset()
+        }
         // goQuiz(){
         //     this.componentHandleDict.start = false
         //     this.componentHandleDict.quiz = true            

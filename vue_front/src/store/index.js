@@ -120,7 +120,7 @@ export default createStore({
         let response2 = await axios.get(`/api/questions/quizzes/?quiz=${state.id}&num=${state.num}`)
         commit('getRandomQuestion',response2.data)
         commit('setQuestions',response2.data);
-        commit('setIsLoading', false)
+        // commit('setIsLoading', false)
       }
       catch{
         commit('setIsLoading', false)
