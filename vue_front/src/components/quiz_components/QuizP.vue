@@ -4,8 +4,9 @@
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
-            <!-- <Start v-if="startQuiz==false"/> -->
-            <div >
+            <Start v-if="startQuiz"
+            @closeStart="closeStart"/>
+            <div v-if="startQuiz==false">
                 <p class="quiz-description title-white">{{ quiz.description }}</p>
                 <div class="progress-wrapper">
                     <div v-if="result==false" class="progress-bar-outer">
@@ -110,6 +111,7 @@
                 @HandleShowResult='HandleShowResult'
                 @resultAnswerHandler='resultAnswerHandler'
                 @handleResult='handleResult'
+                @playAgain="playAgain"
                 />
             </div>
         </div>
@@ -163,15 +165,17 @@ export default {
         this.getquestions()
     },
     mounted(){
+        this.startQuiz = true
+        console.log('m',this.startQuiz)
         this.SelectedAnswerInfo = {}
         this.progressBar()
     },
-    watch:{
-        questions:function(v) {
-            let percentage = this.questionLengthCounter/(this.questions.length) * 100 
-            let a = document.getElementById('progress')
-            a.setAttribute('style',`width:${percentage}%`)},
-    },
+    // watch:{
+    //     questions:function(v) {
+    //         let percentage = this.questionLengthCounter/(this.questions.length) * 100 
+    //         let a = document.getElementById('progress')
+    //         a.setAttribute('style',`width:${percentage}%`)},
+    // },
     computed: mapGetters(['questions','quiz']),
     methods:{
         ...mapActions(['getquestions']),
@@ -472,11 +476,46 @@ export default {
             behavior: "smooth"
             });
         },
+        closeStart(){
+            console.log("clicked")
+            this.startQuiz = false
+        },
+        playAgain(){
+            console.log('clicked play again')
+            this.startQuiz = true
+            this.attributeReset()
+        },
+        attributeReset(){
+            this.result = false
+            this.showResult = false
+            this.pagination.a = 0
+            this.pagination.b = 1
+            this.selectedIndexNum= null
+            this.showNextOrFinishButton = false
+            this.SelectedAnswerInfo = {}
+            this.NumOfIscorrect = 0
+            this.maxSelectReach = false
+            this.selectedOrderAnswer = {}
+            this.selectedAnswer = {}
+            this.selectAnswerCounter = 0
+            this.questionLengthCounter = 1
+            this.resultHandleDict.isCorrect = false,
+            this.resultHandleDict.IsNotCorrect =false,
+            this.resultHandleDict.answerIDType3 = '',
+            this.resultHandleDict.questionType4 = false,
+            this.resultHandleDict.answerAllTrueType4 =false,
+            this.resultHandleDict.answerIDType4 ='',
+            this.resultHandleDict.answerIDType5 = ''
+            this.answerIDAndOrder = {}
+            this.getquestions()
+        },
         progressBar(){
-            console.log(this.questionLengthCounter,(this.questions.length))
-            let percentage = this.questionLengthCounter/(this.questions.length) * 100 
-            let a = document.getElementById('progress')
-            a.setAttribute('style',`width:${percentage}%`)
+            if(this.startQuiz == false){
+                console.log(this.questionLengthCounter,(this.questions.length))
+                let percentage = this.questionLengthCounter/(this.questions.length) * 100 
+                let a = document.getElementById('progress')
+                a.setAttribute('style',`width:${percentage}%`)
+            }
         }
     }
 }

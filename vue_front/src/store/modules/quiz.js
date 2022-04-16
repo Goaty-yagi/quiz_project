@@ -48,6 +48,12 @@ export default {
         getQuiz(state, payload){
             state.quiz = payload
             console.log(state.quiz)
+        },
+        getQuizInfo(state, {quizid,questionfield}){
+            state.questionField = []
+            state.quizID = quizid
+            state.questionField = questionfield
+            console.log('',state.quizID,state.questionField)
         }
     },
     actions:{

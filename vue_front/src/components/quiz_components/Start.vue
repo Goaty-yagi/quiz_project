@@ -6,7 +6,7 @@
                 <p class="start-length">全10問</p>
             </div>
             <div class="button-container">
-                <div @click="goQuiz()" class="btn-base-black-db-ov">
+                <div @click="closeStart()" class="btn-base-black-db-ov">
                     START
                 </div>
             </div>
@@ -34,6 +34,9 @@ export default {
     methods:{
         goQuiz(){
             this.$emit('goQuiz')
+        },
+        closeStart(){
+            this.$emit('closeStart')
         }
         // handleSHowQuiz(){
         //     this.$emit('handle')

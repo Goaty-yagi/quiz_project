@@ -4,9 +4,9 @@
             <QuizP
             v-if="componentHandleDict.quiz"/>
             <div v-if="componentHandleDict.quiz==false" class="title-white">クイズ</div>
-            <Start
+            <!-- <Start
             v-if="componentHandleDict.start"
-            @goQuiz="goQuiz"/>
+            @goQuiz="goQuiz"/> -->
             <div v-if="this.componentHandleDict.quizStart==false" class="quiz-home-container">
                 <div class="select-container">
                     <div 
@@ -182,19 +182,23 @@ export default {
                 this.optionDict.showOption = true
             }
         },
+        getQuizInfo(quizid,quizfield){
+            this.$store.commit('getQuizInfo',{})
+        },
         allReset(){
             this.optionDict.showOption = false
             this.showEachGrade = false
         },
         goStart(){
-            this.componentHandleDict.start = true
+            // this.getQuizInfo()
+            this.componentHandleDict.quiz = true
             this.componentHandleDict.quizStart = true
             this.allReset()
         },
-        goQuiz(){
-            this.componentHandleDict.start = false
-            this.componentHandleDict.quiz = true            
-        }
+        // goQuiz(){
+        //     this.componentHandleDict.start = false
+        //     this.componentHandleDict.quiz = true            
+        // }
     }
 
 }

@@ -26,7 +26,7 @@
         </div>
         <div class="buttons">
             <div class="btn-tr-white-base-cir">戻る</div>
-            <div class="btn-tr-black-baselite-cir">もう一度</div>
+            <div @click="playAgain()" class="btn-tr-black-baselite-cir">もう一度</div>
         </div>
     </div>
 </template>
@@ -111,6 +111,9 @@ export default {
         },
         showDetail(){
             this.$emit('show')
+        },
+        playAgain(){
+            this.$emit('playAgain')
         }
     }
 }
