@@ -61,7 +61,7 @@ body{
 	background: $back-tr-white;
 	border: solid $base-color;
 	border-radius: 0.5rem;
-	width: 90vw;
+	width: 90%;
 	max-width: 550px;
 	height: auto;
 	max-height: 950px;
@@ -79,8 +79,9 @@ body{
 // 	width:100vw;
 // 	height:100vh;
 // }
-.scrll-fixed{
+.scroll-fixed{
     position: fixed;
+    // overflow-x: hidden
 }
 // this is for loading bar centered
 .laoding-center{

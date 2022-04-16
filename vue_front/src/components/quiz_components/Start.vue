@@ -1,32 +1,89 @@
 <template>
-  <div>
-      <div v-if="!showQuiz">
-        <p class="title is 3 has-text-white">{{quizzes[0].name}}問題</p>
-        <p class="subtitle is 4 has-text-white">全{{questions.length}}問</p>
-        <button @click="handleSHowQuiz">START</button>
+    <div class="start-wrapper">
+        <div class="main-wrapper">
+            <div class="quiz-title-container">
+                <p class="start-title">初級・くだもの問題</p>
+                <p class="start-length">全10問</p>
+            </div>
+            <div class="button-container">
+                <div @click="goQuiz()" class="btn-base-black-db-ov">
+                    START
+                </div>
+            </div>
+            <div class="start-notification">
+                ・クイズはランダムに作成されるので
+                毎回問題が異なります。
+                何回も挑戦してみてね。
+            </div>
+        </div>
+      
     </div>
-  </div>
 </template>
 
 <script>
 export default {
     props:[
-        'quizzes',
-        'questions',
-        'showQuiz'
+        // 'quizzes',
+        // 'questions',
+        // 'showQuiz'
     ],
     data(){
         return{
         }
     },
     methods:{
-        handleSHowQuiz(){
-            this.$emit('handle')
-        },
+        goQuiz(){
+            this.$emit('goQuiz')
+        }
+        // handleSHowQuiz(){
+        //     this.$emit('handle')
+        // },
     }
     }
 </script>
 
-<style>
+<style scoped lang="scss">
+@import "style/_variables.scss";
+
+.start-wrapper{
+    .main-wrapper{
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        // justify-content: center;
+        .quiz-title-container{
+            width: 80%;
+            border: solid $base-color;
+            border-radius: 0.5rem;
+            background: $back-white;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            .start-title{
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            .start-length{
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+        }
+        .button-container{
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            .btn-base-black-db-ov{
+                padding-right: 0.8rem;
+                padding-left: 0.8rem;
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+        }
+        .start-notification{
+            width: 80%;
+            color: white;
+            margin-top: 2rem;
+        }
+    }
+}
 
 </style>

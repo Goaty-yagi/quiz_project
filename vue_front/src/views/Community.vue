@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div class="community-wrapper scroll_area" :class="{'scrll-fixed':showCreateQuestion, 'laoding-center':$store.state.isLoading}">
+    <div class="community-wrapper scroll_area" :class="{'scroll-fixed':showCreateQuestion, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->

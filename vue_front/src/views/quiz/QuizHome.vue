@@ -1,8 +1,13 @@
 <template>
-    <div class="quiz-home-wrapper" :class="{'scrll-fixed':showEachGrade}">
+    <div class="quiz-home-wrapper">
         <div class="main-wrapper">
-            <div class="title-white">クイズ</div>
-            <div class="quiz-home-container">
+            <QuizP
+            v-if="componentHandleDict.quiz"/>
+            <div v-if="componentHandleDict.quiz==false" class="title-white">クイズ</div>
+            <Start
+            v-if="componentHandleDict.start"
+            @goQuiz="goQuiz"/>
+            <div v-if="this.componentHandleDict.quizStart==false" class="quiz-home-container">
                 <div class="select-container">
                     <div 
                     class="select-loop"
@@ -22,7 +27,7 @@
                 <div v-if="showEachGrade" class="l-wrapper">
                     <div class="l-container">
                         <div class="close-grade">
-                            <div @click="closeGrade" class="close">
+                            <div @click="closeGrade()" class="close">
                                 <i class="fas fa-times"></i>
                             </div>
                         </div>
@@ -61,8 +66,9 @@
                                             class="option-loop"
                                             v-for="(option, optionindex) in options"
                                             v-bind:key="optionindex">
-                                                <div class="each-option">
+                                                <div @click="goStart()" class="each-option">
                                                     <div class="option-font">
+                                                        
                                                         <i v-if="option=='くだもの'" class="fas fa-apple-alt"></i>
                                                         <i v-if="option=='やさい'" class="fas fa-carrot"></i>
                                                         <i v-if="option=='どうぶつ'" class="fas fa-cat"></i>
@@ -88,7 +94,16 @@
 </template>
 
 <script>
+import Start from '@/components/quiz_components/Start.vue'
+import Result from '@/components/quiz_components/Result.vue'
+import QuizP from '@/components/quiz_components/QuizP.vue'
+
 export default {
+    components: {
+        Result,
+        Start,
+        QuizP,
+    },  
     data(){
         return{
             quizSelectDict:{
@@ -133,6 +148,13 @@ export default {
                 currentCategory:'',
                 showOption: false,                
             },
+            // quizStart manage after start
+            componentHandleDict:{
+                start: false,
+                quiz: false,
+                result: false,
+                quizStart: false,
+            },
             showEachGrade: false,
             // showEachOptions: false,
             receivedKey: '',
@@ -160,6 +182,19 @@ export default {
                 this.optionDict.showOption = true
             }
         },
+        allReset(){
+            this.optionDict.showOption = false
+            this.showEachGrade = false
+        },
+        goStart(){
+            this.componentHandleDict.start = true
+            this.componentHandleDict.quizStart = true
+            this.allReset()
+        },
+        goQuiz(){
+            this.componentHandleDict.start = false
+            this.componentHandleDict.quiz = true            
+        }
     }
 
 }
@@ -170,8 +205,9 @@ export default {
 
 .quiz-home-wrapper{
     display: flex;
-    // align-items: center;
     justify-content: center;
+    min-height: 80vh;
+    width: 100vw;
     .quiz-home-container{
         display: flex;
         flex-direction: column;
@@ -231,15 +267,15 @@ export default {
                 flex-direction: column;
                 // justify-content: center;
                 // nim-height: 75%;
-                height: 80%;
+                // min-height: 60%;
+                padding-bottom: 2rem;
                 .close-grade{
-                    width: inherit;
-                    height: inherit;
-                    position: fixed;
-                    left:auto;
+                    // width: inherit;
+                    // left:auto;
                     display: flex;
                     justify-content: flex-end;
                     .close{
+                        position: fixed;
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -310,7 +346,7 @@ export default {
                                         justify-content: center;
                                         margin-bottom: 0.5rem;
                                         .option-font{
-                                            flex-basis: 20%;
+                                            flex-basis: 35%;
                                             display: flex;
                                             justify-content: flex-end;
                                             .fa-apple-alt{
@@ -333,7 +369,7 @@ export default {
                                             }
                                         }
                                         .option-title{
-                                            flex-basis: 50%;
+                                            flex-basis: 65%;
                                             display: flex;
                                             margin-left: 1rem;
                                             p{
