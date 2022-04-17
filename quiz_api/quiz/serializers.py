@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from quiz.models import Quiz, Question, Answer, QuestionType
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -35,6 +35,23 @@ class QuizListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Quiz
 		fields = ["id", "name", "description", "image", "slug","question" ]
+
+
+class QuizNameIdListSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Quiz
+		fields = ["id", "name"]
+
+	def to_representation(self, instance):
+		rep = super(QuizNameIdListSerializer, self).to_representation(instance)
+		rep['name'] = instance.name.name
+		return rep
+
+
+class FieldNameIdListSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ParentField
+		fields = ["id", "name"]
 
 
 class QuizFilterSerializer(serializers.ModelSerializer):
