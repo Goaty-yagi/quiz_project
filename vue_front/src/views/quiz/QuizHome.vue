@@ -96,6 +96,7 @@
 </template>
 
 <script>
+import {mapGetters,mapActions} from 'vuex'
 import QuizP from '@/components/quiz_components/QuizP.vue'
 
 export default {
@@ -155,16 +156,30 @@ export default {
                 quiz: false,
                 quizStart: false,
             },
+            configQuizIdAndFieldId:{
+                quizId:'',
+                fieldId:[]
+            },
             showEachGrade: false,
             // showEachOptions: false,
             receivedKey: '',
             gradeTitle: '',
         }
     },
+    computed: mapGetters(['quizNameId','fieldNameId']),
+    created(){
+        this.getQuizNameId()
+        this.getFieldNameId()
+        // this.$store.dispatch("getFieldNameId")
+        // this.$store.dispatch("getQuizNameId")
+        
+    },
     mounted(){
         this.optionDict.currentCategory = ''
+        
     },
     methods:{
+        ...mapActions(['getQuizNameId','getFieldNameId']),
         showGrade(grade, key){
             this.showEachGrade = true
             this.gradeTitle = grade
@@ -193,6 +208,9 @@ export default {
         goStart(field){
             // this.getQuizInfo()
             this.getQuizPageInfo(0,field)
+            this.getQuizId()
+            this.getFieldIds()
+            this.getQuizInfo()
             this.componentHandleDict.quiz = true
             this.componentHandleDict.quizStart = true
             this.allReset()
@@ -209,6 +227,31 @@ export default {
                 this.forQuizPageInfo.field = field
             }
         },
+        getQuizId(){
+            // this is for matching quiz name to quiz id.
+            // quiz name set in front must be the same as a quiz name in DB
+            for(let i of this.quizNameId){
+                if(i.name == this.forQuizPageInfo.grade){
+                    this.configQuizIdAndFieldId.quizId = i.id
+                    break
+                }
+            }
+        },
+        getFieldIds(){
+            // this is for matching field name to field id.
+            // field name set in front must be the same as a field name in DB
+            for(let i of this.fieldNameId){
+                if(i.name == this.forQuizPageInfo.field){
+                    this.configQuizIdAndFieldId.fieldId.push(i.id)
+                    console.log(this.configQuizIdAndFieldId.fieldId)
+                    break
+                }
+            }
+        },
+        getQuizInfo(){
+            console.log('GQI',this.configQuizIdAndFieldId)
+            this.$store.commit("getQuizInfo",this.configQuizIdAndFieldId)
+        }
         // goQuiz(){
         //     this.componentHandleDict.start = false
         //     this.componentHandleDict.quiz = true            

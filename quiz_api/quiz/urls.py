@@ -32,8 +32,8 @@ from quiz.apis import (
 
 urlpatterns = [
   path('quizzes/', QuizListApi.as_view()),
-  path('quizzes-questions/', QuizNameIdListApi.as_view()),
-  path('quizzes-name-id/', QuizListApi.as_view()),
+  path('quizzes-questions/', QuizApi.as_view()),
+  path('quizzes-name-id/', QuizNameIdListApi.as_view()),
   path('questions/', QuestionListApi.as_view()),
   path('question-types/', QuestionTypeApi.as_view()),
   path('questions/quizzes/', QuizFilteredListApi.as_view()),

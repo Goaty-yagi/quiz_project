@@ -7,10 +7,12 @@ let getDefaultState = () => {
     return {
         isLoading: false,
         quizID: 1,
-        numOfQuiz: 5,
+        numOfQuiz: 3,
         questionField: [1,2],
         questions:[],
         quiz:[],
+        quizNameId:'',
+        fieldNameId:'',
         randomURL:'',
         test:null,
         notice:false,
@@ -23,7 +25,9 @@ export default {
     state: getDefaultState(),
     getters:{
         questions:(state) => state.questions,
-        quiz:(state) => state.quiz
+        quiz:(state) => state.quiz,
+        quizNameId:(state) => state.quizNameId,
+        fieldNameId:(state) => state.fieldNameId
     },
     mutations:{
         getRandomQuestion(state,array){
@@ -49,11 +53,18 @@ export default {
             state.quiz = payload
             console.log(state.quiz)
         },
-        getQuizInfo(state, {quizid,questionfield}){
+        getQuizInfo(state, quizInfo){
+            console.log('GQIStore',quizInfo)
             state.questionField = []
-            state.quizID = quizid
-            state.questionField = questionfield
-            console.log('',state.quizID,state.questionField)
+            state.quizID = quizInfo.quizId
+            state.questionField = quizInfo.fieldId
+            console.log('GQINFOStore',state.quizID,state.questionField)
+        },
+        setQuizNameId(state, payload){
+            state.quizNameId = payload
+        },
+        setFieldNameId(state, payload){
+            state.fieldNameId = payload
         }
     },
     actions:{
@@ -67,6 +78,24 @@ export default {
               commit('getRandomQuestion',response.data)
               commit('setQuestions',response.data);
               commit('setIsLoading', false,{root:true})
+        },
+        async getQuizNameId({ state, commit }){
+            if(state.quizNameId==false){
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get("/api/quizzes-name-id/")
+                commit('setQuizNameId',response.data)
+                console.log(state.quizNameId)
+                commit('setIsLoading', false,{root:true})
             }
+        },
+        async getFieldNameId({ state, commit }){
+            if(state.fieldNameId==false){
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get("/api/field-list/")
+                commit('setFieldNameId',response.data)
+                console.log(state.fieldNameId)
+                commit('setIsLoading', false,{root:true})
+            }
+        }
     }
 }
