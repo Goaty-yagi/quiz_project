@@ -6,6 +6,7 @@
             </div>
             <Start v-if="startQuiz&&questionLength&&$store.state.isLoading==false"
             :questionLength="questionLength"
+            :forQuizPageInfo="forQuizPageInfo"
             @closeStart="closeStart"/>
             <div v-if="startQuiz==false">
                 <p class="quiz-description title-white">{{ quiz.description }}</p>
@@ -129,7 +130,10 @@ export default {
     components: {
     Result,
     Start
-  },  
+    },
+    props:[
+        "forQuizPageInfo"
+    ],
     data(){
         return{
             questionLengthCounter:1,
@@ -171,7 +175,6 @@ export default {
     mounted(){
         this.questionLength = this.questions.length
         this.startQuiz = true
-        console.log('m',this.questions)
         this.SelectedAnswerInfo = {}
         
     },

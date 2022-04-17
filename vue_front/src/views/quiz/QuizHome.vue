@@ -3,6 +3,7 @@
         <div class="main-wrapper">
             <QuizP
             v-if="componentHandleDict.quiz"
+            :forQuizPageInfo="forQuizPageInfo"
             @backQuizHome="backQuizHome"/>
             <div v-if="componentHandleDict.quiz==false" class="title-white">クイズ</div>
             <!-- <Start
@@ -67,7 +68,7 @@
                                             class="option-loop"
                                             v-for="(option, optionindex) in options"
                                             v-bind:key="optionindex">
-                                                <div @click="goStart()" class="each-option">
+                                                <div @click="goStart(field=option)" class="each-option">
                                                     <div class="option-font">
                                                         
                                                         <i v-if="option=='くだもの'" class="fas fa-apple-alt"></i>
@@ -145,6 +146,10 @@ export default {
                 currentCategory:'',
                 showOption: false,                
             },
+            forQuizPageInfo:{
+                grade:'',
+                field:''
+            },
             // quizStart manage after start
             componentHandleDict:{
                 quiz: false,
@@ -164,6 +169,7 @@ export default {
             this.showEachGrade = true
             this.gradeTitle = grade
             this.receivedKey = key
+            this.getQuizPageInfo(grade=grade)
         },
         closeGrade(){
             this.showEachGrade = false
@@ -184,8 +190,9 @@ export default {
             this.optionDict.showOption = false
             this.showEachGrade = false
         },
-        goStart(){
+        goStart(field){
             // this.getQuizInfo()
+            this.getQuizPageInfo(0,field)
             this.componentHandleDict.quiz = true
             this.componentHandleDict.quizStart = true
             this.allReset()
@@ -194,7 +201,14 @@ export default {
             this.componentHandleDict.quizStart = false
             this.componentHandleDict.quiz = false
             this.allReset()
-        }
+        },
+        getQuizPageInfo(grade='',field=''){
+            if(grade){
+                this.forQuizPageInfo.grade = grade
+            }else if(field){
+                this.forQuizPageInfo.field = field
+            }
+        },
         // goQuiz(){
         //     this.componentHandleDict.start = false
         //     this.componentHandleDict.quiz = true            

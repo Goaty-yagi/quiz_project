@@ -2,7 +2,7 @@
     <div class="start-wrapper">
         <div class="main-wrapper">
             <div class="quiz-title-container">
-                <p class="start-title">初級・くだもの問題</p>
+                <p class="start-title">{{ forQuizPageInfo.grade }}・{{ forQuizPageInfo.field }}問題</p>
                 <p class="start-length">全{{ questionLength }}問</p>
             </div>
             <div class="button-container">
@@ -23,7 +23,8 @@
 <script>
 export default {
     props:[
-        'questionLength'
+        'questionLength',
+        'forQuizPageInfo'
         // 'questions',
         // 'showQuiz'
     ],
