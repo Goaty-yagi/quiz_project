@@ -135,35 +135,58 @@ class QuizApi(APIView):
         quiz_id = request.query_params['quiz']
         num = int(request.query_params['num'])
         # field_ids = request.query_params.getlist("field")
-        f = [i.strip("[]") for i in request.query_params.getlist("field")if i is not ',']
-        i = ''.join(f[0])
-        field_list = i.split(',')
-        # field_list = [int(i) for i in request.query_params.getlist("field")[0].strip("[]")if i is not ',']
-        print(type(field_list),field_list)
-        try:
-            queryset = Question.objects.select_related(
-                'quiz', 
-                'question_type'
-                ).prefetch_related(
-                    'field', 
-                    'status', 
-                    'answer', 
-                    ).filter(field__in=field_list)
-            question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
-            quiz_queryset  = Quiz.objects.filter(
-                id = quiz_id,
-                )
-            print('got quiz_queryset')
-            # quizn_queryset  = Quiz.objects.filter(
-            #     answer__question__field__in = field_list
-            # ).distinct()
-            # union = list(chain(quiz_queryset, all_question))
-            serializer = QuizFilterSerializer(quiz_queryset, many=True)
-            serializer2 = QuestionListSerializer(question, many=True)
-            union = list(chain(serializer.data, serializer2.data))
-            return Response(union)
-        except Quiz.DoesNotExist:
-            raise Http404
+        if request.query_params.getlist("field"):
+            f = [i.strip("[]") for i in request.query_params.getlist("field")if i is not ',']
+            i = ''.join(f[0])
+            field_list = i.split(',')
+            # field_list = [int(i) for i in request.query_params.getlist("field")[0].strip("[]")if i is not ',']
+            print(type(field_list),field_list)
+            try:
+                queryset = Question.objects.select_related(
+                    'quiz', 
+                    'question_type'
+                    ).prefetch_related(
+                        'field', 
+                        'status', 
+                        'answer', 
+                        ).filter(field__in=field_list)
+                question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
+                quiz_queryset  = Quiz.objects.filter(
+                    id = quiz_id,
+                    )
+                print('got quiz_queryset')
+                # quizn_queryset  = Quiz.objects.filter(
+                #     answer__question__field__in = field_list
+                # ).distinct()
+                # union = list(chain(quiz_queryset, all_question))
+                serializer = QuizFilterSerializer(quiz_queryset, many=True)
+                serializer2 = QuestionListSerializer(question, many=True)
+                union = list(chain(serializer.data, serializer2.data))
+                return Response(union)
+            except Quiz.DoesNotExist:
+                raise Http404
+        else:
+            try:
+                queryset = Question.objects.select_related(
+                    'quiz', 
+                    'question_type'
+                    ).prefetch_related(
+                        'field', 
+                        'status', 
+                        'answer', 
+                        ).filter(quiz=quiz_id)
+                question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
+                quiz_queryset  = Quiz.objects.filter(
+                    id = quiz_id,
+                    )
+                print('got quiz_queryset')
+                serializer = QuizFilterSerializer(quiz_queryset, many=True)
+                serializer2 = QuestionListSerializer(question, many=True)
+                union = list(chain(serializer.data, serializer2.data))
+                return Response(union)
+            except Quiz.DoesNotExist:
+                raise Http404
+
 
     # def get(self, request, format=None):
     #     try:
