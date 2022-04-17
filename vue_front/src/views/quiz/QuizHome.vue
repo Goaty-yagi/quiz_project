@@ -204,6 +204,9 @@ export default {
         allReset(){
             this.optionDict.showOption = false
             this.showEachGrade = false
+            this.optionDict.currentCategory = ''
+            this.configQuizIdAndFieldId.quizid = ''
+            this.configQuizIdAndFieldId.fieldId = []
         },
         goStart(field){
             // this.getQuizInfo()
@@ -216,6 +219,7 @@ export default {
             this.allReset()
         },
         backQuizHome(){
+            // this is to pass to quiz => result
             this.componentHandleDict.quizStart = false
             this.componentHandleDict.quiz = false
             this.allReset()

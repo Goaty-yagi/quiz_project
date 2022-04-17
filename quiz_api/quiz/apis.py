@@ -134,7 +134,11 @@ class QuizApi(APIView):
         print("request",request)
         quiz_id = request.query_params['quiz']
         num = int(request.query_params['num'])
-        field_list = [i for i in request.query_params.getlist("field")[0].strip("[]")if i is not ',']
+        # field_ids = request.query_params.getlist("field")
+        f = [i.strip("[]") for i in request.query_params.getlist("field")if i is not ',']
+        i = ''.join(f[0])
+        field_list = i.split(',')
+        # field_list = [int(i) for i in request.query_params.getlist("field")[0].strip("[]")if i is not ',']
         print(type(field_list),field_list)
         try:
             queryset = Question.objects.select_related(

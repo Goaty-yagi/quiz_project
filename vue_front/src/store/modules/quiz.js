@@ -65,19 +65,27 @@ export default {
         },
         setFieldNameId(state, payload){
             state.fieldNameId = payload
-        }
+        },
+        // clearQuiz(state, payload){
+        //     console.log('in_cleared')
+        //     state.questions = []
+        //     state.quiz = []
+        //     console.log('cleared')
+        // }
     },
     actions:{
         async getquestions({ state, commit }){
             console.log('action2',state.num)
+            state.questions = []
+            state.quiz = []
             commit('setIsLoading', true, {root:true})
             
-              let response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
-              commit('getQuiz',response.data[0])
-              response.data.shift()
-              commit('getRandomQuestion',response.data)
-              commit('setQuestions',response.data);
-              commit('setIsLoading', false,{root:true})
+            let response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
+            commit('getQuiz',response.data[0])
+            response.data.shift()
+            commit('getRandomQuestion',response.data)
+            commit('setQuestions',response.data);
+            commit('setIsLoading', false,{root:true})
         },
         async getQuizNameId({ state, commit }){
             if(state.quizNameId==false){

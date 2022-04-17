@@ -172,7 +172,7 @@ export default {
         // this.getquiz()
         this.getquestions()
     },
-    mounted(){
+    mounted(){console.log("mounted QuizP")
         this.questionLength = this.questions.length
         this.startQuiz = true
         this.SelectedAnswerInfo = {}
