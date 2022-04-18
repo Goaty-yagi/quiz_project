@@ -44,22 +44,24 @@
                             <div v-if="key==receivedKey">
                                 <div class="category-inner-loop" v-for="(titles,titlesindex) in selects"
                                 v-bind:key="titlesindex">
+                                 <!-- @click="e => result==false && onClick(answerindex,answer,question)" -->
                                     <div 
                                     class="category-container"
                                     v-for="(options,title,titleindex) in titles"
-                                    v-bind:key="titleindex"
-                                    >
-                                        <div @click="showOptions(titleindex)" class="category-title-container" :class="{
+                                    v-bind:key="titleindex">
+                                        <div @click="e => options && showOptions(titleindex)" class="category-title-container" :class="{
                                             'space':optionDict.showOption&&
                                             optionDict.currentCategory==titleindex,
                                             }">
-                                            <div class="category-title">
-                                                {{ title }}
-                                                <i v-if="options" :class="{
-                                                    'lotate':optionDict.showOption&&
-                                                    optionDict.currentCategory==titleindex}" 
-                                                    class="fas fa-caret-down">
-                                                </i>
+                                            <div @click="e => options=='all' && getAllCategoryQuiz()">
+                                                <div class="category-title">
+                                                    {{ title }}
+                                                    <i v-if="options" :class="{
+                                                        'lotate':optionDict.showOption&&
+                                                        optionDict.currentCategory==titleindex}" 
+                                                        class="fas fa-caret-down">
+                                                    </i>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="option-container" v-if="optionDict.showOption&&
@@ -136,7 +138,8 @@ export default {
                             "たべもの",
                             "のみもの"
                         ], 
-                        すうじ:""
+                        すうじ:"",
+                        超初級道場:"all"
                     },
                 },
                 basic:{
@@ -149,7 +152,8 @@ export default {
             },
             forQuizPageInfo:{
                 grade:'',
-                field:''
+                field:'',
+                all: false,
             },
             // quizStart manage after start
             componentHandleDict:{
@@ -158,7 +162,12 @@ export default {
             },
             configQuizIdAndFieldId:{
                 quizId:'',
-                fieldId:[]
+                fieldId:[],
+                quizNum:''
+            },
+            quizNum:{
+                general: 3,
+                all: 6,
             },
             showEachGrade: false,
             // showEachOptions: false,
@@ -198,9 +207,9 @@ export default {
                 this.optionDict.showOption = true
             }
         },
-        getQuizInfo(quizid,quizfield){
-            this.$store.commit('getQuizInfo',{})
-        },
+        // getQuizInfo(quizid,quizfield){
+        //     this.$store.commit('getQuizInfo',{})
+        // },
         allReset(){
             this.optionDict.showOption = false
             this.showEachGrade = false
@@ -211,6 +220,7 @@ export default {
         goStart(field){
             // this.getQuizInfo()
             this.getQuizPageInfo(0,field)
+            this.forQuizPageInfo.all = false
             this.getQuizId()
             this.getFieldIds()
             this.getQuizInfo()
@@ -254,8 +264,23 @@ export default {
         },
         getQuizInfo(){
             console.log('GQI',this.configQuizIdAndFieldId)
+            this.configQuizIdAndFieldId.quizNum = this.quizNum.general
             this.$store.commit("getQuizInfo",this.configQuizIdAndFieldId)
-        }
+        },
+        getAllCategoryQuiz(title){
+            for(let i of this.quizNameId){
+                if(i.name == this.forQuizPageInfo.grade){
+                    this.configQuizIdAndFieldId.quizId = i.id
+                    break
+                }
+            }
+            this.configQuizIdAndFieldId.quizNum = this.quizNum.all
+            this.$store.commit("getQuizInfo",this.configQuizIdAndFieldId)
+            this.forQuizPageInfo.all = true
+            this.componentHandleDict.quiz = true
+            this.componentHandleDict.quizStart = true
+            this.allReset()
+        },
         // goQuiz(){
         //     this.componentHandleDict.start = false
         //     this.componentHandleDict.quiz = true            

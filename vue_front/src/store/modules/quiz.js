@@ -56,8 +56,13 @@ export default {
         getQuizInfo(state, quizInfo){
             console.log('GQIStore',quizInfo)
             state.questionField = []
+            state.quizID = ''
+            state.numOfQuiz = ''
             state.quizID = quizInfo.quizId
-            state.questionField = quizInfo.fieldId
+            if(quizInfo.fieldId){
+                state.questionField = quizInfo.fieldId
+            }
+            state.numOfQuiz = quizInfo.quizNum
             console.log('GQINFOStore',state.quizID,state.questionField)
         },
         setQuizNameId(state, payload){
@@ -79,8 +84,11 @@ export default {
             state.questions = []
             state.quiz = []
             commit('setIsLoading', true, {root:true})
-            
-            let response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
+            if(state.questionField[0]){
+                var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
+            }else{
+                var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}`)
+            }
             commit('getQuiz',response.data[0])
             response.data.shift()
             commit('getRandomQuestion',response.data)

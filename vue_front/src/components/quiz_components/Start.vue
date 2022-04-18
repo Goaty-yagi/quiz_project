@@ -2,11 +2,12 @@
     <div class="start-wrapper">
         <div class="main-wrapper">
             <div class="quiz-title-container">
-                <p class="start-title">{{ forQuizPageInfo.grade }}・{{ forQuizPageInfo.field }}問題</p>
+                <p v-if="forQuizPageInfo==false" class="start-title">{{ forQuizPageInfo.grade }}・{{ forQuizPageInfo.field }}問題</p>
+                <p v-if="forQuizPageInfo" class="start-title">{{ forQuizPageInfo.grade }}道場</p>
                 <p class="start-length">全{{ questionLength }}問</p>
             </div>
             <div class="button-container">
-                <div @click="closeStart()" class="btn-base-black-db-ov">
+                <div @click="closeStart()" class="btn-base-white-db-sq">
                     START
                 </div>
             </div>
@@ -68,8 +69,8 @@ export default {
             border: solid $base-color;
             border-radius: 0.5rem;
             background: $back-white;
-            margin-top: 1rem;
-            padding: 0.5rem;
+            margin-top: 3rem;
+            padding: 1rem;
             .start-title{
                 font-size: 1.5rem;
                 font-weight: bold;
@@ -80,9 +81,11 @@ export default {
             }
         }
         .button-container{
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            .btn-base-black-db-ov{
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            .btn-base-white-db-sq{
+                padding-top: 0.3rem;
+                padding-bottom: 0.3rem;
                 padding-right: 0.8rem;
                 padding-left: 0.8rem;
                 font-size: 1.5rem;
