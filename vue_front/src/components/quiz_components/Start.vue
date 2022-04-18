@@ -35,6 +35,7 @@ export default {
     },
     mounted(){
         this.questionLength
+        this.scrollTop()
     },
     methods:{
         goQuiz(){
@@ -43,6 +44,12 @@ export default {
         closeStart(){
             this.$emit('closeStart')
             // this.progressBar()
+        },
+        scrollTop(){
+            window.scrollTo({
+            top: 0,
+            // behavior: "smooth"
+            });
         },
         // progressBar(){
         //     this.$emit('progressBar')

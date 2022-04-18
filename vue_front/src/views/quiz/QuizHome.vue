@@ -56,7 +56,7 @@
                                             <div @click="e => options=='all' && getAllCategoryQuiz()">
                                                 <div class="category-title">
                                                     {{ title }}
-                                                    <i v-if="options" :class="{
+                                                    <i v-if="options&&options!='all'" :class="{
                                                         'lotate':optionDict.showOption&&
                                                         optionDict.currentCategory==titleindex}" 
                                                         class="fas fa-caret-down">
@@ -167,7 +167,7 @@ export default {
             },
             quizNum:{
                 general: 3,
-                all: 6,
+                all: 12,
             },
             showEachGrade: false,
             // showEachOptions: false,
@@ -184,6 +184,7 @@ export default {
         
     },
     mounted(){
+        this.scrollTop()
         this.optionDict.currentCategory = ''
         
     },
@@ -197,6 +198,7 @@ export default {
         },
         closeGrade(){
             this.showEachGrade = false
+            this.optionDict.showOption = false
         },
         showOptions(index){
             if(this.optionDict.currentCategory==index){
@@ -232,6 +234,7 @@ export default {
             // this is to pass to quiz => result
             this.componentHandleDict.quizStart = false
             this.componentHandleDict.quiz = false
+            this.scrollTop()
             this.allReset()
         },
         getQuizPageInfo(grade='',field=''){
@@ -280,6 +283,12 @@ export default {
             this.componentHandleDict.quiz = true
             this.componentHandleDict.quizStart = true
             this.allReset()
+        },
+        scrollTop(){
+            window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+            });
         },
         // goQuiz(){
         //     this.componentHandleDict.start = false
@@ -391,26 +400,30 @@ export default {
                         align-items: center;
                         flex-direction: column;
                         .category-container{
-                            display: flex;
                             position: relative;
-                            flex-direction: column;
+                            display: flex;
                             justify-content: center;
-                            align-items: center;
-                            width: 80%;
-                            border: solid $base-color;
-                            border-radius: 0.5rem;
-                            margin-top: 0.5rem;
-                            margin-bottom: 0.5rem;
-                            min-height: 3rem;
-                            background: $background-bottom-right;
+                            width: 100%;
                             // transition: 1s;
-                            .category-title-container.space{
+                            .category-title-container.space{ 
                                 margin-top:0.6rem;
                                 margin-bottom: 1rem;
                             }
                             .category-title-container{
                                 height: 100%;
                                 width: 100%;
+                                display: flex;
+                                position: relative;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                width: 80%;
+                                border: solid $base-color;
+                                border-radius: 0.5rem;
+                                margin-top: 0.5rem;
+                                margin-bottom: 0.5rem;
+                                min-height: 3rem;
+                                background: $background-bottom-right;
                                 .category-title{
                                     color: white;
                                     font-weight: bold;
@@ -428,7 +441,18 @@ export default {
                                 }
                             }
                             .option-container{
-                                width: 100%;
+                                position: absolute;
+                                width: 80%;
+                                border: solid grey;
+                                border-top: 0.3rem solid grey;
+                                border-bottom: 0.3rem solid grey;
+                                top: 3rem;
+                                margin-top: 0.1rem;
+                                margin-bottom: 0.5rem;
+                                padding-top: 1rem;
+                                min-height: 3rem;
+                                background: $back-tr-white;
+                                z-index: 1;
                                 .option-loop{
                                     width: 100%;
                                     .each-option{
@@ -463,7 +487,7 @@ export default {
                                             display: flex;
                                             margin-left: 1rem;
                                             p{
-                                                color: white;
+                                                color: $dark-blue;
                                                 font-weight: bold;
                                             }
                                         }

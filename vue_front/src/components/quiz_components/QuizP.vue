@@ -260,7 +260,7 @@ export default {
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
-                    if(Object.keys(this.selectedOrderAnswer).length == this.questions.length){
+                    if(Object.keys(this.selectedOrderAnswer).length == question.answer.length){
                     this.handleShowNextOrFinishButton()
                     }
                 }
