@@ -4,15 +4,15 @@
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
-            <p class="quiz-description title-white">{{ quiz.description }}</p>
-            <div v-if="showResult==false" class='quiz-countainer'>
+            <p class="quiz-description title-white">テスト問題</p>
+            <div v-if="showResult==false&&$store.state.isLoading==false" class='quiz-countainer'>
                 <div
                 class="question-loop"
                 v-for="(question,questionindex) in questions.slice(pagination.a,pagination.b)"
                 v-bind:key="questionindex">
                     <div class='question-wrapper'>
-                        <div class="question-header"><i class='q'>Q</i>第{{ questionLengthCounter }}問</div>
-                        <div class='question-body'>{{ question.label }}</div>
+                        <div class="question-header"><i class='q'>Q</i>第{{ questionLengthForHTML }}問</div>
+                        <div class='question-body'>{{ question.label }}{{ question.quiz_level }}</div>
                     </div>
                     
                     <!-- <div :class='showPic(question.image)'> -->
@@ -76,9 +76,9 @@
                     </div>
                     <div v-if="showNextOrFinishButton&&
                     result==false" class="button-container">
-                        <div v-if="questions.length==questionLengthCounter"
-                         @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div>
-                        <div v-if="questions.length!=questionLengthCounter"
+                        <!-- <div v-if="questions.length==questionLengthCounter"
+                         @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
+                        <div
                          @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
                     </div>
 
@@ -94,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <Result
+            <!-- <Result
             v-if="showResult"
             :SelectedAnswerInfo='SelectedAnswerInfo'
             :question_length='questions.length'
@@ -102,7 +102,7 @@
             @HandleShowResult='HandleShowResult'
             @resultAnswerHandler='resultAnswerHandler'
             @handleResult='handleResult'
-            />
+            /> -->
             <!-- <Result
             v-if="showResult"
             :question_length='questions.length'
@@ -115,6 +115,7 @@
 <script>
 import {mapGetters,mapActions} from 'vuex'
 import Result from '@/components/quiz_components/Result.vue'
+import { createHydrationRenderer } from '@vue/runtime-core'
 
 export default {
     components: {
@@ -122,6 +123,7 @@ export default {
   },  
     data(){
         return{
+            questionLengthForHTML:1,
             questionLengthCounter:1,
             SelectedAnswerInfo:{},
             selectedAnswer: {},
@@ -153,20 +155,27 @@ export default {
             showSelectNum: true,
             selectedOrderAnswer:{},
             selectAnswerCounter:0,
-            NumOfIscorrect:0
+            NumOfIscorrect:0,
+            // from here for test attributes
+            quizTestInfo:{
+                level:'',
+                quizId:4
+            },
+            currentLevel:1,
+            correctAnswer:{}
         }
     },
     created(){
         console.log("created")
         // this.getquiz()
-        this.getquestions()
+        this.getTestQuestions()
     },
     mounted(){
         this.SelectedAnswerInfo = {}
     },
     computed: mapGetters(['questions','quiz']),
     methods:{
-        ...mapActions(['getquestions']),
+        ...mapActions(['getTestQuestions']),
         nextQuestion(questionType){
             this.pagination.a += 1
             this.pagination.b += 1
@@ -175,31 +184,34 @@ export default {
             this.selectAnswerHandler(
                 questionType,
                 )
-            this.NumOfIscorrect = 0
-            this.maxSelectReach = false
-            this.selectedOrderAnswer = {}
-            this.selectedAnswer = {}
-            this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
-            console.log(this.SelectedAnswerInfo)
-            this.scrollTop()
-        },
-        Finish(questionType){
-            this.showResult = true
-            this.result = true
-            this.selectedIndexNum= null
-            this.selectAnswerHandler(
-                questionType,
-                )
+            this.questionLengthForHTML += 1
+            this.checkConsecutiveResult()
             this.NumOfIscorrect = 0
             this.maxSelectReach = false
             this.selectedOrderAnswer = {}
             this.selectedAnswer = {}
+            this.answerIDAndOrder = {}
             this.selectAnswerCounter = 0
             console.log(this.SelectedAnswerInfo)
-            this.resultAnswerHandler()
             this.scrollTop()
         },
+        // Finish(questionType){
+        //     this.showResult = true
+        //     this.result = true
+        //     this.selectedIndexNum= null
+        //     this.selectAnswerHandler(
+        //         questionType,
+        //         )
+        //     this.NumOfIscorrect = 0
+        //     this.maxSelectReach = false
+        //     this.selectedOrderAnswer = {}
+        //     this.selectedAnswer = {}
+        //     this.selectAnswerCounter = 0
+        //     console.log(this.SelectedAnswerInfo)
+        //     this.resultAnswerHandler()
+        //     this.scrollTop()
+        // },
         onClick(answerindex, answer, question){
             // this is for 2 things,
             // first is for controling CSS return selectedIndexNum
@@ -221,8 +233,8 @@ export default {
                     this.handleShowNextOrFinishButton()
                 }
             }else if(question.question_type == 4){
-                if(this.selectedOrderAnswer[answerindex+1]&&
-                this.questions.length>=this.selectAnswerCounter){
+                console.log("in No4 DELETE")
+                if(this.selectedOrderAnswer[answerindex+1]){
                     this.selectedOrderAnswer = 
                     this.changeOrder(this.selectedOrderAnswer,answerindex+1)
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
@@ -230,11 +242,12 @@ export default {
                     this.showNextOrFinishButton = false
                     
                 }else{
+                    console.log("in No4 ADD")
                     this.selectAnswerCounter += 1
                     this.selectedOrderAnswer[answerindex+1] = this.selectAnswerCounter
                     this.getAnswerIDAndOrder(answer.answer_id,this.selectAnswerCounter)
-                    console.log(Object.keys(this.selectedOrderAnswer).length, question.length)
-                    if(Object.keys(this.selectedOrderAnswer).length == this.questions.length){
+                    console.log("Onclick-No4",Object.keys(this.selectedOrderAnswer).length, question.length)
+                    if(Object.keys(this.selectedOrderAnswer).length == question.answer.length){
                     this.handleShowNextOrFinishButton()
                     }
                 }
@@ -336,7 +349,10 @@ export default {
         },
         getAnswerIDAndOrder(answerID,orderNum){
             // this is for collecting answer from questionType 4
+            console.log("GAID")
             if(this.questionLengthCounter in this.answerIDAndOrder){
+                console.log("first-IF TRUE",this.questionLengthCounter, this.answerIDAndOrder)
+                console.log("sono2daze",orderNum, this.answerIDAndOrder[this.questionLengthCounter])
                 if(orderNum in this.answerIDAndOrder[this.questionLengthCounter]){
                     this.answerIDAndOrder[this.questionLengthCounter] =
                     this.changeOrder(this.answerIDAndOrder[this.questionLengthCounter],orderNum)
@@ -488,21 +504,51 @@ export default {
             behavior: "smooth"
             });
         },
-        // resetCurrentQuestionType(){
-        //     this.currentQuestionType.select = false
-        //     this.currentQuestionType.order = false
-        //     this.currentQuestionType.manySelect = false
-        // },
-        // getCurrentQuestionType(currentQuestionType){
-        //     this.resetCurrentQuestionType()
-        //     if(currentQuestionType == 1){
-        //         this.currentQuestionType.select = true
-        //     }else if(currentQuestionType == 2){
-        //         this.currentQuestionType.order = true
-        //     }else if(currentQuestionType == 3){
-        //         this.currentQuestionType.manySelect = true
-        //     }
-        // }
+        // from here for test function
+        checkConsecutiveResult(){
+            var correctCounter = 0
+            console.log('SS',this.SelectedAnswerInfo)
+            if(Object.keys(this.SelectedAnswerInfo).length >= 4){
+                console.log("longer than 4")
+                let num4 = 0
+                num4 = Object.keys(this.SelectedAnswerInfo).length - 4
+                console.log("num4", num4)
+                for (let i = 1; i <= 4; i++){
+                    console.log("forloop",this.SelectedAnswerInfo,this.SelectedAnswerInfo[0] )
+                    if(this.SelectedAnswerInfo[i + num4].isCorrect){
+                        correctCounter += 1
+                    }
+                }
+                if(correctCounter == 4){
+                    console.log('UP')
+                    this.quizTestInfo.level = this.currentLevel + 1
+                    this.currentLevel += 1
+                    this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                    this.getTestQuestions()
+                    this.pagination.a = 0
+                    this.pagination.b = 1
+                    this.SelectedAnswerInfo = {}
+                    correctCounter = 0
+                    this.questionLengthCounter = 1
+                
+                }else if(correctCounter == 0){
+                    if(this.currentLevel==1){
+                        console.log("no more low level")
+                    }else{
+                        console.log('down')
+                        this.quizTestInfo.level = this.currentLevel -1
+                        this.currentLevel -= 1
+                        this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                        this.getTestQuestions()
+                        correctCounter = 0
+                        this.pagination.a = 0
+                        this.pagination.b = 1
+                        this.questionLengthCounter = 1
+                        this.SelectedAnswerInfo = {}
+                    }
+                }
+            }
+        }
     }
 }
 </script>

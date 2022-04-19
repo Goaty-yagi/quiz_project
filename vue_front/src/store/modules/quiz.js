@@ -9,6 +9,7 @@ let getDefaultState = () => {
         quizID: 1,
         numOfQuiz: 3,
         questionField: [1,2],
+        level: 1,
         questions:[],
         quiz:[],
         quizNameId:'',
@@ -49,6 +50,7 @@ export default {
             return array
         },
         setQuestions:(state,questions) => (state.questions = questions),
+        setTestQuestions:(state,questions) => (state.questions = questions),
         getQuiz(state, payload){
             state.quiz = payload
             console.log(state.quiz)
@@ -64,6 +66,10 @@ export default {
             }
             state.numOfQuiz = quizInfo.quizNum
             console.log('GQINFOStore',state.quizID,state.questionField)
+        },
+        getTestQuizInfo(state, quizInfo){
+            state.quizID = quizInfo.quizId
+            state.level = quizInfo.level
         },
         setQuizNameId(state, payload){
             state.quizNameId = payload
@@ -112,6 +118,15 @@ export default {
                 console.log(state.fieldNameId)
                 commit('setIsLoading', false,{root:true})
             }
-        }
+        },
+        async getTestQuestions({ state, commit }){
+            commit('setIsLoading', true, {root:true})
+            let response = await axios.get(`/api/quizzes-tests/?quiz=${state.quizID}&level=${state.level}`)
+            commit('getQuiz',response.data[0])
+            response.data.shift()
+            commit('getRandomQuestion',response.data)
+            commit('setTestQuestions',response.data);
+            commit('setIsLoading', false,{root:true})
+        },
     }
 }
