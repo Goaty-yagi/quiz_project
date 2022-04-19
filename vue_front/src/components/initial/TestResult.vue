@@ -10,7 +10,8 @@
                 <div class='diamond'/>
             </div>
             <div class='text-wrapper'>
-                <p class='text'>初級LV５</p>
+                <p class='text'>{{ finalResult.grade }}</p>
+                <p >LV{{ finalResult.level }}</p>
             </div>
         </div>
         <div class='font-wrapper'>
@@ -22,6 +23,9 @@
 <script>
 
 export default {
+    props:[
+        "finalResult"
+    ],
     mounted(){
         console.log('testresult')
         setTimeout(() =>{
@@ -33,11 +37,7 @@ export default {
 </script>
 
 <style scoped>
-    .testresult-wrapper{
-        /* height: 100vh; */
-        width: 100vw;
-        line-height:initial;
-        padding-top: 3rem;
+.testresult-wrapper{
         
 }
     /* // this is only for i phone5 */

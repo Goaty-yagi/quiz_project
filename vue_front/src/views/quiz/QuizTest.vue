@@ -4,110 +4,118 @@
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
-            <p class="quiz-description title-white">テスト問題</p>
-            <div v-if="showResult==false&&$store.state.isLoading==false" class='quiz-countainer'>
-                <div
-                class="question-loop"
-                v-for="(question,questionindex) in questions.slice(pagination.a,pagination.b)"
-                v-bind:key="questionindex">
-                    <div class='question-wrapper'>
-                        <div class="question-header"><i class='q'>Q</i>第{{ questionLengthForHTML }}問</div>
-                        <div class='question-body'>{{ question.label }}{{ question.quiz_level }}</div>
-                    </div>
-                    
-                    <!-- <div :class='showPic(question.image)'> -->
-                    <div class="image-container" v-if="question.image">
-                        <img class="image" v-bind:src="question.get_image"/>
-                    </div>
+            <div v-if="finishTest==false&&$store.state.isLoading==false">
+                <p class="quiz-description title-white">テスト問題</p>
+                <div v-if="finishTest" class="finishTest">"finishTest is TRUE"{{ finishTest }}</div>
+                <div class='quiz-countainer'>
+                    <div
+                    class="question-loop"
+                    v-for="(question,questionindex) in questions.slice(pagination.a,pagination.b)"
+                    v-bind:key="questionindex">
+                        <div class='question-wrapper'>
+                            <div class="question-header"><i class='q'>Q</i>第{{ questionLengthForHTML }}問</div>
+                            <div class='question-body'>{{ question.label }}{{ question.quiz_level }}</div>
+                        </div>
+                        
+                        <!-- <div :class='showPic(question.image)'> -->
+                        <div class="image-container" v-if="question.image">
+                            <img class="image" v-bind:src="question.get_image"/>
+                        </div>
 
-                    <!-- answer part -->
-                    <!-- questiontype 3 is '選択'
-                    ４ is '並び替え'
-                    5 is '多答' -->
-                    <div class='answer-wrapper'>
-                        <button 
-                        class="answer-loop"
-                        :class="{'selected-answer':selectedIndexNum==answerindex||
-                        answerindex+1 in selectedOrderAnswer,
-                        'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct||
-                        resultHandleDict.answerAllTrueType4||
-                        resultHandleDict.answerIDType4[answer.answer_id],
-                        'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
-                        resultHandleDict.answerIDType5[answer.id]==false||
-                        resultHandleDict.answerIDType4[answer.answer_id]==false}"
-                        @click="e => result==false && onClick(answerindex,answer,question)"
-                        :disabled="maxSelectReach&&answer.id in selectedAnswer==false"
-                        v-for="(answer,answerindex) in question.answer"
-                        v-bind:key="answerindex">
-                            <div class='answer-select-bases'>
-                                <div class="answer-select">
-                                    <div class="selecter">{{ String.fromCharCode(answerindex+65) }}
+                        <!-- answer part -->
+                        <!-- questiontype 3 is '選択'
+                        ４ is '並び替え'
+                        5 is '多答' -->
+                        <div class='answer-wrapper'>
+                            <button 
+                            class="answer-loop"
+                            :class="{'selected-answer':selectedIndexNum==answerindex||
+                            answerindex+1 in selectedOrderAnswer,
+                            'is-correct-answer':resultHandleDict.isCorrect&&answer.is_correct||
+                            resultHandleDict.answerAllTrueType4||
+                            resultHandleDict.answerIDType4[answer.answer_id],
+                            'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
+                            resultHandleDict.answerIDType5[answer.id]==false||
+                            resultHandleDict.answerIDType4[answer.answer_id]==false}"
+                            @click="e => result==false && onClick(answerindex,answer,question)"
+                            :disabled="maxSelectReach&&answer.id in selectedAnswer==false"
+                            v-for="(answer,answerindex) in question.answer"
+                            v-bind:key="answerindex">
+                                <div class='answer-select-bases'>
+                                    <div class="answer-select">
+                                        <div class="selecter">{{ String.fromCharCode(answerindex+65) }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="answer-label-bases">
-                                <div class="answer-label">
-                                    {{ answer.label }}
-                                </div>
-                            </div>
-                            <div class="selected-answer-bases">
-                                <div v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==4" class="selected-answer-order">
-                                    {{ selectedOrderAnswer[answerindex+1] }}
-                                </div>
-                                <div class="result-answer-order">
-                                    <div class="order" v-if="resultHandleDict.questionType4">
-                                        {{ answer.answer_id}}
-                                    </div>
-                                    <div v-if="type3And5CheckResult(resultHandleDict.answerIDType5,resultHandleDict.answerIDType3,answer.id)&&question.question_type!=4">
-                                        <i class="fas fa-check"></i>
+                                <div class="answer-label-bases">
+                                    <div class="answer-label">
+                                        {{ answer.label }}
                                     </div>
                                 </div>
-                                <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
-                                <!-- for result -->
-                                <!-- <i v-if="answer.id in resultHandleDict.answerIDType5&&question.question_type==5" class="fas fa-check"></i> -->
-                                <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
-                                resultHandleDict.answerAllTrueType4||
-                                resultHandleDict.answerIDType4[answer.answer_id]" class="far fa-circle"></i>
-                                <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
-                                resultHandleDict.answerIDType5[answer.id]==false||
-                                resultHandleDict.answerIDType4[answer.answer_id]==false" class="fas fa-times"></i>
-                            </div>
-                        </button>
-                    </div>
-                    <div v-if="showNextOrFinishButton&&
-                    result==false" class="button-container">
-                        <!-- <div v-if="questions.length==questionLengthCounter"
-                         @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
-                        <div
-                         @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
-                    </div>
+                                <div class="selected-answer-bases">
+                                    <div v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==4" class="selected-answer-order">
+                                        {{ selectedOrderAnswer[answerindex+1] }}
+                                    </div>
+                                    <div class="result-answer-order">
+                                        <div class="order" v-if="resultHandleDict.questionType4">
+                                            {{ answer.answer_id}}
+                                        </div>
+                                        <div v-if="type3And5CheckResult(resultHandleDict.answerIDType5,resultHandleDict.answerIDType3,answer.id)&&question.question_type!=4">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                    <i v-if="selectedOrderAnswer[answerindex+1]&&question.question_type==5" class="fas fa-check"></i>
+                                    <!-- for result -->
+                                    <!-- <i v-if="answer.id in resultHandleDict.answerIDType5&&question.question_type==5" class="fas fa-check"></i> -->
+                                    <i v-if="resultHandleDict.isCorrect&&answer.is_correct||
+                                    resultHandleDict.answerAllTrueType4||
+                                    resultHandleDict.answerIDType4[answer.answer_id]" class="far fa-circle"></i>
+                                    <i v-if="resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
+                                    resultHandleDict.answerIDType5[answer.id]==false||
+                                    resultHandleDict.answerIDType4[answer.answer_id]==false" class="fas fa-times"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <div v-if="showNextOrFinishButton&&
+                        result==false" class="button-container">
+                            <!-- <div v-if="questions.length==questionLengthCounter"
+                            @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
+                            <div
+                            @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                        </div>
 
-                    <!-- here for buttun in result -->
-                    <div v-if="result" class="buttun-in-result">
-                        <div v-if="questionLengthCounter!=1" 
-                        @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
-                        <div 
-                        @click="HandleShowResult()"
-                        class="btn-base-black-db-ov">結果画面</div>
-                        <div v-if="questions.length!=questionLengthCounter"
-                        @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                        <!-- here for buttun in result -->
+                        <div v-if="result" class="buttun-in-result">
+                            <div v-if="questionLengthCounter!=1" 
+                            @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
+                            <div 
+                            @click="HandleShowResult()"
+                            class="btn-base-black-db-ov">結果画面</div>
+                            <div v-if="questions.length!=questionLengthCounter"
+                            @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                        </div>
                     </div>
                 </div>
+                <!-- <Result
+                v-if="showResult"
+                :SelectedAnswerInfo='SelectedAnswerInfo'
+                :question_length='questions.length'
+                @handlePagination='handlePagination'
+                @HandleShowResult='HandleShowResult'
+                @resultAnswerHandler='resultAnswerHandler'
+                @handleResult='handleResult'
+                /> -->
+                <!-- <Result
+                v-if="showResult"
+                :question_length='questions.length'
+                :rerultAnswer='rerultAnswer'
+                @show='showDetail'/> -->
+
             </div>
-            <!-- <Result
-            v-if="showResult"
-            :SelectedAnswerInfo='SelectedAnswerInfo'
-            :question_length='questions.length'
-            @handlePagination='handlePagination'
-            @HandleShowResult='HandleShowResult'
-            @resultAnswerHandler='resultAnswerHandler'
-            @handleResult='handleResult'
-            /> -->
-            <!-- <Result
-            v-if="showResult"
-            :question_length='questions.length'
-            :rerultAnswer='rerultAnswer'
-            @show='showDetail'/> -->
+            <TestResult
+            v-if="finishTest"
+            :finalResult="finalResult"
+            />
         </div>
     </div>
 </template>
@@ -115,11 +123,13 @@
 <script>
 import {mapGetters,mapActions} from 'vuex'
 import Result from '@/components/quiz_components/Result.vue'
+import TestResult from '@/components/initial/TestResult.vue'
 import { createHydrationRenderer } from '@vue/runtime-core'
 
 export default {
     components: {
-    Result
+    Result,
+    TestResult
   },  
     data(){
         return{
@@ -161,7 +171,17 @@ export default {
                 level:'',
                 quizId:4
             },
+            LevelCounters:{
+                handleLevelUp:0,
+                handleLevelDown:0
+            },
+            finalResult:{
+                grade:'',
+                level:''
+            },
+            finishTest:false,
             currentLevel:1,
+            currentGrade:"超初級",
             correctAnswer:{}
         }
     },
@@ -507,47 +527,143 @@ export default {
         // from here for test function
         checkConsecutiveResult(){
             var correctCounter = 0
+        
             console.log('SS',this.SelectedAnswerInfo)
             if(Object.keys(this.SelectedAnswerInfo).length >= 4){
-                console.log("longer than 4")
-                let num4 = 0
-                num4 = Object.keys(this.SelectedAnswerInfo).length - 4
-                console.log("num4", num4)
-                for (let i = 1; i <= 4; i++){
-                    console.log("forloop",this.SelectedAnswerInfo,this.SelectedAnswerInfo[0] )
-                    if(this.SelectedAnswerInfo[i + num4].isCorrect){
-                        correctCounter += 1
+                if(Object.keys(this.SelectedAnswerInfo).length == 10){
+                    let isTrue = 0
+                    let isFalse = 0
+                    for (let i = 1; i <= 10; i++){
+                        if(this.SelectedAnswerInfo[i].isCorrect){
+                            isTrue += 1
+                        }else{
+                            isFalse += 1
+                        }
                     }
-                }
-                if(correctCounter == 4){
-                    console.log('UP')
-                    this.quizTestInfo.level = this.currentLevel + 1
-                    this.currentLevel += 1
-                    this.$store.commit('getTestQuizInfo',this.quizTestInfo)
-                    this.getTestQuestions()
-                    this.pagination.a = 0
-                    this.pagination.b = 1
-                    this.SelectedAnswerInfo = {}
-                    correctCounter = 0
-                    this.questionLengthCounter = 1
-                
-                }else if(correctCounter == 0){
-                    if(this.currentLevel==1){
-                        console.log("no more low level")
-                    }else{
-                        console.log('down')
-                        this.quizTestInfo.level = this.currentLevel -1
-                        this.currentLevel -= 1
-                        this.$store.commit('getTestQuizInfo',this.quizTestInfo)
-                        this.getTestQuestions()
-                        correctCounter = 0
-                        this.pagination.a = 0
-                        this.pagination.b = 1
-                        this.questionLengthCounter = 1
-                        this.SelectedAnswerInfo = {}
+                    console.log("isT",isTrue)
+                    console.log("isF",isFalse)
+                    if(isTrue >= 7){
+                        this.LevelCounters.handleLevelUp += 1
+                        this.currentLevel += 1
+                        if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
+                            this.finishTest = true
+                            this.getFinalResult()
+                            this.LevelCounters.handleLevelUp = 0
+                            this.LevelCounters.handleLevelDown = 0
+                        }
+                        else{
+                            this.quizTestInfo.level = this.currentLevel
+                            this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                            this.getTestQuestions()
+                            this.pagination.a = 0
+                            this.pagination.b = 1
+                            this.SelectedAnswerInfo = {}
+                            correctCounter = 0
+                            this.questionLengthCounter = 1
+                        }
+                    }
+                    else{
+                        this.LevelCounters.handleLevelDown += 1
+                        if(this.currentGrade !="超初級"&&this.currentLevel!=1){
+                            this.currentLevel -= 1
+                            if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
+                                this.finishTest = true
+                                this.getFinalResult()
+                                this.LevelCounters.handleLevelUp = 0
+                                this.LevelCounters.handleLevelDown = 0
+                            }
+                            else{
+                                this.quizTestInfo.level = this.currentLevel
+                                this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                                this.getTestQuestions()
+                                correctCounter = 0
+                                this.pagination.a = 0
+                                this.pagination.b = 1
+                                this.questionLengthCounter = 1
+                                this.SelectedAnswerInfo = {}
+                            }
+                        }
+                    }
+                    if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
+                        this.finishTest = true
+                        this.getFinalResult()
+                        this.LevelCounters.handleLevelUp = 0
+                        this.LevelCounters.handleLevelDown = 0
+                    }
+                }else{
+                    console.log("longer than 4")
+                    let num4 = 0
+                    num4 = Object.keys(this.SelectedAnswerInfo).length - 4
+                    for (let i = 1; i <= 4; i++){
+                        console.log("forloop",this.SelectedAnswerInfo)
+                        if(this.SelectedAnswerInfo[i + num4].isCorrect){
+                            correctCounter += 1
+                        }
+                    }
+                    if(correctCounter == 4){
+                        console.log("correct4",this.LevelCounters.handleLevelUp,this.LevelCounters.handleLevelDown)
+                        this.LevelCounters.handleLevelUp += 1
+                        if(this.LevelCounters.handleLevelUp>=3&&this.LevelCounters.handleLevelDown==0){
+                            this.finishTest = true
+                            this.getFinalResult()
+                            this.LevelCounters.handleLevelUp = 0
+                        }else if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown==3){
+                            console.log("quiz done", this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown)
+                            this.finishTest = true
+                            this.getFinalResult()
+                            this.LevelCounters.handleLevelUp = 0
+                            this.LevelCounters.handleLevelDown = 0
+                        }else{
+                            console.log('UP')
+                            this.quizTestInfo.level = this.currentLevel + 1
+                            this.currentLevel += 1
+                            this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                            this.getTestQuestions()
+                            this.pagination.a = 0
+                            this.pagination.b = 1
+                            this.SelectedAnswerInfo = {}
+                            correctCounter = 0
+                            this.questionLengthCounter = 1
+                        }                
+                    }else if(correctCounter == 0){
+                        console.log("zeroCA")
+                        if(this.currentLevel==1){
+                            console.log("no more low level")
+                        }
+                        else{
+                            this.LevelCounters.handleLevelDown += 1
+                            console.log("in down-part",this.LevelCounters.handleLevelUp,this.LevelCounters.handleLevelDown)
+                            if(this.LevelCounters.handleLevelDown>=3&&this.LevelCounters.handleLevelUp==0){
+                                this.finishTest = true
+                                this.getFinalResult()
+                                this.LevelCounters.handleLevelDown = 0
+                            }
+                            else if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown==3){
+                                this.finishTest = true
+                                this.getFinalResult()
+                                this.LevelCounters.handleLevelUp = 0
+                                this.LevelCounters.handleLevelDown = 0
+                            }else{
+                                console.log('down')
+                                this.quizTestInfo.level = this.currentLevel -1
+                                this.currentLevel -= 1
+                                this.$store.commit('getTestQuizInfo',this.quizTestInfo)
+                                this.getTestQuestions()
+                                correctCounter = 0
+                                this.pagination.a = 0
+                                this.pagination.b = 1
+                                this.questionLengthCounter = 1
+                                this.SelectedAnswerInfo = {}
+                            }
+                        }
                     }
                 }
             }
+        },
+        getFinalResult(){
+            console.log("GFR")
+            this.finalResult.grade = this.currentGrade
+            this.finalResult.level = this.currentLevel
         }
     }
 }
@@ -560,6 +676,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     .quiz-countainer{
         width: 100%;
         display: flex;

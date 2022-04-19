@@ -208,6 +208,7 @@ export default {
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
             this.questionLengthCounter += 1
+            this.answerIDAndOrder = {}
             // this. progressBar()
             this.scrollTop()
         },
@@ -223,6 +224,7 @@ export default {
             this.selectedOrderAnswer = {}
             this.selectedAnswer = {}
             this.selectAnswerCounter = 0
+            this.answerIDAndOrder = {}
             this.resultAnswerHandler()
             this.scrollTop()
         },
