@@ -13,7 +13,8 @@ class QuestionListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Question
 		fields = [
-			"id", 
+			"id",
+			"quiz_level",
 			"quiz", 
 			"label", 
 			"image", 

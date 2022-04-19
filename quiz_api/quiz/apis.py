@@ -188,6 +188,34 @@ class QuizApi(APIView):
                 raise Http404
 
 
+class QuizTestApi(APIView):
+    def get(self, request):
+        print("request",request)
+        quiz_id = request.query_params['quiz']
+        num = 10
+        level = request.query_params['level']
+        try:
+            queryset = Question.objects.select_related(
+                'quiz', 
+                'question_type'
+                ).prefetch_related(
+                    'field', 
+                    'status', 
+                    'answer', 
+                    ).filter(quiz_level=level)
+            question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
+            quiz_queryset  = Quiz.objects.filter(
+                id = quiz_id,
+                )
+            print('got quiz_queryset')
+            serializer = QuizFilterSerializer(quiz_queryset, many=True)
+            serializer2 = QuestionListSerializer(question, many=True)
+            union = list(chain(serializer.data, serializer2.data))
+            return Response(union)
+        except Quiz.DoesNotExist:
+            raise Http404
+        
+
     # def get(self, request, format=None):
     #     try:
     #         queryset = Quiz.objects.filter(quiz=request.query_params['quiz'],

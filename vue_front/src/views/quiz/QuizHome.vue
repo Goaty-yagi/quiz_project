@@ -198,6 +198,7 @@ export default {
         },
         closeGrade(){
             this.showEachGrade = false
+            this.optionDict.currentCategory = ''
             this.optionDict.showOption = false
         },
         showOptions(index){

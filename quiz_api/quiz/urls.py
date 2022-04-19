@@ -12,7 +12,8 @@ from quiz.apis import (
   QuizApi,
   QuestionTypeApi,
   QuizNameIdListApi,
-  FieldNameIdListApi)
+  FieldNameIdListApi,
+  QuizTestApi)
 
 
 # router = routers.SimpleRouter()
@@ -33,6 +34,7 @@ from quiz.apis import (
 urlpatterns = [
   path('quizzes/', QuizListApi.as_view()),
   path('quizzes-questions/', QuizApi.as_view()),
+  path('quizzes-tests/', QuizTestApi.as_view()),
   path('quizzes-name-id/', QuizNameIdListApi.as_view()),
   path('questions/', QuestionListApi.as_view()),
   path('question-types/', QuestionTypeApi.as_view()),

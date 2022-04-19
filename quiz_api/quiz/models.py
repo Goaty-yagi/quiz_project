@@ -53,6 +53,7 @@ class QuestionType(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, related_name='question', on_delete=models.CASCADE)
+    quiz_level = models.IntegerField(default=1)
     label = models.CharField(max_length=100)
     image = models.ImageField(upload_to='quizzes/', blank=True, null=True)
     field = models.ManyToManyField(ParentField)
