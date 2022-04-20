@@ -11,7 +11,7 @@
             </div>
             <div class='text-wrapper'>
                 <p class='text'>{{ finalResult.grade }}</p>
-                <p >LV{{ finalResult.level }}</p>
+                <p class='level-text'>Lv,{{ finalResult.level }}</p>
             </div>
         </div>
         <div class='font-wrapper'>
@@ -36,7 +36,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .testresult-wrapper{
         
 }
@@ -180,10 +180,83 @@ export default {
         font-weight: bold;
         margin: 0 auto;
     }
+    .level-text{
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
     .font-wrapper{
         font-size:10rem;
         color:orange;
         margin-top:15rem;
     }
 }
+
+// .testresult-wrapper{
+//     .main-wrapper{
+//         .content-wrapper{
+//             display: flex;
+//             flex-direction: column;
+//             .text-wrapper{
+//                 .result-text{
+//                     color: white;
+//                     font-size: 2.5rem;
+//                     font-weight: bold;
+//                 }
+//                 .result-level-text{
+//                     color: white;
+//                     font-size: 1.5rem;
+//                     font-weight: bold;
+//                 }
+//             }
+//             .diamond-wrapper{
+//                 position:relative;
+//                 display: flex;
+//                 justify-content: center;
+//                 .dwrapper1{
+//                     .diamond-outer{
+//                     border: 7.5rem solid transparent;
+//                     border-bottom: 5.5rem solid orange;
+//                     position: relative;
+//                     top: -5rem;
+//                     width: 0;
+//                     height: 0;
+//                     margin: 0 auto;
+//                     }
+//                     .diamond-outer:after{
+//                         content: '';
+//                         position: absolute;
+//                         left: -7.5rem;
+//                         top: 5.5rem;
+//                         width: 0;
+//                         height: 0;
+//                         border: 7.5rem solid transparent;
+//                         border-top: 5.5rem solid orange;
+//                     }        
+//                 }
+//                 .dwrapper2{
+//                     .diamond{
+//                         width: 0;
+//                         height: 0;
+//                         border: 7rem solid transparent;
+//                         border-bottom: 5rem solid white;
+//                         position: relative;
+//                         top: -17rem;
+//                         margin: 0 auto;
+//                     }
+//                     .diamond:after{
+//                         content: '';
+//                         position: absolute;
+//                         left: -7rem;
+//                         top: 5rem;
+//                         width: 0;
+//                         border: 7rem solid transparent;
+//                         border-top: 5rem solid white;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+        
+// }
+
 </style>

@@ -562,6 +562,12 @@ export default {
                             this.questionLengthCounter = 1
                         }
                     }
+                    else if(isTrue > 4&& isTrue < 7){
+                        this.finishTest = true
+                        this.getFinalResult()
+                        this.LevelCounters.handleLevelUp = 0
+                        this.LevelCounters.handleLevelDown = 0
+                    }
                     else{
                         this.LevelCounters.handleLevelDown += 1
                         if(this.currentGrade !="超初級"&&this.currentLevel!=1){

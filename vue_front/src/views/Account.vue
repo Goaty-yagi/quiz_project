@@ -1,15 +1,6 @@
 <template>
-  <div class="account-wrapper">
-    <!-- <div v-if='emailVerified==false'>
-        <div class='main-notification-wrapper'>
-            <div class='main-notice-wrapper'>
-                <img class='main-image' src="@/assets/logo.png">
-                <p class='main-text1'>メール承認が完了していません。</p>
-                <p class='main-text1'>メール承認を完了してください。</p>
-                <button @click='resent' onclick="disabled = true" class='main-text1'>承認メールを送る。</button>                      
-            </div>
-        </div>
-      </div> -->
+    <div class="account-wrapper">
+    
       <Sent v-show='showSent'/>
       <Thumbnail v-if="showThumbnail"/>
       <div class='account'  v-if='this.$store.state.signup.emailVerified'>
@@ -21,7 +12,17 @@
         <p> Username {{ userData.name}}</p>
         <p> grade {{ userData.grade}}</p>
       </div>
-  </div>
+      <!-- <div v-if='emailVerified==false'>
+        <div class='main-notification-wrapper'>
+            <div class='main-notice-wrapper'>
+                <img class='main-image' src="@/assets/logo.png">
+                <p class='main-text1'>メール承認が完了していません。</p>
+                <p class='main-text1'>メール承認を完了してください。</p>
+                <button @click='resent' onclick="disabled = true" class='main-text1'>承認メールを送る。</button>                      
+            </div>
+        </div>
+      </div> -->
+    </div>
 </template>
 
 <script>
