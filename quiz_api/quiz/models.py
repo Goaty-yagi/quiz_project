@@ -1,5 +1,7 @@
+from email.policy import default
 from django.contrib.auth.models import User
 from django.db import models
+from django.forms import BooleanField, DurationField
 from django.utils.text import slugify
 from django.utils import timezone
 
@@ -39,6 +41,7 @@ class ParentField(models.Model):
 
 class ParentStatus(models.Model):
     name = models.CharField(max_length=100)
+    grade = models.ForeignKey(ParentField, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -87,22 +90,22 @@ class Answer(models.Model):
 # class CorrectAnswer(models.Model):
 #     order = models.IntegerField(default=1)
 
+class UserStatus(models.Model):
+    status = models.ForeignKey(ParentStatus, on_delete=models.CASCADE)
+    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
+    is_correct = models.BooleanField(default=False)
+    is_false = models.BooleanField(default=False)
+    percentage = models.IntegerField(default=0)
+
  
 class QuizTaker(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)
-    completed = models.BooleanField(default=False)
-    data_finished = models.DateTimeField
+    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
+    level = models.IntegerField(default=0)
+    user_status = models.ForeignKey(UserStatus, null=True, on_delete=models.CASCADE)
+    test_take_num = models.IntegerField(default=0)
+    quiz_practice_num = models.IntegerField(default=0)
     
 
     def __str__(self):
         return self.user.email
-
-class UsersAnswer(models.Model):
-    quiz_taker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.quiestion

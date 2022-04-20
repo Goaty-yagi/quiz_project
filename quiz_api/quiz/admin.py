@@ -5,7 +5,6 @@ from .models import (
 	Question, 
 	Answer, 
 	QuizTaker, 
-	UsersAnswer,
 	ParentQuiz,
 	ParentField,
 	ParentStatus,
@@ -33,19 +32,19 @@ class AnswerAdmin(nested_admin.NestedModelAdmin):
 	inlines = [AnswerInline]
 
 
-class UserAnswerInline(admin.TabularInline):
-	model = UsersAnswer
+# class UserAnswerInline(admin.TabularInline):
+# 	model = UsersAnswer
 
 
-class QuizTakerAdmin(admin.ModelAdmin):
-	inlines = [UserAnswerInline,]
+# class QuizTakerAdmin(admin.ModelAdmin):
+# 	inlines = [UserAnswerInline,]
 
 
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Question, AnswerAdmin)
 admin.site.register(Answer)
-admin.site.register(QuizTaker, QuizTakerAdmin)
-admin.site.register(UsersAnswer)
+admin.site.register(QuizTaker)
+# admin.site.register(UsersAnswer)
 admin.site.register(ParentQuiz)
 admin.site.register(ParentField)
 admin.site.register(ParentStatus)
