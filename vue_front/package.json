@@ -9,10 +9,13 @@
   "dependencies": {
     "axios": "^0.24.0",
     "bulma": "^0.9.3",
+    "chart.js": "^3.7.1",
+    "chartjs-plugin-datalabels": "^2.0.0",
     "core-js": "^3.6.5",
     "cropperjs": "^1.5.12",
     "lodash": "^4.17.21",
     "vue": "^3.0.0",
+    "vue-chartjs": "^4.0.5",
     "vue-router": "^4.0.0-0",
     "vue-select": "^4.0.0-beta.3",
     "vue-uuid": "^3.0.0",

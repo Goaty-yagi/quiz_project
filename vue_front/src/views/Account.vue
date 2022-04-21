@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="status-wrapper">
-
+                    <chart></chart>
                 </div>
                 <div class="comunity-account">
                     コミュニティアカウントへ移動
@@ -83,6 +83,7 @@
 import axios from 'axios'
 import 'cropperjs/dist/cropper.css';
 import  Thumbnail from '@/components/account/Thumbnail.vue'
+import  Chart from '@/components/account/Chart.vue'
 import Sent from '@/components/signin/Sent.vue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
@@ -106,7 +107,8 @@ export default{
   },
   components: {
     Sent,
-    Thumbnail
+    Thumbnail,
+    Chart
   },
   mounted(){
     console.log('account mounted',this.$route.params.uid)
@@ -264,7 +266,7 @@ export default{
                 }
             }
             .status-wrapper{
-
+                
             }
             .comunity-account{
                 color: white;
