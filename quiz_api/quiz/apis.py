@@ -2,6 +2,7 @@ from django.db.models import Prefetch
 from django.db.models.query_utils import select_related_descend
 from django.shortcuts import render
 from django.db.models import Prefetch
+from django.db.models import F
 # import django_filters
 from django.db.models import Max
 from itertools import chain
@@ -21,12 +22,10 @@ from quiz.serializers import (
     QuestionTypeSerializer, 
     QuizNameIdListSerializer, 
     FieldNameIdListSerializer, 
+    AnswerCountSerializer,
     )
 
-# class FieldModuleFilterAPI(generics.ListAPIView):
-    # queryset = Quiz.objects.prefetch_related(
-    #     Prefetch("question",queryset=Question.objects.filter(field='analog'), to_attr='filtered_question')
-    # )
+
 class QuestionListApi(APIView):
 # this is for all indicate quiz, field and module
     def get(self, request, format=None):
@@ -128,6 +127,22 @@ class OneQuestionApi(generics.ListAPIView):
     filterset_fields = ['label',]
     pagination_class = None
 
+
+# class AnswerCountApi(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Answer.objects.all()
+#     serializer_class = AnswerCountSerializer
+#     pagination_class = None
+
+
+class AnswerCountApi(APIView):
+    def patch(self, request):
+        print("ACA",request)
+        answer_id = request.query_params['answer']
+        question_id = request.query_params['question']
+        Question.objects.filter(id=question_id).update(taken_num=F('taken_num') + 1)
+        Answer.objects.filter(id=answer_id).update(taken_num=F('taken_num') + 1)
+        return Response("PATCH 200")
+    
 
 class QuizApi(APIView):
     def get(self, request):

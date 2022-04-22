@@ -1,10 +1,35 @@
 from rest_framework import serializers
+from django.db.models import F
 from quiz.models import Quiz, Question, Answer, QuestionType, ParentField
 
 class AnswerListSerializer(serializers.ModelSerializer):
+	# percantage = serializers.SerializerMethodField('get_percentage')
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct",'answer_id']
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num','percantage']
+
+	# def get_percentage(self, obj):
+	# 	answers = Answer.objects.filter(question_id=obj.question.id)
+	# 	print("AOBJ",answers)
+	# 	return 9090
+
+
+class AnswerCountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Answer
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+		# lookup_field = 'id'
+
+
+		# def update(self, instance, validated_data):
+		# 	print("in_update",instance,validated_data)
+		# 	question_id = validated_data.pop('question')
+		# 	# instance.taken_num += 1
+		# 	instance.update(taken_num=F('taken_num') + 1)
+		# 	question = Question.objects.get(id=question_id).update(taken_num=F('taken_num') + 1)
+		# 	instance.save()
+		# 	question.save()
+		
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -24,6 +49,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
 			'status',
 			'correct_answer', 
 			'max_select',
+			'taken_num',
 			'answer']
 
 	# def get_answers_count(self, obj):

@@ -64,6 +64,7 @@ class Question(models.Model):
     status = models.ManyToManyField(ParentStatus, blank=True)
     correct_answer = models.JSONField(blank=True, null=True)
     max_select = models.IntegerField(default=0)
+    taken_num = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     
 
