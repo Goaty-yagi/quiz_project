@@ -69,6 +69,20 @@ class QuestionTypeSerializer(serializers.ModelSerializer):
 		fields = ["id", "name"]
 
 
+class QuizTakerSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = QuestionType
+		fields = [
+			"id", 
+			"user", 
+			"grade", 
+			"level",
+			"user_status",
+			"test_take_num",
+			"practice_take_num"]
+
+
 	# def get_questions_count(self, obj):
 	# 	return obj.question_set.all().count()
 

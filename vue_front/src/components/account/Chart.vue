@@ -1,5 +1,5 @@
 <template>
-    <div class="chart-container">
+    
         <Radar
         :chart-options="chartOptions"
         :chart-data="chartData"
@@ -11,7 +11,7 @@
         :width="width"
         :height="height"
         />
-    </div>
+    
 </template>
 
 <script>
@@ -66,6 +66,8 @@ export default {
     data() {
         Chart.defaults.color = '#fff'
         return {
+            // width should be modify laler
+            width: 375,
             data:[10, 9, 8, 7],
             chartData: {
                 labels: [ 'ひらがな', 'カタカナ', 'ボキャブラリー', 'すうじ' ],
@@ -92,6 +94,7 @@ export default {
             },
             chartOptions: {
                 responsive: false,
+                // maintainAspectRatio: true,
                 plugins: {
                     datalabels: {
                         display: false
@@ -120,10 +123,21 @@ export default {
     },
     mounted(){
         Chart.defaults.font.size = 16
+            // let a = document.getElementsByTagName('canvas')
+            // console.log('a',a)
+            // a.setAttribute('style','padding:1rem')
+        
+        
 
     }
 }
 </script>
 <style scoped lang="scss">
+// canvas{
+//     padding: 20rem;
+// }
+// .chart-container{
+    
+// }
 
 </style>

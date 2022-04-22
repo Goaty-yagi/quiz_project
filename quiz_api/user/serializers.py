@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from user.models import User
-from board.serializers import BoardAnswerReadSerializer, BoardQuestionListSerializer, BoardLikedReadSerializer, AnswerLikedCreateSerializer, UserTagReadSerializer, FavoriteQuestionReadSerializer
+from board.serializers import (
+    BoardAnswerReadSerializer, 
+    BoardQuestionListSerializer, 
+    BoardLikedReadSerializer, 
+    AnswerLikedCreateSerializer, 
+    UserTagReadSerializer, 
+    FavoriteQuestionReadSerializer,
+    )
+from quiz.serializers import QuizTakerSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
@@ -9,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
     user_tag = UserTagReadSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
+    quiz_taker = QuizTakerSerializer(many=True, required=False) #ForeignKey
     
     class Meta:
         model = User
@@ -24,7 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
                   "liked_num",
                   "liked_answer",
                   "user_tag",
-                  "favorite_question"
+                  "favorite_question",
+                  "quiz_taker",
                   ]
         # read_only_field = []
 

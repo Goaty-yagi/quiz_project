@@ -8,7 +8,8 @@ from .models import (
 	ParentQuiz,
 	ParentField,
 	ParentStatus,
-	QuestionType
+	QuestionType,
+	UserStatus
 	)
 
 
@@ -49,4 +50,5 @@ admin.site.register(ParentQuiz)
 admin.site.register(ParentField)
 admin.site.register(ParentStatus)
 admin.site.register(QuestionType)
+admin.site.register(UserStatus)
 

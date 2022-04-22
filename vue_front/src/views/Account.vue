@@ -265,8 +265,8 @@ export default{
                     color: white;
                 }
             }
-            .status-wrapper{
-                
+            .status-wrappe{
+                // padding-top: 10%;
             }
             .comunity-account{
                 color: white;

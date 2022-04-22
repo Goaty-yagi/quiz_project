@@ -102,9 +102,9 @@ class QuizTaker(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
     level = models.IntegerField(default=0)
-    user_status = models.ForeignKey(UserStatus, null=True, on_delete=models.CASCADE)
+    user_status = models.ForeignKey(UserStatus,  default=None ,blank=True, on_delete=models.CASCADE)
     test_take_num = models.IntegerField(default=0)
-    quiz_practice_num = models.IntegerField(default=0)
+    practice_take_num = models.IntegerField(default=0)
     
 
     def __str__(self):
