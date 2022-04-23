@@ -88,9 +88,9 @@
                         <div v-if="showNextOrFinishButton&&
                         result==false" class="button-container">
                             <div v-if="questions.length==questionLengthCounter"
-                            @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div>
+                            @click="Finish(question.question_type,question.id)" class="btn-tr-white-base-sq">FINSH</div>
                             <div v-if="questions.length!=questionLengthCounter"
-                            @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
                         </div>
 
                         <!-- here for buttun in result -->
@@ -159,7 +159,11 @@ export default {
                 answerIDType4: '',
                 answerIDType5: '',
             },
-            
+            countupDict:{
+                answerID:'',
+                questionID:'',
+                questionType:''
+            },
             maxSelectReach: false,
             selectedIndexNum: null,
             showSelectNum: true,
@@ -194,7 +198,8 @@ export default {
     computed: mapGetters(['questions','quiz']),
     methods:{
         ...mapActions(['getquestions']),
-        nextQuestion(questionType){
+        nextQuestion(questionType,questionID){
+            this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
@@ -212,7 +217,8 @@ export default {
             // this. progressBar()
             this.scrollTop()
         },
-        Finish(questionType){
+        Finish(questionType,questionID){
+            this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
             this.showResult = true
             this.result = true
             this.selectedIndexNum= null
@@ -461,6 +467,21 @@ export default {
                     }
                 }
             }
+        },
+        handleCounyUpDict(selectedAnswer,questionType,questionID){
+            this.countupDict.questionType = questionType
+            this.countupDict.questionID = questionID
+            if(questionType == 5){
+                this.countupDict.answerID = Object.keys(selectedAnswer)
+            }else if(questionType == 3){
+                Object.keys(selectedAnswer).forEach(key => {
+                    if(key = "answerID"){
+                        this.countupDict.answerID = selectedAnswer[key]
+                    }
+                })
+            }
+            console.log("HCUD",this.countupDict)
+            this.$store.dispatch('countUpAnswerAndQuestion',this.countupDict)
         },
         handlePagination(a,b){
             // this is for result component

@@ -140,7 +140,8 @@ class AnswerCountApi(APIView):
         answer_id = request.query_params['answer']
         question_id = request.query_params['question']
         Question.objects.filter(id=question_id).update(taken_num=F('taken_num') + 1)
-        Answer.objects.filter(id=answer_id).update(taken_num=F('taken_num') + 1)
+        answer_id_list = answer_id.split(',')
+        Answer.objects.filter(id__in=answer_id_list).update(taken_num=F('taken_num') + 1)
         return Response("PATCH 200")
     
 

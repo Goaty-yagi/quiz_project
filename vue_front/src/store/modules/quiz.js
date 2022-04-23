@@ -7,6 +7,11 @@ let getDefaultState = () => {
     return {
         isLoading: false,
         quizID: 1,
+        countUpDict:{
+            questionID: '',
+            answerID: '',
+            questionType:''
+        },
         numOfQuiz: 3,
         questionField: [1,2],
         level: 1,
@@ -54,6 +59,11 @@ export default {
         getQuiz(state, payload){
             state.quiz = payload
             console.log(state.quiz)
+        },
+        setAnswerAndQuestionID(state,IDs){
+            state.countUpDict.questionID = IDs.questionID
+            state.countUpDict.answerID = IDs.answerID
+            state.countUpDict.questionType = IDs.questionType
         },
         getQuizInfo(state, quizInfo){
             console.log('GQIStore',quizInfo)
@@ -127,6 +137,15 @@ export default {
             commit('getRandomQuestion',response.data)
             commit('setTestQuestions',response.data);
             commit('setIsLoading', false,{root:true})
+        },
+        async countUpAnswerAndQuestion({ state , commit }, payload){
+            // commit('setIsLoading', true, {root:true})
+            commit('setAnswerAndQuestionID',payload)
+            if(state.countUpDict.questionType!=4){
+                await axios.patch(`/api/answers-count/?answer=${state.countUpDict.answerID}&question=${state.countUpDict.questionID}`)
+            }
+            // commit('setIsLoading', false,{root:true})
+            
         },
     }
 }

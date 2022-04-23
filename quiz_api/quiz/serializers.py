@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from django.db.models import F
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField,QuizTaker,UserStatus
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	# percantage = serializers.SerializerMethodField('get_percentage')
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num','percantage']
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
 
 	# def get_percentage(self, obj):
 	# 	answers = Answer.objects.filter(question_id=obj.question.id)
@@ -17,19 +17,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class AnswerCountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
-		# lookup_field = 'id'
-
-
-		# def update(self, instance, validated_data):
-		# 	print("in_update",instance,validated_data)
-		# 	question_id = validated_data.pop('question')
-		# 	# instance.taken_num += 1
-		# 	instance.update(taken_num=F('taken_num') + 1)
-		# 	question = Question.objects.get(id=question_id).update(taken_num=F('taken_num') + 1)
-		# 	instance.save()
-		# 	question.save()
-		
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']		
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -95,10 +83,43 @@ class QuestionTypeSerializer(serializers.ModelSerializer):
 		fields = ["id", "name"]
 
 
+class UserStatusSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = UserStatus
+		fields = [
+			"id",
+			"status",
+			"grade",
+			"is_correct",
+			"is_false",
+			"percentage"]
+
+	# def create(self, validated_data):
+	# 		print('in__create')
+	# 		liked_num_data = validated_data.pop('liked_num')
+	# 		tag_data = validated_data.pop('tag')
+	# 		liked_num_data = {}
+	# 		question = BoardQuestion.objects.create(**validated_data)
+	# 		user = validated_data.pop('user')
+	# 		for tag in tag_data:
+	# 			question.tag.add(tag)
+	# 			if BoardUserTag.objects.filter(tag=tag, user=user).exists():
+	# 				BoardUserTag.objects.update_or_create(
+	# 					tag=tag,
+	# 					user=user,
+	# 					defaults={'used_num':F('used_num') + 1})
+	# 				print("if done")
+	# 			else:
+	# 				BoardUserTag.objects.create(tag=tag, user=user, used_num=1)
+	# 		BoardQuestionLiked.objects.create(question=question, **liked_num_data)
+	# 		return question
+
+
 class QuizTakerSerializer(serializers.ModelSerializer):
 	
 	class Meta:
-		model = QuestionType
+		model = QuizTaker
 		fields = [
 			"id", 
 			"user", 

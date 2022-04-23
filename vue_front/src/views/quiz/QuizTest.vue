@@ -81,7 +81,7 @@
                             <!-- <div v-if="questions.length==questionLengthCounter"
                             @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
                             <div
-                            @click="nextQuestion(question.question_type)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
                         </div>
 
                         <!-- here for buttun in result -->
@@ -141,6 +141,11 @@ export default {
             showResult: false,
             showNextOrFinishButton:false,
             result: false,
+            countupDict:{
+                answerID:'',
+                questionID:'',
+                questionType:''
+            },
             pagination:{
                 a: 0,
                 b: 1,
@@ -196,7 +201,8 @@ export default {
     computed: mapGetters(['questions','quiz']),
     methods:{
         ...mapActions(['getTestQuestions']),
-        nextQuestion(questionType){
+        nextQuestion(questionType,questionID){
+            this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
@@ -497,6 +503,20 @@ export default {
             this.pagination.a = a
             this.pagination.b = b
             this.questionLengthCounter = b
+        },
+        handleCounyUpDict(selectedAnswer,questionType,questionID){
+            this.countupDict.questionType = questionType
+            this.countupDict.questionID = questionID
+            if(questionType == 5){
+                this.countupDict.answerID = Object.keys(selectedAnswer)
+            }else if(questionType == 3){
+                Object.keys(selectedAnswer).forEach(key => {
+                    if(key = "answerID"){
+                        this.countupDict.answerID = selectedAnswer[key]
+                    }
+                })
+            }
+            this.$store.dispatch('countUpAnswerAndQuestion',this.countupDict)
         },
         HandleShowResult(){
             this.showResult = !this.showResult          
