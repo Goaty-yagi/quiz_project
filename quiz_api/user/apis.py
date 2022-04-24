@@ -74,7 +74,12 @@ class UserDetail(generics.RetrieveUpdateAPIView ):
         'liked_num__question__tag',
         'liked_answer',
         'liked_answer__answer',
-        'liked_answer__user')
+        'liked_answer__user',
+        'quiz_taker',
+        'quiz_taker__user',
+        'quiz_taker__grade',
+        'quiz_taker__user_status',
+        )
         # Prefetch('answer', queryset=BoardAnswer.objects.select_related('user', 'question'), to_attr="user_answer"),        
     serializer_class = UserStrageSerializer
     lookup_field = 'UID'

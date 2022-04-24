@@ -133,6 +133,7 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 		print("liked_answer_data:",liked_answer_data)
 		answer = BoardAnswer.objects.create(**validated_data)
 		BoardAnswerLiked.objects.create(answer=answer)
+		print('answer',type(answer))
 		return answer
 
 	# def create(self, validated_data):

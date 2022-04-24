@@ -81,43 +81,63 @@ class QuestionTypeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = QuestionType
 		fields = ["id", "name"]
-
+		
 
 class UserStatusSerializer(serializers.ModelSerializer):
-	
+	# percentage = serializers.SerializerMethodField()
 	class Meta:
 		model = UserStatus
 		fields = [
 			"id",
 			"status",
+			"quiz_taker",
 			"grade",
 			"is_correct",
 			"is_false",
-			"percentage"]
+			"percentage"
+			]
 
-	# def create(self, validated_data):
-	# 		print('in__create')
-	# 		liked_num_data = validated_data.pop('liked_num')
-	# 		tag_data = validated_data.pop('tag')
-	# 		liked_num_data = {}
-	# 		question = BoardQuestion.objects.create(**validated_data)
-	# 		user = validated_data.pop('user')
-	# 		for tag in tag_data:
-	# 			question.tag.add(tag)
-	# 			if BoardUserTag.objects.filter(tag=tag, user=user).exists():
-	# 				BoardUserTag.objects.update_or_create(
-	# 					tag=tag,
-	# 					user=user,
-	# 					defaults={'used_num':F('used_num') + 1})
-	# 				print("if done")
-	# 			else:
-	# 				BoardUserTag.objects.create(tag=tag, user=user, used_num=1)
-	# 		BoardQuestionLiked.objects.create(question=question, **liked_num_data)
-	# 		return question
+	# def get_percentage(self, obj):
+	# 	print("obj",obj[0].is_correct)
+	# 	if obj[0].is_correct==0:
+	# 		return 0
+	# 	elif obj[0].is_false==0:
+	# 		return 10
+	# 	else:
+	# 		return int(obj[0].is_correct / (obj[0].is_false + obj[0].is_correct) * 10)
+
+
+	def create(self, validated_data):
+		is_correct = validated_data.pop('is_correct')
+		is_false = validated_data.pop('is_false')
+		
+		if UserStatus.objects.filter(**validated_data).exists():
+			if is_correct:
+				user_status = UserStatus.objects.filter(**validated_data).update(
+					is_correct=F('is_correct') + 1,
+					percentage=((F('is_correct')+ 1) * 100 / ((F('is_correct')+ 1) + F('is_false'))))
+				
+			elif is_false:
+				user_status = UserStatus.objects.filter(**validated_data).update(
+					is_false=F('is_false') + 1,
+					percentage=((F('is_correct')) * 100 / ((F('is_false')+ 1)+F('is_correct'))))
+		else:
+			if is_correct:
+				user_status = UserStatus.objects.create(
+					**validated_data,
+					is_correct=is_correct,
+					percentage=100)
+			elif is_false:
+				user_status = UserStatus.objects.create(
+					**validated_data,
+					is_false=is_false)
+		return user_status
+		
+		
 
 
 class QuizTakerSerializer(serializers.ModelSerializer):
-	
+	user_status = UserStatusSerializer(many=True, read_only=True, required=False)
 	class Meta:
 		model = QuizTaker
 		fields = [
@@ -128,7 +148,6 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]
-
 
 	# def get_questions_count(self, obj):
 	# 	return obj.question_set.all().count()

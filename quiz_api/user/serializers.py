@@ -19,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     quiz_taker = QuizTakerSerializer(many=True, required=False) #ForeignKey
     
+    
     class Meta:
         model = User
         fields = ["UID",
@@ -46,6 +47,7 @@ class UserStrageSerializer(serializers.ModelSerializer):
     liked_answer = AnswerLikedCreateSerializer(many=True, required=False) #ManyToManyField
     user_tag = UserTagReadSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
+    quiz_taker = QuizTakerSerializer(many=True, required=False) #ForeignKey
     
     class Meta:
         model = User
@@ -59,5 +61,6 @@ class UserStrageSerializer(serializers.ModelSerializer):
                   "liked_num",
                   "liked_answer",
                   "user_tag",
-                  "favorite_question"
+                  "favorite_question",
+                  "quiz_taker"
                   ]

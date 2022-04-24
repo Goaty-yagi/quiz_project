@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker
 from quiz.serializers import (
     QuizListSerializer, 
     QuestionListSerializer, 
@@ -23,6 +23,8 @@ from quiz.serializers import (
     QuizNameIdListSerializer, 
     FieldNameIdListSerializer, 
     AnswerCountSerializer,
+    UserStatusSerializer,
+    QuizTakerSerializer,
     )
 
 
@@ -128,6 +130,14 @@ class OneQuestionApi(generics.ListAPIView):
     pagination_class = None
 
 
+class UserStatusCreateApi(generics.CreateAPIView):
+    queryset = UserStatus.objects.select_related(
+                'quiz_taker', 
+                'status',
+                'grade'
+                )
+    serializer_class = UserStatusSerializer
+    pagination_class = None
 # class AnswerCountApi(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = Answer.objects.all()
 #     serializer_class = AnswerCountSerializer
@@ -296,6 +306,12 @@ class AnswerListApi(generics.ListAPIView):
 class QuestionTypeApi(generics.ListAPIView):
     queryset = QuestionType.objects
     serializer_class = QuestionTypeSerializer
+    pagination_class = None
+
+
+class QuizTakerApi(generics.ListAPIView):
+    queryset = QuizTaker.objects.all()
+    serializer_class = QuizTakerSerializer
     pagination_class = None
     
 

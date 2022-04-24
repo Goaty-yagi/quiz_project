@@ -1,5 +1,5 @@
 from email.policy import default
-from django.contrib.auth.models import User
+from user.models import User
 from django.db import models
 from django.forms import BooleanField, DurationField
 from django.utils.text import slugify
@@ -91,22 +91,26 @@ class Answer(models.Model):
 # class CorrectAnswer(models.Model):
 #     order = models.IntegerField(default=1)
 
-class UserStatus(models.Model):
-    status = models.ForeignKey(ParentStatus, on_delete=models.CASCADE)
-    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(default=False)
-    is_false = models.BooleanField(default=False)
-    percentage = models.IntegerField(default=0)
-
- 
 class QuizTaker(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='quiz_taker', on_delete=models.CASCADE)
     grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
     level = models.IntegerField(default=0)
-    user_status = models.ForeignKey(UserStatus,  default=None ,blank=True, on_delete=models.CASCADE)
+    # user_status = models.ForeignKey(UserStatus, related_name='quiz_taker', default=None ,blank=True, on_delete=models.CASCADE)
     test_take_num = models.IntegerField(default=0)
     practice_take_num = models.IntegerField(default=0)
     
 
     def __str__(self):
         return self.user.email
+
+
+class UserStatus(models.Model):
+    quiz_taker = models.ForeignKey(QuizTaker,default=None ,related_name='user_status', on_delete=models.CASCADE)
+    status = models.ForeignKey(ParentStatus, blank=True ,on_delete=models.CASCADE)
+    grade = models.ForeignKey(ParentQuiz,blank=True, on_delete=models.CASCADE)
+    is_correct = models.IntegerField(default=0)
+    is_false = models.IntegerField(default=0)
+    percentage = models.IntegerField(default=0)
+    
+
+ 
