@@ -12,6 +12,13 @@ let getDefaultState = () => {
             answerID: '',
             questionType:''
         },
+        userStatusDict:{
+            status:'',
+            grade:'',
+            quizTaker:'',
+            isCorrect:0,
+            isFalse:0
+        },
         numOfQuiz: 3,
         questionField: [1,2],
         level: 1,
@@ -33,7 +40,9 @@ export default {
         questions:(state) => state.questions,
         quiz:(state) => state.quiz,
         quizNameId:(state) => state.quizNameId,
-        fieldNameId:(state) => state.fieldNameId
+        fieldNameId:(state) => state.fieldNameId,
+        quizTaker:(state, getters, rootState)=>
+            rootState.signup.djangoUser.quiz_taker[0].id
     },
     mutations:{
         getRandomQuestion(state,array){
@@ -87,6 +96,20 @@ export default {
         setFieldNameId(state, payload){
             state.fieldNameId = payload
         },
+        getUserStatusInfo(state, payload){
+            state.userStatusDict.status = payload.status
+            // state.userStatusDict.grade = payload.grade
+            // state.userStatusDict.quiz_taker = payload.quiz_taker
+            state.userStatusDict.isCorrect = payload.isCorrect
+            state.userStatusDict.isFalse = payload.isFalse
+            console.log("GUSI",state.userStatusDict)
+        },
+        setQuizID(state, payload){
+            state.userStatusDict.grade = payload.name
+        },
+        setQuizTakerID(state, payload){
+            state.userStatusDict.quizTaker = payload
+        },
         // clearQuiz(state, payload){
         //     console.log('in_cleared')
         //     state.questions = []
@@ -95,7 +118,7 @@ export default {
         // }
     },
     actions:{
-        async getquestions({ state, commit }){
+        async getquestions({ state, commit,getters }){
             console.log('action2',state.num)
             state.questions = []
             state.quiz = []
@@ -105,7 +128,10 @@ export default {
             }else{
                 var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}`)
             }
+            console.log(getters.quizTaker)
+            commit('setQuizTakerID',getters.quizTaker)
             commit('getQuiz',response.data[0])
+            commit('setQuizID',response.data[0])
             response.data.shift()
             commit('getRandomQuestion',response.data)
             commit('setQuestions',response.data);
@@ -146,6 +172,21 @@ export default {
             }
             // commit('setIsLoading', false,{root:true})
             
+        },
+        async userStatusPost({ state , commit }, payload){
+            console.log("userStatusPost")
+            commit('getUserStatusInfo',payload)
+            await axios({
+                method: 'post',
+                url: '/api/user-status/',
+                data: {
+                    status: state.userStatusDict.status,
+                    grade: state.userStatusDict.grade,
+                    quiz_taker: state.userStatusDict.quiz_taker,
+                    is_correct: state.userStatusDict.isCorrect,
+                    is_false: state.userStatusDict.isFalse,
+                }
+            })
         },
     }
 }

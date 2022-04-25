@@ -105,8 +105,8 @@ class QuizTaker(models.Model):
 
 
 class UserStatus(models.Model):
-    quiz_taker = models.ForeignKey(QuizTaker,default=None ,related_name='user_status', on_delete=models.CASCADE)
-    status = models.ForeignKey(ParentStatus, blank=True ,on_delete=models.CASCADE)
+    quiz_taker = models.ForeignKey(QuizTaker,default=None, blank=True,null=True ,related_name='user_status', on_delete=models.CASCADE)
+    status = models.ForeignKey(ParentStatus, blank=True,default=None ,on_delete=models.CASCADE)
     grade = models.ForeignKey(ParentQuiz,blank=True, on_delete=models.CASCADE)
     is_correct = models.IntegerField(default=0)
     is_false = models.IntegerField(default=0)

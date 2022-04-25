@@ -9,6 +9,7 @@
             :forQuizPageInfo="forQuizPageInfo"
             @closeStart="closeStart"/>
             <div v-if="startQuiz==false">
+                <!-- {{userStatusDict.status.status[0]}} -->
                 <p class="quiz-description title-white">{{ quiz.description }}</p>
                 <div class="progress-wrapper">
                     <div v-if="result==false" class="progress-bar-outer">
@@ -23,7 +24,7 @@
                     v-bind:key="questionindex">
                         <div class='question-wrapper'>
                             <div class="question-header"><i class='q'>Q</i>第{{ questionLengthCounter }}問</div>
-                            <div class='question-body'>{{ question.label }}</div>
+                            <div class='question-body'>{{ getQuestionStatus(question.label,question.status[0]) }}</div>
                         </div>
                         
                         <!-- <div :class='showPic(question.image)'> -->
@@ -164,6 +165,11 @@ export default {
                 questionID:'',
                 questionType:''
             },
+            userStatusDict:{
+                status:'',
+                isCorrect:0,
+                isFalse:0
+            },
             maxSelectReach: false,
             selectedIndexNum: null,
             showSelectNum: true,
@@ -176,7 +182,8 @@ export default {
         // this.getquiz()
         this.getquestions()
     },
-    mounted(){console.log("mounted QuizP")
+    mounted(){
+        console.log("mounted QuizP")
         this.questionLength = this.questions.length
         this.startQuiz = true
         this.SelectedAnswerInfo = {}
@@ -186,6 +193,7 @@ export default {
         questions:function(v) {
             if(this.questions){
                 this.questionLength = this.questions.length
+                // this.userStatusDict.status = this.questions[0]
             }
         },
         // startQuiz:function(v) {
@@ -324,6 +332,7 @@ export default {
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
                 this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = this.selectedAnswer.isCorrect
+                this.handleUserStatus(this.selectedAnswer.isCorrect)
                 this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
             }
             else if(questionType == 4){
@@ -334,8 +343,10 @@ export default {
                 })
                 if(JSON.stringify(stringKeys) == JSON.stringify(Object.values(this.answerIDAndOrder[this.questionLengthCounter]))){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                    this.handleUserStatus(true)
                 }else{
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                    this.handleUserStatus(false)
                 }
                 this.makeOrderBoolean()
                 this.SelectedAnswerInfo[this.questionLengthCounter]['orderAnswer'] = this.answerIDAndOrder
@@ -347,6 +358,7 @@ export default {
                 Object.values(this.selectedAnswer).forEach(value =>{
                     if(value == false){
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                        this.handleUserStatus(false)
                         type5IsCorrect = false
                     }else{
                         isCorrectCounter += 1
@@ -355,9 +367,11 @@ export default {
                 if(this.NumOfIscorrect == isCorrectCounter&&
                 type5IsCorrect){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                    this.handleUserStatus(true)
                 }else if(type5IsCorrect==false&&
                 isCorrectCounter > 0){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
+                    this.handleUserStatus(false)
                 }
                 this.SelectedAnswerInfo[this.questionLengthCounter]['selectedAnswer'] = this.selectedAnswer
             }
@@ -494,6 +508,24 @@ export default {
         },
         handleResult(){
             this.result = ! this.result
+        },
+        handleUserStatus(selectedAnswer){
+            // this is for only is_true and is_false
+            console.log(selectedAnswer)
+            this.userStatusDict.isCorrect = 0
+            this.userStatusDict.isFalse = 0
+            if(selectedAnswer){
+                this.userStatusDict.isCorrect = 1
+            }else{
+                this.userStatusDict.isFalse = 1
+            }
+            this.$store.dispatch('userStatusPost',this.userStatusDict)
+            console.log('HUS',this.userStatusDict)
+            
+        },
+        getQuestionStatus(lavel,status){
+            this.userStatusDict.status = status
+            return lavel
         },
         resultNext(){
             this.pagination.a += 1 
