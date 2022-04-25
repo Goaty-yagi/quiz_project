@@ -41,7 +41,7 @@ class ParentField(models.Model):
 
 class ParentStatus(models.Model):
     name = models.CharField(max_length=100)
-    grade = models.ForeignKey(ParentField, on_delete=models.CASCADE)
+    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

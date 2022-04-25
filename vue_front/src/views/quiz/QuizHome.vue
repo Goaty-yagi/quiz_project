@@ -143,7 +143,9 @@ export default {
                     },
                 },
                 basic:{
-                    title:[]
+                    title:{
+                        初級道場:"all"
+                    }
                 }
             },
             optionDict:{
@@ -167,7 +169,7 @@ export default {
             },
             quizNum:{
                 general: 3,
-                all: 12,
+                all: 5,
             },
             showEachGrade: false,
             // showEachOptions: false,

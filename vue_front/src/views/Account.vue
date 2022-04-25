@@ -45,7 +45,8 @@
                         </div>
                         <div class="right-side grade-right-side">
                             <div classs="current-level-text">
-                                {{ userData.grade}}
+                                {{ getCurrentGradeNmae(quizTaker.grade)}}
+                                Lv,{{ quizTaker.level }}
                             </div>
                             <div class="max-level">
                                 最大レベル　初級Lv,2
@@ -140,7 +141,7 @@ export default{
             chartData: {
                 labels: [],
                 datasets: [{ 
-                    label: "超初級正解率",
+                    label: "",
                     data: [],
                     borderWidth:1,
                     backgroundColor: 'rgba(255, 153, 51, 0.2)',
