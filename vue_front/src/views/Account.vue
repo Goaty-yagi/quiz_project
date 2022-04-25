@@ -5,6 +5,7 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
+            
             <div class="content-wrapper">
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
@@ -56,7 +57,10 @@
                     </div>
                 </div>
                 <div class="status-wrapper">
-                    <chart></chart>
+                    <chart
+                    v-if="gotInfo"
+                    :chart-data="chartData"
+                    />
                 </div>
                 <div class="comunity-account">
                     コミュニティアカウントへ移動
@@ -87,62 +91,166 @@ import  Chart from '@/components/account/Chart.vue'
 import Sent from '@/components/signin/Sent.vue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import {mapGetters,mapActions} from 'vuex'
+
 export default{
-  setup(){
-    const store = useStore()
-    return{
-      user: computed(() => store.state.signup.user),
-      email: computed(() => store.state.signup.email),
-      password: computed(() => store.state.signup.password),
-      emailVerified: computed(() => store.state.signup.emailVerified),
-    }
-  },
-  data(){
-    return{
-      showSent:false,
-      error:'',
-      userData:'',
-      showThumbnail:false
-    }
-  },
-  components: {
-    Sent,
-    Thumbnail,
-    Chart
-  },
-  mounted(){
-    console.log('account mounted',this.$route.params.uid)
-    this.getUserData()
-  },
-  methods:{
-      async getUserData(){
-          await axios
-            .get(`/api/user/${this.$route.params.uid}`)
-            .then(response => {
-                this.userData = response.data
-                console.log('inGet', this.userData)
-                })
-            .catch(error => {
-                console.log(error)
-                })
+    setup(){
+        const store = useStore()
+        return{
+            user: computed(() => store.state.signup.user),
+            email: computed(() => store.state.signup.email),
+            password: computed(() => store.state.signup.password),
+            emailVerified: computed(() => store.state.signup.emailVerified),
+        }
+    },
+    data(){
+        return{
+            showSent:false,
+            error:'',
+            userData:'',
+            quizTaker:'',
+            showThumbnail:false,
+            gotInfo:false,
+            chartAllData:{
+                '超初級':{
+                    labels:[
+                        'ひらがな', 
+                        'カタカナ', 
+                        'ボキャブラリー', 
+                        'すうじ'
+                        ],
+                },
+                '初級':{
+                    labels:[
+                        '漢字',
+                        'な形容詞',
+                        'い形容詞',
+                        '動詞',
+                        '文法',
+                        'ボキャブラリー',
+                    ],
+                },
+                '中級':{
+                    labels:[],
+                },
+                '上級':{
+                    labels:[],
+                }
             },
-    async resent(){
-          try{
-              await this.$store.dispatch('sendEmailVerify')
-              this.handleShowSent()
-              console.log('showsent:',this.showSent)
-          }catch(err){
-            this.error = err
-            console.log(this.error)
-          }
+            chartData: {
+                labels: [],
+                datasets: [{ 
+                    label: "超初級正解率",
+                    data: [],
+                    borderWidth:1,
+                    backgroundColor: 'rgba(255, 153, 51, 0.2)',
+                    borderColor: ' #ff9933',
+                    pointBackgroundColor: 'rgb(255, 99, 132)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'red'
+                }],
+            },
+        }
     },
-    handleShowSent(){
-      this.showSent = true
+    components: {
+        Sent,
+        Thumbnail,
+        Chart
     },
-    handleShowThumbnail(){
-        this.showThumbnail = true
-    }        
-  }
+    created(){
+        this.getQuizNameId()
+    },
+    // watch:{
+    //     chartData:function(v) {
+    //         if(this.chartData){
+    //             this.gotInfo = true
+    //             console.log("compu",this.chartData)
+    //         }
+    //     },
+    // },
+    computed: mapGetters(['quizNameId']),
+        // returnChartSet(){
+        //     if(this.chartData){
+        //         this.gotInfo = true
+        //         console.log("compu",this.chartData)
+        //         return this.chartData
+        //     }
+        // },
+    mounted(){
+        console.log('account mounted',this.$route.params.uid)
+        this.getUserData()
+    },
+    methods:{
+        ...mapActions(['getQuizNameId']),
+        async getUserData(){
+            await axios
+                .get(`/api/user/${this.$route.params.uid}`)
+                .then(response => {
+                    this.userData = response.data
+                    this.quizTaker = response.data.quiz_taker[0]
+                    console.log('inGet', this.userData,this.userStatus)
+                    this.handleStatusParameter()
+                    this.gotInfo = true
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        async resent(){
+            try{
+                await this.$store.dispatch('sendEmailVerify')
+                this.handleShowSent()
+                console.log('showsent:',this.showSent)
+            }catch(err){
+                this.error = err
+                console.log(this.error)
+            }
+        },
+        handleShowSent(){
+            this.showSent = true
+        },
+        handleShowThumbnail(){
+            this.showThumbnail = true
+        },
+        getCurrentGradeNmae(gradeID){
+            for (let i of this.quizNameId){
+                if(i.id == gradeID){
+                    return i.name
+                }
+            }
+        },
+        handleStatusParameter(){
+            // this is handling chart view.
+            // 1, get quiz_taker from userinfo
+            // 2, get current grade from the quizTaker.
+            // 3, get chart labels which is locally set.
+            // 4, get percentage for each status from user_status from quiz_taker
+            // 5, set the labels and the percentages to chartData to invoke data for chart component
+
+            let tempDict = {}
+            let tempChartAllData = this.chartAllData[this.getCurrentGradeNmae(this.quizTaker.grade)].labels
+            let tempArray = []
+            for(let i of this.quizTaker.user_status){
+                if(i.grade==this.quizTaker.grade){
+                    tempDict[i.status[0]]={"percentage":i.percentage,
+                    'order':i.status[1],
+                    }
+                }
+            // var sort = Object.keys(tempDict).map((k)=>({ key: k, value: tempDict[k] }));
+            }
+            for(let i of tempChartAllData){
+                if(i in tempDict){
+                    tempArray.push(tempDict[i].percentage / 10)
+                }else{
+                    tempArray.push(0)
+                }
+            }
+            this.chartData.labels = tempChartAllData
+            this.chartData.datasets[0].data = tempArray
+            this.gotInfo = true
+        }       
+    }
 }
 </script>
 

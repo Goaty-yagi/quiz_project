@@ -134,10 +134,27 @@ class UserStatusSerializer(serializers.ModelSerializer):
 		return user_status
 		
 		
-
+class UserStatusNameSerializer(serializers.ModelSerializer):
+	# percentage = serializers.SerializerMethodField()
+	class Meta:
+		model = UserStatus
+		fields = [
+			"id",
+			"status",
+			"quiz_taker",
+			"grade",
+			"is_correct",
+			"is_false",
+			"percentage"
+			]
+	
+	def to_representation(self, instance):
+		rep = super(UserStatusNameSerializer, self).to_representation(instance)
+		rep['status'] = [instance.status.name,instance.status.id]
+		return rep
 
 class QuizTakerSerializer(serializers.ModelSerializer):
-	user_status = UserStatusSerializer(many=True, read_only=True, required=False)
+	user_status = UserStatusNameSerializer(many=True, read_only=True, required=False)
 	class Meta:
 		model = QuizTaker
 		fields = [
@@ -148,6 +165,7 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]
+
 
 	# def get_questions_count(self, obj):
 	# 	return obj.question_set.all().count()

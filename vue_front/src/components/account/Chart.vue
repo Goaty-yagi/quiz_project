@@ -2,7 +2,6 @@
     
         <Radar
         :chart-options="chartOptions"
-        :chart-data="chartData"
         :chart-id="chartId"
         :dataset-id-key="datasetIdKey"
         :plugins="plugins"
@@ -34,6 +33,10 @@ export default {
     name: 'Chart',
     components: { Radar },
     props: {
+        chartdata: {
+            type: Object,
+            default: null
+            },
         chartId: {
             type: String,
             default: ''
@@ -44,7 +47,7 @@ export default {
         },
         width: {
             type: Number,
-            default: 400
+            default: 375
         },
         height: {
             type: Number,
@@ -65,40 +68,43 @@ export default {
     },
     data() {
         Chart.defaults.color = '#fff'
+        Chart.defaults.plugins.title.display = false
         return {
             // width should be modify laler
-            width: 375,
-            data:[10, 9, 8, 7],
-            chartData: {
-                labels: [ 'ひらがな', 'カタカナ', 'ボキャブラリー', 'すうじ' ],
-                datasets: [{ 
-                    label: "超初級正解率",
-                    data: [10, 9, 8, 7],
-                    borderWidth:1,
-                    //   fill: true,
-                    //   borderDash: [9],
-                    //   borderDashOffset: 0.9,
-                    //   clip: 'object',
-                    //   order:1,
-                    //   tension:1,
-                    //   spanGaps: true,
-                    //   borderJoinStyle: 'bevel',
-                    //   pointRotation:90,
-                    backgroundColor: 'rgba(255, 153, 51, 0.2)',
-                    borderColor: ' #ff9933',
-                    pointBackgroundColor: 'rgb(255, 99, 132)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'red'
-                }],
-            },
+            
+            
+            // chartData: {
+            //     labels: [ 'ひらがな', 'カタカナ', 'ボキャブラリー', 'すうじ' ],
+            //     datasets: [{ 
+            //         label: "超初級正解率",
+            //         // data: [10, 9, 8.3, 7],
+            //         borderWidth:1,
+            //         //   fill: true,
+            //         //   borderDash: [9],
+            //         //   borderDashOffset: 0.9,
+            //         //   clip: 'object',
+            //         //   order:1,
+            //         //   tension:1,
+            //         //   spanGaps: true,
+            //         //   borderJoinStyle: 'bevel',
+            //         //   pointRotation:90,
+            //         backgroundColor: 'rgba(255, 153, 51, 0.2)',
+            //         borderColor: ' #ff9933',
+            //         pointBackgroundColor: 'rgb(255, 99, 132)',
+            //         pointBorderColor: '#fff',
+            //         pointHoverBackgroundColor: '#fff',
+            //         pointHoverBorderColor: 'red'
+            //     }],
+            // },
             chartOptions: {
-                responsive: false,
-                // maintainAspectRatio: true,
+                responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
                     datalabels: {
                         display: false
-                    }
+                    },
+                    legend: { display: false
+                    },
                 },
                 scales:{
                     r:{
@@ -115,16 +121,18 @@ export default {
                             maxTicksLimit: 3,
                             display: false
                         },
-                
                     }
                 },        
             }
         }
     },
     mounted(){
-        Chart.defaults.font.size = 16
+        // Chart.defaults.plugins.title.display = false
+        // Chart.defaults.plugins = false
+        
+        // Chart.defaults.font.size = 16
             // let a = document.getElementsByTagName('canvas')
-            // console.log('a',a)
+            console.log(Chart.defaults)
             // a.setAttribute('style','padding:1rem')
         
         

@@ -174,7 +174,7 @@ export default {
             
         },
         async userStatusPost({ state , commit }, payload){
-            console.log("userStatusPost")
+            console.log("userStatusPost",state.userStatusDict)
             commit('getUserStatusInfo',payload)
             await axios({
                 method: 'post',
@@ -182,7 +182,7 @@ export default {
                 data: {
                     status: state.userStatusDict.status,
                     grade: state.userStatusDict.grade,
-                    quiz_taker: state.userStatusDict.quiz_taker,
+                    quiz_taker: state.userStatusDict.quizTaker,
                     is_correct: state.userStatusDict.isCorrect,
                     is_false: state.userStatusDict.isFalse,
                 }
