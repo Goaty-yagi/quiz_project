@@ -42,7 +42,9 @@ export default {
         quizNameId:(state) => state.quizNameId,
         fieldNameId:(state) => state.fieldNameId,
         quizTaker:(state, getters, rootState)=>
-            rootState.signup.djangoUser.quiz_taker[0].id
+            rootState.signup.djangoUser.quiz_taker[0].id,
+        quizID:(state, getters, rootState)=>
+            rootState.signup.djangoUser.quiz_taker[0].grade
     },
     mutations:{
         getRandomQuestion(state,array){
@@ -155,10 +157,13 @@ export default {
                 commit('setIsLoading', false,{root:true})
             }
         },
-        async getTestQuestions({ state, commit }){
+        async getTestQuestions({ state, commit, getters }){
+            // need things for non login
             commit('setIsLoading', true, {root:true})
-            let response = await axios.get(`/api/quizzes-tests/?quiz=${state.quizID}&level=${state.level}`)
+            let response = await axios.get(`/api/quizzes-tests/?quiz=${getters.quizID}&level=${state.level}`)
             commit('getQuiz',response.data[0])
+            commit('setQuizTakerID',getters.quizTaker)
+            commit('setQuizID',response.data[0])
             response.data.shift()
             commit('getRandomQuestion',response.data)
             commit('setTestQuestions',response.data);

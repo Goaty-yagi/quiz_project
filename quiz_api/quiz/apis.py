@@ -153,6 +153,17 @@ class AnswerCountApi(APIView):
         answer_id_list = answer_id.split(',')
         Answer.objects.filter(id__in=answer_id_list).update(taken_num=F('taken_num') + 1)
         return Response("PATCH 200")
+
+
+class QuizTakerApi(APIView):
+    def patch(self, request):
+        print("ACA",request)
+        answer_id = request.query_params['answer']
+        question_id = request.query_params['question']
+        Question.objects.filter(id=question_id).update(taken_num=F('taken_num') + 1)
+        answer_id_list = answer_id.split(',')
+        Answer.objects.filter(id__in=answer_id_list).update(taken_num=F('taken_num') + 1)
+        return Response("PATCH 200")
     
 
 class QuizApi(APIView):
@@ -220,6 +231,7 @@ class QuizTestApi(APIView):
         quiz_id = request.query_params['quiz']
         num = 10
         level = request.query_params['level']
+        print('quiz_id',quiz_id)
         try:
             queryset = Question.objects.select_related(
                 'quiz', 
@@ -228,7 +240,7 @@ class QuizTestApi(APIView):
                     'field', 
                     'status', 
                     'answer', 
-                    ).filter(quiz_level=level)
+                    ).filter(quiz_level=level,quiz__name__id=quiz_id)
             question = queryset.filter(id__in=pick_random_object(queryset,num)).order_by('?')
             quiz_queryset  = Quiz.objects.filter(
                 id = quiz_id,

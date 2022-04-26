@@ -14,7 +14,7 @@
                     v-bind:key="questionindex">
                         <div class='question-wrapper'>
                             <div class="question-header"><i class='q'>Q</i>第{{ questionLengthForHTML }}問</div>
-                            <div class='question-body'>{{ question.label }}{{ question.quiz_level }}</div>
+                            <div class='question-body'>{{ getQuestionStatus(question.label,question.status[0]) }}{{ question.quiz_level }}</div>
                         </div>
                         
                         <!-- <div :class='showPic(question.image)'> -->
@@ -171,6 +171,12 @@ export default {
             selectedOrderAnswer:{},
             selectAnswerCounter:0,
             NumOfIscorrect:0,
+            // here for status attribute
+            userStatusDict:{
+                status:'',
+                isCorrect:0,
+                isFalse:0
+            },
             // from here for test attributes
             quizTestInfo:{
                 level:'',
@@ -331,6 +337,7 @@ export default {
                 this.SelectedAnswerInfo[this.questionLengthCounter] = {}
                 this.SelectedAnswerInfo[this.questionLengthCounter]['questionType'] = questionType
                 this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = this.selectedAnswer.isCorrect
+                this.handleUserStatus(this.selectedAnswer.isCorrect)
                 this.SelectedAnswerInfo[this.questionLengthCounter]['answerID'] = this.selectedAnswer.answerID
             }
             else if(questionType == 4){
@@ -341,8 +348,10 @@ export default {
                 })
                 if(JSON.stringify(stringKeys) == JSON.stringify(Object.values(this.answerIDAndOrder[this.questionLengthCounter]))){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                    this.handleUserStatus(true)
                 }else{
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                    this.handleUserStatus(false)
                 }
                 this.makeOrderBoolean()
                 this.SelectedAnswerInfo[this.questionLengthCounter]['orderAnswer'] = this.answerIDAndOrder
@@ -354,6 +363,7 @@ export default {
                 Object.values(this.selectedAnswer).forEach(value =>{
                     if(value == false){
                         this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = false
+                        this.handleUserStatus(false)
                         type5IsCorrect = false
                     }else{
                         isCorrectCounter += 1
@@ -363,9 +373,11 @@ export default {
                 if(this.NumOfIscorrect == isCorrectCounter&&
                 type5IsCorrect){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = true
+                    this.handleUserStatus(true)
                 }else if(type5IsCorrect==false&&
                 isCorrectCounter > 0){
                     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
+                    this.handleUserStatus(false)
                 }
                 // else if(this.maxSelectReach){
                 //     this.SelectedAnswerInfo[this.questionLengthCounter]['isCorrect'] = null
@@ -523,6 +535,24 @@ export default {
         },
         handleResult(){
             this.result = ! this.result
+        },
+        handleUserStatus(selectedAnswer){
+            // this is for only is_true and is_false
+            console.log(selectedAnswer)
+            this.userStatusDict.isCorrect = 0
+            this.userStatusDict.isFalse = 0
+            if(selectedAnswer){
+                this.userStatusDict.isCorrect = 1
+            }else{
+                this.userStatusDict.isFalse = 1
+            }
+            this.$store.dispatch('userStatusPost',this.userStatusDict)
+            console.log('HUS',this.userStatusDict)
+            
+        },
+        getQuestionStatus(lavel,status){
+            this.userStatusDict.status = status
+            return lavel
         },
         resultNext(){
             this.pagination.a += 1 
