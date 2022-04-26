@@ -168,18 +168,7 @@ export default{
   }
 }    
   // here intend to be pablic css
-  #register-button{
-    background: none;
-    color:black;
-    border: 0.1rem solid  $base-color;
-    transition:0.3s;
-  }
-  #register-button:hover{
-    background: $base-color;
-    color:white;
-    font-weight: bold;
-    border: 0.1rem solid  darken($base-color,10%);
-  }
+  
   #color-button{
     background: linear-gradient($base-lite,$base-color);
     color:white;

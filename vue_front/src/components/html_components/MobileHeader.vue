@@ -1,10 +1,10 @@
 <template>
     <div class='mobile-header-wrapper'>
         <div class="mobilemenu-wrapper">
-            <router-link to="/" @click="storeReset" class="nav-mobile-item"><i class="fas fa-home" ></i><p>Home</p></router-link>
+            <router-link :to="{ name: 'Home'}" @click="storeReset" class="nav-mobile-item"><i class="fas fa-home" ></i><p>Home</p></router-link>
             <div @click='getAccount($store.state.signup.user.uid)' class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></div>
-            <router-link to="/board"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Community</p></router-link>
-            <router-link to="quiz-home"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
+            <router-link :to="{ name: 'Community'}"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Community</p></router-link>
+            <router-link :to="{ name: 'QuizHome'}"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
             <router-link to="/"  class="nav-mobile-item"><i class="fas fa-cog"></i><p>その他</p></router-link>
         </div>
     </div>

@@ -5,8 +5,8 @@
     <div class='wrapper'>
       <img class='is-image' src="@/assets/logo.png">
       <p class='home-text'>日本語クイズ</p>
-      unko{{$store.getters.getDjangouser}}
-      {{$store.getters.gettersReply}}    
+      <!-- unko{{$store.getters.getDjangouser}}
+      {{$store.getters.gettersReply}}     -->
       <div  @click="onClick()">
           <button id='or-button' @click='showCompoHandler'>SRART</button>
       </div>
