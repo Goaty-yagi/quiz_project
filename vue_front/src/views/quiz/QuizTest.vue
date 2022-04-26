@@ -121,6 +121,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import {mapGetters,mapActions} from 'vuex'
 import Result from '@/components/quiz_components/Result.vue'
 import TestResult from '@/components/initial/TestResult.vue'
@@ -202,6 +203,8 @@ export default {
         this.getTestQuestions()
     },
     mounted(){
+        // let a = this.$store.commit("convertGradeFromIntToID",'超初級')
+        // console.log('mounted',a)
         this.SelectedAnswerInfo = {}
     },
     computed: mapGetters(['questions','quiz']),
@@ -716,10 +719,18 @@ export default {
                 }
             }
         },
+        async updateQuizTaker(){
+            console.log('UQT',
+            this.$store.state.signup.djangoUser.quiz_taker)
+            this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
+            await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}&grade=${this.$store.state.quiz.gradeForConvert}&level=${this.finalResult.level}`)
+        },
         getFinalResult(){
             console.log("GFR")
             this.finalResult.grade = this.currentGrade
             this.finalResult.level = this.currentLevel
+            console.log(this.finalResult)
+            this.updateQuizTaker()
         }
     }
 }

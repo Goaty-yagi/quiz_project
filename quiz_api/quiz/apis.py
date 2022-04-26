@@ -155,14 +155,15 @@ class AnswerCountApi(APIView):
         return Response("PATCH 200")
 
 
-class QuizTakerApi(APIView):
+class QuizTakerTestPatchApi(APIView):
     def patch(self, request):
-        print("ACA",request)
-        answer_id = request.query_params['answer']
-        question_id = request.query_params['question']
-        Question.objects.filter(id=question_id).update(taken_num=F('taken_num') + 1)
-        answer_id_list = answer_id.split(',')
-        Answer.objects.filter(id__in=answer_id_list).update(taken_num=F('taken_num') + 1)
+        quiz_taker_id = request.query_params['quiz_taker']
+        grade = request.query_params['grade']
+        level = request.query_params['level']
+        QuizTaker.objects.filter(id=quiz_taker_id).update(
+            test_take_num=F('test_take_num') + 1,
+            grade=grade,
+            level=level)
         return Response("PATCH 200")
     
 

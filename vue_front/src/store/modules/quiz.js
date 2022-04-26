@@ -19,6 +19,7 @@ let getDefaultState = () => {
             isCorrect:0,
             isFalse:0
         },
+        gradeForConvert:'',
         numOfQuiz: 3,
         questionField: [1,2],
         level: 1,
@@ -112,6 +113,15 @@ export default {
         setQuizTakerID(state, payload){
             state.userStatusDict.quizTaker = payload
         },
+        convertGradeFromIntToID(state, payload){
+            console.log('CGFITI',state.quizNameId,payload)
+            for(let i of state.quizNameId){
+                console.log('loop',i.name,i.name==payload)
+                if(i.name == payload){
+                    state.gradeForConvert = i.id
+                }
+            }
+        }
         // clearQuiz(state, payload){
         //     console.log('in_cleared')
         //     state.questions = []
