@@ -17,7 +17,8 @@ from quiz.apis import (
   AnswerCountApi,
   UserStatusCreateApi,
   QuizTakerApi,
-  QuizTakerTestPatchApi
+  QuizTakerTestPatchApi,
+  QuizTakerPracticePatchApi
   )
 
 
@@ -50,6 +51,7 @@ urlpatterns = [
   path('answers-count/', AnswerCountApi.as_view()),
   path('quiz-taker/', QuizTakerApi.as_view()),
   path('quiz-taker-test/', QuizTakerTestPatchApi.as_view()),
+  path('quiz-taker-practice/', QuizTakerPracticePatchApi.as_view()),
   path('user-status/', UserStatusCreateApi.as_view()),
   path('field-list/', FieldNameIdListApi.as_view()),
   path('onequestion/', OneQuestionApi.as_view()),

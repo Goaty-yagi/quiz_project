@@ -165,6 +165,15 @@ class QuizTakerTestPatchApi(APIView):
             grade=grade,
             level=level)
         return Response("PATCH 200")
+
+
+class QuizTakerPracticePatchApi(APIView):
+    def patch(self, request):
+        quiz_taker_id = request.query_params['quiz_taker']
+        QuizTaker.objects.filter(id=quiz_taker_id).update(
+            practice_take_num=F('practice_take_num') + 1,
+            )
+        return Response("PATCH 200")
     
 
 class QuizApi(APIView):

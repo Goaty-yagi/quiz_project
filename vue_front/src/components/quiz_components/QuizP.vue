@@ -123,6 +123,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import {mapGetters,mapActions} from 'vuex'
 import Result from '@/components/quiz_components/Result.vue'
 import Start from '@/components/quiz_components/Start.vue'
@@ -227,6 +228,7 @@ export default {
         },
         Finish(questionType,questionID){
             this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
+            this.updateQuizTaker()
             this.showResult = true
             this.result = true
             this.selectedIndexNum= null
@@ -526,6 +528,9 @@ export default {
         getQuestionStatus(lavel,status){
             this.userStatusDict.status = status
             return lavel
+        },
+        async updateQuizTaker(){
+            await axios.patch(`api/quiz-taker-practice/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}`)
         },
         resultNext(){
             this.pagination.a += 1 
