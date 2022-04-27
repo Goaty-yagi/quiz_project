@@ -46,6 +46,9 @@ export default {
         },
         getDjangouser(state){
             return state.djangoUser
+        },
+        getEmailVerified(state){
+            return state.emailVerified
         }
     },
     mutations:{
@@ -89,7 +92,7 @@ export default {
             .then(response => {
                 state.djangoUser = response.data
                 console.log('inDUGet', state.djangoUser)
-                store.dispatch('getFavoriteQuestion')
+                // store.dispatch('getFavoriteQuestion')
                 })
             .catch(error => {
                 console.log(error)

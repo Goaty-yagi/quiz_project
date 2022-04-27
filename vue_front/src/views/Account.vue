@@ -6,7 +6,7 @@
                 <div class="lds-dual-ring"></div>
             </div>
             
-            <div v-if='$store.state.isLoading==false&&this.$store.state.signup.emailVerified' class="content-wrapper">
+            <div v-if='$store.state.isLoading==false' class="content-wrapper">
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
                     <img v-bind:src="userData.thumbnail"/>
@@ -68,21 +68,12 @@
                 </div>
             </div>
         </div>
-    
-      <Sent v-show='showSent'/>
-      <Thumbnail v-if="showThumbnail"
-      @showThumbnailFalse="showThumbnailFalse"
-      @getUserData="getUserData"/>
-      <!-- <div v-if='emailVerified==false'>
-        <div class='main-notification-wrapper'>
-            <div class='main-notice-wrapper'>
-                <img class='main-image' src="@/assets/logo.png">
-                <p class='main-text1'>メール承認が完了していません。</p>
-                <p class='main-text1'>メール承認を完了してください。</p>
-                <button @click='resent' onclick="disabled = true" class='main-text1'>承認メールを送る。</button>                      
-            </div>
-        </div>
-      </div> -->
+        <NotVerified
+        v-if="!emailVerified&&$store.state.isLoading==false"/>
+        <Sent v-show='showSent'/>
+        <Thumbnail v-if="showThumbnail"
+        @showThumbnailFalse="showThumbnailFalse"
+        @getUserData="getUserData"/>
     </div>
 </template>
 
@@ -93,6 +84,7 @@ import 'cropperjs/dist/cropper.css';
 import  Thumbnail from '@/components/account/Thumbnail.vue'
 import  Chart from '@/components/account/Chart.vue'
 import Sent from '@/components/signin/Sent.vue'
+import NotVerified from '@/components/login/NotVerified.vue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import {mapGetters,mapActions} from 'vuex'
@@ -161,7 +153,8 @@ export default{
     components: {
         Sent,
         Thumbnail,
-        Chart
+        Chart,
+        NotVerified
     },
     created(){
         this.getQuizNameId()

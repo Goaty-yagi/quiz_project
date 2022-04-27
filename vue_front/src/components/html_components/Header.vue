@@ -21,7 +21,7 @@
                             <router-link :to="{ name: 'Signup'}" class="nav-item"><i class="fas fa-user-plus"></i>Signup</router-link>
                         </div>
                         <div class="auth" v-if='user'>
-                            <div v-if='emailVerified' @click='getAccount($store.state.signup.user.uid)' class="nav-auth-item"><i class="fas fa-robot"></i>account</div>
+                            <div  @click='getAccount($store.state.signup.user.uid)' class="nav-auth-item"><i class="fas fa-robot"></i>Account</div>
                             <div class="nav-auth-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
                         </div>
                     </div>
@@ -177,8 +177,9 @@ export default {
     }    
 }
 @media(max-width: 428px){
-.header-wrapper{
-    height: 50px;}
+    .header-wrapper{
+        height: 50px;
+    }
 
 }
 

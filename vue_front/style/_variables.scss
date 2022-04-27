@@ -176,6 +176,24 @@ body{
     border: 0.1rem solid  $base-color;
     border-radius:50vh;
 }
+.btn-gray-black-gray-sq{
+    background: rgb(230, 230, 230);
+    color:black;
+    font-weight: bold;
+    border: 0.1rem solid  gray;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.btn-gray-black-gray-sq:hover{
+    background: rgb(238, 238, 238);
+    color: gray;
+    border: 0.1rem solid $dark-blue
+}
 
 
 // input style

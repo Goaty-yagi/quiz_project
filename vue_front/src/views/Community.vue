@@ -122,11 +122,22 @@
 
 <script>
 import axios from 'axios'
+// import { computed } from 'vue'
+// import { useStore } from 'vuex'
 import {router} from "../main.js"
 import  CreateQuestion from '@/components/board/CreateQuestion.vue'
 import  Confirm from '@/components/board/Confirm.vue'
 import  Search from '@/components/board/Search.vue'
 export default {
+    // setup(){
+    //     const store = useStore()
+    //     return{
+    //         user: computed(() => store.state.signup.user),
+    //         email: computed(() => store.state.signup.email),
+    //         password: computed(() => store.state.signup.password),
+    //         emailVerified: computed(() => store.state.signup.emailVerified),
+    //     }
+    // },
     components: {
         CreateQuestion,
         Confirm,
@@ -207,6 +218,9 @@ export default {
         },
         reccomendedQuestion(){
             return this.$store.getters.gettersReccomendedQuestion
+        },
+        emailVerified(){
+            this.$store.getters.getEmailVerified
         },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
