@@ -1,12 +1,12 @@
 <template>
-    <div class="account-wrapper" v-if='this.$store.state.signup.emailVerified'>
+    <div class="account-wrapper">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
             
-            <div class="content-wrapper">
+            <div v-if='$store.state.isLoading==false&&this.$store.state.signup.emailVerified' class="content-wrapper">
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
                     <img v-bind:src="userData.thumbnail"/>
@@ -70,7 +70,9 @@
         </div>
     
       <Sent v-show='showSent'/>
-      <Thumbnail v-if="showThumbnail"/>
+      <Thumbnail v-if="showThumbnail"
+      @showThumbnailFalse="showThumbnailFalse"
+      @getUserData="getUserData"/>
       <!-- <div v-if='emailVerified==false'>
         <div class='main-notification-wrapper'>
             <div class='main-notice-wrapper'>
@@ -162,14 +164,13 @@ export default{
     created(){
         this.getQuizNameId()
     },
-    // watch:{
-    //     chartData:function(v) {
-    //         if(this.chartData){
-    //             this.gotInfo = true
-    //             console.log("compu",this.chartData)
-    //         }
-    //     },
-    // },
+    watch:{
+        userData:function(v) {
+            
+        this.userData = v
+        console.log('hi',v)
+        },
+    },
     computed: mapGetters(['quizNameId']),
         // returnChartSet(){
         //     if(this.chartData){
@@ -185,6 +186,7 @@ export default{
     methods:{
         ...mapActions(['getQuizNameId']),
         async getUserData(){
+            this.$store.commit('setIsLoading', true)
             await axios
                 .get(`/api/user/${this.$route.params.uid}`)
                 .then(response => {
@@ -197,6 +199,7 @@ export default{
                 .catch(error => {
                     console.log(error)
                 })
+                this.$store.commit('setIsLoading', false)
         },
         async resent(){
             try{
@@ -213,6 +216,10 @@ export default{
         },
         handleShowThumbnail(){
             this.showThumbnail = true
+        },
+        showThumbnailFalse(){
+            this.showThumbnail = false
+            console.log('inA',this.showThumbnail)
         },
         getCurrentGradeNmae(gradeID){
             for (let i of this.quizNameId){
@@ -261,6 +268,7 @@ export default{
 .account-wrapper{
     display: flex;
     justify-content: center;
+    height: 120vh;
     .main-wrapper{
         .content-wrapper{
             display: flex;
