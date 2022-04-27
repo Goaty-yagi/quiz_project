@@ -1,5 +1,5 @@
 <template>
-    <div class="account-wrapper">
+    <div class="account-wrapper" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -12,7 +12,7 @@
                     <img v-bind:src="userData.thumbnail"/>
                     <p @click='handleShowThumbnail'>画像を<br>変更する</p>
                 </div>
-                <div class="notification-container">
+                <div v-if="showNotification" class="notification-container">
                     <div class="alert-position-container">
                         <div class="notification-text">
                             お知らせ
@@ -63,7 +63,7 @@
                     :chart-data="chartData"
                     />
                 </div>
-                <div class="comunity-account">
+                <div @click="goCommunityAccount()" class="comunity-account">
                     コミュニティアカウントへ移動
                 </div>
             </div>
@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import {router} from "../main.js"
 import axios from 'axios'
 import 'cropperjs/dist/cropper.css';
 import  Thumbnail from '@/components/account/Thumbnail.vue'
@@ -114,6 +115,7 @@ export default{
             quizTaker:'',
             showThumbnail:false,
             gotInfo:false,
+            showNotification:false,
             chartAllData:{
                 '超初級':{
                     labels:[
@@ -257,7 +259,10 @@ export default{
             this.chartData.labels = tempChartAllData
             this.chartData.datasets[0].data = tempArray
             this.gotInfo = true
-        }       
+        },
+        goCommunityAccount(){
+            router.push("/board/account")
+        },      
     }
 }
 </script>
@@ -268,7 +273,8 @@ export default{
 .account-wrapper{
     display: flex;
     justify-content: center;
-    height: 120vh;
+    min-height: 80vh;
+    // height: 110vh;
     .main-wrapper{
         .content-wrapper{
             display: flex;
@@ -322,6 +328,7 @@ export default{
                 }
             }
             .user-info-wrapper{
+                margin-top: 1rem;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -387,6 +394,16 @@ export default{
             }
             .comunity-account{
                 color: white;
+                cursor : pointer;
+                border: solid rgba(0, 0, 0, 0);
+                padding: 1rem;
+                transition: 0.5s;
+                
+            }
+            .comunity-account:hover{
+                border: solid gray;
+                color: gray; 
+                padding: 1rem;
             }
         }
     }

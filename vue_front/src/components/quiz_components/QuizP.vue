@@ -1,5 +1,5 @@
 <template>
-    <div class="quiz-wrapper">
+    <div class="quiz-wrapper" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
@@ -631,6 +631,7 @@ export default {
 }
 .quiz-wrapper{
     width: 100%;
+    min-height: 80vh;
     display: flex;
     justify-content: center;
     .quiz-countainer{

@@ -176,7 +176,11 @@ export default {
         }
     }    
 }
+@media(max-width: 428px){
+.header-wrapper{
+    height: 50px;}
 
+}
 
   .header-wrapper{
     width:100vw;

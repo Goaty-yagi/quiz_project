@@ -5,7 +5,7 @@
             <div @click='getAccount($store.state.signup.user.uid)' class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></div>
             <router-link :to="{ name: 'Community'}"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Community</p></router-link>
             <router-link :to="{ name: 'QuizHome'}"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
-            <router-link to="/"  class="nav-mobile-item"><i class="fas fa-cog"></i><p>その他</p></router-link>
+            <!-- <router-link to="/"  class="nav-mobile-item"><i class="fas fa-cog"></i><p>その他</p></router-link> -->
         </div>
     </div>
 </template>
@@ -41,7 +41,7 @@ export default {
     border:0.1rem solid white;
     position:flex;
     flex-direction: column;
-    flex-basis:20%;
+    flex-basis:25%;
     padding-left:0.1rem;
     padding-right:0.1rem;
     background: linear-gradient(rgba(91, 117, 159, 0.9),rgba(28, 37, 76, 0.9));
