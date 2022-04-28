@@ -149,19 +149,28 @@
                     </div>
                 </div>
             </div>
-        <Answer v-if='showAnswerPage'
-         @handleShowAnswerPage='handleShowAnswerPage'
-         @getDetail="getDetail"
-         :questionTitle='questionTitle'
-         :questionDescription='questionDescription'
-         :questionId='questionId'
-         />
-        <Reply v-if='showReplyPage'
-         @handleShowReplyPage='handleShowReplyPage'
-         @getDetail="getDetail"
-         :answerId='answerId'
-         :reply="reply"
-         />
+            <transition name="notice">
+                <NotVerified
+                    class="components"
+                    v-if="showEmailVerified"
+                    @handleShowEmailVerified="handleShowEmailVerified"
+                />
+            </transition>
+            <Answer v-if='showAnswerPage'
+            class="components"
+            @handleShowAnswerPage='handleShowAnswerPage'
+            @getDetail="getDetail"
+            :questionTitle='questionTitle'
+            :questionDescription='questionDescription'
+            :questionId='questionId'
+            />
+            <Reply v-if='showReplyPage'
+            class="components"
+            @handleShowReplyPage='handleShowReplyPage'
+            @getDetail="getDetail"
+            :answerId='answerId'
+            :reply="reply"
+            />
         <!-- {{ questions }} -->
         <!-- <div class=question 
          v-for="(question,questionindex) in questions"
@@ -181,12 +190,14 @@
 <script>
 import axios from 'axios'
 import {router} from "../main.js"
+import NotVerified from '@/components/login/NotVerified.vue'
 import  Answer from '@/components/board/Answer.vue'
 import  Reply from '@/components/board/Reply.vue'
 export default {
     components: {
         Answer,
-        Reply
+        Reply,
+        NotVerified,
   },
     data(){
         return{
@@ -214,7 +225,8 @@ export default {
             checkedLikedUserList:[],
             relatedQuestion:'',
             slicedRelatedQuestion:'',
-            questionTags:[]
+            questionTags:[],
+            showEmailVerified:false,
         }
     },
     mounted() {
@@ -224,7 +236,10 @@ export default {
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
-        }
+        },
+        emailVerified(){
+            return this.$store.getters.getEmailVerified
+        },
     },
     methods: {
         async getDetail(slug="") {
@@ -356,7 +371,12 @@ export default {
             }
         },
         handleShowAnswerPage(){
-            this.showAnswerPage = !this.showAnswerPage
+            console.log('clicked')
+            if(this.emailVerified){
+                this.showAnswerPage = !this.showAnswerPage
+            }else{
+                this.handleShowEmailVerified()
+            }
             // this.handleScrollFixed()
         },
         getReply(reply){
@@ -571,6 +591,11 @@ export default {
                 })
                 console.log('done')
         },
+        handleShowEmailVerified(){
+            console.log('V')
+            this.showEmailVerified = !this.showEmailVerified
+            console.log('V',this.showEmailVerified)
+        },
         scrollTop(){
             window.scrollTo({
                 top: 0,
@@ -597,6 +622,9 @@ export default {
 @import "style/_board.scss";
 .scroll{
     position:fixed;
+}
+.components{
+    z-index: 3;
 }
 
 .board-detail-wrapper{

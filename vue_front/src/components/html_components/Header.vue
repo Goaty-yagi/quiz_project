@@ -156,6 +156,8 @@ export default {
                 .auth{
                     display: flex;
                     flex-basis: 40%;
+                    margin-left: 0.5rem;
+                    margin-right: 0.5rem;
                     .nav-auth-item{
                         color:white;
                         flex-basis: 50%;

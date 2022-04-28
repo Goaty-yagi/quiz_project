@@ -38,11 +38,18 @@ export default {
         actionCodeSettings:{
             url: null,
             handleCodeInApp: true
-                }
+        },
+        tempUser: {
+            test: false,
+            statusList:[]
+        },
     },
     getters:{
         getUID(state){
             return state.UID
+        },
+        getUser(state){
+            return state.user
         },
         getDjangouser(state){
             return state.djangoUser
@@ -69,7 +76,9 @@ export default {
         },
         setUser(state,payload){
             state.user = payload
-            state.UID = state.user.uid
+            if(state.user){
+                state.UID = state.user.uid
+            }
             console.log('user state changed:',state.user)
         },
         setAuthIsReady(state,payload){

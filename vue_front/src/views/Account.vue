@@ -69,7 +69,9 @@
             </div>
         </div>
         <NotVerified
-        v-if="!emailVerified&&$store.state.isLoading==false"/>
+        v-if="!emailVerified&&$store.state.isLoading==false"
+        :currentPageName="currentPageName"
+        />
         <Sent v-show='showSent'/>
         <Thumbnail v-if="showThumbnail"
         @showThumbnailFalse="showThumbnailFalse"
@@ -106,6 +108,8 @@ export default{
             userData:'',
             quizTaker:'',
             showThumbnail:false,
+            currentPageName:'',
+            // showEmailVerified:true,
             gotInfo:false,
             showNotification:false,
             chartAllData:{
@@ -176,7 +180,10 @@ export default{
         // },
     mounted(){
         console.log('account mounted',this.$route.params.uid)
+        this.currentPageName = ''
         this.getUserData()
+        this.getCurrentPageName()
+        // this.handleShowEmailVerified()
     },
     methods:{
         ...mapActions(['getQuizNameId']),
@@ -253,6 +260,16 @@ export default{
             this.chartData.datasets[0].data = tempArray
             this.gotInfo = true
         },
+        getCurrentPageName(){
+            let i = this.$route.path
+            i = i.split("/")
+            this.currentPageName = i[1]
+        },
+        // handleShowEmailVerified(){
+        //     if(!this.EmainVerified){}
+        //     this.showEmailVerified = false
+        //     }
+        // },
         goCommunityAccount(){
             router.push("/board/account")
         },      

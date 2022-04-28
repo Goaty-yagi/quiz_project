@@ -93,17 +93,23 @@
                     </div>
                 </div>
             </div>
+            <NotVerified
+            v-if="!emailVerified&&$store.state.isLoading==false"
+            :currentPageName="currentPageName"
+            />
         </div>
     </div>
 </template>
 
 <script>
 import {mapGetters,mapActions} from 'vuex'
+import NotVerified from '@/components/login/NotVerified.vue'
 import QuizP from '@/components/quiz_components/QuizP.vue'
 
 export default {
     components: {
         QuizP,
+        NotVerified,
     },  
     data(){
         return{
@@ -175,9 +181,11 @@ export default {
             // showEachOptions: false,
             receivedKey: '',
             gradeTitle: '',
+            currentPageName:'',
         }
     },
-    computed: mapGetters(['quizNameId','fieldNameId']),
+    computed: mapGetters(['quizNameId','fieldNameId','getEmailVerified']),
+
     created(){
         this.getQuizNameId()
         this.getFieldNameId()
@@ -187,6 +195,7 @@ export default {
     },
     mounted(){
         this.scrollTop()
+        this.getCurrentPageName()
         this.optionDict.currentCategory = ''
         
     },
@@ -286,6 +295,11 @@ export default {
             this.componentHandleDict.quiz = true
             this.componentHandleDict.quizStart = true
             this.allReset()
+        },
+        getCurrentPageName(){
+            let i = this.$route.path
+            i = i.split("/")
+            this.currentPageName = i[1]
         },
         scrollTop(){
             window.scrollTo({

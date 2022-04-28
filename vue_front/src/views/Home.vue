@@ -43,14 +43,14 @@ export default {
   },
   mounted(){
     // this.$store.dispatch("getAnsweredQuestion")
-    this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
+    // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
   },
   methods:{
     unko(){
-      return `/quiz/${this.status}`
+      // return `/quiz/${this.status}`
     },
     onClick(){
-      this.$store.commit('getURLs',this.item)
+      // this.$store.commit('getURLs',this.item)
     },
     showCompoHandler(){
       this.showCompo = !this.showCompo

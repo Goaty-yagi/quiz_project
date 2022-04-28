@@ -9,7 +9,7 @@
             <div class="community-container" v-if="$store.state.isLoading==false">
                 <div class="header-flex">
                     <h1 class='title-white'>質問板</h1>
-                    <i @click="goAccount()" class="fas fa-user user-font"></i>
+                    <i v-if="emailVerified" @click="goAccount()" class="fas fa-user user-font"></i>
                     <i v-if="handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
                     <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
                 </div>
@@ -45,6 +45,12 @@
                         :parentTagDict="parentTagDict"
                         @handleShowConfirm='handleShowConfirm'
                         @handleShowCreateQuestion='handleShowCreateQuestion'/>
+                    <transition name="notice">
+                    <NotVerified
+                        v-if="showEmailVerified"
+                        @handleShowEmailVerified="handleShowEmailVerified"
+                        />
+                    </transition>
                     <Confirm
                         v-if='showConfirm'
                         @handleShowConfirm='handleShowConfirm'
@@ -124,6 +130,7 @@
 import axios from 'axios'
 // import { computed } from 'vue'
 // import { useStore } from 'vuex'
+import NotVerified from '@/components/login/NotVerified.vue'
 import {router} from "../main.js"
 import  CreateQuestion from '@/components/board/CreateQuestion.vue'
 import  Confirm from '@/components/board/Confirm.vue'
@@ -141,7 +148,8 @@ export default {
     components: {
         CreateQuestion,
         Confirm,
-        Search
+        Search,
+        NotVerified
   },
     data(){
         return{
@@ -151,6 +159,7 @@ export default {
             wordList: [],
             parentTagDict:{},       
             showCreateQuestion: false,
+            showEmailVerified: false,
             showConfirm: false,
             scrollFixed: false,
             scroll_position: '100',
@@ -193,6 +202,7 @@ export default {
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
+        this.showEmailVerified = false
         console.log('mounted',this.reccomendedQuestion)
     },
     beforeUnmount(){
@@ -213,6 +223,9 @@ export default {
         user(){
             return this.$store.state.signup.djangoUser
         },
+        roginUser(){
+            return this.$store.state.signup.user
+        },
         notification(){
             return 
         },
@@ -220,28 +233,30 @@ export default {
             return this.$store.getters.gettersReccomendedQuestion
         },
         emailVerified(){
-            this.$store.getters.getEmailVerified
+            return this.$store.getters.getEmailVerified
         },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
-            for(let question2 of this.user.question){
-                if(question2.on_answer==true&&question2.user.UID==this.user.UID){
-                    console.log("onAnswer_dayo")
-                    return true
-                }
-            }
-            console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
-            let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
-            for(let question of answeredQuestion){
-                console.log(question)
-                for(let answer of question.answer){
-                    console.log(answer.id)
-                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                        console.log("onreply_dayo")
-                        return  true
+            if(this.roginUser){
+                for(let question2 of this.user.question){
+                    if(question2.on_answer==true&&question2.user.UID==this.user.UID){
+                        console.log("onAnswer_dayo")
+                        return true
                     }
                 }
-            }return false
+                console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
+                let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
+                for(let question of answeredQuestion){
+                    console.log(question)
+                    for(let answer of question.answer){
+                        console.log(answer.id)
+                        if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                            console.log("onreply_dayo")
+                            return  true
+                        }
+                    }
+                }return false
+            }
             // Object.keys(answeredQuestion).forEach(key =>{
             //     console.log(key)
             //     for(let answer of answeredQuestion[key].answer){
@@ -447,9 +462,16 @@ export default {
         },
         handleShowCreateQuestion(){
             console.log('showCreate')
-            this.showCreateQuestion = !this.showCreateQuestion
-            this.handleScrollFixed()
-            this.a()
+            if(this.emailVerified){
+                this.showCreateQuestion = !this.showCreateQuestion
+                this.handleScrollFixed()
+                this.a()
+            }else{
+                this.handleShowEmailVerified()
+            }
+        },
+        handleShowEmailVerified(){
+            this.showEmailVerified = !this.showEmailVerified
         },
         handleShowConfirm(){
             this.showConfirm = !this.showConfirm
