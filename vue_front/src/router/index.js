@@ -6,6 +6,7 @@ import QuizPractice from '../views/quiz/QuizPractice.vue'
 import QuizHome from '../views/quiz/QuizHome.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/not-found/NotFound.vue'
+import NotFound404 from '../views/not-found/NotFound404.vue'
 import Signup from '../views/Signup.vue'
 import Account from '../views/Account.vue'
 import Login from '../views/Login.vue'
@@ -102,13 +103,13 @@ const routes = [
     path: '/notfound',
     name: 'NotFound',
     component: NotFound,
-    // 
   },
-  // { 
-  //   path: '/:catchAll(.*)',
-  //   name: 'NotFound',
-  //   component: NotFound 
-  // }
+  { 
+    path: '/:catchAll(.*)',
+    name: 'NotFound',
+    component: NotFound,
+    meta:{emailVerified:true}
+  }
 ]
 
 const router = createRouter({

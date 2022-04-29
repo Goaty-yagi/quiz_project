@@ -194,6 +194,46 @@ body{
     color: gray;
     border: 0.1rem solid $dark-blue
 }
+.btn-litegray-black-gray-sq{
+    background: rgb(247, 247, 247);
+    color:black;
+    font-weight: bold;
+    border: 0.1rem solid  gray;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.btn-litegray-black-gray-sq:hover{
+    background: rgb(238, 238, 238);
+    color: gray;
+    border: 0.1rem solid $dark-blue
+}
+
+// close button
+// close-container:{close{ cross-icon}}
+.close-container{
+    // width: inherit;
+    // left:auto;
+    display: flex;
+    justify-content: flex-end;
+    .close{
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 0.2rem solid rgb(180, 179, 179);
+        border-radius: 50vh;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: 0.3rem;
+        margin-right: 0.3rem;
+        color: rgb(172, 172, 172);
+    }
+}
 
 
 // input style
@@ -289,7 +329,7 @@ input[type="text"]:focus {
     opacity: 1 ;
   }
   .notice-enter-active, .notice-leave-active {
-  transition: opacity .5s;
+  transition: opacity .2s;
   }
   
 //   animation for HTML tag

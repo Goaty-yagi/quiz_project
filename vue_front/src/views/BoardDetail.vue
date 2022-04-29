@@ -66,7 +66,9 @@
                             </div>
                         </div>
                     </div>
-                    <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    <div v-if="loginUser">
+                        <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    </div>
                     <!-- <button @click="handleNotifications('reply')" >unko</button> -->
                 </div>
                 <div class="relative-box">
@@ -117,11 +119,13 @@
                             <i v-if="answerDict[answer.id].addedAnswerLiked" class="fas fa-heart"></i>
                             <p class="good"> {{ answerDict[answer.id].liked_num }} </p>
                         </div>
-                        <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
-                         class='btn-base-white-db-sq' 
-                         @click='handleReplyPage(answer.id, answer.description)'>
-                         返信する
-                         </button>
+                        <div v-if="loginUser">
+                            <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
+                            class='btn-base-white-db-sq' 
+                            @click='handleReplyPage(answer.id, answer.description)'>
+                            返信する
+                            </button>
+                        </div>
                         <!-- reply should be appir if post user or replyer -->
                         <div class='reply-wrapper' v-if='answer.reply[0]'>
                             <div>コメント</div>
@@ -136,11 +140,13 @@
                                     </div>
                                 </div>
                                 <p class="replay-description">{{ reply.description }}</p>
-                                <button v-if='$store.state.signup.user.uid==question.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID!=question.user.UID || $store.state.signup.user.uid==answer.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID==question.user.UID'
-                                 class='btn-base-white-db-sq' 
-                                 @click='handleReplyPage(answer.id, reply.description)'>
-                                 返信する
-                                 </button>
+                                <div v-if="loginUser">
+                                    <button v-if='$store.state.signup.user.uid==question.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID!=question.user.UID || $store.state.signup.user.uid==answer.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID==question.user.UID'
+                                    class='btn-base-white-db-sq' 
+                                    @click='handleReplyPage(answer.id, reply.description)'>
+                                    返信する
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class='line-flex'>
@@ -154,6 +160,13 @@
                     class="components"
                     v-if="showEmailVerified"
                     @handleShowEmailVerified="handleShowEmailVerified"
+                />
+            </transition>
+            <transition name="notice">
+                <NotLogin
+                    class="components"
+                    v-if="showNotLogin"
+                    @handleShowNotLogin="handleShowNotLogin"
                 />
             </transition>
             <Answer v-if='showAnswerPage'
@@ -191,6 +204,7 @@
 import axios from 'axios'
 import {router} from "../main.js"
 import NotVerified from '@/components/login/NotVerified.vue'
+import NotLogin from '@/components/login/NotLogin.vue'
 import  Answer from '@/components/board/Answer.vue'
 import  Reply from '@/components/board/Reply.vue'
 export default {
@@ -198,6 +212,7 @@ export default {
         Answer,
         Reply,
         NotVerified,
+        NotLogin
   },
     data(){
         return{
@@ -227,6 +242,7 @@ export default {
             slicedRelatedQuestion:'',
             questionTags:[],
             showEmailVerified:false,
+            showNotLogin: false,
         }
     },
     mounted() {
@@ -236,6 +252,9 @@ export default {
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
+        },
+        loginUser(){
+            return this.$store.state.signup.user
         },
         emailVerified(){
             return this.$store.getters.getEmailVerified
@@ -272,7 +291,10 @@ export default {
                     this.getRelatedQuestion()
                     this.countViewedNumUp()
                     this.favoriteCheck()
-                    })
+                    if(!this.loginUser){
+                        this.$store.commit('setIsLoading', false)
+                    }
+                })
                 .catch(error => {
                     console.log(error)
             })
@@ -317,30 +339,38 @@ export default {
             // relatedQuestion.results Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
-            this.$store.commit('setIsLoading', true)
-            if(this.questionTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
-            }
-            if(this.questionTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&uid=${this.user.UID}`
-            }
-            if(this.questionTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
-            }
-            console.log("url:",url)
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    this.relatedQuestion = response.data
-                    })
+            if(this.loginUser){
+                this.$store.commit('setIsLoading', true)
+                if(this.questionTags.length == 1){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
                 }
-            catch{(error => {
-                    console.log(error)
-            })}
-            this.$store.commit('getRelatedQuestion', this.relatedQuestion.results)
-            this.deleteSameQuestion()
-            this.makeRandomSlicedArray()
-            this.$store.commit('setIsLoading', false)
+                if(this.questionTags.length == 2){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&uid=${this.user.UID}`
+                }
+                if(this.questionTags.length == 3){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
+                }
+                console.log("url:",url)
+                try{
+                    await axios.get(url)
+                        .then(response => {
+                        this.relatedQuestion = response.data
+                        })
+                    }
+                catch{(error => {
+                        console.log(error)
+                })}
+                this.$store.commit('getRelatedQuestion', this.relatedQuestion.results)
+                this.deleteSameQuestion()
+                this.makeRandomSlicedArray()
+                this.$store.commit('setIsLoading', false)
+                    
+            }
+            else{
+                this.relatedQuestion = {}
+                this.relatedQuestion.results = 'unko'
+
+            }
         },
         async createFavorite(){
             await axios({
@@ -353,21 +383,25 @@ export default {
             })
         },
         handleAddedFavorite(){
-            this.addedFavorite=!this.addedFavorite
-            this.createFavorite()
+            if(this.loginUser){
+                this.addedFavorite=!this.addedFavorite
+                this.createFavorite()
+            }else{
+                this.handleShowNotLogin()
+            }
         },
         async countViewedNumUp(){
-            for (let i =0; i < this.question.tag.length; i++){
-                await axios({
-                method: 'post',
-                url: '/api/board/user-tag/create/',
-                data: {
-                    user: this.$store.state.signup.user.uid,
-                    tag: this.question.tag[i].id
-                },
-                
-            })
-
+            if(this.loginUser){
+                for (let i =0; i < this.question.tag.length; i++){
+                    await axios({
+                    method: 'post',
+                    url: '/api/board/user-tag/create/',
+                    data: {
+                        user: this.$store.state.signup.user.uid,
+                        tag: this.question.tag[i].id
+                        },  
+                    })
+                }
             }
         },
         handleShowAnswerPage(){
@@ -419,23 +453,26 @@ export default {
         //     return rValue;
         // },
         makeRandomSlicedArray(){
-            let num = 3
-            console.log("MRSA")
-            if (this.relatedQuestion.results.lendth < 3){
-                num = this.relatedQuestion.results.lendth
+            if(this.loginUser){
+                let num = 3
+                console.log("MRSA")
+                if (this.relatedQuestion.results.lendth < 3){
+                    num = this.relatedQuestion.results.lendth
+                }
+                console.log("MRSA2")
+                this.getRandomQuestion(this.relatedQuestion.results)
+                this.slicedRelatedQuestion = this.relatedQuestion.results.slice(0,num)
+                console.log(this.slicedRelatedQuestion)
             }
-            console.log("MRSA2")
-            this.getRandomQuestion(this.relatedQuestion.results)
-            this.slicedRelatedQuestion = this.relatedQuestion.results.slice(0,num)
-            console.log(this.slicedRelatedQuestion)
         },
         deleteSameQuestion(){
-            for(let q of this.relatedQuestion.results){
-                if (q.id == this.question.id){
-                    this.relatedQuestion.results.splice(this.relatedQuestion.results.indexOf(q),1)
-                    break
+            if(this.loginUser){
+                for(let q of this.relatedQuestion.results){
+                    if (q.id == this.question.id){
+                        this.relatedQuestion.results.splice(this.relatedQuestion.results.indexOf(q),1)
+                        break
+                    }
                 }
-                
             }
         },
         getRandomQuestion(array){
@@ -479,13 +516,17 @@ export default {
             this.$forceUpdate();
         },
         addLikedNum(){
-            this.liked_num += 1
-            this.addedLiked = true
-            for(let i=0; i<this.likedUserIdList.length; i++){
-                this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+            if(this.loginUser){
+                this.liked_num += 1
+                this.addedLiked = true
+                for(let i=0; i<this.likedUserIdList.length; i++){
+                    this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+                }
+                this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
+                this.countUpLiked()
+            }else{
+                this.handleShowNotLogin()
             }
-            this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
-            this.countUpLiked()
         },
         clearAllLiked(){
             this.addedLiked = false
@@ -495,29 +536,33 @@ export default {
         },
         checkUserLiked(){
             // this is for question like
-            this.clearAllLiked()
-            for(let i of this.likedUserIdList){
-                if(i.UID == this.$store.state.signup.user.uid){
-                this.addedLiked = true
-                }
-            }
-            console.log("likedhere",this.addedLiked)
-            // this is for answer like
-            for(let answerId in this.answerDict){
-                // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
-                for( let user of this.answerDict[answerId].likedUsers[0]){
-                    if(user == this.$store.state.signup.user.uid){
-                        this.answerDict[answerId].addedAnswerLiked = true
+            if(this.loginUser){
+                this.clearAllLiked()
+                for(let i of this.likedUserIdList){
+                    if(i.UID == this.$store.state.signup.user.uid){
+                    this.addedLiked = true
                     }
                 }
+                console.log("likedhere",this.addedLiked)
+                // this is for answer like
+                for(let answerId in this.answerDict){
+                    // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
+                    for( let user of this.answerDict[answerId].likedUsers[0]){
+                        if(user == this.$store.state.signup.user.uid){
+                            this.answerDict[answerId].addedAnswerLiked = true
+                        }
+                    }
+                }   
             }
         },
         favoriteCheck(){
-            this.addedFavorite = false
-            for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
-                if(this.question.id==i.id){
-                    this.addedFavorite = true
-                    break
+            if(this.loginUser){
+                this.addedFavorite = false
+                for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
+                    if(this.question.id==i.id){
+                        this.addedFavorite = true
+                        break
+                    }
                 }
             }
         },
@@ -595,6 +640,9 @@ export default {
             console.log('V')
             this.showEmailVerified = !this.showEmailVerified
             console.log('V',this.showEmailVerified)
+        },
+        handleShowNotLogin(){
+            this.showNotLogin = !this.showNotLogin
         },
         scrollTop(){
             window.scrollTo({

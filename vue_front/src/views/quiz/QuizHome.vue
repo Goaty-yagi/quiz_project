@@ -94,7 +94,7 @@
                 </div>
             </div>
             <NotVerified
-            v-if="!emailVerified&&$store.state.isLoading==false"
+            v-if="!getEmailVerified&&$store.state.isLoading==false"
             :currentPageName="currentPageName"
             />
         </div>

@@ -51,6 +51,12 @@
                         @handleShowEmailVerified="handleShowEmailVerified"
                         />
                     </transition>
+                    <transition name="notice">
+                    <NotLogin
+                        v-if="showNotLogin"
+                        @handleShowNotLogin="handleShowNotLogin"
+                        />
+                    </transition>
                     <Confirm
                         v-if='showConfirm'
                         @handleShowConfirm='handleShowConfirm'
@@ -131,6 +137,7 @@ import axios from 'axios'
 // import { computed } from 'vue'
 // import { useStore } from 'vuex'
 import NotVerified from '@/components/login/NotVerified.vue'
+import NotLogin from '@/components/login/NotLogin.vue'
 import {router} from "../main.js"
 import  CreateQuestion from '@/components/board/CreateQuestion.vue'
 import  Confirm from '@/components/board/Confirm.vue'
@@ -149,7 +156,8 @@ export default {
         CreateQuestion,
         Confirm,
         Search,
-        NotVerified
+        NotVerified,
+        NotLogin
   },
     data(){
         return{
@@ -160,6 +168,7 @@ export default {
             parentTagDict:{},       
             showCreateQuestion: false,
             showEmailVerified: false,
+            showNotLogin: false,
             showConfirm: false,
             scrollFixed: false,
             scroll_position: '100',
@@ -462,16 +471,21 @@ export default {
         },
         handleShowCreateQuestion(){
             console.log('showCreate')
-            if(this.emailVerified){
+            if(this.emailVerified&&this.roginUser){
                 this.showCreateQuestion = !this.showCreateQuestion
                 this.handleScrollFixed()
                 this.a()
-            }else{
+            }else if(!this.emailVerified&&this.roginUser){
                 this.handleShowEmailVerified()
+            }else{
+                this.handleShowNotLogin()        
             }
         },
         handleShowEmailVerified(){
             this.showEmailVerified = !this.showEmailVerified
+        },
+        handleShowNotLogin(){
+            this.showNotLogin = !this.showNotLogin
         },
         handleShowConfirm(){
             this.showConfirm = !this.showConfirm
