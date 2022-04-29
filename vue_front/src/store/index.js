@@ -38,6 +38,7 @@ export default createStore({
         "signup.djangoUser",
         "signup.emailVerified",
         "signup.user",
+        "signup.tempUser",
         "signup.UID",
         "board.answeredQuestion",
         "board.reccomendedQuestion",

@@ -17,21 +17,37 @@
         <div class='font-wrapper'>
             <i class="fab fa-angellist"></i>
         </div>
+        <transition name="notice">
+            <Notification
+            v-if="showNotification"/>
+        </transition>
     </div>
 </template>
 
 <script>
-
+import Notification from '@/components/initial/Notification.vue'
 export default {
     props:[
         "finalResult"
     ],
+     components: {
+        Notification,
+  },
+  data(){
+        return{
+            showNotification: false,
+        }
+    },
     mounted(){
         console.log('testresult')
         setTimeout(() =>{
-        // this.$store.commit('testHandler');
-        this.$store.commit('noticeHandler');
+        this.handleShowNotification()
         },3000)
+    },
+    methods:{
+        handleShowNotification(){
+        this.showNotification = !this.showNotification
+    }
     }
 }
 </script>

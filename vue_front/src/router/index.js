@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Quiz from '../views/Quiz.vue'
 import QuizTest from '../views/quiz/QuizTest.vue'
+import QuizTestInit from '../views/quiz/QuizTestInit.vue'
 import QuizPractice from '../views/quiz/QuizPractice.vue'
 import QuizHome from '../views/quiz/QuizHome.vue'
 import Test from '../views/Test.vue'
@@ -38,10 +39,15 @@ const routes = [
   },
   {
     path: '/quiz-test',
-    // path: '/quiz/:id',
     name: 'QuizTest',
     component: QuizTest,
     meta:{login:true}
+  },
+  {
+    path: '/quiz-test-init',
+    name: 'QuizTestInit',
+    component: QuizTestInit,
+    meta:{emailVerified:true}
   },
   {
     path: '/quiz-practice',

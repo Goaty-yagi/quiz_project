@@ -16,14 +16,18 @@
                         <router-link :to="{ name: 'QuizHome'}" class="nav-item "><i class="fas fa-lightbulb"></i><br>Quiz</router-link>
                         <router-link :to="{ name: 'Community'}"  class="nav-item"><i class="far fa-comments"></i>Community</router-link>
                         <!-- <router-link to="/test" class="navbar-item has-text-white"><i class="fab fa-aws"></i>Test</router-link> -->
-                        <div class="auth" v-if='!user'>
+                        <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
+                        <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-item signup"><i class="fas fa-user-plus"></i>Signup</router-link>
+                        <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-item"><i class="fas fa-robot"></i>Account</div>
+                        <div v-if='user' class="nav-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
+                        <!-- <div class="auth" v-if='!user'>
                             <router-link :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
                             <router-link :to="{ name: 'Signup'}" class="nav-item"><i class="fas fa-user-plus"></i>Signup</router-link>
-                        </div>
-                        <div class="auth" v-if='user'>
-                            <div  @click='getAccount($store.state.signup.user.uid)' class="nav-auth-item"><i class="fas fa-robot"></i>Account</div>
-                            <div class="nav-auth-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
-                        </div>
+                        </div> -->
+                        <!-- <div class="auth" v-if='user'>
+                            <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-auth-item"><i class="fas fa-robot"></i>Account</div>
+                            <div v-if='user' class="nav-auth-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
+                        </div> -->
                     </div>
                 </div>
             </nav>
@@ -139,6 +143,7 @@ export default {
                 // .space{
                 //     flex-basis: 50%;
                 // }
+
                 .nav-item{
                     color:white;
                     flex-basis: 20%;
@@ -148,10 +153,20 @@ export default {
                     transition: 0.5s;
                     border: solid rgba(0, 0, 0, 0);
                 }
+                .signup{
+                    border: solid $base-color;
+                    color: $dark-blue;
+                    
+                }
                 .nav-item:hover{
                     color:gray;
                     border: solid gray;
                     box-sizing: inherit;
+                }
+                .signup:hover{
+                    border: solid $dark-blue;
+                    color: white;
+                    // background: $base-lite-3;
                 }
                 .auth{
                     display: flex;

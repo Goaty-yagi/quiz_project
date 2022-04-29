@@ -37,7 +37,7 @@ export default {
             this.$store.commit('reset')
         },
         getURL(){
-            this.$router.push(this.$store.state.randomURL)
+            this.$router.push('/quiz-test-init')
             this.$store.commit('noticeOff')     
         },
         getClass(){

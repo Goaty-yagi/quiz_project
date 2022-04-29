@@ -24,7 +24,8 @@
             <div class='mobile-header'>
           <MobileHeader/>
         </div>
-        <Footer/>
+        <Footer
+        id="footer"/>
           <!-- <Footer
           v-if='!this.$router.path==quizurl'
           /> -->
@@ -111,6 +112,12 @@ export default{
    position:absolute;
 
 }
+#router{
+  min-height: 100vh;
+}
+// #footer{
+//   margin-bottom: 1rem;
+// }
 .main-header{
   position:relative;
   bottom:0;

@@ -41,7 +41,7 @@ export default {
         },
         tempUser: {
             test: false,
-            statusList:[]
+            statusList:''
         },
     },
     getters:{
@@ -85,13 +85,22 @@ export default {
             state.authIsReady = payload
             console.log('setauth is changed:',state.user)
         },
+        setDjangoUser(state,payload){
+            state.djangoUser = payload
+            console.log('get Django user',state.djangoUser)
+        },
         emailVerifiedHandler(state,payload){
             state.emailVerified = payload
             console.log('emailV chainged',state.emailVerified)
         },
         checkEmailHandler(state,payload){
             state.checkedEmail = payload
-        }
+        },
+        setTempUser(state,payload){
+            state.tempUser.test = true
+            state.tempUser.statusList = payload
+            console.log('set-temp-user', state.tempUser)
+        },
     },
     actions:{
         async getDjangoUser({ state, getters,commit }){
@@ -99,7 +108,7 @@ export default {
             await axios
             .get(`/api/user/${getters.getUID}`)
             .then(response => {
-                state.djangoUser = response.data
+                commit('setDjangoUser',response.data)
                 console.log('inDUGet', state.djangoUser)
                 // store.dispatch('getFavoriteQuestion')
                 })

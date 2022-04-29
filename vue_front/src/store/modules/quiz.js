@@ -42,10 +42,20 @@ export default {
         quiz:(state) => state.quiz,
         quizNameId:(state) => state.quizNameId,
         fieldNameId:(state) => state.fieldNameId,
-        quizTaker:(state, getters, rootState)=>
-            rootState.signup.djangoUser.quiz_taker[0].id,
-        quizID:(state, getters, rootState)=>
-            rootState.signup.djangoUser.quiz_taker[0].grade
+        quizTaker(state, getters, rootState){
+            try{
+                return rootState.signup.djangoUser.quiz_taker[0].id
+            }catch{
+                return null
+            }
+        },
+        quizID(state, getters, rootState){
+            try{
+                return rootState.signup.djangoUser.quiz_taker[0].grade
+            }catch{
+                return null
+            }
+        }
     },
     mutations:{
         getRandomQuestion(state,array){
@@ -169,15 +179,25 @@ export default {
         },
         async getTestQuestions({ state, commit, getters }){
             // need things for non login
-            commit('setIsLoading', true, {root:true})
-            let response = await axios.get(`/api/quizzes-tests/?quiz=${getters.quizID}&level=${state.level}`)
-            commit('getQuiz',response.data[0])
-            commit('setQuizTakerID',getters.quizTaker)
-            commit('setQuizID',response.data[0])
-            response.data.shift()
-            commit('getRandomQuestion',response.data)
-            commit('setTestQuestions',response.data);
-            commit('setIsLoading', false,{root:true})
+            if(getters.quizID!=null){
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get(`/api/quizzes-tests/?quiz=${getters.quizID}&level=${state.level}`)
+                commit('getQuiz',response.data[0])
+                commit('setQuizTakerID',getters.quizTaker)
+                commit('setQuizID',response.data[0])
+                response.data.shift()
+                commit('getRandomQuestion',response.data)
+                commit('setTestQuestions',response.data);
+                commit('setIsLoading', false,{root:true})
+            }else{
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get(`/api/quizzes-tests/?quiz=4&level=${state.level}`)
+                commit('getQuiz',response.data[0])
+                response.data.shift()
+                commit('getRandomQuestion',response.data)
+                commit('setTestQuestions',response.data);
+                commit('setIsLoading', false,{root:true})
+            }
         },
         async countUpAnswerAndQuestion({ state , commit }, payload){
             // commit('setIsLoading', true, {root:true})
