@@ -2,7 +2,8 @@
   <div id="wrapper">
     <div class="wrapper2">
       
-       <Header/>
+       <Header
+       id="header"/>
       
       
       
@@ -112,6 +113,11 @@ export default{
    position:absolute;
 
 }
+#header{
+    position: fixed;
+    top: 0;
+    left: 0;
+}
 #router{
   min-height: 100vh;
 }
@@ -124,6 +130,7 @@ export default{
 }
 .main-section{
   // background: linear-gradient(#5B759F,#1C254C);
+  margin-top: 100px;
   width: 100vw;
   height:90vh;
 
@@ -231,7 +238,7 @@ export default{
       .form-error{
         border: solid red;
       }
-@media(min-width: 428px){
+@media(min-width: 630px){
   .mobile-header{
     display:none;
   }

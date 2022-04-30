@@ -2,34 +2,26 @@
     <div class="header-wrapper">
         <template v-if='authIsReady' >
             <nav class="navbar-container">
-                <div v-if="showBrand" class="nav-brand">
+                <div class="nav-brand">
                     <a class="nav-brand-wrapper">
                         <router-link @click="storeReset" to="/" >
                             <img src="@/assets/logo.png">
                         </router-link>
                     </a>
-                </div>      
-                <div v-if="handleWidthAndHeight" class='nav-menu-flex' :class="{'is-active': showMobileMenu }">
-                    <div class="nav-menu" @click="showMobileMenu =false">
-                        <div class="space"></div>
-                        <router-link :to="{ name: 'Home'}" @click="storeReset" class="nav-item"><i class="fas fa-home" ></i><br>Home</router-link>
-                        <router-link :to="{ name: 'QuizHome'}" class="nav-item "><i class="fas fa-lightbulb"></i><br>Quiz</router-link>
-                        <router-link :to="{ name: 'Community'}"  class="nav-item"><i class="far fa-comments"></i>Community</router-link>
-                        <!-- <router-link to="/test" class="navbar-item has-text-white"><i class="fab fa-aws"></i>Test</router-link> -->
-                        <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
-                        <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-item signup"><i class="fas fa-user-plus"></i>Signup</router-link>
-                        <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-item"><i class="fas fa-robot"></i>Account</div>
-                        <div v-if='user' class="nav-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
-                        <!-- <div class="auth" v-if='!user'>
-                            <router-link :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
-                            <router-link :to="{ name: 'Signup'}" class="nav-item"><i class="fas fa-user-plus"></i>Signup</router-link>
-                        </div> -->
-                        <!-- <div class="auth" v-if='user'>
-                            <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-auth-item"><i class="fas fa-robot"></i>Account</div>
-                            <div v-if='user' class="nav-auth-item" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
-                        </div> -->
-                    </div>
                 </div>
+                <div class="handle-show">
+                    <div class='nav-menu-flex'>
+                        <div class="nav-menu" @click="showMobileMenu =false">
+                            <router-link :to="{ name: 'Home'}" @click="storeReset" class="nav-item"><i class="fas fa-home" ></i>Home</router-link>
+                            <router-link :to="{ name: 'QuizHome'}" class="nav-item "><i class="fas fa-lightbulb"></i>Quiz</router-link>
+                            <router-link :to="{ name: 'Community'}"  class="nav-item"><i class="far fa-comments fas"></i>Community</router-link>
+                            <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
+                            <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-item signup"><i class="fas fa-user-plus"></i>Signup</router-link>
+                            <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-item"><i class="fas fa-robot"></i>Account</div>
+                            <div v-if='user' class="nav-item last" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
+                        </div>
+                    </div>
+                </div>     
             </nav>
         </template>
     </div>
@@ -65,29 +57,29 @@ export default {
     //   authIsReady: function(){this.$store.state.signup.authIsReady}
     // //   authIsReady(() => this.$store.state.signup.authIsReady)
     },
-    watch:{
-        width:function(v) {
-            if(this.width > 427){
-                this.handleWidthAndHeight = true
-                this.showBrand = false
-                console.log(this.handleWidthAndHeight)
-                if(this.width > 800){
-                this.showBrand = true
-                }
-            }else{
-                this.handleWidthAndHeight = false
-                this.showBrand = true
-            }
-        }
-    },
+    // watch:{
+    //     width:function(v) {
+    //         if(this.width > 427){
+    //             this.handleWidthAndHeight = true
+    //             this.showBrand = false
+    //             console.log(this.handleWidthAndHeight)
+    //             if(this.width > 630){
+    //             this.showBrand = true
+    //             }
+    //         }else{
+    //             this.handleWidthAndHeight = false
+    //             this.showBrand = true
+    //         }
+    //     }
+    // },
     mounted(){
-        this.width = window.innerWidth
-        this.height = window.innerHeight;
-        window.addEventListener('resize', this.handleResize)
-      console.log('mounted-header',this.width,this.height)
+    //     this.width = window.innerWidth
+    //     this.height = window.innerHeight;
+    //     window.addEventListener('resize', this.handleResize)
+    //   console.log('mounted-header',this.width,this.height)
     },
     beforeUnmount(){
-        window.removeEventListener('resize', this.handleResize)      
+        // window.removeEventListener('resize', this.handleResize)      
     },
     methods:{
     storeReset(){
@@ -101,11 +93,11 @@ export default {
       // this.$router.push('/')
       // this.$router.go({path: '/', force: true})
     },
-    handleResize(){
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        console.log('width:',this.width,'height:',this.height)
-    }
+    // handleResize(){
+    //     this.width = window.innerWidth;
+    //     this.height = window.innerHeight;
+    //     console.log('width:',this.width,'height:',this.height)
+    // }
   }
 }
 </script>
@@ -113,15 +105,16 @@ export default {
 <style scoped lang="scss">
 @import "style/_variables.scss";
 .header-wrapper{
-    position: sticky;
-    // top: 0;
     width: 100vh; 
     height: 100px;
+    margin-top: 1rem;
+    // border-bottom: solid $dark-blue;
     .navbar-container{
         position: relative;
-        // display: flex;
+        display: flex;
+        justify-content: flex-end;
         width: 100%;
-        height: 100%;
+        // height: 100%;
         img{
             position: absolute;
             width: 3rem;
@@ -131,41 +124,50 @@ export default {
         }
         .nav-menu-flex{
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
-            // padding:1rem;
+            padding:1rem;
             width: 100%;
             // height: 100%;
             .nav-menu{
+                margin-top: 1.5rem;
+                margin-right: 1rem;
                 display: flex;
-                align-items: center;
-                padding-top: 1rem;
-                // .space{
-                //     flex-basis: 50%;
-                // }
-
+                .fas{
+                    margin-right: 0.5rem;
+                }
                 .nav-item{
                     color:white;
-                    flex-basis: 20%;
-                    margin-left: 0.5rem;
-                    margin-right: 0.5rem;
-                    padding: 0.3rem;
+                    // flex:1;
+                    border-right: 0.2rem solid $base-color;
+                    padding-right: 1rem;
+                    padding-left: 1rem;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
                     transition: 0.5s;
-                    border: solid rgba(0, 0, 0, 0);
                 }
                 .signup{
-                    border: solid $base-color;
-                    color: $dark-blue;
+                    border: solid $base-white;
+                    color: rgb(240, 205, 4);
+                    margin-left: 0.5rem;
+                    padding-right: 1rem;
+                    padding-left: 0.5rem;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
                     
+                }
+                .last{
+                    border-right: none;
                 }
                 .nav-item:hover{
                     color:gray;
-                    border: solid gray;
+                    background: $base-white;
+                    // border: solid gray;
                     box-sizing: inherit;
                 }
                 .signup:hover{
                     border: solid $dark-blue;
-                    color: white;
+                    color: $dark-blue;
                     // background: $base-lite-3;
                 }
                 .auth{
@@ -193,11 +195,18 @@ export default {
         }
     }    
 }
-@media(max-width: 428px){
-    .header-wrapper{
-        height: 50px;
+@media(min-width: 630px)and(max-width: 660px){
+    .nav-brand{
+        display: none;
     }
-
+}
+@media(max-width: 629px){
+    .handle-show{
+        display: none;
+    }
+    // .header-wrapper{
+    //     display: none;
+    // }
 }
 
   .header-wrapper{
@@ -215,19 +224,42 @@ export default {
   .navbar-end{
     color:white;
   }
-  .nav-mobile-item{
-    font-size:0.8rem;
-    color: white;
-    border:0.1rem solid white;
-    position:flex;
-    flex-direction: column;
-    flex-basis:20%;
-    padding-left:0.1rem;
-    padding-right:0.1rem;
-    background:rgba(255, 255, 255, 0.3);
-  }
-  .nav-mobile-item:hover{
-    background:rgba(255, 255, 255, 0.3);
-  }
-
+  
+// @media(max-width:560px){
+//     .nav-menu-flex{
+//         display: flex;
+//         justify-content: flex-end;
+//         align-items: center;
+//         // padding:1rem;
+//         width: 100%;
+//         // height: 100%;
+//         .nav-menu{
+//             margin-top: 1.5rem;
+//             margin-right: 1rem;
+//             .fas{
+//                 margin-right: 0.5rem;
+//             }
+//             .nav-item{
+//                 color:red;
+//                 flex:1;
+//                 border-right: 0.2rem solid red;
+//                 padding-right: 1rem;
+//                 padding-left: 1rem;
+//                 padding-top: 0.5rem;
+//                 padding-bottom: 0.5rem;
+//                 transition: 0.5s;
+//             }
+//             .signup{
+//                 border: solid $base-white;
+//                 color: rgb(226, 225, 221);
+//                 margin-left: 0.5rem;
+//                 padding-right: 1rem;
+//                 padding-left: 0.5rem;
+//                 padding-top: 0.5rem;
+//                 padding-bottom: 0.5rem;
+                
+//             }
+//         }
+//     }
+// }
 </style>
