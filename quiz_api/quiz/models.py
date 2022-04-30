@@ -4,6 +4,7 @@ from django.db import models
 from django.forms import BooleanField, DurationField
 from django.utils.text import slugify
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 import uuid
 
@@ -92,11 +93,11 @@ class Answer(models.Model):
 #     order = models.IntegerField(default=1)
 
 class QuizTaker(models.Model):
-    user = models.ForeignKey(User, related_name='quiz_taker', on_delete=models.CASCADE)
-    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
-    level = models.IntegerField(default=0)
+    user = models.ForeignKey(User, null=True, related_name='quiz_taker', on_delete=models.CASCADE)
+    grade = models.ForeignKey(ParentQuiz, null=True, on_delete=models.CASCADE)
+    level = models.IntegerField(null=True,blank=True)
     # user_status = models.ForeignKey(UserStatus, related_name='quiz_taker', default=None ,blank=True, on_delete=models.CASCADE)
-    test_take_num = models.IntegerField(default=0)
+    test_take_num = models.IntegerField(default=1)
     practice_take_num = models.IntegerField(default=0)
     
 

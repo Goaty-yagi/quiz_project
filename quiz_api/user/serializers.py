@@ -8,6 +8,7 @@ from board.serializers import (
     UserTagReadSerializer, 
     FavoriteQuestionReadSerializer,
     )
+from quiz.models import User, QuizTaker
 from quiz.serializers import QuizTakerSerializer
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,8 +26,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["UID",
                   "name", 
                   "email", 
-                  "grade",
-                  "grade_level",
                   "thumbnail", 
                   "country",
                   "question", 
@@ -38,6 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
                   "quiz_taker",
                   ]
         # read_only_field = []
+
+    def create(self, validated_data):
+        quiz_taker = validated_data.pop('quiz_taker')
+        user = User.objects.create(**validated_data)
+        level = dict(quiz_taker[1])['level']
+        QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
+        return user
 
 
 class UserStrageSerializer(serializers.ModelSerializer):
@@ -53,8 +59,6 @@ class UserStrageSerializer(serializers.ModelSerializer):
         model = User
         fields = ["UID",
                   "name", 
-                  "grade",
-                  'grade_level',
                   "thumbnail", 
                   "question", 
                   "answer",
