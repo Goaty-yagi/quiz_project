@@ -103,7 +103,6 @@ const routes = [
     path: '/policy',
     name: 'Policy',
     component: Policy,
-    meta:{login:true}
   },
   { 
     path: '/notfound',

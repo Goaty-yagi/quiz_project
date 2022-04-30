@@ -3,7 +3,7 @@
         <div class="login-wrapper">
             <div class="flex-wrapper">
                 <form class="id-form" @submit.prevent='submitForm' >
-                        <p class='login-text'>ログイン</p>
+                        <p class='title-white'>ログイン</p>
                         <div class="field">
                             <div class="input-box">
                                 <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
@@ -30,7 +30,7 @@
                             <p @click='goSignup' class='text'>ユーザー登録</p>
                         </div>
                         <div>
-                            <button class='fbottun' ref='bform'>ログイン</button>
+                            <button :disable='!userError||!passError||!manyError' class='fbottun' ref='bform'>ログイン</button>
                         </div>
                 </form>
             </div>
@@ -176,7 +176,7 @@ export default {
     }.label:not(:last-child) {
         margin-bottom: initial;
 }
-    input[type="text"]:focus {
+    input[type="password"]:focus {
         outline: none;
         }
     input[type="email"]:focus {

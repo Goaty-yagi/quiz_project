@@ -44,8 +44,8 @@
                 </div>
             </div>
             <div class='buttons'>
-                <router-link @click='closeConf' to='/' class='button' id='register-button'>登録しない</router-link>
-                <router-link  to='/signup' class='button' id='register-button'>登録する</router-link>
+                <router-link @click='closeConf' to='/' class='btn-litegray-black-gray-sq' id='register-button'>登録しない</router-link>
+                <router-link  to='/signup' class='btn-litegray-black-gray-sq' id='register-button'>登録する</router-link>
             </div>
         </div>
     </div>
@@ -166,6 +166,11 @@ export default {
         align-items: center;
         margin:1%;
         margin-bottom:1rem;
+        .btn-litegray-black-gray-sq{
+            // font-size: 1.5rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
     }
     #register-button{
         width: auto;

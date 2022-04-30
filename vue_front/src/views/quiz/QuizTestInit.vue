@@ -752,7 +752,8 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 0.5rem;
+    // align-items: center;
     .quiz-countainer{
         width: 100%;
         display: flex;
