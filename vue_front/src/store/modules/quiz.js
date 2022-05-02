@@ -42,6 +42,7 @@ export default {
         quiz:(state) => state.quiz,
         quizNameId:(state) => state.quizNameId,
         fieldNameId:(state) => state.fieldNameId,
+        gradeForConvert:(state) => state.gradeForConvert,
         quizTaker(state, getters, rootState){
             try{
                 return rootState.signup.djangoUser.quiz_taker[0].id
@@ -223,5 +224,12 @@ export default {
                 }
             })
         },
+        async convertGradeFromIntToIDForNewUser({ state , dispatch, commit }, payload){
+            if(!state.quizNameId){
+                await dispatch('getQuizNameId')
+            }
+            commit('convertGradeFromIntToID', payload)
+            console.log('done convert')
+        }
     }
 }

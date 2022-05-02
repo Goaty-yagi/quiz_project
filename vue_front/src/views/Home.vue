@@ -3,7 +3,7 @@
     <!-- <Notification/> -->
     <!-- <p class='has-text-white'>{{ this.$store.state.id }}</p> -->
     <div class='wrapper'>
-      <img class='is-image' src="@/assets/logo.png">
+      <img @click="unko" class='is-image' src="@/assets/logo.png">
       <p class='home-text'>日本語クイズ</p>
       <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
       <!-- {{$store.getters.gettersReply}}     -->
@@ -24,6 +24,7 @@
 <script>
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
+// import Cookies from 'js-cookie'
 //  import { uuid } from 'vue-uuid';
 export default {
   name: 'Home',
@@ -42,11 +43,15 @@ export default {
     }
   },
   mounted(){
+    // console.log('mounted',Cookies)
+    // Cookies.set('unko','chinko')
     // this.$store.dispatch("getAnsweredQuestion")
     // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
   },
   methods:{
     unko(){
+      console.log('clicked')
+      // window.localStorage.removeItem('quizkey')
       // return `/quiz/${this.status}`
     },
     onClick(){

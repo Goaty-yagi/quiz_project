@@ -39,11 +39,15 @@ class UserSerializer(serializers.ModelSerializer):
         # read_only_field = []
 
     def create(self, validated_data):
-        quiz_taker = validated_data.pop('quiz_taker')
-        user = User.objects.create(**validated_data)
-        level = dict(quiz_taker[1])['level']
-        QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
-        return user
+        try:
+            quiz_taker = validated_data.pop('quiz_taker')
+            level = dict(quiz_taker[1])['level']
+            user = User.objects.create(**validated_data)
+            QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
+            return user
+        except:
+            user = User.objects.create(**validated_data)
+            return user
 
 
 class UserStrageSerializer(serializers.ModelSerializer):

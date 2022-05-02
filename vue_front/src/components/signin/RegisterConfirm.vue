@@ -55,43 +55,45 @@ export default {
     },
     methods:{
        async addStep(){
-            // try{
+            try{
+                await this.registerUserOndDjango()
                 await this.$store.dispatch('signup',{
-                        email: this.$store.state.signup.email,
-                        password: this.$store.state.signup.password
-                        })
-                        this.$emit('confHandle')
-                        this.$emit('sentHandle')
-                        this.$store.commit('addStep')
-                        this.$emit('handle')
-                        console.log('start django add')
-                        this.registerUserOndDjango()
-                        
-                
-            // }catch(err){
-            //     this.error = this.errorMessage2
-            //     console.log('catch error',this.error)
-            //     }
-            
-
-            // await this.handleSubmit()
-            // if (this.error == null){
-                
-            // }
+                email: this.$store.state.signup.email,
+                password: this.$store.state.signup.password
+                })
+                this.$emit('confHandle')
+                this.$emit('sentHandle')
+                this.$store.commit('addStep')
+                this.$emit('handle')
+                console.log('start django add')
+            }catch(err){
+                this.error = this.errorMessage2
+                console.log('catch error',this.error)
+            }
         },
         registerUserOndDjango(){
             console.log('start add')
-            axios({
-                method: 'post',
-                url: '/api/user/',
-                data: {
-                    UID: this.$store.state.signup.user.uid,
-                    name: this.$store.state.signup.username,
-                    email: this.$store.state.signup.email,
-                    grade: 'unko',
-                    country: this.$store.state.signup.country
-                },
-            })
+            if(this.$store.getters.getTempUser){
+                try{
+                    axios({
+                        method: 'post',
+                        url: '/api/user/',
+                        data: {
+                            UID: this.$store.state.signup.user.uid,
+                            name: this.$store.state.signup.username,
+                            email: this.$store.state.signup.email,
+                            country: this.$store.state.signup.country,
+                            quiz_taker: [
+                                {grade: this.$store.getters.getTempUser.grade},
+                                {level: this.$store.getters.getTempUser.level}
+                            ]
+                        },
+                    }) 
+                }
+                catch{
+
+                }
+            }
         },
         goEdit(){
             this.$emit('edithandle')

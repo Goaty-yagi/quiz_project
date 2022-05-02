@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import Cookies from 'js-cookie'
 import axios from 'axios'
 import {router} from "../main.js"
 import  signup  from './modules/signup'
@@ -46,8 +47,22 @@ export default createStore({
         "quiz.quizNameId",
         "quiz.fieldNameId"
       ],  // 保存するモジュール：設定しなければ全部。
-      storage: window.sessionStorage,  // 設定しなければlocalStorage
-    })],
+      storage:{
+        getItem:(key) => Cookies.get(key),
+        setItem:(key,value) =>
+          Cookies.set(key,value, {expires: 3, secure: true}),
+        removeItem:(key) => Cookies.remove(key),
+      }
+    }),
+    // createPersistedState({
+    //   storage:{
+    //     getItem:(key) => Cookies.get(key),
+    //     setItem:(key,value) =>
+    //       Cookies.set(key,value, {expires: 3, secure: true}),
+    //     removeItem:() => Cookies.remove(key),
+    //   }
+    // })
+  ],
   getters:{
     questions2:(state) => state.questions,
     quizzes2:(state) => state.quizzes
@@ -57,6 +72,7 @@ export default createStore({
       state.isLoading = status
     },
     reset(state) {
+      console.log('reset')
       Object.assign(state, getDefaultState())
       router.push('/')
     },

@@ -41,7 +41,9 @@ export default {
         },
         tempUser: {
             test: false,
-            statusList:''
+            statusList:'',
+            grade:'',
+            level:''
         },
     },
     getters:{
@@ -56,6 +58,9 @@ export default {
         },
         getEmailVerified(state){
             return state.emailVerified
+        },
+        getTempUser(state){
+            return state.tempUser
         }
     },
     mutations:{
@@ -98,7 +103,9 @@ export default {
         },
         setTempUser(state,payload){
             state.tempUser.test = true
-            state.tempUser.statusList = payload
+            state.tempUser.statusList = payload.status
+            state.tempUser.grade = payload.grade
+            state.tempUser.level = payload.level
             console.log('set-temp-user', state.tempUser)
         },
     },

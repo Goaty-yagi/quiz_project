@@ -195,7 +195,11 @@ export default {
             currentLevel:1,
             currentGrade:"超初級",
             correctAnswer:{},
-            tempStatusList:[]
+            tempStatusDict:{
+                'status':[],
+                'grade':'',
+                'level':''
+            }
         }
     },
     created(){
@@ -230,7 +234,7 @@ export default {
             this.selectedAnswer = {}
             this.answerIDAndOrder = {}
             this.selectAnswerCounter = 0
-            console.log(this.SelectedAnswerInfo)
+            console.log(this.SelectedAnswerInfo,'current',this.currentLevel)
             this.scrollTop()
         },
         // Finish(questionType){
@@ -582,8 +586,8 @@ export default {
         setTempStatusDict(){
             const _ = require('lodash');
             let copyObject = _.cloneDeep(this.userStatusDict)
-            this.tempStatusList.push(copyObject)
-            console.log('TSL',this.tempStatusList)
+            this.tempStatusDict.status.push(copyObject)
+            console.log('TSL',this.tempStatusDict.status)
         },
         // from here for test function
         checkConsecutiveResult(){
@@ -737,8 +741,11 @@ export default {
             console.log("GFR")
             this.finalResult.grade = this.currentGrade
             this.finalResult.level = this.currentLevel
-            console.log(this.finalResult)
-            this.$store.commit('setTempUser',this.tempStatusList)
+            this.tempStatusDict.level = this.currentLevel
+            this.$store.dispatch('convertGradeFromIntToIDForNewUser',this.currentGrade)
+            this.tempStatusDict.grade = this.$store.getters.gradeForConvert
+            console.log(this.finalResult,'store',this.$store.getters.gradeForConvert,'temp',this.tempStatusDict)
+            this.$store.commit('setTempUser',this.tempStatusDict)
             // this.updateQuizTaker()
         }
     }

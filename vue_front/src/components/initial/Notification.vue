@@ -1,5 +1,5 @@
 <template>
-    <div class='notification-wrapper'>
+    <div class='notification-wrapper l-wrapper'>
         <div class='notice-wrapper'>
             <img class='image' src="@/assets/logo.png">
             <p class='text1'>登録すると…</p>

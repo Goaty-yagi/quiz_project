@@ -17,10 +17,10 @@
         <div class='font-wrapper'>
             <i class="fab fa-angellist"></i>
         </div>
-        <!-- <transition name="notice">
+        <transition name="notice">
             <Notification
             v-if="showNotification"/>
-        </transition> -->
+        </transition>
     </div>
 </template>
 
