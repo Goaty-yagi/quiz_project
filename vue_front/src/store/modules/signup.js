@@ -142,14 +142,16 @@ export default {
                 for(let i of state.djangoUser.favorite_question[0].question){
                     questionId.push(i)
                 }
-                await axios
-                .get(`/api/board/question-favorite?question_id=${questionId}`)
-                .then(response => {
-                    state.favoriteQuestion = response.data
+                if(questionId[0]){
+                    await axios
+                    .get(`/api/board/question-favorite?question_id=${questionId}`)
+                    .then(response => {
+                        state.favoriteQuestion = response.data
+                        })
+                    .catch(error => {
+                        console.log(error)
                     })
-                .catch(error => {
-                    console.log(error)
-                })
+                }
             }
         },
         async signup(context, {email,password}){

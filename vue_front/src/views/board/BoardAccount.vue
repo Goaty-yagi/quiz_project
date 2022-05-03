@@ -482,15 +482,15 @@ export default {
         onReplayCheck(questionAnswer){
             console.log('in ORC',questionAnswer)
             for(let answer of questionAnswer){
+                console.log('loop',answer)
                 if(answer.on_reply==true){
                     console.log("check on_reply",answer.on_reply)
                     if(answer.user.UID==this.user.UID){
                     return true
                     }
-                }else{
-                    return false
                 }
             }
+            return false
         },
         scrollTop(){
             window.scrollTo({

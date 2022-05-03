@@ -200,6 +200,7 @@ export default {
     beforeMount(){
         // this.getQuestion()
         console.log('before-mounted')
+        this.$store.dispatch('getDjangoUser')
     },
     mounted() {
         window.addEventListener('scroll', this.handleScroll)
