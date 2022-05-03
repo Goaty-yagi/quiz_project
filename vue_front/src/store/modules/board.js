@@ -39,29 +39,34 @@ export default {
             return state.showNoticeOnAcount.reply
         },
         getUserTags(state, getters){
-            console.log('GUT',getters.user)
+            console.log('GUT',getters.user.user_tag)
             let checkDict = {}  
             // let checkedDict = {}
             let checkedList = []
             let checkedlist2 = []
             for(let i of getters.user.user_tag){
-                checkDict[i.tag] = i.total_num
+                checkDict[i.tag.id] = i.total_num
                 checkedList.push(i.tag)
+                // console.log('loop',Object.keys(checkDict).length,checkDict)
             }
+            console.log('checkDict',Object.keys(checkDict).length,checkDict)
             if(Object.keys(checkDict).length <= 3){
                 return checkedList
             }
             if(Object.keys(checkDict).length > 3){
+                console.log('H than 3')
                 for(let m=0; m < 3; m++){
                     const aryMax = function (a, b) {return Math.max(a, b);}
                     let max = Object.values(checkDict).reduce(aryMax);
-                    const result = Object.keys(checkDict).reduce( (r, key) => { 
+                    const result = Object.keys(checkDict).reduce( (r, key) => {
                         return checkDict[key] === max ? key : r 
                         }, null);
                     // checkedDict[result] = max
+                    console.log('BD',result)
                     delete checkDict[result]
                     checkedlist2.push(result)
                 }
+                console.log('last', checkedlist2)
                 return checkedlist2
             }
         },
@@ -100,6 +105,7 @@ export default {
         // },
         setReccomendedQuestion(state, payload){
             state.reccomendedQuestion = payload
+            console.log('set-reccomendedQuestion')
         },
         setRelatedQuestion(state, payload){
             state.relatedQuestion = payload
@@ -168,6 +174,7 @@ export default {
         },
         async getRelatedQuestion({ state , getters, commit }, payload) {
             // this.$store.commit('setIsLoading', true)
+            console.log('GRQ',getters.getUserTags,getters.user.UID)
             if(getters.getUserTags.length == 1){
                 var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&uid=${getters.user.UID}`
             }

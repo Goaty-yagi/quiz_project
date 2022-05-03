@@ -212,13 +212,10 @@ export default {
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
         this.showEmailVerified = false
-        console.log('mounted',this.reccomendedQuestion)
     },
     beforeUnmount(){
-        console.log("BD")
         window.removeEventListener('scroll', this.handleScroll)
         window.removeEventListener('scroll', this.getScrollY)
-        console.log("removed")
     },
     // unmounted(){
     //     console.log("DSTROY")
@@ -256,11 +253,8 @@ export default {
                 console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
                 let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
                 for(let question of answeredQuestion){
-                    console.log(question)
                     for(let answer of question.answer){
-                        console.log(answer.id)
                         if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                            console.log("onreply_dayo")
                             return  true
                         }
                     }
@@ -323,18 +317,15 @@ export default {
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
-                console.log("return_recen:",this.temporaryQuestion)
                 this.questions = this.temporaryQuestion
-                console.log("Q_resilts",this.questions.results)
                 return this.questions.results
             }
             else if(this.showQuestionStatus.reccomend){
-                console.log("return_reco:",this.reccomendedQuestion)
+                console.log('RECCOMEND',this.reccomendedQuestion)
                 this.questions = this.reccomendedQuestion
                 return this.questions.results
             }
             else if(this.showQuestionStatus.search){
-                console.log("return_search:")
                 this.questions = this.searchedQuestion
                 return this.questions.results
             }
@@ -357,7 +348,6 @@ export default {
             this.getParentTag()
         },
         async getAdditionalQuestion(next){
-            console.log("addQ",next)
             if(next!=null){
                 await axios
                 .get(next)
@@ -370,8 +360,6 @@ export default {
                     if(this.questions.next==null){
                         this.bottomScrollActionHandler = false
                         this.scrollBottom = false
-                        // window.removeEventListener('scroll', this.handleScroll)
-                        // window.removeEventListener('scroll', this.getScrollY)
                     }
                 })
                 .catch(error => {
@@ -380,7 +368,6 @@ export default {
             }
         },
         async getParentTag(){
-            console.log('in_get_parentTag')
             await axios
                 .get('/api/board/parent-tag')
                 .then(response => {
@@ -424,7 +411,6 @@ export default {
         // },
         async getSearchQuestion(){
             this.$store.commit('setIsLoading', true)
-            console.log('Gsearch')
             await axios
                 .get(`/api/board/question/search/?keyword=${this.wordList}`)
                 .then(response => {
@@ -466,7 +452,6 @@ export default {
         getParentTagDict(parentTags){
             for (let i of parentTags){
                 this.parentTagDict[i.parent_tag] = i.center_tag
-                console.log("PD",parentTags,this.parentTagDict)
             }
         },
         handleShowCreateQuestion(){
@@ -489,7 +474,6 @@ export default {
         },
         handleShowConfirm(){
             this.showConfirm = !this.showConfirm
-            console.log('confurm',this.showConfirm)
         },
         getDetail(slug){
             console.log('slugdayo',slug)
