@@ -74,6 +74,35 @@ class BoardQuestionList(generics.ListAPIView):
     pagination_class = PageNumberPagination
 
 
+class ViewedOrderedQuestion(generics.ListAPIView):
+    queryset = BoardQuestion.objects.prefetch_related(
+        "tag", 
+        "tag__parent_tag",
+        "tag__user",
+        'answer',
+        'answer__question',
+        'answer__question__user',
+        'answer__question__tag',
+        'answer__question__tag__parent_tag',
+        'answer__question__tag__user',
+        'answer__reply',
+        'answer__user',
+        'answer__liked_answer',
+        'answer__liked_answer__user',
+        'liked_num',
+        'liked_num__user',
+        'liked_num__question',
+        'liked_num__question__user',
+        'liked_num__question__tag',
+        ).select_related(
+            'user'
+        ).order_by('-viewed')
+        
+    serializer_class = BoardQuestionListSerializer
+    pagination_class = PageNumberPagination
+
+
+
 class BoardQuestionCreate(generics.CreateAPIView):
     serializer_class = BoardQuestionCreateSerializer
     queryset = BoardQuestion.objects.prefetch_related(

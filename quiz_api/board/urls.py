@@ -25,6 +25,7 @@ from board.apis import (
     BoardAnswerDetail, 
     UserQuestionList, 
     TagQuestionList,
+    ViewedOrderedQuestion
     # CenterOnlyTagList
     )
 
@@ -38,6 +39,7 @@ urlpatterns = [
   path('question-answered', AnsweredQuestionList.as_view()),
   path('question-favorite', favoriteQuestionList.as_view()),
   path('question-user-question', UserQuestionList.as_view()),
+  path('question-viewed-order', ViewedOrderedQuestion.as_view()),
   path('tag-question', TagQuestionList.as_view()),
   path('answer/read', BoardAnswerRead.as_view()),
   path('answer/create', BoardAnswerCreate.as_view()),

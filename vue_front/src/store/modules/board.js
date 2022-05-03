@@ -1,5 +1,6 @@
 import store from '..'
 import axios from 'axios'
+import { extractIdentifiers } from '@vue/compiler-core'
 
 export default {
     namespace: true,
@@ -39,35 +40,36 @@ export default {
             return state.showNoticeOnAcount.reply
         },
         getUserTags(state, getters){
-            console.log('GUT',getters.user.user_tag)
-            let checkDict = {}  
-            // let checkedDict = {}
-            let checkedList = []
-            let checkedlist2 = []
-            for(let i of getters.user.user_tag){
-                checkDict[i.tag.id] = i.total_num
-                checkedList.push(i.tag)
-                // console.log('loop',Object.keys(checkDict).length,checkDict)
-            }
-            console.log('checkDict',Object.keys(checkDict).length,checkDict)
-            if(Object.keys(checkDict).length <= 3){
-                return checkedList
-            }
-            if(Object.keys(checkDict).length > 3){
-                console.log('H than 3')
-                for(let m=0; m < 3; m++){
-                    const aryMax = function (a, b) {return Math.max(a, b);}
-                    let max = Object.values(checkDict).reduce(aryMax);
-                    const result = Object.keys(checkDict).reduce( (r, key) => {
-                        return checkDict[key] === max ? key : r 
-                        }, null);
-                    // checkedDict[result] = max
-                    console.log('BD',result)
-                    delete checkDict[result]
-                    checkedlist2.push(result)
+            if(getters.user){
+                let checkDict = {}  
+                // let checkedDict = {}
+                let checkedList = []
+                let checkedlist2 = []
+                for(let i of getters.user.user_tag){
+                    checkDict[i.tag.id] = i.total_num
+                    checkedList.push(i.tag)
+                    // console.log('loop',Object.keys(checkDict).length,checkDict)
                 }
-                console.log('last', checkedlist2)
-                return checkedlist2
+                console.log('checkDict',Object.keys(checkDict).length,checkDict)
+                if(Object.keys(checkDict).length <= 3){
+                    return checkedList
+                }
+                if(Object.keys(checkDict).length > 3){
+                    console.log('H than 3')
+                    for(let m=0; m < 3; m++){
+                        const aryMax = function (a, b) {return Math.max(a, b);}
+                        let max = Object.values(checkDict).reduce(aryMax);
+                        const result = Object.keys(checkDict).reduce( (r, key) => {
+                            return checkDict[key] === max ? key : r 
+                            }, null);
+                        // checkedDict[result] = max
+                        console.log('BD',result)
+                        delete checkDict[result]
+                        checkedlist2.push(result)
+                    }
+                    console.log('last', checkedlist2)
+                    return checkedlist2
+                }
             }
         },
         
@@ -173,16 +175,25 @@ export default {
                 })
         },
         async getRelatedQuestion({ state , getters, commit }, payload) {
-            // this.$store.commit('setIsLoading', true)
-            console.log('GRQ',getters.getUserTags,getters.user.UID)
-            if(getters.getUserTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&uid=${getters.user.UID}`
-            }
-            if(getters.getUserTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&uid=${getters.user.UID}`
-            }
-            if(getters.getUserTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}&uid=${getters.user.UID}`
+            // for reccomended-question, if user and user.user_tag exist, get reccomended-question.
+            // else, get question-viewed-order.
+            if(getters.user){
+                try{
+                    if(getters.getUserTags.length == 1){
+                        var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&uid=${getters.user.UID}`
+                    }
+                    if(getters.getUserTags.length == 2){
+                        var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&uid=${getters.user.UID}`
+                    }
+                    if(getters.getUserTags.length == 3){
+                        var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}&uid=${getters.user.UID}`
+                    }
+                }
+                catch{
+                    var url = '/api/board/question-viewed-order'  
+                }
+            }else{
+                var url = '/api/board/question-viewed-order'
             }
             try{
                 await axios.get(url)

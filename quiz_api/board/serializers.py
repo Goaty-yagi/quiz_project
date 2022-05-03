@@ -347,6 +347,7 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 		return favorite_question[0]
 		
 
+
 # fron here for user storage Purpose
 
 class BoardQuestionStorageSerializer(serializers.ModelSerializer):
@@ -422,3 +423,9 @@ class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
 		fields = ["id",
 				  "question",
 				  ]
+
+
+# user optimization end
+
+# from here for question optimization
+
