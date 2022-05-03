@@ -50,12 +50,10 @@ export default {
                     checkedList.push(i.tag)
                     // console.log('loop',Object.keys(checkDict).length,checkDict)
                 }
-                console.log('checkDict',Object.keys(checkDict).length,checkDict)
                 if(Object.keys(checkDict).length <= 3){
                     return checkedList
                 }
                 if(Object.keys(checkDict).length > 3){
-                    console.log('H than 3')
                     for(let m=0; m < 3; m++){
                         const aryMax = function (a, b) {return Math.max(a, b);}
                         let max = Object.values(checkDict).reduce(aryMax);
@@ -63,11 +61,9 @@ export default {
                             return checkDict[key] === max ? key : r 
                             }, null);
                         // checkedDict[result] = max
-                        console.log('BD',result)
                         delete checkDict[result]
                         checkedlist2.push(result)
                     }
-                    console.log('last', checkedlist2)
                     return checkedlist2
                 }
             }

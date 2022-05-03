@@ -120,32 +120,37 @@ export default {
             state.djangoUser = null
             state.emailVerified = null
             console.log('all-Reset')
-        }
+        },
     },
     actions:{
         async getDjangoUser({ state, getters,commit }){
-            await axios
-            .get(`/api/user/${getters.getUID}`)
-            .then(response => {
-                commit('setDjangoUser',response.data)
+            if(state.user){
+                await axios
+                .get(`/api/user/${getters.getUID}`)
+                .then(response => {
+                    commit('setDjangoUser',response.data)
+                    })
+                .catch(error => {
+                    console.log(error)
                 })
-            .catch(error => {
-                console.log(error)
-            })
+            }
         },
         async getFavoriteQuestion({ state, commit }){
-            const questionId = []
-            for(let i of state.djangoUser.favorite_question[0].question){
-                questionId.push(i)
-            }
-            await axios
-            .get(`/api/board/question-favorite?question_id=${questionId}`)
-            .then(response => {
-                state.favoriteQuestion = response.data
+            state.favoriteQuestion = null
+            if(state.djangoUser){
+                const questionId = []
+                for(let i of state.djangoUser.favorite_question[0].question){
+                    questionId.push(i)
+                }
+                await axios
+                .get(`/api/board/question-favorite?question_id=${questionId}`)
+                .then(response => {
+                    state.favoriteQuestion = response.data
+                    })
+                .catch(error => {
+                    console.log(error)
                 })
-            .catch(error => {
-                console.log(error)
-            })
+            }
         },
         async signup(context, {email,password}){
             console.log('signup in')

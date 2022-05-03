@@ -30,7 +30,7 @@
                     <div class="tag-text">よく使うタグ</div>
                     <div class="tag-wrapper">
                         <div 
-                            @click="handleTag(questionindex,tag.id,'tag')"
+                            @click="handleTag(questionindex,tag.tag.id,'tag')"
                             class="tag"
                             :class="{'animation-tag':active==questionindex}" 
                             v-for="(tag,questionindex) in getThreeUsertag"
@@ -72,7 +72,7 @@
                                 v-bind:key="tagindex">{{ tag.tag }}
                             </div>
                             <div class="on-answer-container">
-                                <div class="on-answer" v-if="handleOnAnswer(question.on_answer)">
+                                <div class="on-answer" v-if="handleOnAnswer(question)">
                                     <span class="span1"> NEW</span><span class="span2">ANSWER</span>
                                 </div>
                                 <div class="on-answer" v-if="onReplayCheck(question.answer)">
@@ -242,11 +242,14 @@ export default {
                 this.questions = this.$store.state.board.reccomendedQuestion
                 return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.favorite){
-                console.log('お気に入り', this.$store.state.signup.favoriteQuestion)
-                this.questions = this.$store.state.signup.favoriteQuestion
-                return this.handleStatus(this.questions.results)
+                if(this.$store.state.signup.favoriteQuestion){
+                     this.questions = this.$store.state.signup.favoriteQuestion
+                    return this.handleStatus(this.questions.results)
+                }else{
+                    this.questions = ''
+                    return this.handleStatus(this.questions)
+                }
             }else if(this.showQuestion.questionType.tag){
-                console.log('tagQuestion dayo' ,this.tagQuestion)
                 this.questions = this.tagQuestion
                 return this.handleStatus(this.questions.results)
             }
@@ -337,7 +340,7 @@ export default {
                 .get(`/api/board/tag-question?tag=${tagID}`)
                 .then(response => {
                     this.tagQuestion = response.data
-                    console.log("GTQ",this.tagQuestion)
+                    console.log("GTQ",this.tagQuestion,tagID,tag)
                     this.handleQuestionType(tag)
                 })
                 .catch(error => {
@@ -468,9 +471,8 @@ export default {
             }
             console.log("end")
         },
-        handleOnAnswer(onAnswer){
-            console.log("onanswer")
-            if(onAnswer){
+        handleOnAnswer(question){
+            if(question.on_answer&&question.user.UID==this.user.UID){
                 this.onNotification.onAnswer = true
                 return true      
             }else{
@@ -478,8 +480,10 @@ export default {
             }
         },
         onReplayCheck(questionAnswer){
+            console.log('in ORC',questionAnswer)
             for(let answer of questionAnswer){
                 if(answer.on_reply==true){
+                    console.log("check on_reply",answer.on_reply)
                     if(answer.user.UID==this.user.UID){
                     return true
                     }

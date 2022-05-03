@@ -123,7 +123,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.login) && !store.state.signup.user) {
+    if (to.matched.some(record => record.meta.login) && !store.state.signup.djangoUser) {
     console.log("LOGIN",to.matched)
     next({ name: 'Login' });
     }

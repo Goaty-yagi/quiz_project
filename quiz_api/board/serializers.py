@@ -4,6 +4,7 @@ import secrets
 from ssl import Purpose
 from django.db.models import F
 from rest_framework import serializers
+from user.models import User
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag, UserFavoriteQuestion
 
 # from user.models import User
@@ -342,19 +343,29 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 			print("Q",Q.id)
 			if UserFavoriteQuestion.objects.filter(user=user,question__id=Q.id).exists():
 				favorite_question[0].question.remove(Q)
+				print('removed')
 				return favorite_question[0]
 		favorite_question[0].question.add(Q)
+		print('created')
 		return favorite_question[0]
 		
 
 
 # fron here for user storage Purpose
 
+class NonEmailUserSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = User
+		fields = ["UID",
+                  ]
+
 class BoardQuestionStorageSerializer(serializers.ModelSerializer):
+	user = NonEmailUserSerializer
 
 	class Meta:
 		model = BoardQuestion
-		fields = ["id", 
+		fields = ["id",
 				  "title", 
 				  "description", 
 				  "slug", 
@@ -367,6 +378,7 @@ class BoardQuestionStorageSerializer(serializers.ModelSerializer):
 				  "vote", 
 				  "img",
 				  "viewed",
+				  "user",
 				  "created_on", 
 				  ]
 

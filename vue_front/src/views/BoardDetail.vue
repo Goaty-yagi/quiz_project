@@ -249,6 +249,10 @@ export default {
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
+    beforeUnmount(){
+        console.log('beforeUNMOUNT')
+        this.$store.dispatch('getDjangoUser')
+    },
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
@@ -383,7 +387,7 @@ export default {
             })
         },
         handleAddedFavorite(){
-            if(this.loginUser){
+            if(this.user){
                 this.addedFavorite=!this.addedFavorite
                 this.createFavorite()
             }else{
@@ -556,11 +560,13 @@ export default {
             }
         },
         favoriteCheck(){
-            if(this.loginUser){
+            if(this.user){
                 this.addedFavorite = false
                 for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
-                    if(this.question.id==i.id){
+                    console.log('loop',this.addedFavorite,i,this.question.id)
+                    if(this.question.id==i){
                         this.addedFavorite = true
+                        console.log(this.addedFavorite)
                         break
                     }
                 }

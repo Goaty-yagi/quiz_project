@@ -242,9 +242,9 @@ export default {
         },
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
-            if(this.roginUser){
+            if(this.user){
                 for(let question2 of this.user.question){
-                    if(question2.on_answer==true&&question2.user.UID==this.user.UID){
+                    if(question2.on_answer==true&&question2.user==this.user.UID){
                         console.log("onAnswer_dayo")
                         return true
                     }
