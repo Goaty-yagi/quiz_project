@@ -364,7 +364,8 @@ export default {
                 catch{(error => {
                         console.log(error)
                 })}
-                this.$store.commit('getRelatedQuestion', this.relatedQuestion.results)
+                console.log('after-try',this.relatedQuestion)
+                this.$store.commit('setRelatedQuestion', this.relatedQuestion.results)
                 this.deleteSameQuestion()
                 this.makeRandomSlicedArray()
                 this.$store.commit('setIsLoading', false)
