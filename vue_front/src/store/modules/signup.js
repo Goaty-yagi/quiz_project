@@ -1,4 +1,5 @@
 import createPersistedState from 'vuex-persistedstate'
+import Cookies from 'js-cookie'
 import { auth } from '@/firebase/config'
 import {router} from "@/main.js"
 import axios from 'axios'
@@ -92,7 +93,7 @@ export default {
         },
         setDjangoUser(state,payload){
             state.djangoUser = payload
-            console.log('get Django user',state.djangoUser)
+            console.log('set Django user',state.djangoUser)
         },
         emailVerifiedHandler(state,payload){
             state.emailVerified = payload
@@ -108,15 +109,24 @@ export default {
             state.tempUser.level = payload.level
             console.log('set-temp-user', state.tempUser)
         },
+        setTempUserNull(state){
+            state.tempUser = null
+            Cookies.remove('tempKey')
+            console.log('set',state.tempUser)
+        },
+        resetQuizKeyStorage(state){
+            state.UID = null
+            state.djangoUser = null
+            state.emailVerified = null
+            console.log('all-Reset')
+        }
     },
     actions:{
         async getDjangoUser({ state, getters,commit }){
-            console.log(getters.getUID)
             await axios
             .get(`/api/user/${getters.getUID}`)
             .then(response => {
                 commit('setDjangoUser',response.data)
-                console.log('inDUGet', state.djangoUser)
                 // store.dispatch('getFavoriteQuestion')
                 })
             .catch(error => {
@@ -169,6 +179,7 @@ export default {
         async login(context, {email,password}){
             const ref = await signInWithEmailAndPassword(auth, email, password)
             context.commit('setUser',ref.user)
+            context.dispatch('getDjangoUser')
             context.commit('emailVerifiedHandler',ref.user.emailVerified)
             console.log(context.state.user,context.state.emailVerified)
                 // try{
@@ -220,6 +231,7 @@ export default {
         async logout(context){
             await signOut(auth)
             context.commit('setUser',null)
+            context.commit('resetQuizKeyStorage')
             router.push({ name: 'Home' })
         }
     }
@@ -231,6 +243,8 @@ const unsub = onAuthStateChanged(auth,(user) =>{
     if(user){
         store.dispatch('getDjangoUser')
         store.commit('emailVerifiedHandler',user.emailVerified)
+    }else{
+        store.commit('resetQuizKeyStorage')
     }
     unsub()
 })

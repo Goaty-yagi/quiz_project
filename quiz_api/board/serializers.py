@@ -1,6 +1,7 @@
 from gettext import install
 from pickletools import read_floatnl, read_long1
 import secrets
+from ssl import Purpose
 from django.db.models import F
 from rest_framework import serializers
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag, UserFavoriteQuestion
@@ -345,3 +346,79 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 		favorite_question[0].question.add(Q)
 		return favorite_question[0]
 		
+
+# fron here for user storage Purpose
+
+class BoardQuestionStorageSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BoardQuestion
+		fields = ["id", 
+				  "title", 
+				  "description", 
+				  "slug", 
+				  "solved",
+				  "select_best_on_going",
+				  "post_on_going",
+				  "vote_on_going",
+				  "on_answer",
+				  "tag", 
+				  "vote", 
+				  "img",
+				  "viewed",
+				  "created_on", 
+				  ]
+
+
+class BoardAnswerStorageSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "question", 
+				  "description", 
+				  "created_on",
+				  "on_reply",
+				  "best",
+				  ]
+		read_only_field = ['questions']
+
+
+class BoardLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardQuestionLiked
+		fields = ["id",
+				  "question", 
+				  "liked_num",
+				  ]
+		read_only_field = ["question"]
+
+
+class AnswerLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardAnswerLiked
+		fields = ["id", 
+				  "answer", 
+				  "liked_num",
+				  ]
+
+class UserTagStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "used_num",
+				  "viewed_num",
+				  "total_num"
+				  ]
+		read_only_field = ['tag']
+		depth=1
+
+
+class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
+	# question = BoardQuestionListSerializer(many=True)
+	class Meta:
+		model = UserFavoriteQuestion
+		fields = ["id",
+				  "question",
+				  ]

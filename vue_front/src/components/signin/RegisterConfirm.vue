@@ -56,7 +56,6 @@ export default {
     methods:{
        async addStep(){
             try{
-                await this.registerUserOndDjango()
                 await this.$store.dispatch('signup',{
                 email: this.$store.state.signup.email,
                 password: this.$store.state.signup.password
@@ -66,6 +65,7 @@ export default {
                 this.$store.commit('addStep')
                 this.$emit('handle')
                 console.log('start django add')
+                await this.registerUserOndDjango()
             }catch(err){
                 this.error = this.errorMessage2
                 console.log('catch error',this.error)
@@ -89,6 +89,7 @@ export default {
                             ]
                         },
                     }) 
+                    this.$store.commit('setTempUserNull')
                 }
                 catch{
 

@@ -167,8 +167,17 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 			"practice_take_num"]
 
 
-	# def get_questions_count(self, obj):
-	# 	return obj.question_set.all().count()
+# here for user-storage purpose
 
-# class QuizFilteredSerializer(serializers.ModelSerializer):
-# 	question = QuestionListSerializer(source='filtered_question',many=True, read_only=True)
+
+class QuizTakerStorageSerializer(serializers.ModelSerializer):
+	user_status = UserStatusNameSerializer(many=True, read_only=True, required=False)
+	class Meta:
+		model = QuizTaker
+		fields = [
+			"id", 
+			"grade", 
+			"level",
+			"user_status",
+			"test_take_num",
+			"practice_take_num"]

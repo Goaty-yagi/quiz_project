@@ -33,35 +33,34 @@ export default createStore({
     createPersistedState({
       key: 'quizkey',  // 設定しなければ'vuex'
       paths: [
-        'id',
-        'num',
-        'test',
         "signup.djangoUser",
         "signup.emailVerified",
-        "signup.user",
-        "signup.tempUser",
         "signup.UID",
+      ],  // 保存するモジュール：設定しなければ全部。
+      storage: window.sessionStorage
+    }),
+    createPersistedState({
+      key: 'quiz-session',
+      paths:[
         "board.answeredQuestion",
         "board.reccomendedQuestion",
         "board.centerTag",
         "quiz.quizNameId",
-        "quiz.fieldNameId"
-      ],  // 保存するモジュール：設定しなければ全部。
-      storage:{
-        getItem:(key) => Cookies.get(key),
-        setItem:(key,value) =>
-          Cookies.set(key,value, {expires: 3, secure: true}),
-        removeItem:(key) => Cookies.remove(key),
-      }
-    }),
-    // createPersistedState({
-    //   storage:{
-    //     getItem:(key) => Cookies.get(key),
-    //     setItem:(key,value) =>
-    //       Cookies.set(key,value, {expires: 3, secure: true}),
-    //     removeItem:() => Cookies.remove(key),
-    //   }
-    // })
+        "quiz.fieldNameId"],
+      storage: window.sessionStorage
+    }),createPersistedState({
+        key: 'tempKey',  // 設定しなければ'vuex'
+        paths: [
+          
+          "signup.tempUser",
+        ],  // 保存するモジュール：設定しなければ全部。
+        storage:{
+          getItem:(key) => Cookies.get(key),
+          setItem:(key,value) =>
+            Cookies.set(key,value, {expires: 3, secure: true}),
+          removeItem:(key) => Cookies.remove(key),
+        }
+      })
   ],
   getters:{
     questions2:(state) => state.questions,
@@ -83,6 +82,10 @@ export default createStore({
       state.test = item.test
       state.randomURL = `/quiz/${state.id}`
     },
+    // deleteTempUser(){
+    //     Cookies.remove('tempKey')
+    //     console.log("deleted")
+    // },
     // getRandomQuestion(state,array){
     //   for (let i = array.length - 1; i >= 0; i--) {
     //     let r = Math.floor(Math.random() * (i + 1))

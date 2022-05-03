@@ -114,7 +114,7 @@
                             <div class='good-like-wrapper'>
                                 <i class="far fa-heart"></i>
                                 <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                <div class="date">作成日：{{ remove_T_Z(question.created_on) }}</div>
+                                <div class="date">作成日：{{ question.created_on }}</div>
                             </div>
                         </div>        
                     </div>
@@ -491,10 +491,6 @@ export default {
             this.showConfirm = !this.showConfirm
             console.log('confurm',this.showConfirm)
         },
-        remove_T_Z(datatime){
-            const time = datatime.replace(/T|Z/g,' ')
-            return time
-        },
         getDetail(slug){
             console.log('slugdayo',slug)
             // this.$store.commit('getSlug',slug)
@@ -537,11 +533,9 @@ export default {
             this.scrollY = window.scrollY
         },
         handleScroll(){
-            console.log("inSCROLL")
             var doch = document.querySelector('.scroll_area').scrollHeight
             var winh = window.innerHeight; //ウィンドウの高さ
             var bottom = doch - winh; //ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
-            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',this.scrollY,this.bottomScrollActionHandler)
             if (bottom+100 <= this.scrollY&&this.bottomScrollActionHandler) {
                 this.bottomScrollActionHandler = false
                 this.scrollBottom = true

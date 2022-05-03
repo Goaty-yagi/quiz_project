@@ -4,7 +4,7 @@
     <!-- <p class='has-text-white'>{{ this.$store.state.id }}</p> -->
     <div class='wrapper'>
       <img @click="unko" class='is-image' src="@/assets/logo.png">
-      <p class='home-text'>日本語クイズ</p>
+      <p @click="unko" class='home-text'>日本語クイズ</p>
       <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
       <!-- {{$store.getters.gettersReply}}     -->
       <div  @click="onClick()">
@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted(){
-    // console.log('mounted',Cookies)
+    console.log('mounted',this.$store.state.signup.djangoUser)
     // Cookies.set('unko','chinko')
     // this.$store.dispatch("getAnsweredQuestion")
     // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
@@ -51,6 +51,7 @@ export default {
   methods:{
     unko(){
       console.log('clicked')
+      this.$store.commit('setTempUserNull')
       // window.localStorage.removeItem('quizkey')
       // return `/quiz/${this.status}`
     },

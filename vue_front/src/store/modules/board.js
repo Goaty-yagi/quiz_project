@@ -39,6 +39,7 @@ export default {
             return state.showNoticeOnAcount.reply
         },
         getUserTags(state, getters){
+            console.log('GUT',getters.user)
             let checkDict = {}  
             // let checkedDict = {}
             let checkedList = []
@@ -97,7 +98,10 @@ export default {
         // getSelectedTagList(state, payload){
         //     state.selectedTagList = payload
         // },
-        getRelatedQuestion(state, payload){
+        setReccomendedQuestion(state, payload){
+            state.reccomendedQuestion = payload
+        },
+        setRelatedQuestion(state, payload){
             state.relatedQuestion = payload
             console.log("commited relatedQ",state.relatedQuestion )
         },
@@ -162,7 +166,7 @@ export default {
                     console.log(error)
                 })
         },
-        async getRelatedQuestion({ state , getters }, payload) {
+        async getRelatedQuestion({ state , getters, commit }, payload) {
             // this.$store.commit('setIsLoading', true)
             if(getters.getUserTags.length == 1){
                 var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&uid=${getters.user.UID}`
@@ -176,7 +180,8 @@ export default {
             try{
                 await axios.get(url)
                     .then(response => {
-                    state.reccomendedQuestion = response.data
+                        commit('setReccomendedQuestion', response.data)
+                    // state.reccomendedQuestion = response.data
                     })
                 }
             catch{(error => {
