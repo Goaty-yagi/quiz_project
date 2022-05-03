@@ -46,6 +46,7 @@ export default {
             grade:'',
             level:''
         },
+        favoriteQuestion:''
     },
     getters:{
         getUID(state){
@@ -127,7 +128,6 @@ export default {
             .get(`/api/user/${getters.getUID}`)
             .then(response => {
                 commit('setDjangoUser',response.data)
-                // store.dispatch('getFavoriteQuestion')
                 })
             .catch(error => {
                 console.log(error)
@@ -136,13 +136,12 @@ export default {
         async getFavoriteQuestion({ state, commit }){
             const questionId = []
             for(let i of state.djangoUser.favorite_question[0].question){
-                questionId.push(i.id)
+                questionId.push(i)
             }
             await axios
             .get(`/api/board/question-favorite?question_id=${questionId}`)
             .then(response => {
                 state.favoriteQuestion = response.data
-                console.log('inDUGet', state.favoriteQuestion)
                 })
             .catch(error => {
                 console.log(error)

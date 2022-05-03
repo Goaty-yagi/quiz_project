@@ -242,6 +242,7 @@ export default {
                 this.questions = this.$store.state.board.reccomendedQuestion
                 return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.favorite){
+                console.log('お気に入り', this.$store.state.signup.favoriteQuestion)
                 this.questions = this.$store.state.signup.favoriteQuestion
                 return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.tag){
@@ -257,6 +258,7 @@ export default {
         this.getUserQuestion()
         this.scrollTop()
         this.$store.dispatch("getAnsweredQuestion")
+        this.$store.dispatch("getFavoriteQuestion")
     },
     mounted(){
         console.log('THREE',this.getThreeUsertag)
