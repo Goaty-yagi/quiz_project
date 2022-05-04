@@ -3,7 +3,7 @@
         <div class="main-wrapper">
             <div class='main-notification-wrapper'>
                 <div class='main-notice-wrapper'>
-                    <div class="close-grade">
+                    <div class="close-container">
                         <div v-if="!currentPageName" @click="unShow()" class="close">
                             <i class="fas fa-times"></i>
                         </div>
@@ -68,6 +68,9 @@ export default {
 }
 .btn-gray-black-gray-sq{
     margin-bottom: 2rem;
+    font-size: 1.2rem;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
 }
 img{
     margin-top: 1.5rem;
@@ -89,25 +92,6 @@ img{
         // padding-top:1.5rem;
         width: 80%;
         min-height: 120%;
-        .close-grade{
-            // width: inherit;
-            // left:auto;
-            display: flex;
-            justify-content: flex-end;
-            .close{
-                position: fixed;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border: 0.2rem solid rgb(180, 179, 179);
-                border-radius: 50vh;
-                width: 1.5rem;
-                height: 1.5rem;
-                margin-top: 0.2rem;
-                margin-right: 0.2rem;
-                color: rgb(172, 172, 172);
-            }
-        }
     }
     .main-image{
         width:15%;
@@ -116,7 +100,7 @@ img{
         margin-right: auto;
     }
     .main-text1{
-        font-size:1rem;
+        font-size:1.4rem;
         font-weight: bold;
         margin:2rem;
     }

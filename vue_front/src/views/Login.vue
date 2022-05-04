@@ -37,10 +37,10 @@
         </div>
         <div>
         <SentPassReset v-if='showSentPassReset'/>
-        <NotVerified v-if='showNotVerified'
+        <!-- <NotVerified v-if='showNotVerified'
         @handleShowSent = 'handleShowSent'
          />
-        <Sent v-show='showSent'/>
+        <Sent v-show='showSent'/> -->
   </div>
     </div>
 </template>
