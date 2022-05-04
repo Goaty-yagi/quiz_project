@@ -13,7 +13,7 @@
                     <div class='nav-menu-flex'>
                         <div class="nav-menu" @click="showMobileMenu =false">
                             <router-link :to="{ name: 'Home'}" @click="storeReset" class="nav-item"><i class="fas fa-home" ></i>Home</router-link>
-                            <router-link :to="{ name: 'QuizHome'}" class="nav-item "><i class="fas fa-lightbulb"></i>Quiz</router-link>
+                            <router-link v-if='user' :to="{ name: 'QuizHome'}" class="nav-item "><i class="fas fa-lightbulb"></i>Quiz</router-link>
                             <router-link :to="{ name: 'Community'}"  class="nav-item"><i class="far fa-comments fas"></i>Community</router-link>
                             <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
                             <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-item signup"><i class="fas fa-user-plus"></i>Signup</router-link>

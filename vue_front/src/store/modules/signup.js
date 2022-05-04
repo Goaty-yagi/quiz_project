@@ -115,6 +115,9 @@ export default {
             Cookies.remove('tempKey')
             console.log('set',state.tempUser)
         },
+        tempUserTestTrue(state){
+            state.tempUser.test = true
+        },
         resetQuizKeyStorage(state){
             state.UID = null
             state.djangoUser = null

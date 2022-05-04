@@ -748,6 +748,7 @@ export default {
             this.tempStatusDict.grade = this.$store.getters.gradeForConvert
             console.log(this.finalResult,'store',this.$store.getters.gradeForConvert,'temp',this.tempStatusDict)
             this.$store.commit('setTempUser',this.tempStatusDict)
+            this.$store.commit('tempUserTestTrue')
             // this.updateQuizTaker()
         }
     }

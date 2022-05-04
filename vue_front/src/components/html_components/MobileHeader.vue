@@ -2,9 +2,11 @@
     <div class='mobile-header-wrapper'>
         <div class="mobilemenu-wrapper">
             <router-link :to="{ name: 'Home'}" @click="storeReset" class="nav-mobile-item"><i class="fas fa-home" ></i><p>Home</p></router-link>
-            <div @click='getAccount($store.state.signup.user.uid)' class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></div>
+            <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-mobile-item"><i class="fas fa-robot"></i><p>Account</p></div>
             <router-link :to="{ name: 'Community'}"  class="nav-mobile-item"><i class="far fa-comments"></i><p>Community</p></router-link>
-            <router-link :to="{ name: 'QuizHome'}"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
+            <router-link v-if='user' :to="{ name: 'QuizHome'}"  class="nav-mobile-item"><i class="far fa-lightbulb"></i><p>Quiz</p></router-link>
+            <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-mobile-item"><i class="fas fa-sign-in-alt"></i><p>Login</p></router-link>
+            <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-mobile-item signup"><i class="fas fa-user-plus"></i><p>Signup</p></router-link>
             <!-- <router-link to="/"  class="nav-mobile-item"><i class="fas fa-cog"></i><p>その他</p></router-link> -->
         </div>
     </div>
@@ -13,6 +15,14 @@
 <script>
 import {router} from "@/main.js"
 export default {
+    computed:{
+        user(){
+            return this.$store.state.signup.djangoUser
+        },
+        emailVerified(){
+            return this.$store.getters.getEmailVerified
+        },
+    },
     methods:{
     storeReset(){
           this.$store.commit('reset')

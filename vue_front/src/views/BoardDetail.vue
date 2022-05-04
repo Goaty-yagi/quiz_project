@@ -687,6 +687,7 @@ export default {
     justify-content: center;
     width: 100vw;
     min-height: 80vh;
+    margin-bottom: 1rem;
     // align-items: center;
 }
 .question-wrapper{

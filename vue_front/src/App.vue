@@ -100,15 +100,16 @@ export default{
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 100;
+    height: 100px;
+    // z-index: 100;
 }
 #router{
   min-height: 80vh;
 //   padding-bottom: 5rem;
 }
-// #footer{
-//   margin-bottom: 1rem;
-// }
+#footer{
+    // z-index: -1;
+}
 .main-header{
   position:relative;
   bottom:0;
@@ -117,7 +118,7 @@ export default{
   // background: linear-gradient(#5B759F,#1C254C);
   margin-top: 60px;
   width: 100vw;
-  height:80vh;
+  min-height:100vh;
 }
 
 // .router{

@@ -2,8 +2,8 @@
     <div>
         <div class="login-wrapper">
             <div class="flex-wrapper">
+                <p class='title-white'>ログイン</p>
                 <form class="id-form" @submit.prevent='submitForm' >
-                        <p class='title-white'>ログイン</p>
                         <div class="field">
                             <div class="input-box">
                                 <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
@@ -143,14 +143,17 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .login-wrapper{
-        width:100vw;
-        flex-direction: column;
-        display: flex;
-        padding-top:5rem;
-        // justify-content: center;
-        align-items: center;
-        }
+.login-wrapper{
+    width:100vw;
+    flex-direction: column;
+    display: flex;
+    // padding-top:5rem;
+    // justify-content: center;
+    align-items: center;
+    .id-form{
+        margin-top: 2rem;
+    }
+    }
     .login-text{
         color:white;
         font-size:1.2rem;
@@ -247,19 +250,25 @@ export default {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        
     }
     .text:hover{
-        background: grey;
+        background: $base-white;
+        color: $dark-blue;
+        font-weight: bold;
     }
     .text{
         color:white;margin-top:1rem;
         border: 0.1rem solid white;
         border-radius: 0.5rem;
         width: 60%;
-        transition:0.5s;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        transition:0.8s;
     }
     .error-form{
         width: 17rem;
+        background: $back-tr-white;
     }
     p{
         color:white;

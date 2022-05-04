@@ -233,7 +233,25 @@ body{
         margin-top: 0.3rem;
         margin-right: 0.3rem;
         color: rgb(172, 172, 172);
+        transition: 0.5s;
     }
+    .close:hover{
+        color: rgb(207, 207, 207);
+        border: 0.2rem solid rgb(207, 207, 207);
+    }
+}
+
+@media(min-width: 520px){
+    .close-container{
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+        margin-right: 0.5rem;
+        .close{
+            width: 2rem;
+            height: 2rem;
+        }
+    }
+
 }
 
 

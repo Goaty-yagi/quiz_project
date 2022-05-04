@@ -1,74 +1,96 @@
 <template>
-  <section class='home-section'>
-    <!-- <Notification/> -->
-    <!-- <p class='has-text-white'>{{ this.$store.state.id }}</p> -->
-    <div class='wrapper'>
-      <img @click="unko" class='is-image' src="@/assets/logo.png">
-      <p @click="unko" class='home-text'>日本語クイズ</p>
-      <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
-      <!-- {{$store.getters.gettersReply}}     -->
-      <div  @click="onClick()">
-          <button id='or-button' @click='showCompoHandler'>SRART</button>
-      </div>
-      <div>
-      </div>
-    </div>   
-     <div class='home-conf' v-if='showCompo'>
-        <TestConf @close='showCompoHandler' />   
-      </div>   
-    
-  </section>
-
+    <section class='home-section'>
+        <div class='wrapper'>
+            <img @click="unko" class='is-image' src="@/assets/logo.png">
+            <p @click="unko" class='home-text'>日本語クイズ</p>
+            <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
+            <!-- {{$store.getters.gettersReply}}     -->
+            <div v-if="!user">
+                <button id='or-button' @click='componentHandler()'>SRART</button>
+            </div>
+        </div>   
+        <div class='home-conf' v-if='showCompo'>
+            <TestConf @close='showCompoHandler' />   
+        </div>
+        <transition name="notice">
+            <NotLogin
+                v-if="tempUser.test&&showNotLogin"
+                @handleShowNotLogin="handleShowNotLogin"
+                />
+        </transition>
+    </section>
 </template>
 
 <script>
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
+import NotLogin from '@/components/login/NotLogin.vue'
 // import Cookies from 'js-cookie'
 //  import { uuid } from 'vue-uuid';
 export default {
-  name: 'Home',
-  components: {
-    TestConf,
-    Notification
-  },
-  data(){
-    return{
-      // status: 2,
-      field:'並び替え',
-      // num:3,
-      showCompo: false,
-      item:{status: 1,num:5,test:true},
-      // a:window.innerWidth
+    name: 'Home',
+    components: {
+        TestConf,
+        Notification,
+        NotLogin,
+    },
+    data(){
+        return{
+            field:'並び替え',
+            showCompo: false,
+            showNotLogin: false,
+            item:{status: 1,num:5,test:true},  
+        }
+    },
+    mounted(){
+        this.scrollTop()
+        console.log('mounted',this.$store.state.signup.djangoUser)
+        // Cookies.set('unko','chinko')
+        // this.$store.dispatch("getAnsweredQuestion")
+        // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
+    },
+    computed:{
+        user(){
+            return this.$store.state.signup.djangoUser
+        },
+        tempUser(){
+            return this.$store.state.signup.tempUser
+        },
+        reccomendedQuestion(){
+            return this.$store.getters.gettersReccomendedQuestion
+        },
+        emailVerified(){
+            return this.$store.getters.getEmailVerified
+        },
+    },
+    methods:{
+        unko(){
+        console.log('clicked')
+        this.$store.commit('setTempUserNull')
+        // window.localStorage.removeItem('quizkey')
+        // return `/quiz/${this.status}`
+        },
+        componentHandler(){
+            if(this.tempUser.test){
+                this.handleShowNotLogin()
+            }
+            else{
+                this.showCompoHandler()
+            }
+        },
+        showCompoHandler(){
+        this.showCompo = !this.showCompo
+        },
+        handleShowNotLogin(){
+            this.showNotLogin = !this.showNotLogin
+        },
+        scrollTop(){
+            window.scrollTo({
+            top: 0,
+            // behavior: "smooth"
+            });
+        },
     }
-  },
-  mounted(){
-    this.scrollTop()
-    console.log('mounted',this.$store.state.signup.djangoUser)
-    // Cookies.set('unko','chinko')
-    // this.$store.dispatch("getAnsweredQuestion")
-    // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
-  },
-  methods:{
-    unko(){
-      console.log('clicked')
-      this.$store.commit('setTempUserNull')
-      // window.localStorage.removeItem('quizkey')
-      // return `/quiz/${this.status}`
-    },
-    onClick(){
-      // this.$store.commit('getURLs',this.item)
-    },
-    showCompoHandler(){
-      this.showCompo = !this.showCompo
-    },
-    scrollTop(){
-          window.scrollTo({
-          top: 0,
-          // behavior: "smooth"
-          });
-      },
-  }
 }
 </script>
 <style scoped lang="scss">
@@ -78,7 +100,7 @@ export default {
   }
   .home-section{
     width:100%;
-    
+    height: 100vh;
     // height:100%;
   }.wrapper{
     flex-direction: column;
@@ -86,7 +108,7 @@ export default {
     justify-content: center;
     align-items: center;
     width:100%;
-    height:100%;
+    // height:100%;
     // bottom:10%;
   }
   .is-image{
