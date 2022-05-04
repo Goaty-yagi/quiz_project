@@ -526,9 +526,8 @@ class RelatedQuestionList(GenericAPIView):
     def get(self, request, format=None):
         print("request",request)
         request_tag_list = request.query_params.getlist("tag")
-        uid = request.query_params.getlist("uid")[0]
-        print("uid",uid)
         try:
+            uid = request.query_params.getlist("uid")[0]
             solved_queryset = self.queryset.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = True
@@ -544,10 +543,26 @@ class RelatedQuestionList(GenericAPIView):
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
             data = result.data
-            # serializer = BoardQuestionListSerializer(question, many=True)
             return Response(data)
-        except BoardQuestion.DoesNotExist:
-            raise Http404
+        except:
+            try:
+                solved_queryset = self.queryset.filter(
+                tag__in = request_tag_list,
+                solved = True
+                ).distinct()
+                unsolved_queryset = self.queryset.filter(
+                    tag__in = request_tag_list,
+                    solved = False
+                ).distinct()
+                question = set_random_object(solved_queryset, unsolved_queryset)
+                page = self.paginate_queryset(question)
+                print('page',self.queryset)
+                serializer = self.get_serializer(page, many=True)
+                result = self.get_paginated_response(serializer.data)
+                data = result.data
+                return Response(data)
+            except BoardQuestion.DoesNotExist:
+                raise Http404
 
 
 class SearchQuestionList(GenericAPIView):

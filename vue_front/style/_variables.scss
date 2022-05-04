@@ -120,6 +120,10 @@ body{
     color:white;
     border: 0.1rem solid  $dark-blue;
     border-radius: 0.5rem;
+    transition: 0.5s;
+}
+.btn-base-white-db-sq:hover{
+    color: $dark-blue;
 }
 .btn-base-black-db-sq{
     background: $base-color;

@@ -295,9 +295,9 @@ export default {
                     this.getRelatedQuestion()
                     this.countViewedNumUp()
                     this.favoriteCheck()
-                    if(!this.loginUser){
-                        this.$store.commit('setIsLoading', false)
-                    }
+                    // if(!this.loginUser){
+                    //     this.$store.commit('setIsLoading', false)
+                    // }
                 })
                 .catch(error => {
                     console.log(error)
@@ -343,7 +343,7 @@ export default {
             // relatedQuestion.results Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
-            if(this.loginUser){
+            if(this.user){
                 this.$store.commit('setIsLoading', true)
                 if(this.questionTags.length == 1){
                     var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
@@ -354,28 +354,34 @@ export default {
                 if(this.questionTags.length == 3){
                     var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
                 }
-                console.log("url:",url)
-                try{
-                    await axios.get(url)
-                        .then(response => {
-                        this.relatedQuestion = response.data
-                        })
-                    }
-                catch{(error => {
-                        console.log(error)
-                })}
-                console.log('after-try',this.relatedQuestion)
-                this.$store.commit('setRelatedQuestion', this.relatedQuestion.results)
-                this.deleteSameQuestion()
-                this.makeRandomSlicedArray()
-                this.$store.commit('setIsLoading', false)
-                    
             }
             else{
-                this.relatedQuestion = {}
-                this.relatedQuestion.results = 'unko'
-
+                console.log('elsedayo')
+                this.$store.commit('setIsLoading', true)
+                if(this.questionTags.length == 1){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
+                }
+                if(this.questionTags.length == 2){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
+                }
+                if(this.questionTags.length == 3){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
+                }
             }
+            try{
+                await axios.get(url)
+                    .then(response => {
+                    this.relatedQuestion = response.data
+                    })
+                }
+            catch{(error => {
+                    console.log(error)
+            })}
+            console.log('after-try',this.relatedQuestion)
+            this.$store.commit('setRelatedQuestion', this.relatedQuestion.results)
+            this.deleteSameQuestion()
+            this.makeRandomSlicedArray()
+            this.$store.commit('setIsLoading', false)
         },
         async createFavorite(){
             await axios({
@@ -445,6 +451,7 @@ export default {
             }
         },
         getQuestionTagList(questionTags){
+            console.log("GQTL",questionTags)
             this.questionTags = []
             for(let tag of questionTags){
                 this.questionTags.push(tag.id)
@@ -458,17 +465,15 @@ export default {
         //     return rValue;
         // },
         makeRandomSlicedArray(){
-            if(this.loginUser){
-                let num = 3
-                console.log("MRSA")
-                if (this.relatedQuestion.results.lendth < 3){
-                    num = this.relatedQuestion.results.lendth
-                }
-                console.log("MRSA2")
-                this.getRandomQuestion(this.relatedQuestion.results)
-                this.slicedRelatedQuestion = this.relatedQuestion.results.slice(0,num)
-                console.log(this.slicedRelatedQuestion)
+            let num = 3
+            console.log("MRSA")
+            if (this.relatedQuestion.results.lendth < 3){
+                num = this.relatedQuestion.results.lendth
             }
+            console.log("MRSA2")
+            this.getRandomQuestion(this.relatedQuestion.results)
+            this.slicedRelatedQuestion = this.relatedQuestion.results.slice(0,num)
+            console.log(this.slicedRelatedQuestion)
         },
         deleteSameQuestion(){
             if(this.loginUser){
@@ -586,7 +591,8 @@ export default {
         },
         async questionPatch(){
             // patch view count_up and on_answer
-            if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+            if(this.user){
+                if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
                 console.log('count', this.questionSlug)
                 await axios.patch(`/api/board/question/${this.questionSlug}`,{
                     viewed: this.viewed + 1,
@@ -594,7 +600,9 @@ export default {
                 })
                 this.$store.dispatch('getDjangoUser')
                 this.$store.dispatch('getAnsweredQuestion')
-            }else if(this.questionUserBoolean == false){
+                }
+            }
+            else if(this.questionUserBoolean == false){
                 axios.patch(`/api/board/question/${this.questionSlug}`,{
                     viewed: this.viewed + 1
                 })
@@ -709,7 +717,7 @@ export default {
                 width:  3rem;   
                 height: 3rem;
                 margin: 0.5rem; 
-            }
+                }
             }
             .username-date{
                 display: flex;
@@ -776,6 +784,7 @@ export default {
             }
             .viewed-wrapper{
                 flex-basis: 40%;
+                display: flex;
                 .viewed{
                 margin-left: 1rem;
                 margin-right: 0.5rem;
@@ -1000,5 +1009,26 @@ export default {
             }
         }
     }
+}
+.icon{
+    animation: icon 0.5s ;
+
+}
+@keyframes icon {
+    0% {
+        transform: scale(1);
+        
+        opacity: 0;
+      }
+    30%{
+        opacity: 1;
+    }
+    80%{
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
 }
 </style>
