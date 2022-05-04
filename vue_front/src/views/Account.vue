@@ -283,7 +283,7 @@ export default{
 .account-wrapper{
     display: flex;
     justify-content: center;
-    min-height: 80vh;
+    // min-height: 10vh;
     // height: 110vh;
     .main-wrapper{
         .content-wrapper{

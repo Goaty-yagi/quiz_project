@@ -1,5 +1,5 @@
 <template>
-    <div class="quiz-wrapper">
+    <div class="quiz-wrapper" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
@@ -208,9 +208,11 @@ export default {
         this.getTestQuestions()
     },
     mounted(){
-        // let a = this.$store.commit("convertGradeFromIntToID",'超初級')
-        // console.log('mounted',a)
+        this.$store.commit('onQuizTrue')
         this.SelectedAnswerInfo = {}
+    },
+    beforeUnmount(){
+        this.$store.commit('onQuizFalse')
     },
     computed: mapGetters(['questions','quiz']),
     methods:{
@@ -760,6 +762,7 @@ export default {
     display: flex;
     justify-content: center;
     margin-top: 0.5rem;
+    padding-bottom: 2rem;
     // align-items: center;
     .quiz-countainer{
         width: 100%;

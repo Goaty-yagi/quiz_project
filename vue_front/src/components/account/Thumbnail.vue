@@ -105,7 +105,7 @@ export default {
         //     result.src = resultImgUrl;
         //      });
         // },
-        userUpdate(){
+        async userUpdate(){
             const canvas = this.cropper.getCroppedCanvas({
                 width: 160,
                 height: 90,
@@ -117,7 +117,7 @@ export default {
                 imageSmoothingEnabled: false,
                 imageSmoothingQuality: 'high',
                 });
-            canvas.toBlob(async (blob) => {
+            await canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('thumbnail',blob, `${this.image}.png`),
             console.log('getthumb',formData.get('thumbnail')),

@@ -43,6 +43,7 @@ export default {
     }
   },
   mounted(){
+    this.scrollTop()
     console.log('mounted',this.$store.state.signup.djangoUser)
     // Cookies.set('unko','chinko')
     // this.$store.dispatch("getAnsweredQuestion")
@@ -61,6 +62,12 @@ export default {
     showCompoHandler(){
       this.showCompo = !this.showCompo
     },
+    scrollTop(){
+          window.scrollTo({
+          top: 0,
+          // behavior: "smooth"
+          });
+      },
   }
 }
 </script>

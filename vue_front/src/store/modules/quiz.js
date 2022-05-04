@@ -31,6 +31,7 @@ let getDefaultState = () => {
         test:null,
         notice:false,
         step:1,
+        onQuiz: false,
     }
 }
 
@@ -132,13 +133,13 @@ export default {
                     state.gradeForConvert = i.id
                 }
             }
+        },
+        onQuizTrue(state){
+            state.onQuiz = true
+        },
+        onQuizFalse(state){
+            state.onQuiz = false
         }
-        // clearQuiz(state, payload){
-        //     console.log('in_cleared')
-        //     state.questions = []
-        //     state.quiz = []
-        //     console.log('cleared')
-        // }
     },
     actions:{
         async getquestions({ state, commit,getters }){

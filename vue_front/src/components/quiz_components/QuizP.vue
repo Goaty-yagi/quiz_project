@@ -608,6 +608,7 @@ export default {
 .progress-wrapper{
     display: flex;
     justify-content: center;
+    min-height: 80%;
     .progress-bar-outer{
         position: relative;
         border: solid black;

@@ -1,38 +1,21 @@
 <template>
-  <div id="wrapper">
-    <div class="wrapper2">
-      
-       <Header
-       id="header"/>
-      
-      
-      
-        <section class="main-section" :class="{'scrll-fixed':$store.state.isLoading}">
-          <router-view
-            id='router'/>
-           <!-- <div v-if='user&&emailVerified==false&&this.$store.state.step==1'>
-             <div class='main-notification-wrapper'>
-                  <div class='main-notice-wrapper'>
-                      <img class='main-image' src="@/assets/logo.png">
-                      <p class='main-text1'>メール承認が完了していません。</p>
-                      <p class='main-text1'>メール承認を完了してください。</p>
-                      <p @click='resent' class='main-text1'>承認メールを送る。</p>                      
-                      <button  @click='addStep' class='button' id='color-button'><p>次へ</p></button>
-                  </div>
-              </div>
-           </div>
-           <Sent v-if='showSent'/> -->
-            <div class='mobile-header'>
-          <MobileHeader/>
+    <div id="wrapper">
+        <div class="wrapper2">
+            <Header
+            id="header"/>
+            <section class="main-section" :class="{'scroll-fixed':$store.state.isLoading}">
+                <router-view
+                id='router'/>
+                <Footer
+                id="footer"
+                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz"/>
+            </section>
+            <div class='mobile-header'
+            v-if="!$store.state.quiz.onQuiz">
+                <MobileHeader/>
+            </div>
         </div>
-        <Footer
-        id="footer"/>
-          <!-- <Footer
-          v-if='!this.$router.path==quizurl'
-          /> -->
-        </section>
     </div>
-  </div>
 </template>
 
 <script>
@@ -117,9 +100,11 @@ export default{
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 100;
 }
 #router{
-  min-height: 100vh;
+  min-height: 80vh;
+//   padding-bottom: 5rem;
 }
 // #footer{
 //   margin-bottom: 1rem;
@@ -130,15 +115,11 @@ export default{
 }
 .main-section{
   // background: linear-gradient(#5B759F,#1C254C);
-  margin-top: 100px;
+  margin-top: 60px;
   width: 100vw;
-  height:90vh;
-
-  // border:solid orange;
-  // width: 80%;
-  // margin: 0 auto;
-  // max-width: 90%
+  height:80vh;
 }
+
 // .router{
 //   border:solid green;
 //   width: 60%;
@@ -245,6 +226,7 @@ export default{
   .wrapper{
     position:relative
   }.main-section{
+    margin-top: 120px;
     // background: linear-gradient(#5B759F,#1C254C);
     // width: 100vw;
     // height:100vh;
