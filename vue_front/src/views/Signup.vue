@@ -1,7 +1,7 @@
 <template>
     <div class="signin-wrapper">
         <div class="flex-wrapper">
-            <p class='signin-text'>ユーザー登録</p>
+            <p class='title-white'>ユーザー登録</p>
             <Progress
             v-if='showProgress'
             />
@@ -22,7 +22,7 @@
                     <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
                 </div>         
             </div>
-            <div class="field">
+            <!-- <div class="field">
                 <div class="input-box">
                     <i class="fas fa-globe" id='in-font'>
                         <select class="select-box" id='Country' v-model='country' >
@@ -31,7 +31,7 @@
                         </select>
                     </i>
                 </div>         
-            </div>
+            </div> -->
             <div v-if='mailError||nameError||mailInUseError' class='error-form'>
                 <i class="fas fa-exclamation-triangle"></i>
                 <div v-if='mailError'>{{ mailError}}</div>
@@ -105,7 +105,7 @@ export default {
             username:'',
             email:'',
             email2:'',
-            country:'',
+            // country:'',
             nameError:null,
             mailError:null,
             mailInUseError:null,
@@ -158,7 +158,7 @@ export default {
                 this.$store.commit('getUsername',this.username)
                 this.$store.commit('getEmail',this.email)
                 this.$store.commit('getEmail2',this.email2)
-                this.$store.commit('getCountry',this.country)
+                // this.$store.commit('getCountry',this.country)
                 }                
             }
         },
@@ -180,8 +180,9 @@ export default {
         showButtonHandler(){
             if(this.username!=''&&
                 this.email!=''&&
-                this.email2!=''&&
-                this.country!=''){
+                this.email2!=''
+                // &&this.country!=''
+                ){
                     this.showButton = false
             }
             else{
@@ -204,11 +205,11 @@ export default {
                     this.email2 = this.$store.signup.state.email2
                 }
             }
-            if(item == 'Country'){
-                if(this.$store.signup.state.country !=''){
-                    this.country = this.$store.signup.state.country
-                }
-            }
+            // if(item == 'Country'){
+            //     if(this.$store.signup.state.country !=''){
+            //         this.country = this.$store.signup.state.country
+            //     }
+            // }
         },
     }
 }
@@ -225,7 +226,10 @@ export default {
         padding-top:5rem;
         // justify-content: center;
         align-items: center;
-        overflow:scroll;  
+        overflow:scroll;
+        .title-white{
+            margin-bottom: 1rem;
+        }
         }
     .signin-text{
         color:white;

@@ -40,7 +40,8 @@ export default {
             field:'並び替え',
             showCompo: false,
             showNotLogin: false,
-            item:{status: 1,num:5,test:true},  
+            item:{status: 1,num:5,test:true},
+            test1:""
         }
     },
     mounted(){
@@ -86,13 +87,16 @@ export default {
         handleShowNotLogin(){
             this.showNotLogin = !this.showNotLogin
         },
-        test(){
-            fetch("https://ipinfo.io/json?token=32e16159d962c5").then(
-  (response) => response.json()
-).then(
-  (jsonResponse) => console.log(jsonResponse, jsonResponse.country)
-)
-            	
+        async test(){
+            await axios
+            .get("https://ipinfo.io/json?token=32e16159d962c5")
+            .then(response => {
+                this.test1 = response.data
+                console.log(this.test1)
+                })
+            .catch(error => {
+                console.log(error)
+            })      	
 // axios.get('https://ipinfo.io').then(res => console.log(res.data.ip))
 
             // const script = document.createElement('script');

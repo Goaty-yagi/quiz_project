@@ -12,7 +12,7 @@
                         <i class="far fa-envelope" id='in-font'><input required class="text-box" v-model='email' type='email'  id='E-mail' placeholder="E-mail"></i>
                     </div>         
                 </div>
-                <div class="field">
+                <!-- <div class="field">
                     <div class="input-box">
                         <i class="fas fa-globe" id='in-font'></i>
                         <select class="select-box"  id='Country' v-model='country' >
@@ -21,7 +21,7 @@
                         </select>
                     </div>         
                 </div>
-                    
+                     -->
                 <div class="field">
                     <div class="input-box">
                         <i class="fas fa-unlock-alt" id='in-font'><input required v-model='password' class="text-box" :type="inputType"></i>
@@ -60,7 +60,7 @@ export default {
     data(){
         return{
             username:this.$store.state.signup.username,
-            country:this.$store.state.signup.country,
+            // country:this.$store.state.signup.country,
             password:this.$store.state.signup.password,
             email:this.$store.state.signup.email,
             password2:'',
@@ -125,7 +125,9 @@ export default {
         },
         showButtonHandler(){
             if(this.password!=''&&this.password2!=''&&this.accept==true
-                &&this.username!=''&&this.country!=''){
+                &&this.username!=''
+                // &&this.country!=''
+                ){
                 this.showButton = false
                 }
             else{
@@ -152,7 +154,7 @@ export default {
                     this.$emit('edithandle')
                     this.$store.commit('getPassword',this.password)
                     this.$store.commit('getUsername',this.username)
-                    this.$store.commit('getCountry',this.country)
+                    // this.$store.commit('getCountry',this.country)
             }
         },
     },        

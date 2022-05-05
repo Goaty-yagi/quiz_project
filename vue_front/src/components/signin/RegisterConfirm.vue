@@ -15,12 +15,12 @@
                         <div class="text-box" id='mail'>{{ $store.state.signup.email }}</div>
                 </div>         
             </div>
-            <div class="field">
+            <!-- <div class="field">
                 <div class="input-box">
                     <div><i class="fas fa-globe" id='in-font'></i></div>
                     <div class="text-box">{{ $store.state.signup.country }}</div>
                 </div>         
-            </div>
+            </div> -->
             <div class="field">
                 <div class="input-box">
                     <i class="fas fa-unlock-alt" id='in-font'></i>
@@ -51,10 +51,11 @@ export default {
             error: null,
             errorMessage:'このメールアドレスはすでに使われています。',
             errorMessage2:'登録できませんでした。もう一度お試しください。',
+            IPInfo:'',
         }
     },
     methods:{
-       async addStep(){
+        async addStep(){
             try{
                 await this.$store.dispatch('signup',{
                 email: this.$store.state.signup.email,
@@ -100,27 +101,20 @@ export default {
             this.$emit('edithandle')
             this.$emit('handle')
         },
-        // async handleSubmit(){
-        //     try {
-        //         await this.$store.dispatch('sentValidation',{
-        //             email: this.$store.state.signup.email,
-        //             password: this.$store.state.signup.password
-        //             })
-        //             this.$store.dispatch('')
-        //     } catch (err){
-        //         this.error = this.errorMessage2
-        //         console.log('catch error',this.error)
-        //     }
-        // },
-        // errorMessageHandler(error){
-        //     if ( error == 'Firebase: Error (auth/email-already-in-use).'){
-        //         this.error = this.errorMessage
-        //     }else{
-        //         this.error = this.errorMessage2
-        //     }
-        // }        
+        async getCountry(){
+            await axios
+            .get("https://ipinfo.io/json?token=32e16159d962c5")
+            .then(response => {
+                this.IPInfo = response.data
+                console.log(this.IPInfo)
+                })
+            .catch(error => {
+                console.log(error)
+            })
+        }    
     },
     mounted(){
+        this.getCountry()
         console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
     },
 }
