@@ -30,7 +30,7 @@
                         </div>
                         <div class="username-date">
                             <p> {{ question.user.name}}さん </p>
-                            <p> {{ question.created_on }} </p>
+                            <p> {{ dateConvert(question.created_on) }} </p>
                         </div>
                         <div class="question-status-container">
                             <p class="question-status"> {{ handleQuestionStatus(question.solved) }} </p>
@@ -89,7 +89,7 @@
                             <div class='good-like-wrapper'>
                                 <i class="far fa-heart"></i>
                                 <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                <div class="date">投稿日：{{ question.created_on }}</div>
+                                <div class="date">投稿日：{{ dateConvert(question.created_on) }}</div>
                             </div>
                         </div>        
                     </div>
@@ -110,7 +110,7 @@
                             <img class='img' v-bind:src="answer.user.thumbnail"/>
                             <div class="username-date">
                                 <p> {{ answer.user.name}}さん </p>
-                                <p> {{ answer.created_on }} </p>
+                                <p> {{ dateConvert(answer.created_on) }} </p>
                             </div>
                         </div>
                         <p class="answer-description-container">{{ answer.description }} </p>
@@ -265,6 +265,20 @@ export default {
         },
     },
     methods: {
+        dateConvert(date){
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString()
+            return stringDT.replace(/\//g,'-')
+        },
         async getDetail(slug="") {
             this.$store.commit('setIsLoading', true)
             this.scrollTop()
@@ -876,9 +890,9 @@ export default {
                     }
                 }
             }
-            .question-list:hover{
-                background: rgb(230, 230, 230);
-            }
+            // .question-list:hover{
+            //     background: rgb(230, 136, 136);
+            // }
         }
         .see-more{
             display: flex;

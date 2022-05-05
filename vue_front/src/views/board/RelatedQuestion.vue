@@ -23,7 +23,7 @@
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
                             <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                            <div class="date">作成日：{{ question.created_on }}</div>
+                            <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                         </div>
                     </div>        
                 </div>
@@ -44,7 +44,21 @@ export default {
             console.log('slugdayo',slug)
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
-        },        
+        },
+        dateConvert(date){
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString()
+            return stringDT.replace(/\//g,'-')
+        },      
     }
 
 }
@@ -73,6 +87,9 @@ export default {
         .question-wrapper{
             margin: 1rem;
             width: 85%;
+            .question-list:hover{
+                    background: $base-lite-3;
+                }
             .question-list{
                 border: solid $base-color;
                 margin-bottom: 0.5rem;

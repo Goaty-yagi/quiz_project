@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
 import NotLogin from '@/components/login/NotLogin.vue'
@@ -43,6 +44,7 @@ export default {
         }
     },
     mounted(){
+        this.test()
         this.scrollTop()
         console.log('mounted',this.$store.state.signup.djangoUser)
         // Cookies.set('unko','chinko')
@@ -83,6 +85,22 @@ export default {
         },
         handleShowNotLogin(){
             this.showNotLogin = !this.showNotLogin
+        },
+        test(){
+            fetch("https://ipinfo.io/json?token=32e16159d962c5").then(
+  (response) => response.json()
+).then(
+  (jsonResponse) => console.log(jsonResponse, jsonResponse.country)
+)
+            	
+// axios.get('https://ipinfo.io').then(res => console.log(res.data.ip))
+
+            // const script = document.createElement('script');
+ 
+            // script.src = 'https://ipinfo.io?token=32e16159d962c5';
+            // console.log('test',script)
+            // document.body.appendChild(script);
+            // document.body.removeChild(script);
         },
         scrollTop(){
             window.scrollTo({

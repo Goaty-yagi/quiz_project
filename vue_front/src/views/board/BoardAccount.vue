@@ -85,7 +85,7 @@
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
                             <div class="good" v-if="question.liked_num">{{ question.liked_num[0].liked_num }}</div>
-                            <div class="date">作成日：{{ question.created_on }}</div>
+                            <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                         </div>
                     </div>   
                 </div>
@@ -541,6 +541,20 @@ export default {
                 this.getTagQuestion(tagID, tag)
             }
         },
+        dateConvert(date){
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString()
+            return stringDT.replace(/\//g,'-')
+        },
     }
 }
 </script>
@@ -709,62 +723,65 @@ export default {
     }
     .question-container{
         width: 90%;
+        .question-list:hover{
+            background: $base-lite-3;
+        }
         .question-list{
-        border: solid $base-color;
-        margin-bottom: 0.5rem;
-        width:100%;
-        background: rgb(252, 252, 252);
-        display: flex;
-        flex-direction: column;
-        .tag-wrapper{
+            border: solid $base-color;
+            margin-bottom: 0.5rem;
+            width:100%;
+            background: rgb(252, 252, 252);
             display: flex;
-            width: 100%;
-            .tag{
-                border: solid black;
-                border-radius: 50vh;
-                background: rgb(230, 230, 230);
-                margin-top: 0.5rem;
-                margin-left: 0.3rem;
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                min-width: 3rem;
-            }
-            .on-answer-container{
-                position:relative;
-                width:100%;
-                .on-answer{
-                    display: flex;
-                    position: absolute;
-                    right: 0;
-                    flex-direction: column;
-                    width:3.7rem;
+            flex-direction: column;
+            .tag-wrapper{
+                display: flex;
+                width: 100%;
+                .tag{
+                    border: solid black;
+                    border-radius: 50vh;
+                    background: rgb(230, 230, 230);
                     margin-top: 0.5rem;
-                    margin-right: 0.3rem;
-                    padding-right:0.2rem;
-                    padding-left:0.2rem;
-                    color: red;
-                    border: solid red;
-                    border-radius: 0.5rem;
-                    .span2{
-                        margin-top: -0.5rem;
-                        font-size: 0.6rem;                   
+                    margin-left: 0.3rem;
+                    margin-bottom: 0.5rem;
+                    padding: 0.5rem;
+                    min-width: 3rem;
+                }
+                .on-answer-container{
+                    position:relative;
+                    width:100%;
+                    .on-answer{
+                        display: flex;
+                        position: absolute;
+                        right: 0;
+                        flex-direction: column;
+                        width:3.7rem;
+                        margin-top: 0.5rem;
+                        margin-right: 0.3rem;
+                        padding-right:0.2rem;
+                        padding-left:0.2rem;
+                        color: red;
+                        border: solid red;
+                        border-radius: 0.5rem;
+                        .span2{
+                            margin-top: -0.5rem;
+                            font-size: 0.6rem;                   
+                        }
                     }
                 }
             }
-        }
-        .good-like-wrapper{
-            display: flex;
-            .fa-heart{
-                color: rgb(221, 36, 221);
-                margin-left: 0.5rem;
-                margin-right: 0.3rem;
-                margin-top: 0.2rem;
+            .good-like-wrapper{
+                display: flex;
+                .fa-heart{
+                    color: rgb(221, 36, 221);
+                    margin-left: 0.5rem;
+                    margin-right: 0.3rem;
+                    margin-top: 0.2rem;
+                }
+                .date{
+                    margin-left: 0.5rem;
+                }
             }
-            .date{
-                margin-left: 0.5rem;
-            }
         }
-    }
     }
     .question-list-dammy{
         background: gray;

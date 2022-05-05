@@ -77,7 +77,7 @@
                         <div
                         v-for="(question,questionindex) in questions.results"
                         v-bind:key="questionindex">
-                            <div class='question-list' @click="getDetail(question.slug)">
+                            <div class='question-list l-question-list' @click="getDetail(question.slug)">
                                 <div 
                                     class="tag-wrapper">
                                     <div 
@@ -90,7 +90,7 @@
                                 <div class='good-like-wrapper'>
                                     <i class="far fa-heart"></i>
                                     <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                    <div class="date">作成日：{{ question.created_on }}</div>
+                                    <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                                 </div>
                             </div>        
                         </div>
@@ -114,7 +114,7 @@
                             <div class='good-like-wrapper'>
                                 <i class="far fa-heart"></i>
                                 <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                <div class="date">作成日：{{ question.created_on }}</div>
+                                <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                             </div>
                         </div>        
                     </div>
@@ -384,31 +384,6 @@ export default {
                 this.onAnswerOrReply = true
             }
         },
-        // async getRelatedQuestion() {
-        //     // this.$store.commit('setIsLoading', true)
-        //     console.log("ingetRQ",this.getUserTags)
-        //     if(this.getUserTags.length == 1){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}`
-        //     }
-        //     if(this.getUserTags.length == 2){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}`
-        //     }
-        //     if(this.getUserTags.length == 3){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}&tag=${this.getUserTags[2]}`
-        //     }
-        //     console.log("url:",url)
-        //     try{
-        //         await axios.get(url)
-        //             .then(response => {
-        //             this.reccomendedQuestion = response.data
-        //             console.log(this.reccomendedQuestion.length,this.reccomendedQuestion)
-        //             })
-        //         }
-        //     catch{(error => {
-        //             console.log(error)
-        //     })}
-        //     // this.$store.commit('setIsLoading', false)
-        // },
         async getSearchQuestion(){
             this.$store.commit('setIsLoading', true)
             await axios
@@ -547,16 +522,21 @@ export default {
             this.scroll_position = window.pageYOffset;
             this.styles.top = this.scroll_position
             console.log(this.scroll_position,)
-        
-        // const elem = document.getElementById('scroll');
-        // elem.style.top = scroll_position
-        // console.log('scroll', scroll_position)
-        // window.scrollTo({
-        //     top: scroll_position,
-        //     behavior: "smooth"
-        //     });
-        //     console.log("unko")
-        }
+        },
+        dateConvert(date){
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString()
+            return stringDT.replace(/\//g,'-')
+        },
     }
 }
 </script>
@@ -693,6 +673,9 @@ export default {
                             transition:0.3s;
                         }
                     }
+                }
+                .question-list:hover{
+                    background: $base-lite-3;
                 }
                 .question-list{
                     border: solid $base-color;

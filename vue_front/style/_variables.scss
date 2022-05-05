@@ -91,6 +91,15 @@ body{
     align-items: center;
 }
 
+// this is for question-list hover
+.question-list{
+    transition: 0.5s;
+}
+.question-list:hover{
+    // this is not working
+    background: $base-white;
+}
+
 // module
 .title-white{
     color: white;
