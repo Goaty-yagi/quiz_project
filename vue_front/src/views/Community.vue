@@ -526,15 +526,18 @@ export default {
         dateConvert(date){
             var time = ''
             var newDate = ''
+            console.log('date',date)
             var dt = new Date(date)
+            console.log('dt',dt)    
             if(dt.getHours() > 11){
                 time = " PM"
             }else{
                 time = " AM"
             }
+            dt.setSeconds()
             newDate = date + time + " UTC"
             dt = new Date(newDate)
-            var stringDT = dt.toLocaleString()
+            var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
             return stringDT.replace(/\//g,'-')
         },
     }
