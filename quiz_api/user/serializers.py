@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from user.models import User
+from user.models import User, IPData
 from board.serializers import (
     BoardAnswerReadSerializer, 
     BoardAnswerStorageSerializer,
@@ -17,6 +17,13 @@ from board.serializers import (
 from quiz.models import User, QuizTaker
 from quiz.serializers import QuizTakerSerializer,QuizTakerStorageSerializer
 
+
+class IPDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IPData
+        fields = '__all__'
+
+
 class UserSerializer(serializers.ModelSerializer):
     question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
     answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey
@@ -25,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
     user_tag = UserTagReadSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     quiz_taker = QuizTakerSerializer(many=True, required=False) #ForeignKey
+    ip_data = IPDataSerializer(many=True,required=False) #ForeignKey
     
     
     class Meta:
@@ -33,7 +41,6 @@ class UserSerializer(serializers.ModelSerializer):
                   "name", 
                   "email", 
                   "thumbnail", 
-                  "country",
                   "question", 
                   "answer",
                   "liked_num",
@@ -41,15 +48,20 @@ class UserSerializer(serializers.ModelSerializer):
                   "user_tag",
                   "favorite_question",
                   "quiz_taker",
+                  'ip_data'
                   ]
         # read_only_field = []
 
     def create(self, validated_data):
         try:
+            print('create', validated_data)
+            ip_data = validated_data.pop('ip_data')
+            # print('create2', ip_data[0])
             quiz_taker = validated_data.pop('quiz_taker')
             level = dict(quiz_taker[1])['level']
             user = User.objects.create(**validated_data)
             QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
+            IPData.objects.create(user=user, **ip_data[0])
             return user
         except:
             user = User.objects.create(**validated_data)
@@ -70,7 +82,6 @@ class UserStrageSerializer(serializers.ModelSerializer):
         fields = ["UID",
                   "name", 
                   "thumbnail",
-                  "country",
                   "question", 
                   "answer",
                   "liked_num",
