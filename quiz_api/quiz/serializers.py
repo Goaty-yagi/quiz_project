@@ -132,6 +132,49 @@ class UserStatusSerializer(serializers.ModelSerializer):
 					**validated_data,
 					is_false=is_false)
 		return user_status
+
+
+class UserStatusInitSerializer(serializers.ModelSerializer):
+	"""this is for user registration only """
+
+	class Meta:
+		model = UserStatus
+		fields = [
+			"id",
+			"status",
+			"quiz_taker",
+			"grade",
+			"is_correct",
+			"is_false",
+			"percentage"
+			]
+
+	# def create(self, validated_data):
+	# 	print('USINIT', validated_data)
+	# 	for i in validated_data.statusList:
+	# 		if UserStatus.objects.filter(quiz_taker=i.quizTker,status=i.status).exists():
+	# 			if i.isCorrect:
+	# 				user_status = UserStatus.objects.filter(quiz_taker=i.quizTker,status=i.status).update(
+	# 					is_correct=F('is_correct') + 1,
+	# 					percentage=((F('is_correct')+ 1) * 100 / ((F('is_correct')+ 1) + F('is_false'))))
+					
+	# 			elif i.isFalse:
+	# 				user_status = UserStatus.objects.filter(quiz_taker=i.quizTker,status=i.status).update(
+	# 					is_false=F('is_false') + 1,
+	# 					percentage=((F('is_correct')) * 100 / ((F('is_false')+ 1)+F('is_correct'))))
+	# 		else:
+	# 			if i.isCorrect:
+	# 				user_status = UserStatus.objects.create(
+	# 					quiz_taker=i.quizTker,
+	# 					status=i.status,
+	# 					is_correct=i.isCorrect,
+	# 					percentage=100)
+	# 			elif i.isFalse:
+	# 				user_status = UserStatus.objects.create(
+	# 					quiz_taker=i.quizTker,
+	# 					status=i.status,
+	# 					is_false=i.isFalse)
+	# 		return user_status
 		
 		
 class UserStatusNameSerializer(serializers.ModelSerializer):

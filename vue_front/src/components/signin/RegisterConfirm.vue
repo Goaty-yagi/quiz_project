@@ -51,8 +51,29 @@ export default {
             error: null,
             errorMessage:'このメールアドレスはすでに使われています。',
             errorMessage2:'登録できませんでした。もう一度お試しください。',
-            IPInfo:'',
+            userInfo:'',
+            IPInfo:[
+                {city:"",
+                ip:"",
+                loc:"",
+                org:"",
+                postal:"",
+                region:"",
+                timezone:"",
+                country:""
+                }
+            ],
         }
+    },
+    computed:{
+        user(){
+            try{
+                return this.$store.state.signup.djangoUser
+            }
+            catch{
+                return null
+            }
+        },
     },
     methods:{
         async addStep(){
@@ -66,36 +87,64 @@ export default {
                 this.$store.commit('addStep')
                 this.$emit('handle')
                 console.log('start django add')
-                await this.registerUserOndDjango()
+                await this.registerUserAndDjango()
             }catch(err){
                 this.error = this.errorMessage2
-                console.log('catch error',this.error)
+                console.log('catch error',this.error,err)
             }
         },
-        registerUserOndDjango(){
-            console.log('start add')
-            if(this.$store.getters.getTempUser){
-                try{
-                    axios({
-                        method: 'post',
-                        url: '/api/user/',
-                        data: {
-                            UID: this.$store.state.signup.user.uid,
-                            name: this.$store.state.signup.username,
-                            email: this.$store.state.signup.email,
-                            country: this.$store.state.signup.country,
-                            quiz_taker: [
-                                {grade: this.$store.getters.getTempUser.grade},
-                                {level: this.$store.getters.getTempUser.level}
-                            ]
-                        },
-                    }) 
-                    this.$store.commit('setTempUserNull')
+        async registerUserAndDjango(){
+            console.log('start add',this.$store.getters.getTempUser)
+            if(this.$store.getters.getTempUser.test){
+                console.log('YES TEMP')
+                this.userInfo={
+                    UID: this.$store.state.signup.user.uid,
+                    name: this.$store.state.signup.username,
+                    email: this.$store.state.signup.email,
+                    quiz_taker: [
+                        {grade: this.$store.getters.getTempUser.grade},
+                        {level: this.$store.getters.getTempUser.level}
+                    ],
                 }
-                catch{
-
-                }
+            }else{
+                console.log('NO TEMP')
+                this.userInfo={
+                    UID: this.$store.state.signup.user.uid,
+                    name: this.$store.state.signup.username,
+                    email: this.$store.state.signup.email
+                    }
             }
+            try{
+                console.log("try")
+                await axios({
+                    method: 'post',
+                    url: '/api/user/',
+                    data: this.userInfo
+                    // {
+                    //     UID: this.$store.state.signup.user.uid,
+                    //     name: this.$store.state.signup.username,
+                    //     email: this.$store.state.signup.email,
+                    //     quiz_taker: [
+                    //         {grade: this.$store.getters.getTempUser.grade},
+                    //         {level: this.$store.getters.getTempUser.level}
+                    //     ],
+                        // ip_data: [{
+                        //    city: this.IPInfo.city,
+                        //    ip: this.IPInfo.ip,
+                        //    loc: this.IPInfo.loc,
+                        //    org: this.IPInfo.org,
+                        //    postal: this.IPInfo.postal,
+                        //    region: this.IPInfo.region,
+                        //    timezone: this.IPInfo.timezone,
+                        //    country: this.IPInfo.country
+                        // }]
+                    // },
+                })
+            }
+            catch(error){
+                console.log('error',error.message)
+                }
+            
         },
         goEdit(){
             this.$emit('edithandle')
@@ -108,6 +157,18 @@ export default {
                 this.IPInfo = response.data
                 console.log(this.IPInfo)
                 })
+            // .then(response => {
+            //     let IP = response.data
+            //     this.IPInfo.city = IP.city
+            //     this.IPInfo.ip = IP.ip
+            //     this.IPInfo.loc = IP.loc
+            //     this.IPInfo.org = IP.org
+            //     this.IPInfo.postal = IP.postal
+            //     this.IPInfo.region = IP.region
+            //     this.IPInfo.timezone = IP.timezone
+            //     this.IPInfo.country = IP.country
+            //     console.log(this.IPInfo)
+            //     })
             .catch(error => {
                 console.log(error)
             })

@@ -14,7 +14,7 @@
         </div>
         <transition name="notice">
             <NotLogin
-                v-if="tempUser.test&&showNotLogin"
+                v-if="tempUserTest&&showNotLogin"
                 @handleShowNotLogin="handleShowNotLogin"
                 />
         </transition>
@@ -45,7 +45,7 @@ export default {
         }
     },
     mounted(){
-        this.test()
+        // this.test()
         this.scrollTop()
         console.log('mounted',this.$store.state.signup.djangoUser)
         // Cookies.set('unko','chinko')
@@ -65,6 +65,14 @@ export default {
         emailVerified(){
             return this.$store.getters.getEmailVerified
         },
+        tempUserTest(){
+            try{
+                return this.$store.state.signup.tempUser.test
+            }
+            catch{
+                return false
+            }
+        }
     },
     methods:{
         unko(){
@@ -74,7 +82,7 @@ export default {
         // return `/quiz/${this.status}`
         },
         componentHandler(){
-            if(this.tempUser.test){
+            if(this.tempUserTest){
                 this.handleShowNotLogin()
             }
             else{
@@ -87,25 +95,17 @@ export default {
         handleShowNotLogin(){
             this.showNotLogin = !this.showNotLogin
         },
-        async test(){
-            await axios
-            .get("https://ipinfo.io/json?token=32e16159d962c5")
-            .then(response => {
-                this.test1 = response.data
-                console.log(this.test1)
-                })
-            .catch(error => {
-                console.log(error)
-            })      	
-// axios.get('https://ipinfo.io').then(res => console.log(res.data.ip))
-
-            // const script = document.createElement('script');
- 
-            // script.src = 'https://ipinfo.io?token=32e16159d962c5';
-            // console.log('test',script)
-            // document.body.appendChild(script);
-            // document.body.removeChild(script);
-        },
+        // async test(){
+        //     await axios
+        //     .get("https://ipinfo.io/json?token=32e16159d962c5")
+        //     .then(response => {
+        //         this.test1 = response.data
+        //         console.log(this.test1.city)
+        //         })
+        //     .catch(error => {
+        //         console.log(error)
+        //     })      
+        // },
         scrollTop(){
             window.scrollTo({
             top: 0,

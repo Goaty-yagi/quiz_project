@@ -48,7 +48,8 @@ export default createStore({
         "quiz.quizNameId",
         "quiz.fieldNameId"],
       storage: window.sessionStorage
-    }),createPersistedState({
+    }),
+    createPersistedState({
         key: 'tempKey',  // 設定しなければ'vuex'
         paths: [
           

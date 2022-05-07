@@ -95,7 +95,7 @@ class Answer(models.Model):
 class QuizTaker(models.Model):
     user = models.ForeignKey(User, null=True, related_name='quiz_taker', on_delete=models.CASCADE)
     grade = models.ForeignKey(ParentQuiz, null=True, on_delete=models.CASCADE)
-    level = models.IntegerField(null=True,blank=True)
+    level = models.IntegerField(default=0, null=True, blank=True)
     # user_status = models.ForeignKey(UserStatus, related_name='quiz_taker', default=None ,blank=True, on_delete=models.CASCADE)
     test_take_num = models.IntegerField(default=1)
     practice_take_num = models.IntegerField(default=0)

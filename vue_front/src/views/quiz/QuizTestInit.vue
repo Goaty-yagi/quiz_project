@@ -218,7 +218,7 @@ export default {
     methods:{
         ...mapActions(['getTestQuestions']),
         nextQuestion(questionType,questionID){
-            this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
+            this.handleCountUpDict(this.selectedAnswer,questionType,questionID)
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
@@ -527,7 +527,7 @@ export default {
             this.pagination.b = b
             this.questionLengthCounter = b
         },
-        handleCounyUpDict(selectedAnswer,questionType,questionID){
+        handleCountUpDict(selectedAnswer,questionType,questionID){
             this.countupDict.questionType = questionType
             this.countupDict.questionID = questionID
             if(questionType == 5){
@@ -586,11 +586,41 @@ export default {
             });
         },
         setTempStatusDict(){
+            console.log('IN-setSD',this.tempStatusDict,this.userStatusDict)
             const _ = require('lodash');
             let copyObject = _.cloneDeep(this.userStatusDict)
-            this.tempStatusDict.status.push(copyObject)
-            console.log('TSL',this.tempStatusDict.status)
+            if(!this.tempStatusDict.status[0]){
+                this.tempStatusDict.status.push(copyObject)
+                console.log('pushed')
+            }
+            else{
+                for(let i in this.tempStatusDict.status){
+                    console.log('loop',i,typeof(i),this.tempStatusDict.status[i].status,copyObject.status)
+                    if(this.tempStatusDict.status[i].status==copyObject.status){
+                        console.log('true',this.tempStatusDict)
+                        if(copyObject.isCorrect){
+                            console.log('correct')
+                            this.tempStatusDict.status[i].isCorrect+=1
+                            console.log('correct',this.tempStatusDict)
+                            break
+                        }else{
+                            console.log('notcorrect')
+                            this.tempStatusDict.status[i].isFalse+=1
+                            console.log('notcorrect',this.tempStatusDict)
+                            break
+                        }
+                    }
+                    else{
+                        console.log('false',i,this.tempStatusDict.status.length -1)
+                        if(Number(i) == this.tempStatusDict.status.length -1){
+                            this.tempStatusDict.status.push(copyObject)
+                            console.log('pushed2',this.tempStatusDict.status)
+                        }
+                    }
+                }
+            }
         },
+        
         // from here for test function
         checkConsecutiveResult(){
             var correctCounter = 0

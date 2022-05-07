@@ -110,8 +110,11 @@ export default {
             state.tempUser.level = payload.level
             console.log('set-temp-user', state.tempUser)
         },
-        setTempUserNull(state){
-            state.tempUser = null
+        setTempUserReset(state){
+            state.tempUser.test = false
+            state.tempUser.statusList = '',
+            state.tempUser.grade = '',
+            state.tempUser.level = ''
             Cookies.remove('tempKey')
             console.log('set',state.tempUser)
         },

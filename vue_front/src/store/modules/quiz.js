@@ -119,8 +119,16 @@ export default {
             state.userStatusDict.isFalse = payload.isFalse
             console.log("GUSI",state.userStatusDict)
         },
+        // getUserStatusInfoForInit(state, payload){
+        //     state.userStatusDict.status = payload.status
+        //     // state.userStatusDict.grade = payload.grade
+        //     // state.userStatusDict.quiz_taker = payload.quiz_taker
+        //     state.userStatusDict.isCorrect = payload.isCorrect
+        //     state.userStatusDict.isFalse = payload.isFalse
+        //     console.log("GUSI",state.userStatusDict)
+        // },
         setQuizID(state, payload){
-            state.userStatusDict.grade = payload.name
+            state.userStatusDict.grade = payload
         },
         setQuizTakerID(state, payload){
             state.userStatusDict.quizTaker = payload
@@ -155,7 +163,7 @@ export default {
             console.log(getters.quizTaker)
             commit('setQuizTakerID',getters.quizTaker)
             commit('getQuiz',response.data[0])
-            commit('setQuizID',response.data[0])
+            commit('setQuizID',response.data[0].name)
             response.data.shift()
             commit('getRandomQuestion',response.data)
             commit('setQuestions',response.data);

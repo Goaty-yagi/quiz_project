@@ -25,6 +25,7 @@ from quiz.serializers import (
     AnswerCountSerializer,
     UserStatusSerializer,
     QuizTakerSerializer,
+    UserStatusInitSerializer
     )
 
 
@@ -138,6 +139,12 @@ class UserStatusCreateApi(generics.CreateAPIView):
                 )
     serializer_class = UserStatusSerializer
     pagination_class = None
+
+
+class UserStatusInitCreateApi(APIView):
+   def post(self, request, format=None):
+       print('CREATE',request.query_params)
+       serializer =  UserStatusInitSerializer
 # class AnswerCountApi(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = Answer.objects.all()
 #     serializer_class = AnswerCountSerializer

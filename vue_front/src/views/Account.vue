@@ -196,6 +196,7 @@ export default{
                     this.quizTaker = response.data.quiz_taker[0]
                     console.log('inGet', this.userData,this.userStatus)
                     this.handleStatusParameter()
+                    this.setInitUserStatus()
                     this.gotInfo = true
                 })
                 .catch(error => {
@@ -264,6 +265,39 @@ export default{
             let i = this.$route.path
             i = i.split("/")
             this.currentPageName = i[1]
+        },
+        setInitUserStatus(){
+            if(this.emailVerified){
+                if(this.$store.getters.getTempUser){
+                    this.$store.commit('setQuizTakerID',this.quizTaker.id)
+                    this.$store.commit('setQuizID',this.$store.getters.getTempUser.grade)
+                    var list = []
+                    var counter = 0
+                    for(let n of this.$store.getters.getTempUser.statusList){
+                        if(counter == 0){
+                            list.push(n)
+                            counter += 1
+                        }else{
+                            list.forEach(function(element,index){
+                                if(element.status == n.status){
+                                    if(n.inCorrect){
+                                        list[index].isCorrect +=1
+                                    }else{
+                                        list[index].isFalse +=1
+                                    }
+                                }else{
+                                    list.push(n)
+                                }          
+                            })
+                        }
+                    }
+                    console.log("go-loop",list)
+                    for(let i of list){
+                        this.$store.dispatch('userStatusPost',i)
+                    }
+                }
+                this.$store.commit('setTempUserReset')
+            }
         },
         // handleShowEmailVerified(){
         //     if(!this.EmainVerified){}

@@ -55,16 +55,16 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             print('create', validated_data)
-            ip_data = validated_data.pop('ip_data')
-            # print('create2', ip_data[0])
+            # ip_data = validated_data.pop('ip_data')
             quiz_taker = validated_data.pop('quiz_taker')
             level = dict(quiz_taker[1])['level']
             user = User.objects.create(**validated_data)
             QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
-            IPData.objects.create(user=user, **ip_data[0])
+            # IPData.objects.create(user=user, **ip_data[0])
             return user
         except:
             user = User.objects.create(**validated_data)
+            QuizTaker.objects.create(user=user)
             return user
 
 
