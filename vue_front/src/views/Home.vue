@@ -47,6 +47,7 @@ export default {
     mounted(){
         // this.test()
         this.scrollTop()
+        this.setInitUserStatus()
         console.log('mounted',this.$store.state.signup.djangoUser)
         // Cookies.set('unko','chinko')
         // this.$store.dispatch("getAnsweredQuestion")
@@ -111,6 +112,18 @@ export default {
             top: 0,
             // behavior: "smooth"
             });
+        },
+        async setInitUserStatus(){
+            if(this.emailVerified){
+                if(this.$store.getters.getTempUser){
+                    this.$store.commit('setQuizTakerID',this.quizTaker.id)
+                    this.$store.commit('setQuizID',this.$store.getters.getTempUser.grade)
+                    for(let i of this.$store.getters.getTempUser.statusList){
+                        await this.$store.dispatch('userStatusPost',i)
+                    }
+                }
+                this.$store.commit('setTempUserReset')
+            }
         },
     }
 }

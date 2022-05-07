@@ -35,7 +35,7 @@ export default {
         emailVerified:null,
         authIsReady:false,
         checkedEmail:null,
-        accountURL:'http://localhost:8080/login/',
+        accountURL:'http://localhost:8080/account/',
         actionCodeSettings:{
             url: null,
             handleCodeInApp: true

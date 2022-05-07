@@ -14,7 +14,7 @@ from board.serializers import (
     FavoriteQuestionReadSerializer,
     FavoriteQuestionStorageSerializer
     )
-from quiz.models import User, QuizTaker
+from quiz.models import User, QuizTaker, UserStatus, ParentQuiz, ParentStatus
 from quiz.serializers import QuizTakerSerializer,QuizTakerStorageSerializer
 
 
@@ -63,8 +63,23 @@ class UserSerializer(serializers.ModelSerializer):
             # IPData.objects.create(user=user, **ip_data[0])
             return user
         except:
+            # set 超初級 ids 変わる可能性あり
+            # 7 = ボキャブラリー
+            # 1 = ひらがな
+            # 6 = カタカナ
+            # 13 = 数字
+            # grade 4 = 超初級
+
+            ids = [7,1,6,13]
+            list = []
             user = User.objects.create(**validated_data)
-            QuizTaker.objects.create(user=user)
+            print('before grade')
+            grade = ParentQuiz.objects.get(id=4)
+            quiz_taker = QuizTaker.objects.create(user=user, grade=grade)
+            status = ParentStatus.objects.filter(id__in=ids)
+            print('ready',status)
+            for i in status:
+                UserStatus.objects.create(quiz_taker=quiz_taker, status=i, grade=grade)
             return user
 
 
