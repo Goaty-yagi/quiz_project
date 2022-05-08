@@ -167,9 +167,10 @@ export default {
                 }
             
         },
-        goEdit(){
-            this.$emit('edithandle')
+        async goEdit(){
+            this.$emit('showPasswordFalse')
             this.$emit('handle')
+            this.$emit('edithandle')
         },
         async getCountry(){
             if(!this.gotIP){

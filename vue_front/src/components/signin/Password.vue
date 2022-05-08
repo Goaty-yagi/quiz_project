@@ -84,6 +84,7 @@ export default {
             '' : '@password is less than 8 char'
             if (this.passwordError == ''&&this.passwordError2 == ''){
                 this.$emit('confHandle')
+                this.$emit('handleAfterPassword')
                 this.$store.commit('getPassword',this.password)         
             }
         },
@@ -108,8 +109,9 @@ export default {
         flex-direction: column;
         align-items: flex-start;;
         display: flex;
-        
+        position: absolute;
         align-items: center;
+        margin-top: 100px;
         }
     .password-text{
         color:white;

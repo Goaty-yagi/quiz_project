@@ -2,7 +2,7 @@
     <div class='notification-wrapper l-wrapper'>
         <div class='notice-wrapper'>
             <img class='image' src="@/assets/logo.png">
-            <p class='text1'>登録すると…</p>
+            <p class='text2'>登録すると…</p>
             <div class='block'>
                 <div class='font-inline'>
                     <i id='font' class="fas fa-cog">
@@ -44,8 +44,8 @@
                 </div>
             </div>
             <div class='buttons'>
-                <router-link @click='closeConf' to='/' class='btn-litegray-black-gray-sq' id='register-button'>登録しない</router-link>
-                <router-link  to='/signup' class='btn-litegray-black-gray-sq' id='register-button'>登録する</router-link>
+                <router-link @click='closeConf' to='/' class='btn-litegray-black-gray-sq' >登録しない</router-link>
+                <router-link  to='/signup' class='btn-litegray-black-gray-sq' >登録する</router-link>
             </div>
         </div>
     </div>
@@ -66,26 +66,20 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .notification-wrapper{
-        top:0;
-        position: fixed;
-        background:rgba(0,0,0,0.5);
-        width:100vw;
-        height:100vh;
-        flex-direction: column;
-        display: flex;
-        justify-content: center;
-        align-items: center;        
+
+
+.notification-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     }
     .notice-wrapper{
         border: solid $base-color;
         border-radius: 2vh;
         background:$back-white;
-        
-        // height:70%;
-        text-align: center;
-        
+        text-align: center;       
         display:inline-block;
+        max-width: 450px;
     }
     .image{
         width:15%;
@@ -93,9 +87,22 @@ export default {
         margin-left: auto;
         margin-right: auto;
     }
-    .text1{
-        font-size:7vw;
+    .text-container{
+        display: flex;
+        justify-content: center;
+        .text1{
+            font-size:1.2rem;
+            font-weight: bold;
+            color: red;
+            margin-bottom: 0.5rem;
+            border: solid red;
+            width: 80%;
+        }
+    }
+    .text2{
+        font-size: 1.5rem;
         font-weight: bold;
+        margin-bottom: 0.7rem;
     }
     .block{
         display:flex;
@@ -110,13 +117,13 @@ export default {
             }.font-inner{
                 color:initial;
                 position:absolute;
-                font-size:10vw;
+                font-size:1rem;
                 color:$back-white;
             }
     #in-font{
         font-size:initial;
         color:initial;
-        font-size:10vw;
+        font-size:2.5rem;
         color:$back-white;
         position:absolute;
         top: 25%;
@@ -131,7 +138,7 @@ export default {
         // left:0;
         padding-left:20%;
         padding-right:20%;
-        font-size:4vw;
+        font-size:1rem;
         font-weight: bold;
         text-align: center;
     }
@@ -139,7 +146,7 @@ export default {
         position:relative;
     // border:solid black;
         // margin-top:-15%;
-        font-size:40vw;
+        font-size:10rem;
         color: $base-color;
         // font-size:1.5rem;
         // position:absolute;
@@ -153,8 +160,8 @@ export default {
         border-radius: 50%;
         background:$base-color;
         margin:auto;
-        height: 15vw;
-        width: 15vw;
+        height: 5rem;
+        width: 5rem;
         margin: 0 auto;
         top: 50%;
         left: 50%;
@@ -178,53 +185,53 @@ export default {
         padding:1.5%;
         
     }
-@media(min-width: 660px) and (max-width: 1024px){
-    .notice-wrapper{
-        margin-top:10%;
-        width:80%;
-    }
-    #font{
-        font-size:35vw;
-    }
-    .text{
-        font-size:3vw;
-    }
-    #register-button{
-        font-size:3vw;
-    }
-  }
-@media(min-width: 1025px){
-    .text1{
-        font-size:2vw;
-    }
-    .notice-wrapper{
-        margin-top:10%;
-        width:40%;
-        height:50vw;
-    }
-    .block{
-        margin:1.5vw;
-    }
-    #font{
-        font-size:13vw;
-    }
-    .circle{
-        height: 10vw;
-        width: 10vw;
-    }
-    .text{
-        font-size:1.1vw;
-    }
-    #register-button{
-        font-size:3vw;
-    }
-    #in-font{
-        font-size:3vw;
-    }
-    #register-button{
-        font-size:1.5vw;
-  }
-}
+// @media(min-width: 660px) and (max-width: 1024px){
+//     .notice-wrapper{
+//         margin-top:10%;
+//         width:80%;
+//     }
+//     #font{
+//         font-size:35vw;
+//     }
+//     .text{
+//         font-size:3vw;
+//     }
+//     .btn-litegray-black-gray-sq{
+//         font-size:3vw;
+//     }
+//   }
+// @media(min-width: 1025px){
+//     .text1{
+//         font-size:2vw;
+//     }
+//     .notice-wrapper{
+//         margin-top:10%;
+//         width:40%;
+//         height:50vw;
+//     }
+//     .block{
+//         margin:1.5vw;
+//     }
+//     #font{
+//         font-size:13vw;
+//     }
+//     .circle{
+//         height: 10vw;
+//         width: 10vw;
+//     }
+//     .text{
+//         font-size:1.1vw;
+//     }
+//     #register-button{
+//         font-size:3vw;
+//     }
+//     #in-font{
+//         font-size:3vw;
+//     }
+//     #register-button{
+//         font-size:1.5vw;
+//   }
+// }
 // @media(min-width: 1550px){
 //     .text1{
 //         font-size:3vw;

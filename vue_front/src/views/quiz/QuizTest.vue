@@ -77,7 +77,7 @@
                             </button>
                         </div>
                         <div v-if="showNextOrFinishButton&&
-                        result==false" class="button-container">
+                        result==false" class="button-quiz-container">
                             <!-- <div v-if="questions.length==questionLengthCounter"
                             @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
                             <div
@@ -881,14 +881,14 @@ export default {
                     }
                 }
             }
-            .button-container{
-                display: flex;
-                margin-top: 1rem;
-                div{
-                    padding-right: 0.3rem;
-                    padding-left: 0.3rem;
-                }
-            }
+            // .button-container{
+            //     display: flex;
+            //     margin-top: 1rem;
+            //     div{
+            //         padding-right: 0.3rem;
+            //         padding-left: 0.3rem;
+            //     }
+            // }
             .buttun-in-result{
                 display: flex;
                 margin-top: 1rem;

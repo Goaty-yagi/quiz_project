@@ -266,7 +266,19 @@ body{
     }
 
 }
+// this is for quiz next button
 
+.button-quiz-container{
+    display: flex;
+    margin-top: 1rem;
+    align-items: center;
+    div{
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+        padding-right: 0.4rem;
+        padding-left: 0.4rem;
+    }
+}
 
 // input style
 input[type="text"]:focus {

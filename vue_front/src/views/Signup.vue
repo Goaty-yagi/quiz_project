@@ -6,7 +6,8 @@
             v-if='showProgress'
             />
         </div>
-        <form v-if='$store.state.step==1&&showProgress' @submit.prevent='submitForm' class="field-wrapper">
+        <div :class="{'slide-in':slideIn,'slide-out':slideOut}" id="slide">
+        <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
             <div class="field">
                 <div class="input-box" ref='formName'>
                     <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
@@ -42,27 +43,25 @@
                 <button class='fbottun'  ref='bform' id=''>次へ</button>
             </div>
         </form>
-        
-        <transition name="notice">
+        </div>
+        <transition name="slide-in">
             <Password
-            v-if='$store.state.step==2&&!showEdit'
+            class="components"
+            v-if='$store.state.step==2&&showPassword&&!showEdit'
             @handle='showProgressHandler'
             @confHandle='showRegiConfHandler'
+            @handleAfterPassword='handleAfterPassword'
             />
-          </transition>
-        <!-- <ID
-            v-if='$store.state.step==2'
-            @handle='showProgressHandler'/> -->
-        <RegisterConfirm
-           v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
-           @handle='showProgressHandler'
-           @edithandle='showEditHandler'
-           @sentHandle='showSentHandler'
-           />
-        <!-- <Registered
-            v-if='$store.state.step==4'
+        </transition>
+        <transition name="notice">
+            <RegisterConfirm
+            v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
             @handle='showProgressHandler'
-            /> -->
+            @edithandle='showEditHandler'
+            @sentHandle='showSentHandler'
+            @showPasswordFalse='showPasswordFalse'
+            />
+        </transition>
         <transition name="notice">
           <Sent
             v-if='showSent&&$store.state.step==3'
@@ -70,12 +69,14 @@
             @sentHandle='showSentHandler'
             />
         </transition>
-        <Edit
-            v-if='showEdit'
-            @handle='showProgressHandler'
-            @confHandle='showRegiConfHandler'
-            @edithandle='showEditHandler'
-            :showProgress='showProgress'/>
+        <transition name="slide-in">
+            <Edit
+                v-if='showEdit&&!showPassword'
+                @handle='showProgressHandler'
+                @confHandle='showRegiConfHandler'
+                @edithandle='showEditHandler'
+                :showProgress='showProgress'/>
+        </transition>
     </div>
 </template>
 
@@ -113,7 +114,11 @@ export default {
             showProgress:true,
             showButton:true,
             showRegiConf:false,
-            showEdit:false
+            showEdit:false,
+            showPassword: false,
+            slideIn:true,
+            slideOut:false
+            // afterPassword:false
 
         }
     },
@@ -153,6 +158,8 @@ export default {
                 console.log(this.mailInUseError)
                 if (this.$store.state.signup.checkedEmail == true){
                 // this.showSentHandler()
+                this.handleSlide()
+                this.showPasswordTrue()
                 this.showProgressHandler()
                 this.$store.commit('addStep')
                 this.$store.commit('getUsername',this.username)
@@ -211,6 +218,19 @@ export default {
             //     }
             // }
         },
+        showPasswordTrue(){
+            this.showPassword = true
+        },
+        showPasswordFalse(){
+            this.showPassword = false
+        },
+        handleSlide(){
+            this.slideOut = !this.slideOut
+            this.slideIn = !this.slideIn
+            // var slide = document.getElementById('slide')
+            // slide.setAttribute('style','display:none')
+            // console.log('slide',slide)
+        },
     }
 }
 </script>
@@ -218,10 +238,9 @@ export default {
 <style scoped lang='scss'>
 @import "style/_variables.scss";
     .signin-wrapper{
-        // height: 100vh;
-        width:100vw;
+        width:100%;
+        position: relative;
         flex-direction: column;
-        align-items: flex-start;;
         display: flex;
         padding-top:5rem;
         // justify-content: center;
@@ -307,4 +326,101 @@ export default {
         color:white;
         margin-left:1rem;
     }
+.components{
+    display: absolute;
+}
+#slide{
+    display: absolute;
+}
+// .slide-in{
+// 	text-align: center;
+// 	opacity: 0;
+// 	animation: slide-in-anim 1.5s ease-out forwards;
+// }
+.slide-out{
+    text-align: center;
+	opacity: 1;
+	animation: slide-out-anim 1.5s ease-out forwards;
+}
+
+// @keyframes slide-in-anim {
+// 	0% {
+// 		opacity: 0;
+//         transform: translateX(-20%);
+// 	}
+// 	// 60% {
+// 	// 	transform: translateX(-10%);
+// 	// }
+// 	// 75% {
+// 	// 	transform: translateX(2%);
+// 	// }
+// 	100% {
+// 		opacity: 1;
+// 		transform: translateX(0);
+// 	}
+// }
+@keyframes slide-out-anim {
+	0% {
+		opacity: 1;
+        transform: translateX(0);
+	}
+	// 60% {
+	// 	transform: translateX(-10%);
+	// }
+	// 75% {
+	// 	transform: translateX(2%);
+	// }
+	100% {
+		opacity: 0;
+		transform: translateX(-60%);
+        display: none;
+        
+	}
+}
+
+
+.slide-in-enter-active {
+  animation: slide-in  ease-out 1.5s;
+}
+.slide-in-leave-active {
+  animation: slide-out ease-out 1.5s;
+}
+@keyframes slide-in {
+  0% {
+		opacity: 0;
+        transform: translateX(5%);
+	}
+	// 60% {
+	// 	transform: translateX(-10%);
+	// }
+	// 75% {
+	// 	transform: translateX(2%);
+	// }
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes slide-out {
+  0% {
+		opacity: 1;
+        transform: translateX(0);
+	}
+	// 60% {
+	// 	transform: translateX(-10%);
+	// }
+	// 75% {
+	// 	transform: translateX(2%);
+	// }
+	100% {
+		opacity: 0;
+		transform: translateX(-10%);
+	}
+}
+@media(max-width: 629px){
+    .signin-wrapper{
+        padding-top:1rem;
+        
+    }
+}
 </style>

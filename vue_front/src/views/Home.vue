@@ -5,8 +5,9 @@
             <div class="lds-dual-ring"></div>
         </div>
         <div class='wrapper'>
-            <img @click="unko" class='is-image' src="@/assets/logo.png">
+            <img @click="testClick" class='is-image animate__bounce' src="@/assets/logo.png">
             <p @click="unko" class='home-text'>日本語クイズ</p>
+            <div :class="{'slide-in':slideIn,'slide-out':slideOut}">UNKO</div>
             <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
             <!-- {{$store.getters.gettersReply}}     -->
             <div v-if="!user">
@@ -45,7 +46,9 @@ export default {
             showCompo: false,
             showNotLogin: false,
             item:{status: 1,num:5,test:true},
-            test1:""
+            test1:"",
+            slideIn:true,
+            slideOut:false
         }
     },
     mounted(){
@@ -129,8 +132,12 @@ export default {
                 this.$store.commit('setTempUserReset')
             }
         },
+        testClick(){
+            this.slideIn = !this.slideIn
+            this.slideOut = !this.slideOut
+        }
     }
-}
+}       
 </script>
 <style scoped lang="scss">
 @import "style/_variables.scss";
@@ -178,4 +185,48 @@ export default {
       position:absolute;
       left:0;
     }
+.slide-in{
+	text-align: center;
+	opacity: 0;
+	animation: slide-in-anim 1.5s ease-out forwards;
+}
+.slide-out{
+    text-align: center;
+	opacity: 1;
+	animation: slide-out-anim 1.5s ease-out forwards;
+}
+
+@keyframes slide-in-anim {
+	20% {
+		opacity: 0;
+        transform: translateX(-20%);
+	}
+	// 60% {
+	// 	transform: translateX(-10%);
+	// }
+	// 75% {
+	// 	transform: translateX(2%);
+	// }
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes slide-out-anim {
+	20% {
+		opacity: 1;
+        transform: translateX(0);
+	}
+	// 60% {
+	// 	transform: translateX(-10%);
+	// }
+	// 75% {
+	// 	transform: translateX(2%);
+	// }
+	100% {
+		opacity: 0;
+		transform: translateX(-20%);
+        display: none;
+	}
+}
 </style>

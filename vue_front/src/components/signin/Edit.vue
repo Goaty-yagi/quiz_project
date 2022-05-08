@@ -80,6 +80,7 @@ export default {
         'showProgress'
     ],
     mounted(){
+        this.progressHandle()
         console.log(this.showProgress)
     },
     updated(){
@@ -113,7 +114,7 @@ export default {
         //     }
         // },
         progressHandle(){
-            if(this.showProgress = true){
+            if(this.showProgress == true){
             this.$emit('handle')
             }
         },

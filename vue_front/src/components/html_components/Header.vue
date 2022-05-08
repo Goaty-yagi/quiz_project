@@ -201,6 +201,9 @@ export default {
     }
 }
 @media(max-width: 629px){
+    .header-wrapper{
+        height: 50px
+    }
     .handle-show{
         display: none;
     }

@@ -77,11 +77,13 @@
                             </button>
                         </div>
                         <div v-if="showNextOrFinishButton&&
-                        result==false" class="button-container">
+                        result==false" class="button-quiz-container">
                             <!-- <div v-if="questions.length==questionLengthCounter"
                             @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
                             <div
-                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">
+                                NEXT ＞
+                            </div>
                         </div>
 
                         <!-- here for buttun in result -->
@@ -932,12 +934,15 @@ export default {
                     }
                 }
             }
-            .button-container{
+            .button-quiz-container{
                 display: flex;
                 margin-top: 1rem;
+                align-items: center;
                 div{
-                    padding-right: 0.3rem;
-                    padding-left: 0.3rem;
+                    padding-top: 0.2rem;
+                    padding-bottom: 0.2rem;
+                    padding-right: 0.4rem;
+                    padding-left: 0.4rem;
                 }
             }
             .buttun-in-result{
