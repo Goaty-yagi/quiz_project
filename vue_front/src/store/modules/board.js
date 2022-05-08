@@ -173,6 +173,7 @@ export default {
         async getRelatedQuestion({ state , getters, commit }, payload) {
             // for reccomended-question, if user and user.user_tag exist, get reccomended-question.
             // else, get question-viewed-order.
+            
             if(getters.user){
                 try{
                     if(getters.getUserTags.length == 1){
@@ -184,6 +185,9 @@ export default {
                     if(getters.getUserTags.length == 3){
                         var url = `/api/board/question/filter-list?tag=${getters.getUserTags[0]}&tag=${getters.getUserTags[1]}&tag=${getters.getUserTags[2]}&uid=${getters.user.UID}`
                     }
+                    else{
+                        var url = '/api/board/question-viewed-order'
+                    }
                 }
                 catch{
                     var url = '/api/board/question-viewed-order'  
@@ -192,6 +196,7 @@ export default {
                 var url = '/api/board/question-viewed-order'
             }
             try{
+                console.log("try2",url)
                 await axios.get(url)
                     .then(response => {
                         commit('setReccomendedQuestion', response.data)

@@ -35,7 +35,7 @@ export default {
         emailVerified:null,
         authIsReady:false,
         checkedEmail:null,
-        accountURL:'http://localhost:8080/account/',
+        accountURL:'http://localhost:8080/',
         actionCodeSettings:{
             url: null,
             handleCodeInApp: true
@@ -189,30 +189,25 @@ export default {
             }
         },
         async login(context, {email,password}){
-            const ref = await signInWithEmailAndPassword(auth, email, password)
-            context.commit('setUser',ref.user)
-            context.dispatch('getDjangoUser')
-            context.commit('emailVerifiedHandler',ref.user.emailVerified)
-            console.log(context.state.user,context.state.emailVerified)
-                // try{
-                //     const ref = await signInWithEmailAndPassword(auth, email, password)
-                //     console.log('signin',ref)
-                //     
-                //     console.log('signin is done',auth.currentUser)
-                // }catch{
-                //     console.log('catch in store',error.code)
-                //     throw new Error('could not complite signin')
-                    
-                // }
-                // if(res){
-                //     console.log('signin',ref)
-                //     context.commit('setUser',ref.user)
-                //     context.commit('emailVerifiedHandler',ref.user.emailVerified)
-                //     console.log('signin is done',auth.currentUser)
-                // }else{
-                //     console.log('error in sign in')
-                //     throw new Error('could not complite signin')
-                // }
+            // context.commit('setIsLoading', true, {root:true})
+            console.log('in_login')
+            try{
+                var ref = await signInWithEmailAndPassword(auth, email, password)
+            }catch{
+                console.log('error')
+                throw new Error('could not complite signin')
+            }
+            if(ref){
+                console.log("IF YES")
+                context.commit('setUser',ref.user)
+                context.dispatch('getDjangoUser')
+                context.commit('emailVerifiedHandler',ref.user.emailVerified)
+                console.log(context.state.user,context.state.emailVerified)
+            }else{
+                console.log('error in sign in')
+                throw new Error('could not complite signin')
+            }
+            // context.commit('setIsLoading', false, {root:true})                
         },
         async checkEmail(context,email){
             try {

@@ -66,8 +66,8 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="loginUser">
-                        <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    <div>
+                        <button v-if="question.user.uid != UID" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
                     </div>
                     <!-- <button @click="handleNotifications('reply')" >unko</button> -->
                 </div>
@@ -257,6 +257,13 @@ export default {
         user(){
             return this.$store.state.signup.djangoUser
         },
+        UID(){
+            try{
+                return this.$store.state.signup.djangoUser.UID
+            }catch{
+                return ''
+            }
+        },
         loginUser(){
             return this.$store.state.signup.user
         },
@@ -431,11 +438,16 @@ export default {
         },
         handleShowAnswerPage(){
             console.log('clicked')
-            if(this.emailVerified){
+            if(this.user){
+                if(this.emailVerified){
                 this.showAnswerPage = !this.showAnswerPage
+                }else{
+                    this.handleShowEmailVerified()
+                }
             }else{
-                this.handleShowEmailVerified()
+                this.handleShowNotLogin()
             }
+
             // this.handleScrollFixed()
         },
         getReply(reply){
@@ -540,7 +552,7 @@ export default {
             this.$forceUpdate();
         },
         addLikedNum(){
-            if(this.loginUser){
+            if(this.user){
                 this.liked_num += 1
                 this.addedLiked = true
                 for(let i=0; i<this.likedUserIdList.length; i++){
@@ -646,15 +658,16 @@ export default {
         },
         addAnsweerLikedNum(answerId){
             // add answer id start from here. answerDict has each answers liked num.
-            // invoke answerId to att liked num, then addedAnswerLiked = true  
-            this.answerDict[answerId].liked_num += 1
-            this.answerDict[answerId].addedAnswerLiked = true
-            // for(let i=0; i<this.likedUserIdList.length; i++){
-            //     this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
-            // }
-            this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
-            console.log("is addliked",this.answerDict)
-            this.countUpLikedAnswer(answerId)
+            // invoke answerId to att liked num, then addedAnswerLiked = true 
+            if(this.user){
+                this.answerDict[answerId].liked_num += 1
+                this.answerDict[answerId].addedAnswerLiked = true
+                this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
+                console.log("is addliked",this.answerDict)
+                this.countUpLikedAnswer(answerId)
+            }else{
+                this.handleShowNotLogin()
+            }
         },
         countUpLikedAnswer(answerId){
             console.log("countUpLikedAnswer")

@@ -115,26 +115,23 @@ export default {
             this.showSent = true
             console.log('showsent')
         },
-        async submitForm(){            
+        async submitForm(){      
             try{
                 await this.$store.dispatch('login',{
                 email:this.email,
                 password:this.password})
-                if(this.store.checkedEmail!=true){
-                    this.handleShowNotVerified()
-                }else{
-                    router.push('/')
+                console.log("done")
+                router.push('/')
                 this.$store.commit('reset')
-                }
             }catch(err){
-                console.log(typeof(err),err.code)
+                console.log('er',typeof(err),err.code)
                 this.userError = err.code == 'auth/user-not-found'?
                 'ユーザーが存在しません。' : '' 
                 this.passError = err.code == 'auth/wrong-password'?
                 'パスワードが違います。' : ''
                 this.manyError = err.code == 'auth/too-many-requests'?
                 '短時間にリクエストを複数受けたため一時的にリクエストを停止します。暫く経ってもう一度お試しください。' :''               
-            }     
+            }
         }
     }
 }

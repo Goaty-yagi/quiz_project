@@ -52,6 +52,7 @@ export default {
             errorMessage:'このメールアドレスはすでに使われています。',
             errorMessage2:'登録できませんでした。もう一度お試しください。',
             userInfo:'',
+            gotIP:false,
             IPInfo:[
                 {city:"",
                 ip:"",
@@ -105,14 +106,34 @@ export default {
                         {grade: this.$store.getters.getTempUser.grade},
                         {level: this.$store.getters.getTempUser.level}
                     ],
+                    ip_data: [{
+                        city: this.IPInfo.city,
+                        ip: this.IPInfo.ip,
+                        loc: this.IPInfo.loc,
+                        org: this.IPInfo.org,
+                        postal: this.IPInfo.postal,
+                        region: this.IPInfo.region,
+                        timezone: this.IPInfo.timezone,
+                        country: this.IPInfo.country
+                    }]
                 }
             }else{
                 console.log('NO TEMP')
                 this.userInfo={
                     UID: this.$store.state.signup.user.uid,
                     name: this.$store.state.signup.username,
-                    email: this.$store.state.signup.email
-                    }
+                    email: this.$store.state.signup.email,
+                    ip_data: [{
+                        city: this.IPInfo.city,
+                        ip: this.IPInfo.ip,
+                        loc: this.IPInfo.loc,
+                        org: this.IPInfo.org,
+                        postal: this.IPInfo.postal,
+                        region: this.IPInfo.region,
+                        timezone: this.IPInfo.timezone,
+                        country: this.IPInfo.country
+                    }]
+                }
             }
             try{
                 console.log("try")
@@ -151,27 +172,30 @@ export default {
             this.$emit('handle')
         },
         async getCountry(){
-            await axios
-            .get("https://ipinfo.io/json?token=32e16159d962c5")
-            .then(response => {
-                this.IPInfo = response.data
-                console.log(this.IPInfo)
+            if(!this.gotIP){
+                await axios
+                .get("https://ipinfo.io/json?token=32e16159d962c5")
+                // .then(response => {
+                //     this.IPInfo = response.data
+                //     console.log(this.IPInfo)
+                //     })
+                .then(response => {
+                    let IP = response.data
+                    this.IPInfo.city = IP.city
+                    this.IPInfo.ip = IP.ip
+                    this.IPInfo.loc = IP.loc
+                    this.IPInfo.org = IP.org
+                    this.IPInfo.postal = IP.postal
+                    this.IPInfo.region = IP.region
+                    this.IPInfo.timezone = IP.timezone
+                    this.IPInfo.country = IP.country
+                    console.log(this.IPInfo)
+                    })
+                .catch(error => {
+                    console.log(error)
                 })
-            // .then(response => {
-            //     let IP = response.data
-            //     this.IPInfo.city = IP.city
-            //     this.IPInfo.ip = IP.ip
-            //     this.IPInfo.loc = IP.loc
-            //     this.IPInfo.org = IP.org
-            //     this.IPInfo.postal = IP.postal
-            //     this.IPInfo.region = IP.region
-            //     this.IPInfo.timezone = IP.timezone
-            //     this.IPInfo.country = IP.country
-            //     console.log(this.IPInfo)
-            //     })
-            .catch(error => {
-                console.log(error)
-            })
+                this.gotIP = true
+            }
         }    
     },
     mounted(){

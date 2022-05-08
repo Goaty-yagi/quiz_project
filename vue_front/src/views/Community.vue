@@ -372,7 +372,6 @@ export default {
                 .get('/api/board/parent-tag')
                 .then(response => {
                     let parentTags = response.data
-                    console.log('parentTags',parentTags)
                     this.getParentTagDict(parentTags)
                 })
                 .catch(error => {
@@ -526,9 +525,7 @@ export default {
         dateConvert(date){
             var time = ''
             var newDate = ''
-            console.log('date',date)
             var dt = new Date(date)
-            console.log('dt',dt)    
             if(dt.getHours() > 11){
                 time = " PM"
             }else{

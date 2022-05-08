@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from django.http import Http404
 from django.db.models import Prefetch
 
+# from ipware import get_client_ip
+
 from user.models import User
 from board.models import BoardQuestion, BoardAnswer
 from user.serializers import UserSerializer,UserStrageSerializer
-
 
 class UserList(generics.ListCreateAPIView):
     # parser_classes = (MultiPartParser, FormParser)

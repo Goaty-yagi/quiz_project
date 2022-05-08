@@ -55,12 +55,12 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             print('create', validated_data)
-            # ip_data = validated_data.pop('ip_data')
             quiz_taker = validated_data.pop('quiz_taker')
             level = dict(quiz_taker[1])['level']
             user = User.objects.create(**validated_data)
             QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
-            # IPData.objects.create(user=user, **ip_data[0])
+            ip_data = validated_data.pop('ip_data')
+            IPData.objects.create(user=user, **ip_data[0])
             return user
         except:
             # set 超初級 ids 変わる可能性あり
@@ -69,10 +69,11 @@ class UserSerializer(serializers.ModelSerializer):
             # 6 = カタカナ
             # 13 = 数字
             # grade 4 = 超初級
-
+            print('create22', validated_data)
             ids = [7,1,6,13]
-            list = []
+            ip_data = validated_data.pop('ip_data')
             user = User.objects.create(**validated_data)
+            IPData.objects.create(user=user, **ip_data[0])
             print('before grade')
             grade = ParentQuiz.objects.get(id=4)
             quiz_taker = QuizTaker.objects.create(user=user, grade=grade)

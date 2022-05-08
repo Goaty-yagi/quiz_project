@@ -1,5 +1,9 @@
 <template>
     <section class='home-section'>
+         <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+            <!-- <i class="fas fa-cog"></i> -->
+            <div class="lds-dual-ring"></div>
+        </div>
         <div class='wrapper'>
             <img @click="unko" class='is-image' src="@/assets/logo.png">
             <p @click="unko" class='home-text'>日本語クイズ</p>
@@ -115,8 +119,8 @@ export default {
         },
         async setInitUserStatus(){
             if(this.emailVerified){
-                if(this.$store.getters.getTempUser){
-                    this.$store.commit('setQuizTakerID',this.quizTaker.id)
+                if(this.$store.getters.getTempUser.test){
+                    this.$store.commit('setQuizTakerID',this.user.quiz_taker.id)
                     this.$store.commit('setQuizID',this.$store.getters.getTempUser.grade)
                     for(let i of this.$store.getters.getTempUser.statusList){
                         await this.$store.dispatch('userStatusPost',i)
