@@ -181,6 +181,9 @@ export default {
         display: flex;
         align-items: center;
         margin-top:1.5rem;
+        .error-form{
+            width: 17rem;
+        }
     }
     .field{
         display: flex;

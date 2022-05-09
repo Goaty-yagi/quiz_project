@@ -46,7 +46,15 @@ export default {
             grade:'',
             level:''
         },
-        favoriteQuestion:''
+        favoriteQuestion:'',
+        logger:{
+            actualError:'',
+            message:'',
+            name:''
+        },
+        userInfo:'',
+        exceptUserInfo:'',
+        beingException:false
     },
     getters:{
         getUID(state){
@@ -63,6 +71,9 @@ export default {
         },
         getTempUser(state){
             return state.tempUser
+        },
+        logger(state){
+            return state.logger
         }
     },
     mutations:{
@@ -127,18 +138,135 @@ export default {
             state.emailVerified = null
             console.log('all-Reset')
         },
+        setLogger(state,payload){
+            state.logger.actualError = payload.actualError
+            state.logger.name = payload.name
+            state.logger.message = payload.message
+        },
+        setUserInfo(state,payload){
+            state.userInfo = payload
+        },
+        checkBeingException(state,payload){
+            if(state.user&&!state.djangoUser){
+                state.beingException = true
+                console.log('set-being-exception',state.beingException)
+            }
+        }
     },
     actions:{
-        async getDjangoUser({ state, getters,commit }){
-            if(state.user){
-                await axios
-                .get(`/api/user/${getters.getUID}`)
-                .then(response => {
-                    commit('setDjangoUser',response.data)
-                    })
-                .catch(error => {
-                    console.log(error)
+        async signupDjangoUser( {state, commit},payload ){
+            console.log("INSDU",payload)
+            try{
+                throw new Error('could not sent validation')
+                await axios({
+                    method: 'post',
+                    url: '/api/user/',
+                    data: payload
                 })
+                state.beingException = false
+            }
+            catch(e){
+                state.userInfo = payload
+                let logger = {
+                    message: "in store/signup.getDjangoUser. couldn't signup django user",
+                    name: window.location.pathname,
+                    actualError: e
+                }
+                commit('setLogger',logger)
+                commit('checkBeingException')
+                router.push({ name: 'NotFound404' })
+            }
+        },
+        async signupDjangoUserForException( {state, commit},payload ){
+            // this is only for unsub and getDjangoUser below. dont use other part
+            console.log("INSDUFX")
+            if(!state.djangoUser){
+                console.log('no django')
+                if(state.userInfo){
+                    try{
+                        // throw new Error('could not sent validation')
+                        await axios({
+                            method: 'post',
+                            url: '/api/user/',
+                            data: state.userInfo
+                        })
+                        state.beingException = false
+                    }
+                    catch(e){
+                        let logger = {
+                            message: "in store/signup.getDjangoUserForException. couldn't signup django user",
+                            name: window.location.pathname,
+                            actualError: e
+                        }
+                        commit('setLogger',logger)
+                        router.push({ name: 'NotFound404' })
+                    }
+                }
+                else{
+                    console.log('NO TEMP')
+                    await axios
+                    .get("https://ipinfo.io/json?token=32e16159d962c5")
+                    .then(response => {
+                        let IP = response.data
+                        state.exceptUserInfo = {
+                            UID: state.user.uid,
+                            name: '名前を変更しよう',
+                            email: state.signup.user.email,
+                            ip_data: [{
+                                city: IP.city,
+                                ip: IP.ip,
+                                loc: IP.loc,
+                                org: IP.org,
+                                postal: IP.postal,
+                                region: IP.region,
+                                timezone: IP.timezone,
+                                country: IP.country
+                            }]
+                        }
+                    
+                    })
+                    try{
+                        // throw new Error('could not sent validation')
+                        await axios({
+                            method: 'post',
+                            url: '/api/user/',
+                            data: state.exceptUserInfo
+                        })
+                    }
+                    catch(e){
+                        let logger = {
+                            message: "in store/signup.getDjangoUserForException. couldn't signup django user",
+                            name: window.location.pathname,
+                            actualError: e
+                        }
+                        commit('setLogger',logger)
+                        router.push({ name: 'NotFound404' })
+                    }
+                }
+            }
+        },
+        async getDjangoUser({ state, commit,dispatch }){
+            if(state.user){
+                try{
+                    await axios
+                    .get(`/api/user/${state.user.uid}`)
+                    .then(response => {
+                        commit('setDjangoUser',response.data)
+                    })
+                }
+                catch(e){
+                    if(!state.djangoUser){
+                        dispatch('signupDjangoUserForException')
+                    }else{
+                        let logger = {
+                            message: "in store/signup.getDjangoUser. couldn't get django user",
+                            name: window.location.pathname,
+                            actualError: e
+                        }
+                        commit('setLogger',logger)
+                        router.push({ name: 'NotFound404' })
+                    }
+                }
             }
         },
         async getFavoriteQuestion({ state, commit }){
@@ -169,9 +297,14 @@ export default {
                 context.commit('setUser',ref.user)
                 context.commit('emailVerifiedHandler',ref.user.emailVerified)
                 console.log('signup is done',auth.currentUser)
-            }catch{
-                console.log('error in sign up')
-                throw new Error('could not conmplite signup')
+            }catch(e){
+                let logger = {
+                    message: "in store/signup.signup. couldn't signup firebase user",
+                    name: window.location.pathname,
+                    actualError: e
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'NotFound404' })
             }
         },
         async sendEmailVerify(context){
@@ -247,7 +380,9 @@ export default {
 const unsub = onAuthStateChanged(auth,(user) =>{
     store.commit('setAuthIsReady',true)
     store.commit('setUser',user)
+    console.log('unsub')
     if(user){
+        store.dispatch('signupDjangoUserForException')
         store.dispatch('getDjangoUser')
         store.commit('emailVerifiedHandler',user.emailVerified)
     }else{

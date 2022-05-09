@@ -1,10 +1,18 @@
 <template>
-    <div class='notification-wrapper'>
-        <div class='notice-wrapper'>
-            <img class='image' src="@/assets/logo.png">
-            <p class='text1'>承認メールを送信しました。</p>
-            <p class='text1'>登録したアドレスで確認してください。</p>
-            <!-- <button  @click='addStep' class='button' id='color-button'><p>アカウント</p></button> -->
+    <div class="account-wrapper l-wrapper">
+        <div class="main-wrapper">
+            <div class='main-notification-wrapper'>
+                <div class='main-notice-wrapper'>
+                    <!-- <div class="close-container">
+                        <div v-if="!currentPageName" @click="unShow()" class="close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div> -->
+                    <img class='main-image' src="@/assets/logo.png">
+                    <p class='main-text1'>承認メールを送信しました。</p>
+                    <p class='main-text1'>登録したアドレスで確認してください。</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -29,95 +37,50 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .notification-wrapper{
-        top:0;
-        position: fixed;
-        background:rgba(0,0,0,0.5);
-        width:100vw;
-        height:100vh;
-        flex-direction: column;
+.account-wrapper{
+    // height: 100%;
+    width: 100%;
+    .main-wrapper{
         display: flex;
         justify-content: center;
-        align-items: center;
-       
-        
-        
     }
-    .notice-wrapper{
+}
+.btn-gray-black-gray-sq{
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+img{
+    margin-top: 1.5rem;
+    cursor: pointer;
+}
+.main-notification-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // min-height: 100%;
+    width: 100%;
+}
+    .main-notice-wrapper{
         border: solid $base-color;
         border-radius: 2vh;
         background:$back-white;
         text-align: center;       
-        display:inline-block;
-        padding-top:1.5rem;
+        position:relative;
+        // padding-top:1.5rem;
+        width: 80%;
+        min-height: 120%;
     }
-    .image{
+    .main-image{
         width:15%;
-        height:15%;
+        height:auto;
         margin-left: auto;
         margin-right: auto;
     }
-    .text1{
-        font-size:7vw;
+    .main-text1{
+        font-size:1.4rem;
         font-weight: bold;
         margin:2rem;
     }
-
-    .button{
-        font-weight: bold;
-        margin:3rem;
-    }
-    #register-button{
-        width: auto;
-        font-size:5vw;
-        padding:1.5%;
-        
-    }
-@media(min-width: 660px) and (max-width: 1024px){
-    .notice-wrapper{
-        margin-top:10%;
-        width:80%;
-    }
-    #font{
-        font-size:35vw;
-    }
-    .text{
-        font-size:3vw;
-    }
-    #register-button{
-        font-size:3vw;
-    }
-  }
-@media(min-width: 1025px){
-    .text1{
-        font-size:3vw;
-    }
-    .notice-wrapper{
-        margin-top:10%;
-        width:40%;
-        height:50vw;
-    }
-    .block{
-        margin:1.5vw;
-    }
-    #font{
-        font-size:13vw;
-    }
-    .circle{
-        height: 10vw;
-        width: 10vw;
-    }
-    .text{
-        font-size:1.1vw;
-    }
-    #register-button{
-        font-size:3vw;
-    }
-    #in-font{
-        font-size:3vw;
-    }
-    #register-button{
-        font-size:1.5vw;
-  }
-}
 </style>

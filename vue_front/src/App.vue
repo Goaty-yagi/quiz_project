@@ -32,6 +32,7 @@ export default{
     // const mediaQuery = () =>  window.matchMedia("(max-width: 896px)")
     return{
       user: computed(() => store.state.signup.user),
+      djangoUser: computed(() => store.state.signup.djangoUser),
       email: computed(() => store.state.signup.email),
       password: computed(() => store.state.signup.password),
       emailVerified: computed(() => store.state.signup.emailVerified),

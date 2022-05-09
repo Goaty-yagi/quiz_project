@@ -94,6 +94,7 @@ export default {
         text-align: center;       
         display:inline-block;
         max-width: 450px;
+        padding: 1rem;
     }
     .image{
         width:15%;

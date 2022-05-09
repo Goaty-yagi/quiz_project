@@ -52,8 +52,8 @@ export default createStore({
     createPersistedState({
         key: 'tempKey',  // 設定しなければ'vuex'
         paths: [
-          
           "signup.tempUser",
+          "signup.userInfo",
         ],  // 保存するモジュール：設定しなければ全部。
         storage:{
           getItem:(key) => Cookies.get(key),

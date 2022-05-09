@@ -78,24 +78,17 @@ export default {
     },
     methods:{
         async addStep(){
-            try{
-                await this.$store.dispatch('signup',{
-                email: this.$store.state.signup.email,
-                password: this.$store.state.signup.password
-                })
-                this.$emit('confHandle')
-                this.$emit('sentHandle')
-                this.$store.commit('addStep')
-                this.$emit('handle')
-                console.log('start django add')
-                await this.registerUserAndDjango()
-            }catch(err){
-                this.error = this.errorMessage2
-                console.log('catch error',this.error,err)
-            }
+            await this.$store.dispatch('signup',{
+            email: this.$store.state.signup.email,
+            password: this.$store.state.signup.password
+            })
+            this.$emit('confHandle')
+            this.$emit('sentHandle')
+            this.$store.commit('addStep')
+            this.$emit('handle')
+            await this.registerUserAndDjango()
         },
         async registerUserAndDjango(){
-            console.log('start add',this.$store.getters.getTempUser)
             if(this.$store.getters.getTempUser.test){
                 console.log('YES TEMP')
                 this.userInfo={
@@ -137,10 +130,11 @@ export default {
             }
             try{
                 console.log("try")
-                await axios({
-                    method: 'post',
-                    url: '/api/user/',
-                    data: this.userInfo
+                this.$store.dispatch('signupDjangoUser',this.userInfo)
+                // await axios({
+                //     method: 'post',
+                //     url: '/api/user/',
+                //     data: this.userInfo
                     // {
                     //     UID: this.$store.state.signup.user.uid,
                     //     name: this.$store.state.signup.username,
@@ -160,7 +154,7 @@ export default {
                         //    country: this.IPInfo.country
                         // }]
                     // },
-                })
+                // })
             }
             catch(error){
                 console.log('error',error.message)

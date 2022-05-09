@@ -53,6 +53,8 @@ export default {
     },
     mounted(){
         // this.test()
+        this.reload()
+        console.log('mounted',window.location.href,window.location.pathname)
         this.scrollTop()
         this.setInitUserStatus()
         console.log('mounted',this.$store.state.signup.djangoUser)
@@ -84,11 +86,11 @@ export default {
     },
     methods:{
         unko(){
-        console.log('clicked')
-        this.$store.commit('setTempUserNull')
-        // window.localStorage.removeItem('quizkey')
-        // return `/quiz/${this.status}`
-        },
+            console.log('clicked')
+            this.$store.commit('setTempUserNull')
+            // window.localStorage.removeItem('quizkey')
+            // return `/quiz/${this.status}`
+            },
         componentHandler(){
             if(this.tempUserTest){
                 this.handleShowNotLogin()
@@ -135,6 +137,13 @@ export default {
         testClick(){
             this.slideIn = !this.slideIn
             this.slideOut = !this.slideOut
+        },
+        reload(){
+            console.log('reload_enter',this.$store.state.signup.beingException)
+            if(this.$store.state.signup.beingException){
+                console.log('reload_desu')
+                window.location.reload();
+            }
         }
     }
 }       

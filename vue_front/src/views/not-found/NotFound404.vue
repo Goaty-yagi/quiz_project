@@ -1,8 +1,9 @@
 <template>
 <div class='not-wrapper'>
-  <h1 class='title is-1 mt-4'> 404</h1>
-  <h1 class='subtitle is-3'> Page not found</h1>
+  <h1 class='title is-1 mt-4'> 404　サーバーエラー</h1>
+  <h1 class='subtitle is-3'> 404 Server Error</h1>
   <div>
+    <button>エラー報告をする</button>
     <router-link :to="{name:'Home'}" @click='closeConf'  class="is-centered mt-6"><i class="fas fa-home"></i>Return to Home</router-link>
   </div>
 </div>
@@ -10,17 +11,31 @@
 </template>
 
 <script>
-export default {
-  data(){
-    return{
+import {router} from "/src/main.js"
 
+export default {
+    data(){
+        return{
+
+        }
+    },
+    mounted(){
+        console.log(this.$store.getters.logger)
+        this.checkBeingException()
+        setTimeout(this.reload, 3000)  
+    },
+    methods:{
+        closeConf(){
+            this.$store.commit('reset')
+        },
+        checkBeingException(){
+            this.$store.commit('checkBeingException')
+        },
+        reload(){
+            console.log('reload')
+            // this.$router.go({path: this.$router.currentRoute.path, force: true})
+        }
     }
-  },
-  methods:{
-    closeConf(){
-        this.$store.commit('reset')
-    }
-  }
 }
 </script>
 

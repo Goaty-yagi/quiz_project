@@ -34,7 +34,7 @@ const routes = [
     path: '/quiz-home',
     name: 'QuizHome',
     component: QuizHome,
-    meta:{login:true}
+    meta:{login:true,beingException:true}
     
   },
   {
@@ -47,13 +47,13 @@ const routes = [
     path: '/quiz-test-init',
     name: 'QuizTestInit',
     component: QuizTestInit,
-    meta:{emailVerified:true}
+    meta:{emailVerified:true,beingException:true}
   },
   {
     path: '/quiz-practice',
     name: 'QuizPractice',
     component: QuizPractice,
-    meta:{login:true}
+    meta:{login:true,beingException:true}
   },
   {
     path: '/test',
@@ -64,13 +64,13 @@ const routes = [
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    meta:{emailVerified:true}
+    meta:{emailVerified:true,beingException:true}
   },
   {
     path: '/account/:uid',
     name: 'Account',
     component: Account,
-    meta:{login:true}
+    meta:{login:true,beingException:true}
   },
   {
     path: '/board',
@@ -86,7 +86,7 @@ const routes = [
     path: '/board/account',
     name: 'BoardAccount',
     component: BoardAccount,
-    meta:{login:true,emailVerified:true}
+    meta:{login:true,emailVerified:true,beingException:true}
   },
   {
     path: '/board-detail/:slug',
@@ -97,7 +97,7 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-    meta:{emailVerified:true}
+    meta:{emailVerified:true,beingException:true}
   },
   {
     path: '/policy',
@@ -108,6 +108,11 @@ const routes = [
     path: '/notfound',
     name: 'NotFound',
     component: NotFound,
+  },
+  { 
+    path: '/notfound404',
+    name: 'NotFound404',
+    component: NotFound404,
   },
   { 
     path: '/:catchAll(.*)',
@@ -127,12 +132,16 @@ router.beforeEach((to, from, next) => {
     console.log("LOGIN",to.matched)
     next({ name: 'Login' });
     }
+    else if(to.matched.some(record => record.meta.beingException)&&store.state.signup.beingException){
+      console.log("BeingException",to.matched)
+      next({ name: 'NotFound404' });
+      }
     else if(to.matched.some(record => record.meta.emailVerified)&&!store.state.signup.emailVerified&&store.state.signup.user){
     console.log("NOTFOUND",to.matched)
     next({ name: 'NotFound' });
     }
     else {
-    console.log('else',to.matched)
+    console.log('else',to.matched,'D',store.state.signup.djangoUser,"U",store.state.signup.user)
     next()
   }
 })
