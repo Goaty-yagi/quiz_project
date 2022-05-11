@@ -129,7 +129,12 @@ export default {
         // this.getClass()
     },
     mounted(){
+        this.$store.commit('handleOnSigningup')
+        console.log('mounted',this.$store.getters.onSigningup)
         this.step = this.$store.state.step
+    },
+    beforeUnmount(){
+        this.$store.commit('handleOnSigningup')
     },
     watch:{
         showButton:function(v) {if (v == false) { this.$refs.bform.classList.add('button-hover')}

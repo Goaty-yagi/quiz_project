@@ -62,7 +62,8 @@ export default {
             firebase: false,
             ipinfo: false,
             any: false
-        }
+        },
+        onSigningup:false
     },
     getters:{
         getUID(state){
@@ -82,6 +83,9 @@ export default {
         },
         logger(state){
             return state.logger
+        },
+        onSigningup(state){
+            return state.onSigningup
         }
     },
     mutations:{
@@ -202,6 +206,9 @@ export default {
         resetDjangoError(state){
             state.apiError.django = false
             state.apiError.any = false
+        },
+        handleOnSigningup(state){
+            state.onSigningup = !state.onSigningup
         }
     },
     actions:{
@@ -350,19 +357,23 @@ export default {
         async getFavoriteQuestion({ state, commit }){
             state.favoriteQuestion = null
             if(state.djangoUser){
-                const questionId = []
-                for(let i of state.djangoUser.favorite_question[0].question){
-                    questionId.push(i)
-                }
-                if(questionId[0]){
-                    await axios
-                    .get(`/api/board/question-favorite?question_id=${questionId}`)
-                    .then(response => {
-                        state.favoriteQuestion = response.data
+                try{
+                    const questionId = []
+                    for(let i of state.djangoUser.favorite_question[0].question){
+                        questionId.push(i)
+                    }
+                    if(questionId[0]){
+                        await axios
+                        .get(`/api/board/question-favorite?question_id=${questionId}`)
+                        .then(response => {
+                            state.favoriteQuestion = response.data
+                            })
+                        .catch(error => {
+                            console.log(error)
                         })
-                    .catch(error => {
-                        console.log(error)
-                    })
+                    }
+                }catch{
+                    
                 }
             }
         },

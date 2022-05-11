@@ -165,7 +165,7 @@ export default {
 <style scoped lang='scss'>
 @import "style/_variables.scss";
     .id-form{
-        height: 100vh;
+        margin-bottom: 100px;
         width:100vw;
         }
     .password-text{

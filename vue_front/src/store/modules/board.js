@@ -136,10 +136,7 @@ export default {
                     }
                 }
             }
-        }
-        // getWordList(state, payload){
-        //     state.wordList = payload
-        // }
+        },
     },
     
     actions:{
@@ -210,11 +207,13 @@ export default {
         },
         async getAnsweredQuestion({ state , getters,rootState,rootGetters}, payload) {
             // this.$store.commit('setIsLoading', true)
+            console.log("INGAQ")
             var url = `/api/board/question-answered?user=${rootGetters.getUID}`
             try{
                 await axios.get(url)
                     .then(response => {
                     state.answeredQuestion = response.data
+                    console.log('A',state.answeredQuestion)
                     })                    
                 }
             catch{(error => {

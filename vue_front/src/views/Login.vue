@@ -50,6 +50,7 @@ import {router} from "../main.js"
 import SentPassReset from '@/components/login/SentPassReset.vue'
 import NotVerified from '@/components/login/NotVerified.vue'
 import Sent from '@/components/signin/Sent.vue'
+
 export default {
     components:{
         SentPassReset,
@@ -70,6 +71,9 @@ export default {
             showNotVerified:false,
             store: this.$store.state.signup
         }
+    },
+    mounted(){
+        this.scrollTop()
     },
     updated(){
         console.log('login check ',this.store.user)
@@ -132,7 +136,12 @@ export default {
                 this.manyError = err.code == 'auth/too-many-requests'?
                 '短時間にリクエストを複数受けたため一時的にリクエストを停止します。暫く経ってもう一度お試しください。' :''               
             }
-        }
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+            });
+        },
     }
 }
 </script>

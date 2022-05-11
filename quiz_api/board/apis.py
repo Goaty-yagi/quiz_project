@@ -354,9 +354,10 @@ class AnsweredQuestionList(GenericAPIView):
     def get(self, request, format=None):
         user = request.query_params.getlist("user")
         try:
-            question_queryset  = self.queryset.filter(
+            question_queryset = self.queryset.filter(
                 answer__user = user[0],
-            ).distinct()
+            ).distinct().order_by('-on_reply')
+            print("oeder",question_queryset)
             page = self.paginate_queryset(question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)

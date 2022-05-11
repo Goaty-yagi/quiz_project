@@ -77,6 +77,7 @@ class BoardQuestion(models.Model):
     select_best_on_going = models.BooleanField(default=False)
     vote_on_going = models.BooleanField(default=False)
     on_answer = models.BooleanField(default=False)
+    on_reply = models.BooleanField(default=False)
     vote = models.IntegerField(default=0)
     tag = models.ManyToManyField(BoardCenterTag, related_name='question')
     img = models.ImageField(blank=True, null=True)
@@ -180,7 +181,6 @@ class UserFavoriteQuestion(models.Model):
 
 @receiver(post_save, sender=BoardAnswer)
 def handle_on_answer(sender, instance, created, **kwargs):
-    print('reciever from answer create')  
     if created == True:
         try:
             question = BoardQuestion.objects.filter(id=instance.question.id)
@@ -194,10 +194,14 @@ def handle_on_answer(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=BoardReply)
 def handle_on_reply(sender, instance, created, **kwargs):
-    print("kwargs",kwargs["signal"].__dict__, 'instance',instance,'created',created, 'sender',sender)  
+    print("Kwargs",kwargs["signal"].__dict__, 'IIIInstance',instance,'cCCCreated',created, 'SSSsender',sender)  
     if created == True:
+        print("CREATED")
         try:
             answer = BoardAnswer.objects.filter(id=instance.answer.id)
+            question = BoardQuestion.objects.get(id=answer[0].question.id)
+            question.on_reply = True
+            question.save()
             for q in answer:
                 q.on_reply = True
                 q.save()

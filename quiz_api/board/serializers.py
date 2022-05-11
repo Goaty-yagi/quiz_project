@@ -164,6 +164,7 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "post_on_going",
 				  "vote_on_going",
 				  "on_answer",
+				  "on_reply",
 				  "tag", 
 				  "vote", 
 				  "user",

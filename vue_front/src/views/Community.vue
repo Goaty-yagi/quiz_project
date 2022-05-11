@@ -244,48 +244,27 @@ export default {
         handleOnReplyAndOnAnswer(){
             // this is for community_page to display if user have notifications
             if(this.user){
-                for(let question2 of this.user.question){
-                    if(question2.on_answer==true&&question2.user==this.user.UID){
-                        console.log("onAnswer_dayo")
-                        return true
-                    }
-                }
-                console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
-                let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
-                for(let question of answeredQuestion){
-                    for(let answer of question.answer){
-                        if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                            return  true
+                try{
+                    for(let question2 of this.user.question){
+                        if(question2.on_answer==true&&question2.user==this.user.UID){
+                            console.log("onAnswer_dayo")
+                            return true
                         }
                     }
-                }return false
+                    console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
+                    let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
+                    for(let question of answeredQuestion){
+                        for(let answer of question.answer){
+                            if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                                return  true
+                            }
+                        }
+                    }return false
+                }
+                catch{
+                    console.log('NONE')
+                }
             }
-            // Object.keys(answeredQuestion).forEach(key =>{
-            //     console.log(key)
-            //     for(let answer of answeredQuestion[key].answer){
-            //         if(answer.on_reply==true){
-            //             return true
-            //         }
-            //     }
-            //     // this.showQuestion.questionStatus[key] = false
-            // })
-            // for(let question of getters.gettersAnsweredQuestions){
-            //     console.log(question)
-            //     for(let answer of question.answer){
-            //         console.log(answer.id)
-            //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
-            //             return  true
-            //         }
-            //     for(let question2 of getters.user.question){
-            //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
-            //                 return true
-            //             }else{
-            //                 return false
-            //             }
-            //         }
-            //     }
-                
-            // }
         },
         // getUserTags(){
         //     let checkDict = {}  

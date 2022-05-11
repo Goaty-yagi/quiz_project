@@ -12,7 +12,7 @@
                 id='router'/>
                 <Footer
                 id="footer"
-                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz"/>
+                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!this.$store.getters.onSigningup"/>
             </section>
             <div class='mobile-header'
             v-if="!$store.state.quiz.onQuiz">
@@ -129,7 +129,7 @@ export default{
   // background: linear-gradient(#5B759F,#1C254C);
   // margin-top: 60px;
   width: 100vw;
-  min-height:100vh;
+  // min-height:100vh;
 }
 
 // .router{

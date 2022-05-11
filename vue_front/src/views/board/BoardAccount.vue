@@ -7,7 +7,7 @@
             </div>
             <div v-if="$store.state.isLoading==false" class='main-container'>
                 <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
-                    <div class="notification-text text1" v-if="onNotification.onAnswer">
+                    <div class="notification-text" v-if="onNotification.onAnswer">
                         新しい回答があります。
                     </div>
                     <div class="notification-text" v-if="onNotification.onReply">
@@ -203,6 +203,7 @@ export default {
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
+                console.log('AQ',this.getAnsweredQuestion)
                 this.questions = this.getAnsweredQuestion
                 console.log("best",this.showQuestion.questionStatus.best)
                 if(this.showQuestion.questionStatus.best){
@@ -459,17 +460,22 @@ export default {
             
         },
         handleOnReply(){
-            console.log("handleOnREPLY", this.getAnsweredQuestion)
-            for(let question of this.getAnsweredQuestion.results){
-                console.log("first loop",question.answer)
-                for(let answer of question.answer){
-                    console.log("second loop",answer)
-                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                        this.onNotification.onReply = true
+            try{
+                console.log("handleOnREPLY", this.getAnsweredQuestion)
+                for(let question of this.getAnsweredQuestion.results){
+                    console.log("first loop",question.answer)
+                    for(let answer of question.answer){
+                        console.log("second loop",answer)
+                        if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                            this.onNotification.onReply = true
+                        }
                     }
                 }
+                console.log("end")
             }
-            console.log("end")
+            catch{
+
+            }
         },
         handleOnAnswer(question){
             if(question.on_answer&&question.user.UID==this.user.UID){
@@ -595,21 +601,7 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    .l-notification-container{
-        .notification-blue{
-            // display: flex;
-            // flex-direction: column;
-            // width: 100%;
-            .text1{
-                border-bottom: solid rgb(26, 209, 255);
-                padding-bottom:0.5rem;
-                width:100%;
-            }
-            .text2{
-                margin-top: 0.5rem;
-            }
-        }
-    } 
+    
     .user-info{
         border: solid $base-color;
         border-radius: 0.5rem;
