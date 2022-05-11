@@ -1,13 +1,11 @@
 <template>
     <div class="header-wrapper">
         <template v-if='authIsReady' >
-            <nav class="navbar-container">
+            <nav class="nav-container">
                 <div class="nav-brand">
-                    <a class="nav-brand-wrapper">
-                        <router-link @click="storeReset" to="/" >
-                            <img src="@/assets/logo.png">
-                        </router-link>
-                    </a>
+                    <router-link @click="storeReset" to="/" >
+                        <img src="@/assets/logo.png">
+                    </router-link>
                 </div>
                 <div class="handle-show">
                     <div class='nav-menu-flex'>
@@ -109,7 +107,7 @@ export default {
     height: 100px;
     margin-top: 1rem;
     // border-bottom: solid $dark-blue;
-    .navbar-container{
+    .nav-container{
         position: relative;
         display: flex;
         justify-content: flex-end;
@@ -215,7 +213,6 @@ export default {
   .header-wrapper{
     width:100vw;
     /* height:100Vh; */
-    position:relative;
 
   }
   .navbar {
@@ -227,42 +224,4 @@ export default {
   .navbar-end{
     color:white;
   }
-  
-// @media(max-width:560px){
-//     .nav-menu-flex{
-//         display: flex;
-//         justify-content: flex-end;
-//         align-items: center;
-//         // padding:1rem;
-//         width: 100%;
-//         // height: 100%;
-//         .nav-menu{
-//             margin-top: 1.5rem;
-//             margin-right: 1rem;
-//             .fas{
-//                 margin-right: 0.5rem;
-//             }
-//             .nav-item{
-//                 color:red;
-//                 flex:1;
-//                 border-right: 0.2rem solid red;
-//                 padding-right: 1rem;
-//                 padding-left: 1rem;
-//                 padding-top: 0.5rem;
-//                 padding-bottom: 0.5rem;
-//                 transition: 0.5s;
-//             }
-//             .signup{
-//                 border: solid $base-white;
-//                 color: rgb(226, 225, 221);
-//                 margin-left: 0.5rem;
-//                 padding-right: 1rem;
-//                 padding-left: 0.5rem;
-//                 padding-top: 0.5rem;
-//                 padding-bottom: 0.5rem;
-                
-//             }
-//         }
-//     }
-// }
 </style>

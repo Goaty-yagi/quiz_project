@@ -8,6 +8,7 @@ import QuizHome from '../views/quiz/QuizHome.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/not-found/NotFound.vue'
 import NotFound404 from '../views/not-found/NotFound404.vue'
+import ConnectionError from '../views/not-found/ConnectionError.vue'
 import Signup from '../views/Signup.vue'
 import Account from '../views/Account.vue'
 import Login from '../views/Login.vue'
@@ -115,6 +116,11 @@ const routes = [
     component: NotFound404,
   },
   { 
+    path: '/connection-error',
+    name: 'ConnectionError',
+    component: ConnectionError,
+  },
+  { 
     path: '/:catchAll(.*)',
     name: 'NotFound',
     component: NotFound,
@@ -132,9 +138,13 @@ router.beforeEach((to, from, next) => {
     console.log("LOGIN",to.matched)
     next({ name: 'Login' });
     }
-    else if(to.matched.some(record => record.meta.beingException)&&store.state.signup.beingException){
+    // else if(to.matched.some(record => record.meta.beingException)&&store.state.signup.beingException){
+    //   console.log("BeingException",to.matched)
+    //   next({ name: 'NotFound404' });
+    //   }
+    else if(to.matched.some(record => record.meta.apiException==false)&&store.state.signup.apiError.any){
       console.log("BeingException",to.matched)
-      next({ name: 'NotFound404' });
+      next({ name: 'ConnectionError' });
       }
     else if(to.matched.some(record => record.meta.emailVerified)&&!store.state.signup.emailVerified&&store.state.signup.user){
     console.log("NOTFOUND",to.matched)

@@ -10,7 +10,7 @@
                     <div class="notification-text text1" v-if="onNotification.onAnswer">
                         新しい回答があります。
                     </div>
-                    <div class="notification-text text2" v-if="onNotification.onReply">
+                    <div class="notification-text" v-if="onNotification.onReply">
                         新しい返信があります。
                     </div>
                 </div>
@@ -594,18 +594,22 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    .notification-blue{
-        display: flex;
-        flex-direction: column;
-        .text1{
-            border-bottom: solid rgb(26, 209, 255);
-            padding-bottom:0.5rem;
-            width:100%;
+    width: 100%;
+    .l-notification-container{
+        .notification-blue{
+            // display: flex;
+            // flex-direction: column;
+            // width: 100%;
+            .text1{
+                border-bottom: solid rgb(26, 209, 255);
+                padding-bottom:0.5rem;
+                width:100%;
+            }
+            .text2{
+                margin-top: 0.5rem;
+            }
         }
-        .text2{
-            margin-top: 0.5rem;
-        }
-    }
+    } 
     .user-info{
         border: solid $base-color;
         border-radius: 0.5rem;

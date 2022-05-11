@@ -1,10 +1,10 @@
 <template>
 <div class='not-wrapper'>
-  <h1 class='title is-1 mt-4'> 404　サーバーエラー</h1>
-  <h1 class='subtitle is-3'> 404 Server Error</h1>
+  <h1 class='title is-1 mt-4'> サーバーエラー</h1>
+  <h1 class='subtitle is-3'> サーバーが混み合っています。しばらく経ってからご利用ください。</h1>
   <div>
     <button>エラー報告をする</button>
-    <router-link :to="{name:'Home'}" @click='closeConf'  class="is-centered mt-6"><i class="fas fa-home"></i>Return to Home</router-link>
+    <router-link :to="{name:'Home'}" @click='reload'  class="is-centered mt-6"><i class="fas fa-home"></i>reload</router-link>
   </div>
 </div>
 
@@ -21,8 +21,8 @@ export default {
     },
     mounted(){
         console.log('mounted',this.$store.getters.logger)
-        this.checkBeingException()
-        setTimeout(this.reload, 3000)  
+        // this.checkBeingException()
+        // setTimeout(this.reload, 3000)  
     },
     methods:{
         closeConf(){
@@ -39,12 +39,12 @@ export default {
                 this.$store.commit('reloadForExceptionFalse')
                 // this.goHome()
                 console.log('start-reload')
-                window.location.reload();
+                window.location.reload(true);
             }
         },
-        goHome(){
-            router.push('/' )
-        }
+        // goHome(){
+        //     router.push('/' )
+        // }
     }
 }
 </script>
@@ -53,7 +53,7 @@ export default {
   .not-wrapper{
     /* background: linear-gradient(#5B759F,#1C254C); */
     width: 100vw;
-    height:100vh;
+    /* height:100vh; */
     padding-top:25vh;
     padding-bottom: 25vh;
   }

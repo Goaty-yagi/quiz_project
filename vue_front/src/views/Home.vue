@@ -53,7 +53,7 @@ export default {
     },
     mounted(){
         // this.test()
-        this.reload()
+        // this.reload()
         console.log('mounted',window.location.href,window.location.pathname)
         this.scrollTop()
         this.setInitUserStatus()
@@ -138,13 +138,13 @@ export default {
             this.slideIn = !this.slideIn
             this.slideOut = !this.slideOut
         },
-        reload(){
-            console.log('reload_enter',this.$store.state.signup.beingException)
-            if(this.$store.state.signup.beingException){
-                console.log('reload_desu')
-                window.location.reload();
-            }
-        }
+        // reload(){
+        //     console.log('reload_enter',this.$store.state.signup.beingException)
+        //     if(this.$store.state.signup.beingException){
+        //         console.log('reload_desu')
+        //         window.location.reload();
+        //     }
+        // }
     }
 }       
 </script>

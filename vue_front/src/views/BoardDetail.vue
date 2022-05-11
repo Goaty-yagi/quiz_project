@@ -8,21 +8,21 @@
             </div>
             <div class="question-wrapper" v-if="question&&relatedQuestion.results&&$store.state.isLoading==false">
                 <p class='title-white'>質問板</p>
-                <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
-                    <div class="notification-text">
-                        返信しました。
+                    <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
+                        <div class="notification-text">
+                            返信しました。
+                        </div>
                     </div>
-                </div>
-                <div v-if="$store.state.board.notifications.answer" :class="{'notification-blue':$store.state.board.notifications.answer}">
-                    <div class="notification-text">
-                        回答しました。
+                    <div v-if="$store.state.board.notifications.answer" :class="{'notification-blue':$store.state.board.notifications.answer}">
+                        <div class="notification-text">
+                            回答しました。
+                        </div>
                     </div>
-                </div>
-                <div v-if="$store.state.board.notifications.post" :class="{'notification-blue':$store.state.board.notifications.post}">
-                    <div class="notification-text">
-                        投稿しました。
+                    <div v-if="$store.state.board.notifications.post" :class="{'notification-blue':$store.state.board.notifications.post}">
+                        <div class="notification-text">
+                            投稿しました。
+                        </div>
                     </div>
-                </div>
                 <div class='question-box'> 
                     <div class="question-box-header">
                         <div class="image">
@@ -730,7 +730,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    // width: 100%;
     .question-box{
         border: solid $base-color;
         border-radius: 0.5rem;

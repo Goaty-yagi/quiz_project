@@ -35,6 +35,7 @@ export default createStore({
       paths: [
         "signup.djangoUser",
         "signup.emailVerified",
+        "signup.apiError",
         "signup.UID",
       ],  // 保存するモジュール：設定しなければ全部。
       storage: window.sessionStorage
@@ -42,8 +43,8 @@ export default createStore({
     createPersistedState({
       key: 'quiz-session',
       paths:[
-        "board.answeredQuestion",
-        "board.reccomendedQuestion",
+        // "board.answeredQuestion",
+        // "board.reccomendedQuestion",
         "board.centerTag",
         "quiz.quizNameId",
         "quiz.fieldNameId"],
@@ -54,6 +55,8 @@ export default createStore({
         paths: [
           "signup.tempUser",
           "signup.userInfo",
+          "signup.beingException",
+          "signup.reloadForException",
         ],  // 保存するモジュール：設定しなければ全部。
         storage:{
           getItem:(key) => Cookies.get(key),

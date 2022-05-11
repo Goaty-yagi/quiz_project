@@ -2,8 +2,12 @@
     <div id="wrapper">
         <div class="wrapper2">
             <Header
-            id="header"/>
-            <section class="main-section" :class="{'scroll-fixed':$store.state.isLoading}">
+            id="header"
+            v-if="!$store.state.signup.apiError.any"/>
+            <ConnectionError
+            id="connection-error"
+            v-if="$store.state.signup.apiError.any"/>
+            <section class="main-section" v-if="!$store.state.signup.apiError.any" :class="{'scroll-fixed':$store.state.isLoading}">
                 <router-view
                 id='router'/>
                 <Footer
@@ -12,7 +16,8 @@
             </section>
             <div class='mobile-header'
             v-if="!$store.state.quiz.onQuiz">
-                <MobileHeader/>
+                <MobileHeader
+                v-if="!$store.state.signup.apiError.any"/>
             </div>
         </div>
     </div>
@@ -22,6 +27,7 @@
 import Footer from '@/components/html_components/Footer.vue'
 import Header from '@/components/html_components/Header.vue'
 import MobileHeader from '@/components/html_components/MobileHeader.vue'
+import ConnectionError from '@/views/not-found/ConnectionError.vue'
 import Sent from '@/components/signin/Sent.vue'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -49,7 +55,8 @@ export default{
     Footer,
     Sent,
     Header,
-    MobileHeader
+    MobileHeader,
+    ConnectionError
   },
   methods:{
     storeReset(){
@@ -98,9 +105,9 @@ export default{
 
 }
 #header{
-    position: fixed;
-    top: 0;
-    left: 0;
+    // position: fixed;
+    // top: 0;
+    // left: 0;
     // height: 100px;
     // z-index: 100;
 }
@@ -111,13 +118,16 @@ export default{
 #footer{
     // z-index: -1;
 }
+#connection-error{
+  height: 100vh;
+}
 .main-header{
   position:relative;
   bottom:0;
 }
 .main-section{
   // background: linear-gradient(#5B759F,#1C254C);
-  margin-top: 60px;
+  // margin-top: 60px;
   width: 100vw;
   min-height:100vh;
 }
@@ -228,7 +238,7 @@ export default{
   .wrapper{
     position:relative
   }.main-section{
-    margin-top: 120px;
+    // margin-top: 120px;
     // background: linear-gradient(#5B759F,#1C254C);
     // width: 100vw;
     // height:100vh;
