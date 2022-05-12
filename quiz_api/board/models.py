@@ -186,7 +186,6 @@ def handle_on_answer(sender, instance, created, **kwargs):
             question = BoardQuestion.objects.filter(id=instance.question.id)
             for q in question:
                 q.on_answer = True
-                print('answeron',q.on_answer)
                 q.save()
         except:
             raise Http404
@@ -194,17 +193,18 @@ def handle_on_answer(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=BoardReply)
 def handle_on_reply(sender, instance, created, **kwargs):
-    print("Kwargs",kwargs["signal"].__dict__, 'IIIInstance',instance,'cCCCreated',created, 'SSSsender',sender)  
+    print('IIIInstance',instance,'cCCCreated',created, 'SSSsender',sender)  
     if created == True:
         print("CREATED")
         try:
-            answer = BoardAnswer.objects.filter(id=instance.answer.id)
-            question = BoardQuestion.objects.get(id=answer[0].question.id)
-            question.on_reply = True
-            question.save()
-            for q in answer:
-                q.on_reply = True
-                q.save()
+            answer = BoardAnswer.objects.get(id=instance.answer.id)
+            if instance.user.UID == answer.user.UID:
+                answer.on_reply = True
+                answer.save()
+            else:
+                question = BoardQuestion.objects.get(id=answer.question.id)
+                question.on_reply = True
+                question.save()
         except:
             raise Http404
 
