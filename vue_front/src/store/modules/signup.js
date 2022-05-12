@@ -215,7 +215,7 @@ export default {
         async signupDjangoUser( {state, commit},payload ){
             console.log("INSDU",payload)
             try{
-                throw new Error('could not sent validation')
+                // throw new Error('could not sent validation')
                 await axios({
                     method: 'post',
                     url: '/api/user/',
@@ -243,7 +243,7 @@ export default {
         async signupDjangoUserForException( {state, commit},payload ){
             // this is only for unsub below. dont use other part
             console.log("INSDUFX")
-            if(!state.djangoUser){
+            if(!state.djangoUser&&state.beingException){
                 if(state.userInfo){
                     try{
                         // throw new Error('could not sent validation')
@@ -472,8 +472,8 @@ const unsub = onAuthStateChanged(auth,(user) =>{
     console.log('unsub')
     if(user){
         store.dispatch('getDjangoUser')
-        store.dispatch('signupDjangoUserForException')
         store.commit('emailVerifiedHandler',user.emailVerified)
+        store.dispatch('signupDjangoUserForException')
     }else{
         store.commit('resetQuizKeyStorage')
     }
