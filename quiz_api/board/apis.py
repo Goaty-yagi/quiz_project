@@ -1,4 +1,3 @@
-from this import d
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,13 +6,16 @@ from rest_framework.generics import GenericAPIView
 
 
 from django.db.models import Q
-from rest_framework import status
 from django.db.models import Max
 from django.db.models import Prefetch
 
 import random
 import operator
 import copy
+from itertools import chain
+
+
+
 from django.http import Http404
 
 from board.models import (
@@ -42,6 +44,8 @@ from board.serializers import (
     UserTagSerializer, 
     CenterTagSerializer, 
     FavoriteQuestionSerializer, 
+    ReplyOnAnswerSerializer,
+    AnswerAndReplyOnQuestionSerializer
     # CenterOnlyTagSerializer
     )
 
@@ -656,6 +660,30 @@ class SearchQuestionList(GenericAPIView):
         data = result.data
         return Response(data)
 
+
+class UserAnswerAndQuestionApi(APIView):
+    def get(self, request):
+        print("request",request)
+        user_UID = request.query_params['user']
+        print(user_UID)
+        try:
+            # q = Q()
+            # q.add(Q(on_answer=True),Q.OR)
+            # q.add(Q(on_reply=True),Q.OR)
+            question = BoardQuestion.objects.filter(user_id=user_UID).filter(Q(on_answer=True) | Q(on_reply=True)).all()
+            answer  = BoardAnswer.objects.filter(
+                user_id = user_UID,
+                on_reply = True
+                )
+            print('got question ', question, answer)
+            print('got answer', answer)
+            serializer = AnswerAndReplyOnQuestionSerializer(question, many=True)
+            serializer2 = ReplyOnAnswerSerializer(answer, many=True)
+            union = list(chain(serializer.data, serializer2.data))
+            return Response(union)
+        except :
+            raise Http404
+
 # class Conbine():
 #     def __init__(self, keywords=''):
 #         string = ''
@@ -731,38 +759,3 @@ def set_random_object(solved_queryset, unsolved_queryset):
     return random_id_list
 
 
-# class RelatedQuestion(generics.ListAPIView):
-#     queryset = BoardQuestion.objects.fi()
-#     serializer_class = BoardQuestionListSerializer
-#     lookup_field = 'slug'
-
-
-# class UserTagCreateApi(APIView):
-#     def post(self, request, format=None):
-#         print("self",self.__dict__)
-#         print("requesti",request)
-#         serializer = UserTagSerializer(data=request.data)
-#         print(serializer)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # try:
-        #     queryset = BoardUserTag.objects.create(request,
-        #     field=request.query_params['field'],
-        #     module=request.query_params['module'])
-        #     quiz_num = int(request.query_params['num'])
-        #     question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-        #     serializer = QuestionListSerializer(question, many=True)
-        #     return Response(serializer.data)
-        # except Question.DoesNotExist:
-        #     raise Http404
-
-# class QuestionLikedRead(generics.ListAPIView):
-#     queryset = BoardQuestionLiked.objects.all()
-#     serializer_class = BoardLikedReadSerializer
-
-
-# class QuestionLikedCreate(generics.CreateAPIView):
-#     queryset = BoardQuestionLiked.objects.all()
-#     serializer_class = BoardLikedCreateSerializer

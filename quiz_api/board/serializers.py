@@ -440,5 +440,22 @@ class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
 
 # user optimization end
 
-# from here for question optimization
+# from here for board notifications
 
+class AnswerAndReplyOnQuestionSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardQuestion
+		fields = ["id", 
+				  "on_answer",
+				  "on_reply",
+				  ]
+
+
+class ReplyOnAnswerSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "on_reply",
+				  ]
