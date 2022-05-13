@@ -312,10 +312,15 @@ export default {
                     // this.patchOnAnswer()
                     this.questionPatch()
                     this.makeAnswerDict()
+                    console.log("after_makeAD")
                     this.getQuestionTagList(this.question.tag)
+                    console.log("after_taglist")
                     this.getRelatedQuestion()
+                    console.log("after_relation")
                     this.countViewedNumUp()
+                    console.log("after_numup")
                     this.favoriteCheck()
+                    console.log("after_favocheck")
                     // if(!this.loginUser){
                     //     this.$store.commit('setIsLoading', false)
                     // }
@@ -325,23 +330,6 @@ export default {
             })
             // this.$store.commit('setIsLoading', false)
         },
-        // async patchOnAnswer(slug=""){
-        //     if(slug==""){
-        //         var url = `/api/board/question/${this.$route.params.slug}`
-        //     }else{
-        //         var url = `/api/board/question/${slug}`
-        //     }
-        //     console.log("gonna if patch answer",this.question.on_answer==true&&this.question.user.UID==this.user.UID)
-        //     if(this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-        //         console.log('PatchAnswer url',url)
-        //         axios.patch(
-        //             url,
-        //             { on_answer: false }) 
-        //         console.log("go store AQ and DU")
-        //         await this.$store.dispatch('getDjangoUser')
-        //         await this.$store.dispatch('getAnsweredQuestion')
-        //     }
-        // },
         async patchOnReply(){
             console.log("patchOnReply",this.allAnswer)
             for(let answer of this.allAnswer){
@@ -572,16 +560,21 @@ export default {
             }
         },
         favoriteCheck(){
-            if(this.user){
-                this.addedFavorite = false
-                for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
-                    console.log('loop',this.addedFavorite,i,this.question.id)
-                    if(this.question.id==i){
-                        this.addedFavorite = true
-                        console.log(this.addedFavorite)
-                        break
+            try{
+                if(this.$store.state.signup.djangoUser.favorite_question[0]){
+                    this.addedFavorite = false
+                    for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
+                        console.log('loop',this.addedFavorite,i,this.question.id)
+                        if(this.question.id==i){
+                            this.addedFavorite = true
+                            console.log(this.addedFavorite)
+                            break
+                        }
                     }
                 }
+            }
+            catch{
+                
             }
         },
         countUpLiked(){
@@ -597,21 +590,45 @@ export default {
         },
         async questionPatch(){
             // patch view count_up and on_answer
+            console.log("inPatch-question")
             if(this.user){
-                if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-                console.log('count', this.questionSlug)
-                await axios.patch(`/api/board/question/${this.questionSlug}`,{
-                    viewed: this.viewed + 1,
-                    on_answer: false
-                })
-                this.$store.dispatch('getDjangoUser')
-                this.$store.dispatch('getAnsweredQuestion')
+                console.log("patch Question",this.questionUserBoolean,this.question.on_answer,this.question.on_reply,this.question.user.UID,this.user.UID)
+                if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.on_reply==true&&this.question.user.UID==this.user.UID){
+                    console.log('count', this.questionSlug)
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_answer: false,
+                        on_reply: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch 2')
                 }
-            }
-            else if(this.questionUserBoolean == false){
-                axios.patch(`/api/board/question/${this.questionSlug}`,{
-                    viewed: this.viewed + 1
-                })
+                else if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_answer: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch answer')
+                }
+                else if(!this.questionUserBoolean&&this.question.on_reply&&this.question.user.UID==this.user.UID){
+                    console.log("in_reply")
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_reply: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch reply')
+                }
+                else if(this.questionUserBoolean == false){
+                    axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1
+                    })
+                    console.log('done patch count')
+                }
             }
         },
         // setAnswerBoolean(){
@@ -625,13 +642,14 @@ export default {
             // to hold information
             console.log("in make dict",this.allAnswer)
             for(let answer of this.allAnswer){
-                console.log(answer)
+                console.log(answer,'id',answer.id)
                 this.answerDict[answer.id] = {
                     "liked_id":answer.liked_answer[0].id,
                     "liked_num":answer.liked_answer[0].liked_num,
                     "addedAnswerLiked":false,
                     "likedUsers":[answer.liked_answer[0].user]
                 }
+                console.log("oneloop done")
             }
             console.log('answer-dict',this.answerDict)
             this.checkUserLiked()

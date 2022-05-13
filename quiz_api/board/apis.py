@@ -490,7 +490,7 @@ class UserQuestionList(GenericAPIView):
         try:
             user_question_queryset = self.queryset.filter(
                 user__UID=uid
-            )
+            ).order_by('-on_reply','-on_answer')
             page = self.paginate_queryset(user_question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
