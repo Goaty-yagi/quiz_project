@@ -224,7 +224,8 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 					print("if done")
 				else:
 					BoardUserTag.objects.create(tag=tag, user=user, used_num=1)
-			BoardQuestionLiked.objects.create(question=question, **liked_num_data)
+			a = BoardQuestionLiked.objects.create(question=question, **liked_num_data)
+			print('created',a.liked_num,a.question)
 			return question
 
 

@@ -71,12 +71,19 @@
                                 v-for="(tag,tagindex) in question.tag" 
                                 v-bind:key="tagindex">{{ tag.tag }}
                             </div>
-                            <div class="on-answer-container">
-                                <div class="on-answer" v-if="handleOnAnswer(question)">
-                                    <span class="span1"> NEW</span><span class="span2">ANSWER</span>
+                            <div class="on-answer-wrapper">
+                                <div class="on-answer" v-if="handleOnAnswer(question)||handleOnReply2(question)">
+                                        <div class="on-answer-container" v-if="handleOnAnswer(question)">
+                                            <span class="span1"> NEW</span><span class="span2">ANSWER</span>
+                                        </div>
+                                        <div class="on-answer-container" v-if="handleOnReply2(question)">
+                                            <span class="span1"> NEW</span><span class="span2">Reply</span>
+                                        </div>
                                 </div>
                                 <div class="on-answer" v-if="onReplayCheck(question.answer)">
-                                    <span class="span1"> NEW</span><span class="span2">REPLY</span>
+                                    <div class="on-answer-container">
+                                        <span class="span1"> NEW</span><span class="span2">REPLY</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +91,7 @@
                         <div class="question-description" v-if="question.description">{{ question.description.substr(0,10)+'...' }}</div>
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
-                            <div class="good" v-if="question.liked_num">{{ question.liked_num[0].liked_num }}</div>
+                            <div class="good" v-if="question">{{ viewedNum(question.liked_num) }}</div>
                             <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                         </div>
                     </div>   
@@ -281,22 +288,6 @@ export default {
         window.removeEventListener('scroll', this.getScrollY)
     },
     methods:{
-        // async getAnsweredQuestion() {
-        //     this.$store.commit('setIsLoading', true)
-        //     console.log("ingetRQ in account")
-        //     var url = `/api/board/question-answered?user=${this.user.UID}`
-        //     try{
-        //         await axios.get(url)
-        //             .then(response => {
-        //             getAnsweredQuestion = response.data
-        //             })
-        //             this.handleOnReply()
-        //         }
-        //     catch{(error => {
-        //             console.log(error)
-        //     })}
-        //     this.$store.commit('setIsLoading', false)
-        // },
         getDetail(slug){
             router.push(`/board-detail/${slug}` )
         },
@@ -485,6 +476,14 @@ export default {
                 return false
             }
         },
+        handleOnReply2(question){
+            if(question.on_reply&&question.user.UID==this.user.UID){
+                this.onNotification.onReply = true
+                return true      
+            }else{
+                return false
+            }
+        },
         onReplayCheck(questionAnswer){
             console.log('in ORC',questionAnswer)
             for(let answer of questionAnswer){
@@ -561,6 +560,20 @@ export default {
             var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
             return stringDT.replace(/\//g,'-')
         },
+        viewedNum(likedNum){
+            console.log('in_liked',likedNum)
+            try{
+                if(likedNum){
+                    return likedNum[0].liked_num
+                }
+                else{
+                    return 0
+                }
+            }
+            catch{
+                return 0
+            }
+        }
     }
 }
 </script>
@@ -742,11 +755,10 @@ export default {
                     padding: 0.5rem;
                     min-width: 3rem;
                 }
-                .on-answer-container{
+                .on-answer-wrapper{
                     position:relative;
                     width:100%;
                     .on-answer{
-                        display: flex;
                         position: absolute;
                         right: 0;
                         flex-direction: column;
@@ -754,13 +766,22 @@ export default {
                         margin-top: 0.5rem;
                         margin-right: 0.3rem;
                         padding-right:0.2rem;
-                        padding-left:0.2rem;
-                        color: red;
-                        border: solid red;
-                        border-radius: 0.5rem;
+                        padding-left:0.2rem; 
+                        .on-answer-container{
+                            display: flex;
+                            flex-direction: column;
+                            color: red;
+                            border: solid red;
+                            border-radius: 0.5rem;
+                            margin-bottom: 0.3rem;     
+                        }
+                        .span1{
+                            font-weight: bold;
+                        }
                         .span2{
                             margin-top: -0.5rem;
-                            font-size: 0.6rem;                   
+                            font-size: 0.6rem;
+                            font-weight: bold;             
                         }
                     }
                 }
