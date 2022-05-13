@@ -199,12 +199,13 @@ def handle_on_reply(sender, instance, created, **kwargs):
         try:
             answer = BoardAnswer.objects.get(id=instance.answer.id)
             if instance.user.UID == answer.user.UID:
-                answer.on_reply = True
-                answer.save()
-            else:
+                # this if for notofication for question user
                 question = BoardQuestion.objects.get(id=answer.question.id)
                 question.on_reply = True
                 question.save()
+            else:
+                answer.on_reply = True
+                answer.save()
         except:
             raise Http404
 

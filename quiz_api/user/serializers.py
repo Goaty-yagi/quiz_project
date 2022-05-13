@@ -108,6 +108,15 @@ class UserStrageSerializer(serializers.ModelSerializer):
                   ]
 
 
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ["UID",
+                  "name", 
+                  
+                  ]
 # class UserStrageSerializer(serializers.ModelSerializer):
 #     question = BoardQuestionListSerializer(many=True, required=False) #ForeignKey
 #     answer = BoardAnswerReadSerializer(many=True, required=False) #ForeignKey

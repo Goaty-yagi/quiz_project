@@ -10,13 +10,19 @@ from django.db.models import Prefetch
 
 from user.models import User
 from board.models import BoardQuestion, BoardAnswer
-from user.serializers import UserSerializer,UserStrageSerializer
+from user.serializers import UserSerializer,UserStrageSerializer, SimpleUserSerializer
 
 class UserList(generics.ListCreateAPIView):
     # parser_classes = (MultiPartParser, FormParser)
     queryset = User.objects.select_related('favorite_question_set').all()
     serializer_class = UserSerializer
     lookup_field = 'UID'
+
+
+class UserAllList(generics.ListCreateAPIView):
+    # parser_classes = (MultiPartParser, FormParser)
+    queryset = User.objects.all()
+    serializer_class = SimpleUserSerializer
 
 
 class UserDetail(generics.RetrieveUpdateAPIView ):

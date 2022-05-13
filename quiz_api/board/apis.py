@@ -679,7 +679,7 @@ class UserAnswerAndQuestionApi(APIView):
             print('got answer', answer)
             serializer = AnswerAndReplyOnQuestionSerializer(question, many=True)
             serializer2 = ReplyOnAnswerSerializer(answer, many=True)
-            union = list(chain(serializer.data, serializer2.data))
+            union = list(chain([serializer.data], [serializer2.data]))
             return Response(union)
         except :
             raise Http404
