@@ -13,6 +13,7 @@ export default {
         reccomendedQuestion:'',
         answeredQuestion:'',
         // favoriteQuestion:'',
+        notificationApi:'',
         showNoticeOnAcount:{
             answer:false,
             reply:false,
@@ -38,6 +39,9 @@ export default {
         },
         gettersReply(state){
             return state.showNoticeOnAcount.reply
+        },
+        notificationApi(state){
+            return state.notificationApi
         },
         getUserTags(state, getters){
             if(getters.user){
@@ -68,7 +72,41 @@ export default {
                 }
             }
         },
-        
+        notificationApi(state){
+            console.log('NAPI',state.notificationApi.length)
+            var noty = state.notificationApi
+            if(noty.length==0){
+                return false
+            }
+            else if(noty.length==1){
+                for(let i of noty.length[0]){
+                    console.log(i)
+                    if(i.on_answer||i.on_reply){
+                        return true
+                    }else{
+                        return false
+                    }
+                }
+            }
+            else if(noty.length==2){
+                console.log("d2desu",noty[0])
+                for(let o of noty[0]){
+                    console.log(o)
+                    if(o.on_answer||o.on_reply){
+                        return true
+                    }else{
+                        for(let k of noty[1]){
+                            if(k.on_reply){
+                                return true
+                            }
+                            else{
+                                return false
+                            }
+                        }
+                    }
+                }
+            }
+        },        
         // handleOnReplyAndOnAnswer(state, getters, rootState){
         //     console.log("handleOnREPLY")
         //     for(let question of getters.gettersAnsweredQuestions){
@@ -113,30 +151,30 @@ export default {
                 state.selectedTagList = payload
                 console.log('Got tagID',state.selectedTagList)
         },
-        handleOnReplyAndOnAnswer(state, getters){
-            // this is for community_page to display if user have notifications
-            console.log('inHandleAR in store')
-            for(let question2 of getters.question){
-                if(question2.on_answer==true&&question2.user.UID==getters.UID){
-                    console.log("onAnswer_dayo")
-                    state.showNoticeOnAcount.answer = true
-                }else{
-                    state.showNoticeOnAcount.answer = false
-                }
-            }
-            console.log("answercheck start")
-            let answeredQuestion = getters.question
-            for(let question of answeredQuestion){
-                console.log(question)
-                for(let answer of question.answer){
-                    console.log(answer.id)
-                    if(answer.on_reply==true&&answer.user.UID==getters.UID){
-                        console.log("onreply_dayo")
-                        state.showNoticeOnAcount.reply = true
-                    }
-                }
-            }
-        },
+        // handleOnReplyAndOnAnswer(state, getters){
+        //     // this is for community_page to display if user have notifications
+        //     console.log('inHandleAR in store')
+        //     for(let question2 of getters.question){
+        //         if(question2.on_answer==true&&question2.user.UID==getters.UID){
+        //             console.log("onAnswer_dayo")
+        //             state.showNoticeOnAcount.answer = true
+        //         }else{
+        //             state.showNoticeOnAcount.answer = false
+        //         }
+        //     }
+        //     console.log("answercheck start")
+        //     let answeredQuestion = getters.question
+        //     for(let question of answeredQuestion){
+        //         console.log(question)
+        //         for(let answer of question.answer){
+        //             console.log(answer.id)
+        //             if(answer.on_reply==true&&answer.user.UID==getters.UID){
+        //                 console.log("onreply_dayo")
+        //                 state.showNoticeOnAcount.reply = true
+        //             }
+        //         }
+        //     }
+        // },
     },
     
     actions:{
@@ -221,6 +259,22 @@ export default {
             })}
             // this.$store.commit('setIsLoading', false)
         },
+        async getNotificationApi({ state , getters,rootState,rootGetters}, payload) {
+            // this.$store.commit('setIsLoading', true)
+            console.log("INGNAPI")
+            var url = `/api/board/user-question-answer-notification?user=${rootGetters.getUID}`
+            try{
+                await axios.get(url)
+                    .then(response => {
+                    state.notificationApi = response.data
+                    console.log('gotAPI',state.answeredQuestion)
+                    })                    
+                }
+            catch{(error => {
+                    console.log("error",error)
+            })}
+            // this.$store.commit('setIsLoading', false)
+        },
         // async getFavoriteQuestion({ state , getters }, payload){
         //     const questionId = []
         //     for(let i of getters.user.question){
@@ -250,6 +304,4 @@ export default {
         //     })
         // },          
     }
-
-
 }

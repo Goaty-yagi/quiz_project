@@ -10,7 +10,7 @@
                 <div class="header-flex">
                     <h1 class='title-white'>質問板</h1>
                     <i v-if="emailVerified" @click="goAccount()" class="fas fa-user user-font"></i>
-                    <i v-if="handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
+                    <i v-if="$store.getters.notificationApi" class="fas fa-exclamation"></i>
                     <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
                 </div>
                 <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
@@ -195,12 +195,14 @@ export default {
     },
     created(){
         console.log('created')
-        this.$store.dispatch('getAnsweredQuestion')
+        // this.$store.dispatch('getAnsweredQuestion')
+        this.$store.dispatch('getDjangoUser')
+        // this.$store.dispatch('getNotificationApi')
     },
     beforeMount(){
         // this.getQuestion()
         console.log('before-mounted')
-        this.$store.dispatch('getDjangoUser')
+        this.$store.dispatch('getNotificationApi')
     },
     mounted() {
         window.addEventListener('scroll', this.handleScroll)
@@ -241,58 +243,6 @@ export default {
         emailVerified(){
             return this.$store.getters.getEmailVerified
         },
-        handleOnReplyAndOnAnswer(){
-            // this is for community_page to display if user have notifications
-            if(this.user){
-                try{
-                    for(let question2 of this.user.question){
-                        if(question2.on_answer==true&&question2.user==this.user.UID){
-                            console.log("onAnswer_dayo")
-                            return true
-                        }
-                    }
-                    console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
-                    let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
-                    for(let question of answeredQuestion){
-                        for(let answer of question.answer){
-                            if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                                return  true
-                            }
-                        }
-                    }return false
-                }
-                catch{
-                    console.log('NONE')
-                }
-            }
-        },
-        // getUserTags(){
-        //     let checkDict = {}  
-        //     // let checkedDict = {}
-        //     let checkedList = []
-        //     let checkedlist2 = []
-        //     for(let i of this.user.user_tag){
-        //         checkDict[i.tag] = i.total_num
-        //         checkedList.push(i.tag)
-        //     }
-        //     console.log("computed",checkDict)
-        //     if(Object.keys(checkDict).length <= 3){
-        //         return checkedList
-        //     }
-        //     if(Object.keys(checkDict).length > 3){
-        //         for(let m=0; m < 3; m++){
-        //             const aryMax = function (a, b) {return Math.max(a, b);}
-        //             let max = Object.values(checkDict).reduce(aryMax);
-        //             const result = Object.keys(checkDict).reduce( (r, key) => { 
-        //                 return checkDict[key] === max ? key : r 
-        //                 }, null);
-        //             // checkedDict[result] = max
-        //             delete checkDict[result]
-        //             checkedlist2.push(result)
-        //         }
-        //         return checkedlist2
-        //     }
-        // },
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
