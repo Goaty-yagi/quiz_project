@@ -6,7 +6,7 @@
                 <div class="lds-dual-ring"></div>
             </div>
             <div v-if="$store.state.isLoading==false" class='main-container'>
-                <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
+                <div v-if="onNotification.show" :class="{'notification-blue':onNotification.show}">
                     <div class="notification-text" v-if="onNotification.onAnswer">
                         新しい回答があります。
                     </div>
@@ -129,7 +129,9 @@ export default {
             onNotification:{
                 onReply:false,
                 onAnswer:false,
+                show: false
             },
+            showNotifications: false,
             temporaryStatus:'',
             showQuestion:{
                 questionType:{
@@ -154,6 +156,9 @@ export default {
         user(){
             return this.$store.getters.getDjangouser
         },
+        // notifications(){
+        //     return this.$store.getters.notifications
+        // },
         getThreeUsertag(){
             const _ = require('lodash');
             let used_num_list = []
@@ -282,6 +287,7 @@ export default {
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
+        this.setTime()
     },
     beforeUnmount(){
         window.removeEventListener('scroll', this.handleScroll)
@@ -450,6 +456,16 @@ export default {
                 // }
             
         },
+        resetNotifications(){
+            this.onNotification.show = false
+            console.log('reset is done',this.onNotification.showReplyNotify)
+        },
+        setTime(){
+            if(this.onNotification.onReply||this.onNotification.onAnswer){
+                this.onNotification.show = true
+                setTimeout(this.resetNotifications, 4500) 
+            }
+        },
         handleOnReply(){
             try{
                 console.log("handleOnREPLY", this.getAnsweredQuestion)
@@ -614,6 +630,14 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    .notification-blue{
+        display: flex;
+        display: flex;
+        flex-direction: column;
+        .notification-text{
+            margin-top: 1rem;
+        }
+    }
     
     .user-info{
         border: solid $base-color;

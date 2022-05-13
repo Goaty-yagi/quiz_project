@@ -301,6 +301,7 @@ input[type="text"]:focus {
     100% {
         opacity: 0;
         transform: translate(0,-3px);
+        display: none;
       }
 }
 // .l-notification-container{

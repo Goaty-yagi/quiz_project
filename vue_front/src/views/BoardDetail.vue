@@ -527,26 +527,6 @@ export default {
                 }}
                 return array
             },
-        // resetNotifications(){
-        //     this.notifications.answer = false
-        //     this.notifications.reply = false
-        // },
-        // handleNotifications(elem){
-        //     if(elem == "reply"){
-        //         this.notifications.reply = true
-        //         setTimeout(this.resetNotifications, 3000)
-                
-        //     }
-        //     if(elem == "answer"){
-        //         console.log("in answer")
-        //         this.notifications.answer = true
-        //         setTimeout(this.resetNotifications, 3000)
-        //     }            
-        // },
-        // getLikedNum(liked_num){
-        //     this.liked_num = liked_num
-        //     return this.liked_num
-        // },
         getRelatedSlug(slug){
             this.getDetail(slug)
             this.$forceUpdate();

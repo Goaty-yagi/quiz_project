@@ -40,9 +40,9 @@ export default {
         gettersReply(state){
             return state.showNoticeOnAcount.reply
         },
-        notificationApi(state){
-            return state.notificationApi
-        },
+        // notificationApi(state){
+        //     return state.notificationApi
+        // },
         getUserTags(state, getters){
             if(getters.user){
                 let checkDict = {}  
