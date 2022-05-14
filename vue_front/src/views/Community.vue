@@ -452,15 +452,17 @@ export default {
             console.log(this.scroll_position,)
         },
         dateConvert(date){
+            var date = date
             var time = ''
             var newDate = ''
             var dt = new Date(date)
             if(dt.getHours() > 11){
                 time = " PM"
+                dt = dt.setHours(dt.getHours()-12)
+                date = new Date(dt)
             }else{
                 time = " AM"
             }
-            dt.setSeconds()
             newDate = date + time + " UTC"
             dt = new Date(newDate)
             var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})

@@ -151,29 +151,29 @@ export default {
                 state.selectedTagList = payload
                 console.log('Got tagID',state.selectedTagList)
         },
-        // handleOnReplyAndOnAnswer(state, getters){
-        //     // this is for community_page to display if user have notifications
-        //     console.log('inHandleAR in store')
-        //     for(let question2 of getters.question){
-        //         if(question2.on_answer==true&&question2.user.UID==getters.UID){
-        //             console.log("onAnswer_dayo")
-        //             state.showNoticeOnAcount.answer = true
-        //         }else{
-        //             state.showNoticeOnAcount.answer = false
-        //         }
+        // dateConvert(state,payload){
+        //     console.log("first",payload)
+        //     var date = payload
+        //     var time = ''
+        //     var newDate = ''
+        //     var dt = new Date(date)
+        //     console.log("S",dt)
+        //     if(dt.getHours() > 11){
+        //         time = " PM"
+        //         dt = dt.setHours(dt.getHours()-12)
+        //         date = new Date(dt)
+        //         console.log('pm',date)
+        //     }else{
+        //         time = " AM"
         //     }
-        //     console.log("answercheck start")
-        //     let answeredQuestion = getters.question
-        //     for(let question of answeredQuestion){
-        //         console.log(question)
-        //         for(let answer of question.answer){
-        //             console.log(answer.id)
-        //             if(answer.on_reply==true&&answer.user.UID==getters.UID){
-        //                 console.log("onreply_dayo")
-        //                 state.showNoticeOnAcount.reply = true
-        //             }
-        //         }
-        //     }
+        //     newDate = date + time + " UTC"
+        //     dt = new Date(newDate)
+        //     console.log("newdata IN Store",newDate,'dt',dt)
+        //     var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+        //     console.log('before',stringDT)
+        //     stringDT = stringDT.replace(/\//g,'-')
+        //     console.log('beforeafter',stringDT)
+        //     return stringDT
         // },
     },
     
