@@ -6,9 +6,11 @@ $base-lite-2:#ffd68b;
 $base-lite-3:#ffebc6;
 $base-white:rgb(229, 229, 229);
 $back-white:#F6F3E4;
+$lite-gray: rgb(227, 227, 227);
 $back-lite-white:rgb(252, 252, 252);
 $back-tr-white:rgba(252, 252, 252, 0.95);
 $dark-blue: #1C254C;
+$middle-blue: #2b409f;
 $lite-blue: #5B759F;
 $buttongradient:linear-gradient(#F6F3E4 1%,#ff9933);
 $background:linear-gradient(#5B759F,#1C254C);
@@ -115,7 +117,7 @@ body{
     font-weight: bold;
 }
 .title-blue{
-    color: $dark-blue;
+    color: $middle-blue;
     font-size: 1.5rem;
     font-weight: bold;
     
@@ -183,12 +185,20 @@ body{
     color:white;
     border: 0.1rem solid  $base-color;
     border-radius:50vh;
+    transition: 0.5s;
+}
+.btn-tr-white-base-cir:hover{
+    font-weight: bold;
 }
 .btn-tr-black-baselite-cir{
     background: $base-lite;
     color:black;
     border: 0.1rem solid  $base-color;
     border-radius:50vh;
+    transition: 0.5s
+}
+.btn-tr-black-baselite-cir:hover{
+    font-weight: bold;
 }
 .btn-gray-black-gray-sq{
     background: rgb(230, 230, 230);

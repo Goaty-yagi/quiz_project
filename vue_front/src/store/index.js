@@ -19,6 +19,7 @@ let getDefaultState = () => {
     test:null,
     notice:false,
     step:1,
+    showModal: false
   }}
 
 
@@ -68,7 +69,8 @@ export default createStore({
   ],
   getters:{
     questions2:(state) => state.questions,
-    quizzes2:(state) => state.quizzes
+    quizzes2:(state) => state.quizzes,
+    showModal:(state) => state.showModal
   },
   mutations: {
     setIsLoading(state, status) {
@@ -86,10 +88,7 @@ export default createStore({
       state.test = item.test
       state.randomURL = `/quiz/${state.id}`
     },
-    // deleteTempUser(){
-    //     Cookies.remove('tempKey')
-    //     console.log("deleted")
-    // },
+    
     // getRandomQuestion(state,array){
     //   for (let i = array.length - 1; i >= 0; i--) {
     //     let r = Math.floor(Math.random() * (i + 1))
@@ -125,6 +124,12 @@ export default createStore({
     stepClear(state){
       state.step = 1
     },
+    showModalTrue(state){
+      state.showModal = true
+    },
+    showModalFalse(state){
+      state.showModal = false
+    }
     // quizRouter(i,f,n){
     //   state.id = i
     //   state.field = f
@@ -133,29 +138,5 @@ export default createStore({
     // }
   },
   // actions: {
-  //   async getquiz2({ state, commit }){
-  //     let response = await axios.get(`/api/quizzes/?id=${state.id}`)
-  //     .catch(error => {
-  //       console.log('error',error.message)
-  //                        })
-  //     commit('setQuiz',response.data);
-  //     console.log('action',response.data)
-  //     console.log(state.isLoading)
-  //     },
-  //   async getquestions2({ state, commit }){
-  //     console.log('action2',state.num)
-  //     try{
-  //       let response2 = await axios.get(`/api/questions/quizzes/?quiz=${state.id}&num=${state.num}`)
-  //       commit('getRandomQuestion',response2.data)
-  //       commit('setQuestions',response2.data);
-  //       // commit('setIsLoading', false)
-  //     }
-  //     catch{
-  //       commit('setIsLoading', false)
-  //       router.push({ name: 'Notfound' })
-        
-  //                        }
-      
-  //   },
-  // },
+  //   }
 })

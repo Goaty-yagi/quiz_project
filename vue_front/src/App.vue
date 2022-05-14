@@ -12,7 +12,7 @@
                 id='router'/>
                 <Footer
                 id="footer"
-                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!this.$store.getters.onSigningup"/>
+                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!$store.getters.onSigningup&&!$store.getters.showModal"/>
             </section>
             <div class='mobile-header'
             v-if="!$store.state.quiz.onQuiz">

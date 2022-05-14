@@ -7,12 +7,12 @@
         @getCanvas='getCanvas'
         />  -->
         <div class='l-container'>
-            <div class="title-black">
+            <div class="title-blue">
                 <p>質問投稿</p>
             </div>
             <form class="form" @submit.prevent='submitForm'>
                 <div class="question-title-container">
-                    <div class='title-flex'>
+                    <div class='title-flex '>
                          <p>TITLE</p>
                     </div>
                     <input class='question-title' maxlength="20" type="text" v-model='title' placeholder="20字以内">
@@ -66,6 +66,7 @@
                             class="tag-child"
                             v-show="showChildTag">
                             <p
+                            class="tag-list"
                              v-for="(tag,tagindex) in centerTagList"
                              v-bind:key="tagindex"
                              @click="addTags(tag.tag, tag.id)">
@@ -78,7 +79,7 @@
                 <div class="line"></div>
 
                 <div class="question-description">
-                    <p class="title-black">質問文</p>
+                    <p class="title-blue">質問文</p>
                 </div>
                 <div class='text-field'>
                     <textarea class='form-text' v-model='description'>
@@ -92,7 +93,7 @@
                 </label>
                 {{ canvas}} -->
                 <div class="button-group">
-                    <p @click="$emit('handleShowCreateQuestion')">キャンセル</p>
+                    <p class="cancel" @click="$emit('handleShowCreateQuestion')">キャンセル</p>
                     <button class='btn-tr-black-base-sq' @click='confirm'>確認</button>
                 </div>                
             </form>
@@ -126,6 +127,7 @@ export default {
         return{
             title: '',
             centerTagList:[],
+            currentParentTag:'',
             selectedTagList:[],
             selectedTagDict:{},
             description:'',
@@ -143,8 +145,12 @@ export default {
         }
     },
     mounted(){
+        this.$store.commit('showModalTrue')
         console.log("CQmounted",this.parentTagDict)
         // this.de()
+    },
+    beforeUnmount(){
+        this.$store.commit('showModalFalse')
     },
     watch:{
         selectedTagList: {
@@ -177,14 +183,20 @@ export default {
             }
         },
         getCenterTag(parentTag){
-            this.handleShowChildTag()
+            if(this.currentParentTag==parentTag){
+                this.showChildTag = false
+                this.currentParentTag = ''
+            }
+            else{
+                this.handleShowChildTag()
+                this.currentParentTag = parentTag
+            }
             if (this.centerTagList[0]){
                 this.centerTagList = []
             }
             for(let i of this.parentTagDict[parentTag]){
                 this.centerTagList.push({"id":i.id, "tag":i.tag})
             }
-            console.log('center.tag',this.centerTagList)
         },
         // getTagId(){
         //     const tagIdList = []
@@ -277,7 +289,7 @@ export default {
     position: relative;
     // justify-content: center;
     align-items: center;
-    .title-black{
+    .title-blue{
         margin-top: 2rem;
     }
     .form{
@@ -301,7 +313,11 @@ export default {
                 width: 80%;
                 height: 2.5rem;
                 background: $back-white;
-                padding-left: 1rem;                
+                padding-left: 1rem;
+                transition: 0.5s;              
+            }
+            .question-title:focus{
+                border: solid $middle-blue
             }
         }
         .tag-container{
@@ -343,6 +359,7 @@ export default {
                                 align-items: center;
                                 justify-content: center;
                                 margin-left:0.5rem;
+                                transition: 0.5s;
                                 p{
                                     font-weight: bold;
                                     color: $dark-blue;
@@ -366,37 +383,64 @@ export default {
                 display: flex;
                 flex-direction: column;
                 padding:0.5rem;
+                .tag-loop:hover .angle-right{
+                    color: $base-color;
+                }
                 .tag-loop{
                     display: flex;
+                    .tag-parent:hover p{
+                        background: $lite-gray;
+                    }
                     .tag-parent{
                         flex-basis:40%;
                         display: flex;
-                        p{}
+                        p{
+                            padding-right: 0.5rem;
+                            padding-left: 0.5rem;
+                            transition: 0.5s;
+                        }
+                        // p:hover{
+                        //     background: $lite-gray;
+                        // }
                     }
                     .fa-angle-right{
                         flex-basis:60%;
+                    }
+                    .angle-right{
+                        transition: 0.5s;
                     }
                 }
                 .tag-child{
                     position:absolute;
                     background: $back-tr-white;
+                    border: solid $lite-gray;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                    margin-top: -0.5rem;
                     width:60%;
                     right:0;
                     display: flex;
                     flex-direction: column;
+                    .tag-list{
+                        margin-bottom: 0.2rem;
+                        transition: 0.5s;
+                    }
+                    .tag-list:hover{
+                        background: $lite-gray;
+                    }
                 }
             }
         }
         .line{
             width: 80%;
-            border-bottom: 0.2rem solid $dark-blue;
+            border-bottom: 0.2rem solid $middle-blue;
             margin-top: 2rem;
             margin-bottom: 1rem;
         }
         .question-description{
-            .title-black{
-                margin: 0;
-            }
+            // .title-blue{
+            //     margin: 0;
+            // }
         }
         .text-field{
             width:80%;
@@ -409,9 +453,11 @@ export default {
                 border-radius: 1vh;
                 padding: 1rem;
                 resize: none;
+                transition: 0.5s;
             }
             .form-text:focus{
                 outline: none;
+                border: solid $middle-blue;
             }
 
         }
@@ -436,10 +482,24 @@ export default {
             display:flex;
             margin:1rem;
             justify-content: flex-end;
+            .cancel{
+                background: rgb(234, 234, 234);
+                padding: 0.5rem;
+                transition: 0.5s;
+            }
+            .cancel:hover{
+                background: rgb(196, 195, 195);
+            }
             .btn-tr-black-base-sq{
-                margin-left: 0.5rem;
-                padding-right: 0.5rem;
-                padding-left: 0.5rem;
+                margin-left: 0.8rem;
+                padding-right: 0.7rem;
+                padding-left: 0.7rem;
+                transition: 0.5s;
+            }
+            .btn-tr-black-base-sq:hover{
+                background: $base-color;
+                color: white;
+                font-weight: bold;
             }
         }
     }

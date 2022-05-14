@@ -502,7 +502,11 @@ export default {
                     margin-right: 1rem;
                     margin-top: 1rem;
                     font-size: 2rem;
-                    color: $dark-blue
+                    color: $dark-blue;
+                    transition: 0.5s;
+                }
+                .user-font:hover{
+                    color: gray;
                 }
                 .fa-exclamation{
                     position:absolute;
@@ -540,7 +544,11 @@ export default {
                     padding-left: 0.5rem;
                     background: $back-white;
                     width: 90%;
+                    // transition: 0.5s;
                     }
+                    // .search:focus{
+                    //     border: solid $dark-blue;
+                    // }
                 }
                 .fa-search:focus-within{
                     color:rgb(80, 80, 80);
