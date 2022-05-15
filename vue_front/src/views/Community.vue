@@ -68,7 +68,7 @@
                     <div v-if='showQuestionStatus.search'>
                         <div class="search-title title-blue">検索結果</div>
                         <div class="no-found" v-if="questions.results==false">
-                            <p>お探しの質問は見つかりませんでした。</p>
+                            <p class="no-found-word">お探しの質問は見つかりませんでした。</p>
                             <div class="route">
                                 <div @click="goHome()"><i class="fas fa-home" ></i><p>ホームへ戻る</p></div>
                                 <div @click="handleShowQuestionStatusSearch()"><i class="far fa-comments"></i><p>質問板へ戻る</p></div>
@@ -402,7 +402,7 @@ export default {
             this.scrollFixed = !this.scrollFixed
         },
         handleShowQuestionStatusSearch(){
-            showQuestionStatus.search = false
+            this.showQuestionStatus.search = false
         },
         goHome(){
             router.push("/")
@@ -593,10 +593,15 @@ export default {
                 width: 85%;
                 .search-title{
                     margin-top: 2rem;
+                    margin-bottom: 2rem;
+                    border-bottom: 0.2rem solid $dark-blue;
+                    display: inline-block;
                 }
                 .no-found{
-                    p{
+                    .no-found-word{
                         margin-top:0.5rem;
+                        color: $middle-blue;
+                        margin-bottom: 1rem;
                     }
                     .route{
                         display:flex;

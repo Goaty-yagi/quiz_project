@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="tag-container">
-                    <div class="tag-text">よく使うタグ</div>
+                    <div class="tag-text">関連するタグ</div>
                     <div class="tag-wrapper">
                         <div 
                             @click="handleTag(questionindex,tag.tag.id,'tag')"
@@ -56,7 +56,7 @@
                     <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
                     <div v-if="showQuestion.questionType.answered" :class="{'option-selected': showQuestion.questionStatus.best}" @click="handleQuestionStatus('best')" class="select-item">ベスト</div>
                 </div>
-                <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': spinner }">
+                <div class="is-loading-bar has-text-centered middle-loading" v-bind:class="{'is-loading': spinner }">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
@@ -576,7 +576,6 @@ export default {
             }
             newDate = date + time + " UTC"
             dt = new Date(newDate)
-            console.log("newdata",newDate,'dt',dt)
             var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
             return stringDT.replace(/\//g,'-')
         },
@@ -626,6 +625,7 @@ export default {
     height: auto;
     min-height: 80vh;
     width: 100vw;
+    margin-bottom: 1rem;
     flex-direction: column;
     align-items: center;
 }
@@ -701,6 +701,10 @@ export default {
                 font-size: 1rem;
                 font-weight: bold;
                 color:$dark-blue;
+                transition: 0.5s;
+            }
+            .tag:hover{
+                color: gray
             }
         }
         p{
@@ -724,6 +728,9 @@ export default {
             padding: 0.2rem;
             background: linear-gradient(rgba(91, 117, 159, 0.9),rgba(28, 37, 76, 0.9));
             transition:0.5s;
+        }
+        div:hover{
+            font-weight: bold;
         }
         .selected{
             background: $base-color;
@@ -751,12 +758,18 @@ export default {
             padding: 0.2rem;
             transition:0.5s;
         }
+        .select-item:hover{
+            font-weight: bold;
+        }
         .option-selected{
             color: black;
             font-weight: bold;
             background: $base-lite;
             border:0.1rem solid $dark-blue;
         }
+    }
+    .middle-loading{
+        margin-top: 2rem;
     }
     .question-container{
         width: 90%;
