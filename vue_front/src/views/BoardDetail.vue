@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div>
-                        <button v-if="question.user.uid != UID" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                        <button v-if="question.user.UID != UID" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
                     </div>
                     <!-- <button @click="handleNotifications('reply')" >unko</button> -->
                 </div>

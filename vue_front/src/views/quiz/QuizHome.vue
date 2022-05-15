@@ -15,7 +15,7 @@
                     class="select-loop"
                     v-for="(select,key,selectindex) in quizSelectDict"
                     v-bind:key="selectindex">
-                        <div @click="showGrade(select.grade,key)" class="loop-wrapper">
+                        <div @click="showGrade(select.grade,key)" class="loop-wrapper" :class="{'unlock':lockedOptions.unlock}">
                             <div class="english-title">{{key}}</div>
                             <div v-if="selectindex==0" class="font"><i class="fas fa-dice-one"></i></div>
                             <div v-if="selectindex==1" class="font"><i class="fas fa-dice-two"></i></div>
@@ -182,6 +182,10 @@ export default {
             receivedKey: '',
             gradeTitle: '',
             currentPageName:'',
+            lockedOptions:{
+                unlock: false,
+                future_content: false
+            }
         }
     },
     computed: mapGetters(['quizNameId','fieldNameId','getEmailVerified']),
@@ -338,6 +342,9 @@ export default {
                 justify-content: center;
                 position: relative;
                 padding: 0.7rem;
+                .loop-wrapper:hover{
+                    background: $back-lite-white;
+                }
                 .loop-wrapper{
                     display: flex;
                     align-items: center;
@@ -348,6 +355,7 @@ export default {
                     margin-bottom:0.5rem;
                     background: $back-white;
                     padding: 1rem;
+                    transition: .5s;
                     .english-title{
                         position: absolute;
                         right: 0;

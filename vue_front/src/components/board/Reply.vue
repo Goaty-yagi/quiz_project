@@ -2,7 +2,7 @@
     <div class="l-wrapper">
         <div class="l-container">
             <div class="reply-wrapper">
-                <div class="title-black">
+                <div class="title-blue">
                     <p>コメント</p>
                 </div>
                 <div class="comment-wrapper">
@@ -14,7 +14,7 @@
             </div>
 
             <div class="answer-wrapper">
-                <div class="title-black">
+                <div class="title-blue">
                     <p>返信文</p>
                 </div>
                 <textarea class='form-text' v-model='description' placeholder="回答"/>
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="button-group">
-                <p @click="$emit('handleShowReplyPage')">キャンセル</p>
+                <p class="cancel" @click="$emit('handleShowReplyPage')">キャンセル</p>
                 <button class="btn-tr-black-base-sq"
                  @click="addAnswer" 
                  :disabled='alert'>回答する</button>
@@ -123,7 +123,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    .title-black{
+    .title-blue{
         margin: 1rem;
     }
     .comment-wrapper{
@@ -137,7 +137,7 @@ export default {
 }
 .answer-wrapper{
     width: 90%;
-    .title-black{
+    .title-blue{
         margin: 1rem;
     }
     .form-text{
@@ -149,21 +149,36 @@ export default {
         border-radius: 1vh;
         padding: 1rem;
         resize: none;
+        transition: .5s;
     }
     .form-text:focus{
         outline: none;
+        border: solid $dark-blue;
     }
 }
 .button-group{
-    // width: 80%;
+    width: 80%;
     display:flex;
-    // margin:1rem;
-    margin-top: 1rem;
+    margin:1rem;
     justify-content: flex-end;
+    .cancel{
+        background: rgb(234, 234, 234);
+        padding: 0.5rem;
+        transition: 0.5s;
+    }
+    .cancel:hover{
+        background: rgb(196, 195, 195);
+    }
     .btn-tr-black-base-sq{
-        margin-left: 0.5rem;
-        padding-right: 0.5rem;
-        padding-left: 0.5rem;
+        margin-left: 0.8rem;
+        padding-right: 0.7rem;
+        padding-left: 0.7rem;
+        transition: 0.5s;
+    }
+    .btn-tr-black-base-sq:hover{
+        background: $base-color;
+        color: white;
+        font-weight: bold;
     }
 }
 </style>
