@@ -526,8 +526,8 @@ export default {
             },
         getRelatedSlug(slug){
             this.getDetail(slug)
-            this.$forceUpdate();
-        },
+            router.push(slug)
+            },
         addLikedNum(){
             if(this.user){
                 this.liked_num += 1
