@@ -192,7 +192,7 @@ export default {
             }
             if(payload == "post"){
                 context.state.notifications.post = true
-                setTimeout(context.commit, 3000,"resetNotifications")
+                setTimeout(context.commit, 4000,"resetNotifications")
             }
         },
         async getSearchQuestion(state,payload){            

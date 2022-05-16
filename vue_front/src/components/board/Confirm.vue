@@ -129,7 +129,7 @@ export default {
     .create-question-wrapper{
         top:0;
         left:0;
-        background: $back-tr-white;
+        background: linear-gradient(to bottom right, #ffffff,#dddddd);;;
         border: solid $dark-blue;
         width:100%;
         height: auto;

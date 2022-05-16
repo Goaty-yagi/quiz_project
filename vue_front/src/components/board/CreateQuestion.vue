@@ -21,8 +21,10 @@
                     <div class="tag-select">
                         <div
                          class="tag-comment">
-                            <p v-if="showParentTag==false&&showSelectedTagList==false&&selectedTagList==false" @click="handleShowParentTag">タグを選んでください</p>
-                            <p v-if="showParentTag&&selectedTagList==false">最大３つまで選べます</p>
+                            <div class="tag-header">
+                                <p v-if="showParentTag==false&&showSelectedTagList==false&&selectedTagList==false" @click="handleShowParentTag">タグを選んでください</p>
+                                <p v-if="showParentTag&&selectedTagList==false">最大３つまで選べます</p>
+                            </div>
                             <div class="tag-group-container" v-if="selectedTagList[0]">
                                 <div class="tag-group">
                                     <div>{{ selectedTagList[0].tag }}</div>
@@ -46,7 +48,10 @@
                         </div>
                         <div class="tag-angle"
                          @click="handleShowParentTag">
-                             <i class="fas fa-angle-down"></i>
+                             <i 
+                             class="fas fa-angle-down"
+                             :class="{'lotate':showParentTag}">
+                             </i>
                         </div>
                     </div>
                     <div class="tag-pull-down" v-if="showParentTag">
@@ -78,11 +83,12 @@
 
                 <div class="line"></div>
 
+                <!-- <div :class="{'bottom-half':showParentTag}" @click="e => showParentTag==false && showParentTagFalse()"></div> -->
                 <div class="question-description">
                     <p class="title-blue">質問文</p>
                 </div>
                 <div class='text-field'>
-                    <textarea class='form-text' v-model='description'>
+                    <textarea class='form-text' v-on:focus="onFocus" v-model='description'>
                      </textarea>
                 </div>
                 
@@ -272,10 +278,24 @@ export default {
         handleShowParentTag(){
             this.showParentTag = !this.showParentTag
         },
+        showParentTagFalse(){
+            this.showParentTag = false
+        },
         handleShowChildTag(){
             this.showChildTag = true
             console.log('inhandle',this.showChildTag)
+        },
+        onFocus: function(){
+            this.showParentTagFalse()
         }
+        // focunHandler(){
+        //     let element = document.getElementById("textarea");
+        //     console.log("element",element)
+        //     element.onfocus = function (){
+        //         console.log("on_dayo",this.showParentTag)
+        //         this.showParentTag = false
+        //     }; 
+        // }
     }    
 }
 </script>
@@ -288,6 +308,7 @@ export default {
     flex-direction: column;
     position: relative;
     // justify-content: center;
+    // background: linear-gradient(to bottom right, #ffffff,#dddddd);;
     align-items: center;
     .title-blue{
         margin-top: 2rem;
@@ -325,17 +346,31 @@ export default {
             border-radius: 0.5rem;
             width: 80%;
             margin-top: 0.5rem;
+            overflow:hidden;
             .tag-select{
+                position: relative;
                 display: flex;
-                align-items: center;
+                background: $background-bottom-right;
                 .tag-comment{
-                    flex-basis:90%;
+                    // flex-basis:90%;
+                    color: $base-white;
+                    font-weight: bold;
                     margin:0.3rem;
                     height: 1.5rem;
+                    width: 100%;
+                    .tag-header{
+                        // display: flex;
+                        // align-items: center;
+                        // justify-content: center;
+                    }
                     .tag-group-container{
                         display: flex;
+                        .tag-group p:hover{
+                            color: white;
+                        }
                         .tag-group{
                             border: solid gray;
+                            background: $lite-gray;
                             border-radius: 50vh;
                             width: auto;
                             min-width: 3rem;
@@ -351,6 +386,7 @@ export default {
                             div{
                                 // flex-basis:60%;
                                 display: inline-block;
+                                color: $dark-blue;
                             }
                             .circle{
                                 // border-radius: 50vh;
@@ -363,21 +399,35 @@ export default {
                                 p{
                                     font-weight: bold;
                                     color: $dark-blue;
-                            }
+                                    padding-top:0.1rem;
+                                }
                             }
                         }
                     }
                 }
                 .tag-angle{
+                    position: absolute;
+                    right: 0;
+                    top:0;
+                    bottom:0;
+                    margin-right: 1rem;
                     flex-basis:10%;
                     display: flex;
                     align-items: center;
+                    color: white;
                     // justify-content: flex-end;
+                    .fa-angle-down{
+                        transition: .5s;
+                    }
+                    .lotate{
+                        transform:rotate(180deg);
+                    }
                 }
             }
             .tag-pull-down{
                 position: absolute;
-                background: $back-tr-white;
+                background: $background-bottom-right;
+                color: white;
                 border: solid $base-color;
                 width: inherit;
                 display: flex;
@@ -390,6 +440,7 @@ export default {
                     display: flex;
                     .tag-parent:hover p{
                         background: $lite-gray;
+                        color: $dark-blue;
                     }
                     .tag-parent{
                         flex-basis:40%;
@@ -398,6 +449,7 @@ export default {
                             padding-right: 0.5rem;
                             padding-left: 0.5rem;
                             transition: 0.5s;
+                            font-weight: bold;
                         }
                         // p:hover{
                         //     background: $lite-gray;
@@ -412,7 +464,7 @@ export default {
                 }
                 .tag-child{
                     position:absolute;
-                    background: $back-tr-white;
+                    background: $background-bottom-right;
                     border: solid $lite-gray;
                     padding-top: 0.5rem;
                     padding-bottom: 0.5rem;
@@ -424,9 +476,11 @@ export default {
                     .tag-list{
                         margin-bottom: 0.2rem;
                         transition: 0.5s;
+                        font-weight: bold;
                     }
                     .tag-list:hover{
                         background: $lite-gray;
+                        color: $dark-blue;
                     }
                 }
             }
@@ -436,6 +490,13 @@ export default {
             border-bottom: 0.2rem solid $middle-blue;
             margin-top: 2rem;
             margin-bottom: 1rem;
+        }
+        .bottom-half{
+            position:absolute;
+            width: 100%;
+            height: 79%;
+            bottom: 0;
+
         }
         .question-description{
             // .title-blue{
@@ -483,7 +544,8 @@ export default {
             margin:1rem;
             justify-content: flex-end;
             .cancel{
-                background: rgb(234, 234, 234);
+                // background: rgb(234, 234, 234);
+                border: solid $lite-gray;
                 padding: 0.5rem;
                 transition: 0.5s;
             }

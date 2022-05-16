@@ -166,7 +166,7 @@ export default {
     margin:1rem;
     justify-content: flex-end;
     .cancel{
-        background: rgb(234, 234, 234);
+        border: solid $lite-gray;
         padding: 0.5rem;
         transition: 0.5s;
     }

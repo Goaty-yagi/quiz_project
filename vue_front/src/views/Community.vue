@@ -213,10 +213,14 @@ export default {
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
         this.showEmailVerified = false
+        this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     beforeUnmount(){
         window.removeEventListener('scroll', this.handleScroll)
         window.removeEventListener('scroll', this.getScrollY)
+        this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     // unmounted(){
     //     console.log("DSTROY")
