@@ -633,6 +633,7 @@ export default {
 .quiz-wrapper{
     width: 100%;
     min-height: 80vh;
+    padding-bottom: 1rem;
     display: flex;
     justify-content: center;
     .quiz-countainer{
@@ -797,6 +798,7 @@ export default {
                     padding-right: 0.5rem;
                     padding-top: 0.2rem;
                     padding-bottom: 0.2rem;
+                    // margin-bottom: 0.5rem;
                 }
             }
         }

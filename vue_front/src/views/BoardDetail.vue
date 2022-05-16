@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div  class="board-detail-wrapper" :class="{'scrll-fixed':showAnswerPage||showReplyPage,'laoding-center':$store.state.isLoading}">
+    <div  class="board-detail-wrapper" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -270,6 +270,9 @@ export default {
         emailVerified(){
             return this.$store.getters.getEmailVerified
         },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
+        }
     },
     methods: {
         dateConvert(date){
@@ -432,6 +435,7 @@ export default {
             if(this.user){
                 if(this.emailVerified){
                 this.showAnswerPage = !this.showAnswerPage
+                this.$store.commit('handleFixedScroll')
                 }else{
                     this.handleShowEmailVerified()
                 }
@@ -446,8 +450,10 @@ export default {
         },
         handleShowReplyPage(){
             this.showReplyPage = !this.showReplyPage
+            this.$store.commit('handleFixedScroll')
         },
         handleReplyPage(id, reply=''){
+            this.$store.commit('handleFixedScroll')
             this.getAnswerId(id)
             this.showReplyPage = !this.showReplyPage
             this.getReply(reply)

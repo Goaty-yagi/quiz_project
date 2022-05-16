@@ -1,5 +1,5 @@
 <template>
-    <div class="quiz-home-wrapper">
+    <div class="quiz-home-wrapper" :class="{'scroll-fixed':fixedScroll}">
         <div class="main-wrapper">
             <QuizP
             v-if="componentHandleDict.quiz"
@@ -15,8 +15,14 @@
                     class="select-loop"
                     v-for="(select,key,selectindex) in quizSelectDict"
                     v-bind:key="selectindex">
-                        <div @click="showGrade(select.grade,key)" class="loop-wrapper" :class="{'unlock':lockedOptions.unlock}">
-                            <div class="english-title">{{key}}</div>
+                        <div class="unlock-false" :class="{'unlock':lockHandler(select.grade)}">
+                            <div v-if="lockHandler(select.grade)" :class="{'lock-container':lockHandler(select.grade)}">
+                                <i class="fas fa-lock"></i>
+                                <div>LOCKED</div>
+                            </div>
+                        </div>
+                        <div @click="e => lockHandler(select.grade)==false && showGrade(select.grade,key)" class="loop-wrapper">
+                            <div class="english-title" :class="{'lock-english-title':lockHandler(select.grade)}">{{key}}</div>
                             <div v-if="selectindex==0" class="font"><i class="fas fa-dice-one"></i></div>
                             <div v-if="selectindex==1" class="font"><i class="fas fa-dice-two"></i></div>
                             <div v-if="selectindex==2" class="font"><i class="fas fa-dice-three"></i></div>
@@ -28,7 +34,7 @@
                 </div>
                 <div v-if="showEachGrade" class="l-wrapper">
                     <div class="l-container">
-                        <div class="close-grade">
+                        <div class="close-container">
                             <div @click="closeGrade()" class="close">
                                 <i class="fas fa-times"></i>
                             </div>
@@ -183,12 +189,12 @@ export default {
             gradeTitle: '',
             currentPageName:'',
             lockedOptions:{
-                unlock: false,
+                unlock: true,
                 future_content: false
             }
         }
     },
-    computed: mapGetters(['quizNameId','fieldNameId','getEmailVerified']),
+    computed: mapGetters(['quizNameId','fieldNameId','getEmailVerified', 'fixedScroll']),
 
     created(){
         this.getQuizNameId()
@@ -203,15 +209,23 @@ export default {
         this.optionDict.currentCategory = ''
         
     },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+        this.$store.commit('showModalFalse')
+    },
     methods:{
         ...mapActions(['getQuizNameId','getFieldNameId']),
         showGrade(grade, key){
+            this.$store.commit('fixedScrollTrue')
+            this.$store.commit('showModalTrue')
             this.showEachGrade = true
             this.gradeTitle = grade
             this.receivedKey = key
             this.getQuizPageInfo(grade=grade)
         },
         closeGrade(){
+            this.$store.commit('fixedScrollFalse')
+            this.$store.commit('showModalFalse')
             this.showEachGrade = false
             this.optionDict.currentCategory = ''
             this.optionDict.showOption = false
@@ -237,6 +251,8 @@ export default {
         },
         goStart(field){
             // this.getQuizInfo()
+            this.$store.commit('fixedScrollFalse')
+            this.$store.commit('showModalFalse')
             this.getQuizPageInfo(0,field)
             this.forQuizPageInfo.all = false
             this.getQuizId()
@@ -311,6 +327,14 @@ export default {
             behavior: "smooth"
             });
         },
+        lockHandler(val){
+            if(val=="超初級"){
+                return false
+            }
+            else{
+                return true
+            }
+        }
         // goQuiz(){
         //     this.componentHandleDict.start = false
         //     this.componentHandleDict.quiz = true            
@@ -342,6 +366,31 @@ export default {
                 justify-content: center;
                 position: relative;
                 padding: 0.7rem;
+                max-height: 110px;
+                .unlock{
+                    position: absolute;
+                    background:rgba(0,0,0,0.7);
+                    width: 97%;
+                    height: 80px;
+                    display: flex;
+                    align-items: center;
+                    .lock-container{
+                        position: absolute;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        opacity: 0.8;
+                        color: rgb(182, 76, 196);
+                        i{
+                            font-size: 2.5rem;
+                        }
+                        div{
+                            font-size: 0.7rem;
+                        }
+                    }
+                }
                 .loop-wrapper:hover{
                     background: $back-lite-white;
                 }
@@ -369,6 +418,10 @@ export default {
                         border-radius: 50vh;
                         background:rgba(252, 75, 175, 0.961);               
                     }
+                    .lock-english-title{
+                        background: $dark-blue;
+                        color: $lite-blue;
+                    }
                     .font{
                         font-size: 1.5rem;
                         flex-basis: 10%;
@@ -380,6 +433,7 @@ export default {
                     }
                     .description{
                         flex-basis: 60%;
+                        font-size: 0.9rem;
                     }
                 }
 

@@ -50,6 +50,10 @@ export default {
     ],
     mounted(){
         console.log('answerMounted',this.reply)
+        this.$store.commit('showModalTrue')
+    },
+    beforeUnmount(){
+        this.$store.commit('showModalFalse')        
     },
     methods:{
         // addAnswer(){

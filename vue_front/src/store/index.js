@@ -19,7 +19,8 @@ let getDefaultState = () => {
     test:null,
     notice:false,
     step:1,
-    showModal: false
+    showModal: false,
+    fixedScroll: false,
   }}
 
 
@@ -70,7 +71,8 @@ export default createStore({
   getters:{
     questions2:(state) => state.questions,
     quizzes2:(state) => state.quizzes,
-    showModal:(state) => state.showModal
+    showModal:(state) => state.showModal,
+    fixedScroll:(state) => state.fixedScroll
   },
   mutations: {
     setIsLoading(state, status) {
@@ -129,7 +131,17 @@ export default createStore({
     },
     showModalFalse(state){
       state.showModal = false
+    },
+    fixedScrollTrue(state){
+      state.fixedScroll = true
+    },
+    fixedScrollFalse(state){
+      state.fixedScroll = false
+    },
+    handleFixedScroll(state){
+      state.fixedScroll = !state.fixedScroll
     }
+
     // quizRouter(i,f,n){
     //   state.id = i
     //   state.field = f

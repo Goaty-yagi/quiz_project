@@ -60,6 +60,9 @@ export default {
     mounted(){
         console.log("mounted_confirm",this.$store.state.board.title)
     },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+    },
     methods:{
         async publish(){
             console.log('start add','uuid',this.uuid)

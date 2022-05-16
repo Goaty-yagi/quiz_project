@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div class="community-wrapper scroll_area" :class="{'scroll-fixed':showCreateQuestion, 'laoding-center':$store.state.isLoading}">
+    <div class="community-wrapper scroll_area" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -61,7 +61,6 @@
                         v-if='showConfirm'
                         @handleShowConfirm='handleShowConfirm'
                         @getDetail='getDetail'
-                        @handleNotifications='handleNotifications'
                     />
 
                     <!-- here is for searched questions -->
@@ -243,6 +242,9 @@ export default {
         emailVerified(){
             return this.$store.getters.getEmailVerified
         },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
+        },
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
@@ -361,8 +363,9 @@ export default {
             console.log('showCreate')
             if(this.emailVerified&&this.roginUser){
                 this.showCreateQuestion = !this.showCreateQuestion
-                this.handleScrollFixed()
-                this.a()
+                this.$store.commit('handleFixedScroll')
+                // this.handleScrollFixed()
+                // this.a()
             }else if(!this.emailVerified&&this.roginUser){
                 this.handleShowEmailVerified()
             }else{
@@ -398,9 +401,9 @@ export default {
             }
             // this.showQuestionStatus[key] = true
         },
-        handleScrollFixed(){
-            this.scrollFixed = !this.scrollFixed
-        },
+        // handleScrollFixed(){
+        //     this.scrollFixed = !this.scrollFixed
+        // },
         handleShowQuestionStatusSearch(){
             this.showQuestionStatus.search = false
         },
@@ -446,11 +449,11 @@ export default {
         //         this.notifications = true
         //         setTimeout(this.resetNotifications, 3000)    
         // },
-        a(){
-            this.scroll_position = window.pageYOffset;
-            this.styles.top = this.scroll_position
-            console.log(this.scroll_position,)
-        },
+        // a(){
+        //     this.scroll_position = window.pageYOffset;
+        //     this.styles.top = this.scroll_position
+        //     console.log(this.scroll_position,)
+        // },
         dateConvert(date){
             var date = date
             var time = ''
