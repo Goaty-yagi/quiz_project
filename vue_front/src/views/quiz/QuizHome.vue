@@ -536,11 +536,14 @@ export default {
                                     width: 100%;
                                     .each-option{
                                         display: flex;
+                                        position: relative;
                                         justify-content: center;
                                         margin-bottom: 0.5rem;
                                         .option-font{
-                                            flex-basis: 35%;
+                                            position: absolute;
+                                            // flex-basis: 35%;
                                             display: flex;
+                                            margin-right: 6rem;
                                             justify-content: flex-end;
                                             .fa-apple-alt{
                                                 color: $dull-red
@@ -562,12 +565,13 @@ export default {
                                             }
                                         }
                                         .option-title{
-                                            flex-basis: 65%;
+                                            // flex-basis: 65%;
                                             display: flex;
-                                            margin-left: 1rem;
+                                            // margin-left: 1rem;
                                             p{
                                                 color: $dark-blue;
                                                 font-weight: bold;
+                                                width: 100%;
                                             }
                                         }
                                     }
