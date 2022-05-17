@@ -92,10 +92,19 @@ class Answer(models.Model):
 # class CorrectAnswer(models.Model):
 #     order = models.IntegerField(default=1)
 
+grade = {
+    "超初級": 0,
+    "初級": 1,
+    "中級": 2,
+    "上級": 3,
+}
+
 class QuizTaker(models.Model):
     user = models.ForeignKey(User, null=True, related_name='quiz_taker', on_delete=models.CASCADE)
     grade = models.ForeignKey(ParentQuiz, null=True, on_delete=models.CASCADE)
     level = models.IntegerField(default=1, null=True, blank=True)
+    max_grade = models.CharField(max_length=100, default=None, null=True)
+    max_level = models.IntegerField(default=0, null=True, blank=True)
     # user_status = models.ForeignKey(UserStatus, related_name='quiz_taker', default=None ,blank=True, on_delete=models.CASCADE)
     test_take_num = models.IntegerField(default=1)
     practice_take_num = models.IntegerField(default=0)
@@ -103,6 +112,21 @@ class QuizTaker(models.Model):
 
     def __str__(self):
         return self.user.email
+
+    def save(self, *args, **kwargs):
+        if self.max_grade==None:
+            self.max_grade = self.grade.name
+            self.max_level = self.level
+        else:
+            for i in grade:
+                if i == self.max_grade:
+                    if grade[i] < grade[self.grade.name]:
+                        self.max_grade = self.grade.name
+                        self.max_level = self.level
+                    elif grade[i] == grade[self.grade.name]:
+                        if self.max_level < self.level:
+                            self.max_level = self.level
+        super().save(*args, **kwargs)
 
 
 class UserStatus(models.Model):

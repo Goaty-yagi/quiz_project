@@ -174,6 +174,7 @@ class QuizTakerPracticePatchApi(APIView):
             practice_take_num=F('practice_take_num') + 1,
             )
         return Response("PATCH 200")
+
     
 
 class QuizApi(APIView):
@@ -336,6 +337,12 @@ class QuizTakerApi(generics.ListAPIView):
     serializer_class = QuizTakerSerializer
     pagination_class = None
     
+
+class QuizTakerRetrieveApi(generics.RetrieveUpdateDestroyAPIView):
+    queryset = QuizTaker.objects.all()
+    serializer_class = QuizTakerSerializer
+    pagination_class = None
+    lookup_field = 'id'
 
 # #  test   
 # class FieldModuleFiltersAPI(APIView):
