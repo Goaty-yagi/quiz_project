@@ -42,52 +42,60 @@
                         <div>
                             <img class='is-image' src="@/assets/logo.png">
                         </div>
-                        <div class="title-blue">{{ gradeTitle }}</div>
-                        <div 
-                        class="category-outer-loop"
-                        v-for="(selects,key,selectsindex) in quizCategories"
-                        v-bind:key="selectsindex">
-                            <div v-if="key==receivedKey">
-                                <div class="category-inner-loop" v-for="(titles,titlesindex) in selects"
-                                v-bind:key="titlesindex">
-                                 <!-- @click="e => result==false && onClick(answerindex,answer,question)" -->
-                                    <div 
-                                    class="category-container"
-                                    v-for="(options,title,titleindex) in titles"
-                                    v-bind:key="titleindex">
-                                        <div @click="e => options &&options != 'all' && showOptions(titleindex,title)" class="category-title-container" :class="{
-                                            'space':optionDict.showOption&&
-                                            optionDict.currentCategory==titleindex,
-                                            }">
-                                            <div class="for-all" @click="e => options=='all' && getAllCategoryQuiz()">
-                                                <div class="category-title">
-                                                    {{ title }}
-                                                    <i v-if="options&&options!='all'" :class="{
-                                                        'lotate':optionDict.showOption&&
-                                                        optionDict.currentCategory==titleindex}" 
-                                                        class="fas fa-caret-down">
-                                                    </i>
+                        <div class="animation-in-quiz-home">
+                            <div class="title-blue">{{ gradeTitle }}</div>
+                            <!-- <div class:="space-off" :class="{'animations-apace':this.optionDict.showOption}"></div> -->
+                            <div 
+                            class="category-outer-loop"
+                            v-for="(selects,key,selectsindex) in quizCategories"
+                            v-bind:key="selectsindex">
+                                <div v-if="key==receivedKey">
+                                    <div class="category-inner-loop" v-for="(titles,titlesindex) in selects"
+                                    v-bind:key="titlesindex"
+                                    >
+                                    <!-- @click="e => result==false && onClick(answerindex,answer,question)" -->
+                                        <div 
+                                        class="category-container"
+                                        v-for="(options,title,titleindex) in titles"
+                                        v-bind:key="titleindex">
+                                            <div @click="e => options &&options != 'all' && showOptions(titleindex,title)" class="category-title-container" :class="{'animation-move':this.optionDict.showOption}">
+                                                <div class="for-all" @click="e => options=='all' && getAllCategoryQuiz()">
+                                                    <div class="category-title">
+                                                        {{ title }}
+                                                        <i v-if="options&&options!='all'" :class="{
+                                                            'lotate':optionDict.showOption&&
+                                                            optionDict.currentCategory==titleindex}" 
+                                                            class="fas fa-caret-down">
+                                                        </i>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="option-container" v-if="optionDict.showOption&&
-                                        optionDict.currentCategory==titleindex">
-                                            <div 
-                                            class="option-loop"
-                                            v-for="(option, optionindex) in options"
-                                            v-bind:key="optionindex">
-                                                <div @click="goStart(option=option)" class="each-option">
-                                                    <div class="option-font">
-                                                        
-                                                        <i v-if="option=='くだもの'" class="fas fa-apple-alt"></i>
-                                                        <i v-if="option=='やさい'" class="fas fa-carrot"></i>
-                                                        <i v-if="option=='どうぶつ'" class="fas fa-cat"></i>
-                                                        <i v-if="option=='のりもの'" class="fas fa-car-side"></i>
-                                                        <i v-if="option=='たべもの'" class="fas fa-utensils"></i>
-                                                        <i v-if="option=='のみもの'" class="fas fa-mug-hot"></i>
+                                            <div class="option-container" v-if="optionDict.showOption&&
+                                            optionDict.currentCategory==titleindex">
+                                                <div class="close-container">
+                                                    <div @click="closeoption()" class="close">
+                                                        <i class="fas fa-times"></i>
                                                     </div>
-                                                    <div class="option-title">
-                                                         <p>{{ option }}</p>
+                                                </div>
+                                                <div class="under-header">
+                                                    <div 
+                                                    class="option-loop"
+                                                    v-for="(option, optionindex) in options"
+                                                    v-bind:key="optionindex">
+                                                        <div @click="goStart(option=option)" class="each-option">
+                                                            <div class="option-font">
+                                                                
+                                                                <i v-if="option=='くだもの'" class="fas fa-apple-alt"></i>
+                                                                <i v-if="option=='やさい'" class="fas fa-carrot"></i>
+                                                                <i v-if="option=='どうぶつ'" class="fas fa-cat"></i>
+                                                                <i v-if="option=='のりもの'" class="fas fa-car-side"></i>
+                                                                <i v-if="option=='たべもの'" class="fas fa-utensils"></i>
+                                                                <i v-if="option=='のみもの'" class="fas fa-mug-hot"></i>
+                                                            </div>
+                                                            <div class="option-title">
+                                                                <p>{{ option }}</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -230,6 +238,10 @@ export default {
             this.showEachGrade = false
             this.optionDict.currentCategory = ''
             this.optionDict.showOption = false
+        },
+        closeoption(){
+            this.optionDict.showOption = false
+            this.optionDict.currentCategory = ''
         },
         showOptions(index,field){
             if(this.optionDict.currentCategory==index){
@@ -448,7 +460,7 @@ export default {
                 flex-direction: column;
                 // justify-content: center;
                 // nim-height: 75%;
-                // min-height: 60%;
+                min-height: 60%;
                 padding-bottom: 2rem;
                 .close-grade{
                     // width: inherit;
@@ -473,108 +485,133 @@ export default {
                     width: 8rem;
                     height: auto;
                 }
-                .category-outer-loop{
-                    width: 100%;
-                    .category-inner-loop{
-                        position: relative;
+                .animation-in-quiz-home{
+                    position: relative;
+                    .space-off{
+                        height: 0px;
+                    }
+                    // .animations-apace{
+                    //     height: 30px;
+                    // }
+                    
+                    .category-outer-loop{
                         width: 100%;
-                        display: flex;
-                        align-items: center;
-                        flex-direction: column;
-                        .category-container{
-                            position: relative;
-                            display: flex;
-                            justify-content: center;
+                        .category-inner-loop{
+                            // position: relative;
                             width: 100%;
-                            // transition: 1s;
-                            .category-title-container.space{ 
-                                margin-top:0.6rem;
-                                margin-bottom: 1rem;
-                            }
-                            .category-title-container{
-                                height: 100%;
-                                width: 100%;
+                            display: flex;
+                            align-items: center;
+                            flex-direction: column;
+                            .category-container{
+                                // position: relative;
                                 display: flex;
-                                position: relative;
-                                flex-direction: column;
                                 justify-content: center;
-                                align-items: center;
-                                width: 80%;
-                                border: solid $base-color;
-                                border-radius: 0.5rem;
-                                margin-top: 0.5rem;
-                                margin-bottom: 0.5rem;
-                                min-height: 3rem;
-                                background: $background-bottom-right;
-                                .category-title{
-                                    color: white;
-                                    font-weight: bold;
-                                    transition: 0.5s;
-                                    .fa-caret-down{
-                                        position: absolute;
-                                        right:0;
-                                        margin-top: 0.3rem;
-                                        margin-right: 1rem;
+                                width: 100%;
+                                // transition: 1s;
+                                .animation-move{
+                                    position: absolute;
+                                }
+                                .category-title-container{
+                                    height: 100%;
+                                    width: 100%;
+                                    display: flex;
+                                    position: relative;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                                    width: 80%;
+                                    border: solid $base-color;
+                                    border-radius: 0.5rem;
+                                    margin-top: 0.5rem;
+                                    margin-bottom: 0.5rem;
+                                    min-height: 3rem;
+                                    background: $background-bottom-right;
+                                    .category-title{
+                                        color: white;
+                                        font-weight: bold;
                                         transition: 0.5s;
-                                    }
-                                    .lotate{
-                                        transform:rotate(180deg);
+                                        .fa-caret-down{
+                                            position: absolute;
+                                            right:0;
+                                            margin-top: 0.3rem;
+                                            margin-right: 1rem;
+                                            transition: 0.5s;
+                                        }
+                                        .lotate{
+                                            transform:rotate(180deg);
+                                        }
                                     }
                                 }
-                            }
-                            .option-container{
-                                position: absolute;
-                                width: 80%;
-                                border: solid grey;
-                                border-top: 0.3rem solid grey;
-                                border-bottom: 0.3rem solid grey;
-                                top: 3rem;
-                                margin-top: 0.1rem;
-                                margin-bottom: 0.5rem;
-                                padding-top: 1rem;
-                                min-height: 3rem;
-                                background: $back-tr-white;
-                                z-index: 1;
-                                .option-loop{
-                                    width: 100%;
-                                    .each-option{
-                                        display: flex;
-                                        position: relative;
-                                        justify-content: center;
-                                        margin-bottom: 0.5rem;
-                                        .option-font{
-                                            position: absolute;
-                                            // flex-basis: 35%;
-                                            display: flex;
-                                            margin-right: 6rem;
-                                            justify-content: flex-end;
-                                            .fa-apple-alt{
-                                                color: $dull-red
-                                            }
-                                            .fa-carrot{
-                                                color: rgb(255, 188, 63)
-                                            }
-                                            .fa-cat{
-                                                color: brown;
-                                            }
-                                            .fa-car-side{
-                                                color: rgb(68, 70, 220);
-                                            }
-                                            .fa-utensils{
-                                                color: gray;
-                                            }
-                                            .fa-mug-hot{
-                                                color: rgb(223, 221, 221);
-                                            }
+                                .option-container{
+                                    position: absolute;
+                                    width: 80%;
+                                    border: solid grey;
+                                    border-top: 0.3rem solid grey;
+                                    border-bottom: 0.3rem solid grey;
+                                    top: 2rem;
+                                    margin-top: 0.1rem;
+                                    margin-bottom: 0.5rem;
+                                    // padding-top: 1rem;
+                                    min-height: 5rem;
+                                    background: $back-tr-white;
+                                    transition: .5s;
+                                    z-index: 1;
+                                    .close-container{
+                                        height: 1.7rem;
+                                        .close{
+                                            font-size: 0.8rem;
+                                            width: 1rem;
+                                            height: 1rem;
+                                            margin-top: 0.3rem;
+                                            margin-right: 0.3rem;
+                                            border: solid;
                                         }
-                                        .option-title{
-                                            // flex-basis: 65%;
+                                    }
+                                    .option-loop{
+                                        width: 100%;
+                                        .each-option:hover{
+                                            background: $lite-gray;
+                                        }
+                                        .each-option{
                                             display: flex;
-                                            // margin-left: 1rem;
-                                            p{
-                                                color: $dark-blue;
-                                                font-weight: bold;
-                                                width: 100%;
+                                            position: relative;
+                                            justify-content: center;
+                                            margin-bottom: 0.5rem;
+                                            transition: .5s;
+                                            .option-font{
+                                                position: absolute;
+                                                // flex-basis: 35%;
+                                                display: flex;
+                                                margin-right: 6rem;
+                                                justify-content: flex-end;
+                                                .fa-apple-alt{
+                                                    color: $dull-red
+                                                }
+                                                .fa-carrot{
+                                                    color: rgb(255, 188, 63)
+                                                }
+                                                .fa-cat{
+                                                    color: brown;
+                                                }
+                                                .fa-car-side{
+                                                    color: rgb(68, 70, 220);
+                                                }
+                                                .fa-utensils{
+                                                    color: gray;
+                                                }
+                                                .fa-mug-hot{
+                                                    color: rgb(223, 221, 221);
+                                                }
+                                            }
+                                            .option-title{
+                                                // flex-basis: 65%;
+                                                display: flex;
+                                                // margin-left: 1rem;
+                                                p{
+                                                    color: $dark-blue;
+                                                    font-weight: bold;
+                                                    width: 100%;
+                                                }
                                             }
                                         }
                                     }
