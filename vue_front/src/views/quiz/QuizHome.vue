@@ -55,11 +55,11 @@
                                     class="category-container"
                                     v-for="(options,title,titleindex) in titles"
                                     v-bind:key="titleindex">
-                                        <div @click="e => options && showOptions(titleindex)" class="category-title-container" :class="{
+                                        <div @click="e => options &&options != 'all' && showOptions(titleindex,title)" class="category-title-container" :class="{
                                             'space':optionDict.showOption&&
                                             optionDict.currentCategory==titleindex,
                                             }">
-                                            <div @click="e => options=='all' && getAllCategoryQuiz()">
+                                            <div class="for-all" @click="e => options=='all' && getAllCategoryQuiz()">
                                                 <div class="category-title">
                                                     {{ title }}
                                                     <i v-if="options&&options!='all'" :class="{
@@ -76,7 +76,7 @@
                                             class="option-loop"
                                             v-for="(option, optionindex) in options"
                                             v-bind:key="optionindex">
-                                                <div @click="goStart(field=option)" class="each-option">
+                                                <div @click="goStart(option=option)" class="each-option">
                                                     <div class="option-font">
                                                         
                                                         <i v-if="option=='くだもの'" class="fas fa-apple-alt"></i>
@@ -167,6 +167,7 @@ export default {
             forQuizPageInfo:{
                 grade:'',
                 field:'',
+                option:'',
                 all: false,
             },
             // quizStart manage after start
@@ -191,7 +192,7 @@ export default {
             lockedOptions:{
                 unlock: true,
                 future_content: false
-            }
+            },
         }
     },
     computed: mapGetters(['quizNameId','fieldNameId','getEmailVerified', 'fixedScroll']),
@@ -230,13 +231,15 @@ export default {
             this.optionDict.currentCategory = ''
             this.optionDict.showOption = false
         },
-        showOptions(index){
+        showOptions(index,field){
             if(this.optionDict.currentCategory==index){
                 this.optionDict.showOption = !this.optionDict.showOption
                 this.optionDict.currentCategory = ''
             }else{
                 this.optionDict.currentCategory = index
                 this.optionDict.showOption = true
+                this.forQuizPageInfo.field = field
+                console.log('field',this.forQuizPageInfo.field)
             }
         },
         // getQuizInfo(quizid,quizfield){
@@ -249,11 +252,11 @@ export default {
             this.configQuizIdAndFieldId.quizid = ''
             this.configQuizIdAndFieldId.fieldId = []
         },
-        goStart(field){
+        goStart(option){
             // this.getQuizInfo()
             this.$store.commit('fixedScrollFalse')
             this.$store.commit('showModalFalse')
-            this.getQuizPageInfo(0,field)
+            this.getQuizPageInfo(0,option)
             this.forQuizPageInfo.all = false
             this.getQuizId()
             this.getFieldIds()
@@ -269,11 +272,11 @@ export default {
             this.scrollTop()
             this.allReset()
         },
-        getQuizPageInfo(grade='',field=''){
+        getQuizPageInfo(grade='',option=''){
             if(grade){
                 this.forQuizPageInfo.grade = grade
-            }else if(field){
-                this.forQuizPageInfo.field = field
+            }else if(option){
+                this.forQuizPageInfo.option = option
             }
         },
         getQuizId(){
@@ -290,7 +293,7 @@ export default {
             // this is for matching field name to field id.
             // field name set in front must be the same as a field name in DB
             for(let i of this.fieldNameId){
-                if(i.name == this.forQuizPageInfo.field){
+                if(i.name == this.forQuizPageInfo.option){
                     this.configQuizIdAndFieldId.fieldId.push(i.id)
                     console.log(this.configQuizIdAndFieldId.fieldId)
                     break
@@ -583,5 +586,8 @@ export default {
             }
         }
     }
+}
+.for-all{
+    width: 100%;
 }
 </style>

@@ -2,8 +2,14 @@
     <div class="start-wrapper">
         <div class="main-wrapper">
             <div class="quiz-title-container">
-                <p v-if="forQuizPageInfo==false" class="start-title">{{ forQuizPageInfo.grade }}・{{ forQuizPageInfo.field }}問題</p>
-                <p v-if="forQuizPageInfo" class="start-title">{{ forQuizPageInfo.grade }}道場</p>
+                <div v-if="forQuizPageInfo.all==false" class="not-all">
+                    <div class="start-grade">
+                        <p>{{ forQuizPageInfo.grade }}</p>
+                    </div>
+                    <p class="field-and-option">{{ forQuizPageInfo.field }}</p>
+                    <p class="field-and-option"> {{forQuizPageInfo.option}}問題</p>
+                </div>
+                <div v-if="forQuizPageInfo.all" class="dojo">{{ forQuizPageInfo.grade }}道場</div>
                 <p class="start-length">全{{ questionLength }}問</p>
             </div>
             <div class="button-container">
@@ -77,15 +83,52 @@ export default {
             border-radius: 0.5rem;
             background: $back-white;
             margin-top: 3rem;
-            padding: 1rem;
-            .start-title{
-                font-size: 1.5rem;
-                font-weight: bold;
+            // padding: 1rem;
+            overflow: hidden;
+            .not-all{
+                width: 100%;
+                .start-grade{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 60px;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    background: $background-bottom-right;
+                    border-bottom: solid $base-color;
+                    color: white; 
+                }
+                .field-and-option{
+                    margin-top: 1rem;
+                    margin-bottom: 1rem;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                }
             }
             .start-length{
+                border: solid $middle-blue;
+                border-radius: 50vh;
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+                margin-bottom: 1rem;
+                display: inline-block;
                 font-size: 1.5rem;
                 font-weight: bold;
             }
+        }
+        .dojo{
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: $background-bottom-right;
+            border-bottom: solid $base-color;
+            color: white; 
         }
         .button-container{
             margin-top: 2rem;
