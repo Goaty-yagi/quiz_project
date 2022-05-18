@@ -37,7 +37,7 @@
                         </div>
                         <div class="right-side grade-right-side">
                             <div classs="current-level-text">
-                                {{ getCurrentGradeName(quizTaker.grade)}}
+                                {{ getCurrentGradeNameFromIds(quizTaker.grade)}}
                                 Lv,{{ quizTaker.level }}
                             </div>
                             <!-- <div class="max-level">
@@ -60,14 +60,17 @@
                     <!-- <div class='next-level' :class="{'next-grade-up':gradeUp}"> -->
                         <span v-if="!gradeUp" class="next-title">Next-Level</span>
                         <span v-if="gradeUp" class="next-title grade-up">Grade-Up</span>
-                        <p :class="{'stop':stop}">{{ nextGrade(getCurrentGradeName(quizTaker.grade),quizTaker.level) }}</p>
+                        <p :class="{'stop':stop}">{{ nextGrade(getCurrentGradeNameFromIds(quizTaker.grade),quizTaker.level) }}</p>
                     </div>
                 </div>
                 <div class="status-wrapper">
                     <div class=chart-loop 
                     v-for="(g,key,index) in grade"
                     v-bind:key="index">
-                        <div v-if="showChartHeaderGrade(key)" class="chart-header">
+                        <div @click="handleStatusParameter(convertGradeIntToGradeId(key))" 
+                            v-if="showChartHeaderGrade(key)" 
+                            class="chart-header"
+                            :class="{'current-status-grade':getCurrentStatusGrade(convertGradeIntToGradeId(key))}">
                             <div>{{key}}</div>
                         </div>
                     </div>
@@ -127,6 +130,7 @@ export default{
             showNotification:false,
             stop: false,
             gradeUp: false,
+            currentStatusGrade:'',
             grade:{
                 '超初級':0,
                 '初級':1,
@@ -192,13 +196,7 @@ export default{
         },
     },
     computed: mapGetters(['quizNameId']),
-        // returnChartSet(){
-        //     if(this.chartData){
-        //         this.gotInfo = true
-        //         console.log("compu",this.chartData)
-        //         return this.chartData
-        //     }
-        // },
+        
     mounted(){
         console.log('account mounted',this.$route.params.uid)
         this.currentPageName = ''
@@ -216,7 +214,7 @@ export default{
                     this.userData = response.data
                     this.quizTaker = response.data.quiz_taker[0]
                     console.log('inGet', this.userData,this.userStatus)
-                    this.handleStatusParameter()
+                    this.handleStatusParameter(this.quizTaker.grade)
                     // this.setInitUserStatus()
                     this.gotInfo = true
                 })
@@ -245,14 +243,21 @@ export default{
             this.showThumbnail = false
             console.log('inA',this.showThumbnail)
         },
-        getCurrentGradeName(gradeID){
+        getCurrentGradeNameFromIds(gradeID){
             for (let i of this.quizNameId){
                 if(i.id == gradeID){
                     return i.name
                 }
             }
         },
-        handleStatusParameter(){
+        convertGradeIntToGradeId(gradeInt){
+            for (let i of this.quizNameId){
+                if(i.name==gradeInt){
+                    return i.id
+                }
+            }
+        },
+        handleStatusParameter(grade){
             // this is handling chart view.
             // 1, get quiz_taker from userinfo
             // 2, get current grade from the quizTaker.
@@ -261,10 +266,11 @@ export default{
             // 5, set the labels and the percentages to chartData to invoke data for chart component
 
             let tempDict = {}
-            let tempChartAllData = this.chartAllData[this.getCurrentGradeName(this.quizTaker.grade)].labels
+            let tempChartAllData = this.chartAllData[this.getCurrentGradeNameFromIds(grade)].labels
             let tempArray = []
+            this.currentStatusGrade = grade
             for(let i of this.quizTaker.user_status){
-                if(i.grade==this.quizTaker.grade){
+                if(i.grade==grade){
                     tempDict[i.status[0]]={"percentage":i.percentage,
                     'order':i.status[1],
                     }
@@ -281,6 +287,14 @@ export default{
             this.chartData.labels = tempChartAllData
             this.chartData.datasets[0].data = tempArray
             this.gotInfo = true
+        },
+        getCurrentStatusGrade(grade){
+            if(this.currentStatusGrade==grade){
+                return true
+            }
+            else{
+                return false
+            }
         },
         getCurrentPageName(){
             let i = this.$route.path
@@ -542,6 +556,11 @@ export default{
                         color: white;
                         transition: .5s;
                         // font-weight: bold;
+                    }
+                    .current-status-grade{
+                        background:$base-color-tr;
+                        font-weight: bold;
+                        border: solid $dull-red;
                     }
                 }
             }
