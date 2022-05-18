@@ -160,8 +160,10 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 		fields = [
 			"id", 
 			"user", 
-			"grade", 
+			"grade",
+			"max_grade",
 			"level",
+			"max_level",
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]
@@ -177,7 +179,9 @@ class QuizTakerStorageSerializer(serializers.ModelSerializer):
 		fields = [
 			"id", 
 			"grade", 
+			"max_grade",
 			"level",
+			"max_level",
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]

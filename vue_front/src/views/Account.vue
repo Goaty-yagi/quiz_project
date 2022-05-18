@@ -31,30 +31,36 @@
                             {{ userData.name}}
                         </div>
                     </div>
-                    <!-- <div class="user-id user-container">
-                        <div class="left-side">
-                            User<br>ID
-                        </div>
-                        <div class="right-side">
-                            <p>{{ userData.UID }}</p>
-                        </div>             
-                    </div> -->
                     <div class="current-level user-container">
                         <div class="left-side">
-                            Grade
+                            Current<br>Grade
                         </div>
                         <div class="right-side grade-right-side">
                             <div classs="current-level-text">
                                 {{ getCurrentGradeNmae(quizTaker.grade)}}
                                 Lv,{{ quizTaker.level }}
                             </div>
-                            <div class="max-level">
+                            <!-- <div class="max-level">
                                 最大レベル　初級Lv,2
+                            </div> -->
+                        </div>       
+                    </div>
+                    <div class="current-level user-container">
+                        <div class="left-side">
+                            Max<br>Grade
+                        </div>
+                        <div class="right-side grade-right-side">
+                            <div classs="current-level-text">
+                                {{ quizTaker.max_grade }}
+                                Lv,{{ quizTaker.max_level }}
                             </div>
                         </div>       
                     </div>
-                    <div class="next-level">
-                        次は初級レベル７だよ！
+                    <div @click="stopFlash()" :class="(gradeUp)?'next-grade-up':'next-level'">
+                    <!-- <div class='next-level' :class="{'next-grade-up':gradeUp}"> -->
+                        <span v-if="!gradeUp" class="next-title">Next-Level</span>
+                        <span v-if="gradeUp" class="next-title grade-up">Grade-Up</span>
+                        <p :class="{'stop':stop}">{{ nextGrade(getCurrentGradeNmae(quizTaker.grade),quizTaker.level) }}</p>
                     </div>
                 </div>
                 <div class="status-wrapper">
@@ -112,6 +118,14 @@ export default{
             // showEmailVerified:true,
             gotInfo:false,
             showNotification:false,
+            stop: false,
+            gradeUp: false,
+            grade:{
+                '超初級':0,
+                '初級':1,
+                '中級':2,
+                '上級':3,
+            },
             chartAllData:{
                 '超初級':{
                     labels:[
@@ -266,6 +280,25 @@ export default{
             i = i.split("/")
             this.currentPageName = i[1]
         },
+        nextGrade(grade,level){
+            if(level==10){
+                var g = this.grade[grade]+ 1
+                for(let i in this.grade){
+                    if(this.grade[i] == g){
+                        this.gradeUp = true
+                        return `次は${i}レベル${1}だよ！`
+                    }
+                }
+            }else{
+                return `次は${grade}レベル${level + 1}だよ！`
+            }
+        },
+        stopFlash(){
+            this.stop = !this.stop
+        },
+        mountReset(){
+            this.gradeUp = false
+        },
         // async setInitUserStatus(){
         //     if(this.emailVerified){
         //         if(this.$store.getters.getTempUser){
@@ -363,7 +396,7 @@ export default{
                     border-radius: 0.5rem;
                     width: 80%;
                     min-height: 3rem;
-                    margin-bottom: 1rem;
+                    margin-bottom: 0.5rem;
                     overflow: hidden;
                     .left-side{
                         display: flex;
@@ -392,24 +425,80 @@ export default{
                         position: relative;
                         display: flex;
                         justify-content: center;
-                        align-items: flex-end;
                         .current-level-text{
                             display: flex;
                             justify-content: center;
                             align-items: flex-end;
                         }
-                        .max-level{
-                            position: absolute;
-                            color: rgba(252, 75, 175, 0.961); 
-                            right: 0;
-                            top: 0;
-                            font-size: 0.7rem;
-                            margin-right: 0.2rem;
-                        }
+                        // .max-level{
+                        //     position: absolute;
+                        //     color: rgba(252, 75, 175, 0.961); 
+                        //     right: 0;
+                        //     top: 0;
+                        //     font-size: 0.7rem;
+                        //     margin-right: 0.2rem;
+                        // }
                     }
                 }
                 .next-level{
-                    color: white;
+                    position: relative;
+                    margin: 2em 0;
+                    padding: 0.5em 1em;
+                    width: 70%;
+                    border: solid 3px #62c1ce;
+                    background: $base-white;
+                    .next-title{
+                        position: absolute;
+                        display: inline-block;
+                        top: -27px;
+                        left: -3px;
+                        padding: 0 9px;
+                        height: 25px;
+                        line-height: 25px;
+                        font-size: 17px;
+                        background: #62c1ce;
+                        color: #ffffff;
+                        font-weight: bold;
+                        border-radius: 5px 5px 0 0;
+                    }
+                    p{
+                        color: $dark-blue;
+                        font-weight: bold;
+                        margin: 0; 
+                        padding: 0;
+                    }
+                }
+                .next-grade-up{
+                    position: relative;
+                    margin: 2em 0;
+                    padding: 0.5em 1em;
+                    width: 70%;
+                    background: $base-white;
+                    border: solid 3px rgb(236, 113, 181);
+                    .grade-up{
+                        position: absolute;
+                        display: inline-block;
+                        top: -27px;
+                        left: -3px;
+                        padding: 0 9px;
+                        height: 25px;
+                        line-height: 25px;
+                        font-size: 17px;
+                        color: #ffffff;
+                        font-weight: bold;
+                        border-radius: 5px 5px 0 0;
+                        background: rgb(236, 113, 181);
+                    }
+                    p{
+                        animation: flash 2.5s linear infinite;
+                        color: $dull-red;
+                        font-weight: bold;
+                        margin: 0; 
+                        padding: 0;
+                    }
+                    .stop{
+                        animation: none;
+                    }
                 }
             }
             .status-wrappe{
@@ -431,6 +520,16 @@ export default{
         }
     }
 }
+@keyframes flash {
+  0%,100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
 
 
     .main-image{
