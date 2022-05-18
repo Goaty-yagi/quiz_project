@@ -37,7 +37,7 @@
                         </div>
                         <div class="right-side grade-right-side">
                             <div classs="current-level-text">
-                                {{ getCurrentGradeNmae(quizTaker.grade)}}
+                                {{ getCurrentGradeName(quizTaker.grade)}}
                                 Lv,{{ quizTaker.level }}
                             </div>
                             <!-- <div class="max-level">
@@ -60,10 +60,17 @@
                     <!-- <div class='next-level' :class="{'next-grade-up':gradeUp}"> -->
                         <span v-if="!gradeUp" class="next-title">Next-Level</span>
                         <span v-if="gradeUp" class="next-title grade-up">Grade-Up</span>
-                        <p :class="{'stop':stop}">{{ nextGrade(getCurrentGradeNmae(quizTaker.grade),quizTaker.level) }}</p>
+                        <p :class="{'stop':stop}">{{ nextGrade(getCurrentGradeName(quizTaker.grade),quizTaker.level) }}</p>
                     </div>
                 </div>
                 <div class="status-wrapper">
+                    <div class=chart-loop 
+                    v-for="(g,key,index) in grade"
+                    v-bind:key="index">
+                        <div v-if="showChartHeaderGrade(key)" class="chart-header">
+                            <div>{{key}}</div>
+                        </div>
+                    </div>
                     <chart
                     v-if="gotInfo"
                     :chart-data="chartData"
@@ -138,11 +145,11 @@ export default{
                 '初級':{
                     labels:[
                         '漢字',
-                        'な形容詞',
-                        'い形容詞',
                         '動詞',
-                        '文法',
+                        'い形容詞',
                         'ボキャブラリー',
+                        '文法',
+                        'な形容詞',
                     ],
                 },
                 '中級':{
@@ -238,7 +245,7 @@ export default{
             this.showThumbnail = false
             console.log('inA',this.showThumbnail)
         },
-        getCurrentGradeNmae(gradeID){
+        getCurrentGradeName(gradeID){
             for (let i of this.quizNameId){
                 if(i.id == gradeID){
                     return i.name
@@ -254,7 +261,7 @@ export default{
             // 5, set the labels and the percentages to chartData to invoke data for chart component
 
             let tempDict = {}
-            let tempChartAllData = this.chartAllData[this.getCurrentGradeNmae(this.quizTaker.grade)].labels
+            let tempChartAllData = this.chartAllData[this.getCurrentGradeName(this.quizTaker.grade)].labels
             let tempArray = []
             for(let i of this.quizTaker.user_status){
                 if(i.grade==this.quizTaker.grade){
@@ -282,19 +289,34 @@ export default{
         },
         nextGrade(grade,level){
             if(level==10){
+                var max = Math.max(...Object.values(this.grade))
                 var g = this.grade[grade]+ 1
-                for(let i in this.grade){
-                    if(this.grade[i] == g){
-                        this.gradeUp = true
-                        return `次は${i}レベル${1}だよ！`
+                if(max == this.grade[grade]){
+                    return `最大レベルだよ！`
+                }
+                else{
+                    for(let i in this.grade){
+                        if(this.grade[i] == g){
+                            this.gradeUp = true
+                            return `次は${i}レベル${1}だよ！`
+                        }
                     }
                 }
-            }else{
+            }
+            else{
                 return `次は${grade}レベル${level + 1}だよ！`
             }
         },
         stopFlash(){
             this.stop = !this.stop
+        },
+        showChartHeaderGrade(grade){
+            if(this.grade[grade] <= this.grade[this.quizTaker.max_grade]){
+                return true   
+            }
+            else{
+                return false
+            }
         },
         mountReset(){
             this.gradeUp = false
@@ -501,8 +523,27 @@ export default{
                     }
                 }
             }
-            .status-wrappe{
-                // padding-top: 10%;
+            .status-wrapper{
+                .chart-loop{
+                    display: inline-block;
+                    .chart-header:hover{
+                        background:$base-color-tr;
+                        font-weight: bold;
+                    }
+                    .chart-header{
+                        border: solid $base-color;
+                        border-radius: 5px;
+                        margin-right: 0.3rem;
+                        margin-left: 0.3rem;
+                        padding-right: 0.7rem;
+                        padding-left: 0.7rem;
+                        padding-top: 0.1rem;
+                        padding-bottom: 0.1rem;
+                        color: white;
+                        transition: .5s;
+                        // font-weight: bold;
+                    }
+                }
             }
             .comunity-account{
                 color: white;
