@@ -5,6 +5,7 @@ import QuizTest from '../views/quiz/QuizTest.vue'
 import QuizTestInit from '../views/quiz/QuizTestInit.vue'
 import QuizPractice from '../views/quiz/QuizPractice.vue'
 import QuizHome from '../views/quiz/QuizHome.vue'
+import MyQuiz from '../views/quiz/MyQuiz.vue'
 import Test from '../views/Test.vue'
 import NotFound from '../views/not-found/NotFound.vue'
 import NotFound404 from '../views/not-found/NotFound404.vue'
@@ -54,6 +55,12 @@ const routes = [
     path: '/quiz-practice',
     name: 'QuizPractice',
     component: QuizPractice,
+    meta:{login:true,beingException:true}
+  },
+  {
+    path: '/my-quiz',
+    name: 'MyQuiz',
+    component: MyQuiz,
     meta:{login:true,beingException:true}
   },
   {

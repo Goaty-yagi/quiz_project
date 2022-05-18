@@ -10,8 +10,12 @@
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
                     <img v-bind:src="userData.thumbnail"/>
-                    <p @click='handleShowThumbnail'>画像を<br>変更する</p>
+                    <p class="change-img" @click='handleShowThumbnail'>画像を<br>変更する</p>
                 </div>
+                <div class="my-quiz-wrapper">
+                    <div class="my-quiz">My Quiz</div>
+                </div>
+
                 <div v-if="showNotification" class="notification-container">
                     <div class="alert-position-container">
                         <div class="notification-text">
@@ -374,22 +378,61 @@ export default{
             justify-content: center;
             align-items: center;
             width: 100%;
+            .my-quiz-wrapper{
+                position: relative;
+                height: 30px;
+                width: 100%;
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+                .my-quiz{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    padding-right: 0.6rem;
+                    padding-left: 0.6rem;
+                    border: solid $base-color;
+                    // background: $buttongradient;
+                    font-weight: bold;
+                    color: $lite-gray;
+                    border-radius: 5px;
+                    width: 90px;
+                    transition: .5s;
+
+                }
+                .my-quiz:hover{
+                    color: $dark-blue;
+                    border: solid $dark-blue;
+                    background: $buttongradient;
+                }
+            }
             .cropper-wrapper{
                 display: flex;
                 position:relative;
                 justify-content: center;
                 margin-top: 0.5rem;
-                width: 12rem;
+                width: 13rem;
                 img{
                     border-radius: 50%; 
                     width:  5rem;   
                     height: 5rem;       
                 }
-                p{
+                .change-img{
                     position: absolute;
                     right: 0;
                     color: white;
                     font-size: 0.8rem;
+                    border: solid transparent;
+                    border-radius: 5px;
+                    padding-left: 0.3rem;
+                    padding-right: 0.3rem;
+                    margin-left: 1rem;
+                    transition: .5s;
+                }
+                .change-img:hover{
+                    border: solid $lite-gray;
+
                 }
             }
             .notification-container{
