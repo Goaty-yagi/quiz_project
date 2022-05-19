@@ -136,6 +136,27 @@ class UserStatus(models.Model):
     is_correct = models.IntegerField(default=0)
     is_false = models.IntegerField(default=0)
     percentage = models.IntegerField(default=0)
-    
 
- 
+
+class MyQuiz(models.Model):
+    user = models.ForeignKey(User, related_name='my_quiz', on_delete=models.CASCADE)
+    # question = models.ManyToManyField(Question, related_name='my_quiz')
+    max_num = models.IntegerField(default=5)
+
+    # timestamp = models.DateTimeField(auto_now_add=True, null=True)
+        
+    def __str__(self):
+        return self.user.name
+
+
+class MyQuestion(models.Model):
+    my_quiz = models.ForeignKey(MyQuiz, null=True, related_name='my_question', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, null=True, blank=True, related_name='my_question',on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        ordering = ['timestamp',]
+
+        
+    # def __str__(self):
+    #     return self.my_quiz

@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker, MyQuiz, MyQuestion
 from quiz.serializers import (
     QuizListSerializer, 
     QuestionListSerializer, 
@@ -25,6 +25,8 @@ from quiz.serializers import (
     AnswerCountSerializer,
     UserStatusSerializer,
     QuizTakerSerializer,
+    MyQuizSerializer,
+    MyQuestionSerializer
     )
 
 
@@ -57,6 +59,7 @@ class QuizFilteredListApi(APIView):
         except Question.DoesNotExist:
             raise Http404
 
+
 class FieldFilteredListApi(APIView):
 # this is for only filtering specific field
     def get(self, request, format=None):
@@ -65,6 +68,7 @@ class FieldFilteredListApi(APIView):
         question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
         serializer = QuestionListSerializer(question, many=True)
         return Response(serializer.data)
+
 
 class ModuleFilteredListApi(APIView):
 # this is for only filtering specific module
@@ -343,6 +347,17 @@ class QuizTakerRetrieveApi(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = QuizTakerSerializer
     pagination_class = None
     lookup_field = 'id'
+
+
+class MyQuizApi(generics.CreateAPIView):
+    queryset = MyQuiz.objects.all()
+    serializer_class = MyQuizSerializer
+
+
+class MyQuestionApi(generics.CreateAPIView):
+    queryset = MyQuestion.objects.all()
+    serializer_class = MyQuestionSerializer
+
 
 # #  test   
 # class FieldModuleFiltersAPI(APIView):

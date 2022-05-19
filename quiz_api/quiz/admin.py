@@ -9,7 +9,9 @@ from .models import (
 	ParentField,
 	ParentStatus,
 	QuestionType,
-	UserStatus
+	UserStatus,
+	MyQuiz,
+	MyQuestion
 	)
 
 
@@ -51,4 +53,6 @@ admin.site.register(ParentField)
 admin.site.register(ParentStatus)
 admin.site.register(QuestionType)
 admin.site.register(UserStatus)
+admin.site.register(MyQuiz)
+admin.site.register(MyQuestion)
 

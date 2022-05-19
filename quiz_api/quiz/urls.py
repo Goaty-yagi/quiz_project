@@ -19,7 +19,9 @@ from quiz.apis import (
   QuizTakerApi,
   QuizTakerTestPatchApi,
   QuizTakerPracticePatchApi,
-  QuizTakerRetrieveApi
+  QuizTakerRetrieveApi,
+  MyQuizApi,
+  MyQuestionApi
   )
 
 
@@ -48,6 +50,8 @@ urlpatterns = [
   path('questions/quizzes/', QuizFilteredListApi.as_view()),
   path('questions/fields/', FieldFilteredListApi.as_view()),
   path('questions/modules/', ModuleFilteredListApi.as_view()),
+  path('my-quiz/', MyQuizApi.as_view()),
+  path('my-question/', MyQuestionApi.as_view()),
   path('answers/', AnswerListApi.as_view()),
   path('answers-count/', AnswerCountApi.as_view()),
   path('quiz-taker/', QuizTakerApi.as_view()),

@@ -12,10 +12,10 @@ from board.serializers import (
     UserTagReadSerializer, 
     UserTagStorageSerializer,
     FavoriteQuestionReadSerializer,
-    FavoriteQuestionStorageSerializer
+    FavoriteQuestionStorageSerializer,
     )
-from quiz.models import User, QuizTaker, UserStatus, ParentQuiz, ParentStatus
-from quiz.serializers import QuizTakerSerializer,QuizTakerStorageSerializer
+from quiz.models import User, QuizTaker, UserStatus, ParentQuiz, ParentStatus, MyQuiz
+from quiz.serializers import QuizTakerSerializer,QuizTakerStorageSerializer, MyQuizSerializer
 
 
 class IPDataSerializer(serializers.ModelSerializer):
@@ -33,6 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
     favorite_question = FavoriteQuestionReadSerializer(many=True, required=False) #ForeignKey
     quiz_taker = QuizTakerSerializer(many=True, required=False) #ForeignKey
     ip_data = IPDataSerializer(many=True,required=False) #ForeignKey
+    my_quiz = MyQuizSerializer(many=True,required=False) #ForeignKey
+    
     
     
     class Meta:
@@ -48,6 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
                   "user_tag",
                   "favorite_question",
                   "quiz_taker",
+                  "my_quiz",
                   'ip_data'
                   ]
         # read_only_field = []
@@ -58,6 +61,7 @@ class UserSerializer(serializers.ModelSerializer):
             quiz_taker = validated_data.pop('quiz_taker')
             level = dict(quiz_taker[1])['level']
             user = User.objects.create(**validated_data)
+            MyQuiz.objects.create(user=user)
             QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
             ip_data = validated_data.pop('ip_data')
             IPData.objects.create(user=user, **ip_data[0])
@@ -73,6 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
             ids = [7,1,6,13]
             ip_data = validated_data.pop('ip_data')
             user = User.objects.create(**validated_data)
+            MyQuiz.objects.create(user=user)
             IPData.objects.create(user=user, **ip_data[0])
             print('before grade')
             grade = ParentQuiz.objects.get(id=4)
@@ -92,6 +97,7 @@ class UserStrageSerializer(serializers.ModelSerializer):
     user_tag = UserTagStorageSerializer(many=True, required=False) #ForeignKey
     favorite_question = FavoriteQuestionStorageSerializer(many=True, required=False) #ForeignKey
     quiz_taker = QuizTakerStorageSerializer(many=True, required=False) #ForeignKey
+    my_quiz = MyQuizSerializer(many=True,required=False) #ForeignKey
     
     class Meta:
         model = User
@@ -104,7 +110,8 @@ class UserStrageSerializer(serializers.ModelSerializer):
                   "liked_answer",
                   "user_tag",
                   "favorite_question",
-                  "quiz_taker"
+                  "quiz_taker",
+                  "my_quiz"
                   ]
 
 

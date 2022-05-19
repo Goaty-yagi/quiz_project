@@ -63,7 +63,8 @@ export default {
             ipinfo: false,
             any: false
         },
-        onSigningup:false
+        onSigningup:false,
+        myQuestion:''
     },
     getters:{
         getUID(state){
@@ -209,6 +210,13 @@ export default {
         },
         handleOnSigningup(state){
             state.onSigningup = !state.onSigningup
+        },
+        deleteMyQuestion(state,payload){
+            console.log("before",state.myQuestion)
+            state.myQuestion = state.myQuestion.filter(item =>{
+                return (item.question.id !=payload)
+            })
+            console.log("after",state.myQuestion)
         }
     },
     actions:{
@@ -339,6 +347,8 @@ export default {
                     .get(`/api/user/${state.user.uid}`)
                     .then(response => {
                         commit('setDjangoUser',response.data)
+                        state.myQuestion = response.data.my_quiz[0].my_question
+                        console.log("MQ",state.myQuestion)
                     })
                     commit("resetDjangoError")
                 }

@@ -8,7 +8,7 @@
             <img @click="testClick" class='is-image animate__bounce' src="@/assets/logo.png">
             <p @click="unko" class='home-text'>日本語クイズ</p>
             <div :class="{'slide-in':slideIn,'slide-out':slideOut}">UNKO</div>
-            <!-- unko{{$store.getters.getDjangouser.quiz_taker}} -->
+            unko{{$store.getters.getDjangouser.my_quiz[0].my_question}}
             <!-- {{$store.getters.gettersReply}}     -->
             <div v-if="!user">
                 <button id='or-button' @click='componentHandler()'>SRART</button>

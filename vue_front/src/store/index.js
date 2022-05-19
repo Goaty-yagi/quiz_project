@@ -49,7 +49,8 @@ export default createStore({
         // "board.reccomendedQuestion",
         "board.centerTag",
         "quiz.quizNameId",
-        "quiz.fieldNameId"],
+        "quiz.fieldNameId",
+        "signup.myQuestion"],
       storage: window.sessionStorage
     }),
     createPersistedState({

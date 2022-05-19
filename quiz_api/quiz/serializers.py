@@ -1,6 +1,10 @@
+from pkg_resources import require
 from rest_framework import serializers
 from django.db.models import F
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField,QuizTaker,UserStatus
+from django.db.models import Count
+from django.http import Http404
+
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	# percantage = serializers.SerializerMethodField('get_percentage')
@@ -185,3 +189,62 @@ class QuizTakerStorageSerializer(serializers.ModelSerializer):
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]
+
+
+class MyQuestionReadSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = MyQuestion
+		fields = ["id",
+				  "my_quiz",
+				  "question",
+				  "timestamp",
+				  ]
+		depth=1
+
+
+class MyQuestionSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = MyQuestion
+		fields = ["id",
+				  "my_quiz",
+				  "question",
+				  "timestamp",
+				  ]
+	
+	def create(self, validated_data):
+		print("create",validated_data)
+		my_quiz = validated_data.pop('my_quiz')
+		question = validated_data.pop('question')
+		# my_question = MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists()
+			
+		# print(my_question)
+		if MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists():
+			my_question = MyQuestion.objects.get(my_quiz=my_quiz,question__id=question.id)
+			my_question.delete()
+			print('removed')
+			return "deleted"
+		else:
+			num = MyQuiz.objects.annotate(Count('my_question'))
+			print("num",int(num.values_list('my_question__count')[0][0]))
+			# print("questionlen", my_quiz.objects.annotate(Count('my_question')))
+			if int(num.values_list('my_question__count')[0][0]) >= my_quiz.max_num:
+				print('max')
+				return Http404
+			else:
+				print('created')
+				return  MyQuestion.objects.create(my_quiz=my_quiz,question_id=question.id)
+
+
+
+class MyQuizSerializer(serializers.ModelSerializer):
+	my_question = MyQuestionReadSerializer(many=True, required=False)
+
+	class Meta:
+		model = MyQuiz
+		fields = ["id",
+				  "user",
+				  "my_question",
+				  "max_num",
+				  ]

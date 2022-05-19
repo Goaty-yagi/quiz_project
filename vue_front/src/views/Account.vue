@@ -13,7 +13,7 @@
                     <p class="change-img" @click='handleShowThumbnail'>画像を<br>変更する</p>
                 </div>
                 <div class="my-quiz-wrapper">
-                    <div class="my-quiz">My Quiz</div>
+                    <router-link :to="{ name: 'MyQuiz'}" class="my-quiz">My Quiz</router-link>
                 </div>
 
                 <div v-if="showNotification" class="notification-container">

@@ -32,6 +32,7 @@ let getDefaultState = () => {
         notice:false,
         step:1,
         onQuiz: false,
+        myQuestion: ''
     }
 }
 
@@ -57,6 +58,10 @@ export default {
             }catch{
                 return null
             }
+        },
+        myQuestion(state, getters, rootState){
+            state.myQuestion = rootState.signup.djangoUser.my_quiz[0].my_question
+            console.log("myquestion",state.myQuestion)
         }
     },
     mutations:{
@@ -230,6 +235,17 @@ export default {
                     quiz_taker: state.userStatusDict.quizTaker,
                     is_correct: state.userStatusDict.isCorrect,
                     is_false: state.userStatusDict.isFalse,
+                }
+            })
+        },
+        async createAndDeleteMyQuiz({ state , commit }, payload){
+            console.log("inMY",payload)
+            await axios({
+                method: 'post',
+                url: '/api/my-question/',
+                data: {
+                    my_quiz: payload.myQuiz,
+                    question: payload.question
                 }
             })
         },
