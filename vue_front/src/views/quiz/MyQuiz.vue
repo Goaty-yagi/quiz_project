@@ -15,6 +15,16 @@
                 <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p>
             </div>
             <div class="my-quiz-container" v-if="$store.state.isLoading==false">
+                <div class="no-my-quiz" v-if="!showButtonAndNoQuiz">
+                    <div class="no-quiz">
+                        登録したクイズはありません。<br>
+                        クイズ画面から登録できます。<br><br>
+                        クイズを登録すると、<br>そのクイズだけ練習できます。
+                    </div>
+                    <router-link :to="{ name: 'QuizHome'}" class="btn-basegra-white-db-sq">
+                        クイズへ行く
+                    </router-link>
+                </div>
                 <div class=my-quiz-loop v-for="(question,questionindex) in myQuestion"
                     v-bind:key="questionindex">
                     <div class="each-quiz-container">
@@ -33,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            <div class="btn-basegra-white-db-sq">
+            <div v-if="showButtonAndNoQuiz" class="btn-basegra-white-db-sq">
                 練習
             </div>
         </div>
@@ -53,10 +63,11 @@ export default {
     data(){
         return{
             myQuestion:'',
+            showButtonAndNoQuiz:false,
         }
     },
     mounted(){
-        this.myQuestion = this.$store.state.signup.myQuestion
+        this.getMyQuestion()
         console.log("mounted",this.myQuestion)
     },
     computed:{
@@ -94,6 +105,12 @@ export default {
             }
 
         },
+        getMyQuestion(){
+            this.myQuestion = this.$store.state.signup.myQuestion
+            if(this.myQuestion.length){
+                this.showButtonAndNoQuiz = true
+            }
+        },
         deleteMyQuestion(question){
             console.log(question)
             let payload = {
@@ -104,6 +121,10 @@ export default {
             this.myQuestion = this.myQuestion.filter(item =>{
                 return (item.question.id !=question)
             })
+            if(this.myQuestion.length==0){
+                this.myQuestion = ''
+                this.showButtonAndNoQuiz = false
+            }
             console.log(payload,this.myQuestion)
             this.$store.commit("deleteMyQuestion",question)
             this.$store.dispatch("createAndDeleteMyQuiz",payload)
@@ -143,6 +164,14 @@ export default {
             background: $back-white;
             padding-top: 1rem;
             padding-bottom: 1rem;
+            .no-my-quiz{
+                margin:2rem;
+                .no-quiz{
+                    color: $dark-blue;
+                    font-weight: bold;
+                    margin-bottom: 2rem;
+                }
+            }
             .my-quiz-loop{
                 .each-quiz-container{
                     display: flex;
