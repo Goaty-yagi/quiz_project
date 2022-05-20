@@ -39,6 +39,8 @@ export default createStore({
         "signup.emailVerified",
         "signup.apiError",
         "signup.UID",
+        "signup.myQuestion",
+        "signup.myQuizInfo",
       ],  // 保存するモジュール：設定しなければ全部。
       storage: window.sessionStorage
     }),
@@ -50,7 +52,7 @@ export default createStore({
         "board.centerTag",
         "quiz.quizNameId",
         "quiz.fieldNameId",
-        "signup.myQuestion"],
+        ],
       storage: window.sessionStorage
     }),
     createPersistedState({

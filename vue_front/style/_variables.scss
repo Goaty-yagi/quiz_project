@@ -20,6 +20,9 @@ $back-gra-white: linear-gradient(to bottom right, #ffffff,#dddddd);;
 $back-gra-green: linear-gradient(to bottom right, #35fea4,#d7ffda);;
 $ORbackground: linear-gradient($base-lite,$base-color);
 $dull-red:rgb(255, 81, 81);
+$lite-dull-red:rgb(255, 143, 143);
+$dull-blue:rgb(56, 208, 251);
+$lite-dull-blue:rgb(157, 234, 255);
 
 
 // base
@@ -247,6 +250,9 @@ body{
     border: 0.1rem solid  $dark-blue;
     border-radius: 0.5rem;
     transition: 0.5s;
+}
+.btn-basegra-white-db-sq:hover{
+    color: $dark-blue;
 }
 
 

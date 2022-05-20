@@ -86,23 +86,35 @@
                                 </div>
                             </button>
                         </div>
-                        <div v-if="showNextOrFinishButton&&
-                        result==false" class="button-quiz-container">
-                            <div v-if="questions.length==questionLengthCounter"
-                            @click="Finish(question.question_type,question.id)" class="btn-tr-white-base-sq">FINSH</div>
-                            <div v-if="questions.length!=questionLengthCounter"
-                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
-                        </div>
+                        <!-- <div  @click="deleteMyQuestion(question.id)" class="register-container"> -->
+                        <div class="quiz-footer">
+                            <div class="register-container">
+                                <div v-if="showError" class='error-form'>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>これ以上登録できません</div>
+                                    <div>現在、最大で{{ getMyQuizInfo.max }}まで登録できます</div>
+                                </div>
+                                <button @click="deleteMyQuestion(question)" :disabled="showError" class="register-border-red" v-if="myQuestionIdList.includes(question.id)==false">この問題を<br>登録する</button>
+                                <button @click="deleteMyQuestion(question)" class="register-border-blue" v-if="myQuestionIdList.includes(question.id)">この問題を<br>登録解除する</button>
+                            </div>
+                            <div v-if="showNextOrFinishButton&&
+                            result==false" class="button-quiz-container">
+                                <div v-if="questions.length==questionLengthCounter"
+                                @click="Finish(question.question_type,question.id)" class="btn-tr-white-base-sq">FINSH</div>
+                                <div v-if="questions.length!=questionLengthCounter"
+                                @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                            </div>
 
-                        <!-- here for buttun in result -->
-                        <div v-if="result" class="buttun-in-result">
-                            <div v-if="questionLengthCounter!=1" 
-                            @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
-                            <div 
-                            @click="HandleShowResult()"
-                            class="btn-base-black-db-ov">結果画面</div>
-                            <div v-if="questions.length!=questionLengthCounter"
-                            @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                            <!-- here for buttun in result -->
+                            <div v-if="result" class="buttun-in-result">
+                                <div v-if="questionLengthCounter!=1" 
+                                @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
+                                <div 
+                                @click="HandleShowResult()"
+                                class="btn-base-black-db-ov">結果画面</div>
+                                <div v-if="questions.length!=questionLengthCounter"
+                                @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -176,7 +188,9 @@ export default {
             showSelectNum: true,
             selectedOrderAnswer:{},
             selectAnswerCounter:0,
-            NumOfIscorrect:0
+            NumOfIscorrect:0,
+            showError: false,
+            myQuestionIdList:[]
         }
     },
     created(){
@@ -184,7 +198,8 @@ export default {
         this.getquestions()
     },
     mounted(){
-        console.log("mounted QuizP")
+        console.log("mounted QuizP",this.getMyQuestion)
+        this.getMyQuestionIds(this.getMyQuestion)
         this.questionLength = this.questions.length
         this.startQuiz = true
         this.SelectedAnswerInfo = {}
@@ -204,7 +219,10 @@ export default {
         //         a.setAttribute('style',`width:${percentage}%`)}
         // }
     },
-    computed: mapGetters(['questions','quiz']),
+    computed: mapGetters(['questions','quiz','getMyQuestion','getMyQuizInfo']),
+        // myQuestion(){
+        //     return this.$store.state.signup.myQuestion
+        // },
     methods:{
         ...mapActions(['getquestions']),
         nextQuestion(questionType,questionID){
@@ -597,7 +615,61 @@ export default {
                 let a = document.getElementById('progress')
                 a.setAttribute('style',`width:${percentage}%`)
             }
+        },
+        deleteMyQuestion(question){
+            console.log("INDELETE",question,this.myQuestionIdList)
+            let payload = {
+                "question":question.id,
+                "myQuiz":this.getMyQuizInfo.id
+            }
+            if(!this.myQuestionIdList.includes(question.id)){
+                if(this.myQuestionIdList.length >=this.getMyQuizInfo.max){
+                    this.showError = true
+                    setTimeout(this.showErrorFalse, 3000)  
+                }
+                else{
+                    this.myQuestionIdList.push(question.id)
+                    console.log("added",this.myQuestionIdList)
+                    this.$store.commit("addMyQuestion",{'question':question})
+                    this.$store.dispatch("createAndDeleteMyQuiz",payload)
+                }
+            }
+            else{
+                this.myQuestionIdList = this.myQuestionIdList.filter(item =>item != question.id )
+                console.log("deleted",this.myQuestionIdList)
+                this.$store.commit("deleteMyQuestion",question.id)
+                this.$store.dispatch("createAndDeleteMyQuiz",payload)
+            }
+        },
+        getMyQuestionIds(myQuestion){
+            for(let i of myQuestion){
+                this.myQuestionIdList.push(i.question.id)
+            }
+            console.log('GMQI',this.myQuestionIdList)
+        },
+        showErrorFalse(){
+            this.showError = false
         }
+        // setTimeout(context.commit, 3000,"resetNotifications")     
+        // handleShowRegister(questionId){
+        //     console.log(this.getMyQuestion)
+        //     try{
+        //         for(let i of this.getMyQuestion){
+        //             console.log("HSR",i.question.id,questionId)
+
+        //             if(i.question.id==questionId){
+        //                 this.showRegister= false
+        //                 return false
+        //             }
+        //         }
+        //         this.showRegister= true
+        //         return true
+        //     }
+        //     catch{
+        //         // this.showRegister= true
+        //         // return true
+        //     }
+        // }
     }
 }
 </script>
@@ -773,32 +845,93 @@ export default {
                     }
                 }
             }
-            // .button-container{
-            //     display: flex;
-            //     margin-top: 1rem;
-            //     div{
-            //         padding-right: 0.3rem;
-            //         padding-left: 0.3rem;
-            //     }
-            // }
-            .buttun-in-result{
+            .quiz-footer{
+                width: 100%;
                 display: flex;
-                margin-top: 1rem;
-                .btn-base-black-db-ov{
-                    padding-left: 0.5rem;
-                    padding-right: 0.5rem;
-                    padding-top: 0.2rem;
-                    padding-bottom: 0.2rem;
-                    margin-right: 0.5rem;
-                    margin-left: 0.5rem;
-                    font-weight: bold;                    
+                justify-content: center;
+                position: relative;
+                margin-bottom: 1rem;
+                height: 3rem;
+                .register-container{
+                    position: absolute;
+                    display: flex;
+                    width: 100%;
+                    justify-content: flex-end;
+                    margin-top: 0.5rem;
+                    margin-right: 1rem;
+                    .error-form{
+                        animation: notification 3s;
+                        animation-fill-mode: forwards;
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 0;
+                        padding-bottom: 0.7rem;
+                        margin: auto;
+                        width: 80%;
+                        background: rgba(252, 252, 252, 0.85);
+                        z-index: 2;
+
+                    }
+                    .register-border-red{
+                        border:0.3rem solid $dull-red;
+                        border-radius: 5px;
+                        padding: 0.2rem;
+                        font-size: 0.8rem;
+                        background: $back-white;
+                        color: $dark-blue;
+                        font-weight: bold;
+                        transition: .5s;
+                    }
+                    .register-border-red:hover{
+                        background: white;
+                        border:0.3rem solid $lite-dull-red;
+                    }
+                    .register-border-blue{
+                        border:0.3rem solid $dull-blue;
+                        border-radius: 5px;
+                        padding: 0.2rem;
+                        font-size: 0.8rem;
+                        background: $back-white;
+                        color: $dark-blue;
+                        font-weight: bold;
+                        transition: .5s;
+                    }
+                    .register-border-blue:hover{
+                        background: white;
+                        border:0.3rem solid $lite-dull-blue;
+                    }
+                    
                 }
-                .btn-tr-white-base-sq{
-                    padding-left: 0.5rem;
-                    padding-right: 0.5rem;
-                    padding-top: 0.2rem;
-                    padding-bottom: 0.2rem;
-                    // margin-bottom: 0.5rem;
+                .button-quiz-container{
+                    display: flex;
+                    margin-top: 1rem;
+                    z-index: 1;
+                    div{
+                        padding-right: 0.3rem;
+                        padding-left: 0.3rem;
+                    }
+                }
+                .buttun-in-result{
+                    display: flex;
+                    margin-top: 1rem;
+                    z-index: 1;
+                    .btn-base-black-db-ov{
+                        padding-left: 0.5rem;
+                        padding-right: 0.5rem;
+                        padding-top: 0.2rem;
+                        padding-bottom: 0.2rem;
+                        margin-right: 0.5rem;
+                        margin-left: 0.5rem;
+                        font-weight: bold;                    
+                    }
+                    .btn-tr-white-base-sq{
+                        padding-left: 0.5rem;
+                        padding-right: 0.5rem;
+                        padding-top: 0.2rem;
+                        padding-bottom: 0.2rem;
+                        // margin-bottom: 0.5rem;
+                    }
                 }
             }
         }

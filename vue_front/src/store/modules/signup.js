@@ -64,7 +64,11 @@ export default {
             any: false
         },
         onSigningup:false,
-        myQuestion:''
+        myQuestion:'',
+        myQuizInfo:{
+            id:'',
+            max:'',
+        },
     },
     getters:{
         getUID(state){
@@ -87,6 +91,12 @@ export default {
         },
         onSigningup(state){
             return state.onSigningup
+        },
+        getMyQuestion(state){
+            return state.myQuestion
+        },
+        getMyQuizInfo(state){
+            return state.myQuizInfo
         }
     },
     mutations:{
@@ -155,6 +165,9 @@ export default {
             state.apiError.firebase = false
             state.apiError.ipinfo = false
             state.apiError.any = false
+            state.myQuizInfo.id = ''
+            state.myQuizInfo.max = ''
+            state.myQuestion = ''
             console.log('all-Reset')
         },
         setLogger(state,payload){
@@ -212,10 +225,16 @@ export default {
             state.onSigningup = !state.onSigningup
         },
         deleteMyQuestion(state,payload){
-            console.log("before",state.myQuestion)
+            console.log("before",state.myQuestion,payload)
             state.myQuestion = state.myQuestion.filter(item =>{
+                console.log('item',item)
                 return (item.question.id !=payload)
             })
+            console.log("after",state.myQuestion)
+        },
+        addMyQuestion(state,payload){
+            console.log("before",state.myQuestion,payload)
+            state.myQuestion.push(payload)
             console.log("after",state.myQuestion)
         }
     },
@@ -348,6 +367,8 @@ export default {
                     .then(response => {
                         commit('setDjangoUser',response.data)
                         state.myQuestion = response.data.my_quiz[0].my_question
+                        state.myQuizInfo.id = response.data.my_quiz[0].id
+                        state.myQuizInfo.max = response.data.my_quiz[0].max_num
                         console.log("MQ",state.myQuestion)
                     })
                     commit("resetDjangoError")
