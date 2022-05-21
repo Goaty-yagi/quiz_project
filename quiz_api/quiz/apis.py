@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker, MyQuiz, MyQuestion
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker, MyQuiz, MyQuestion,ParentStatus
 from quiz.serializers import (
     QuizListSerializer, 
     QuestionListSerializer, 
@@ -26,7 +26,9 @@ from quiz.serializers import (
     UserStatusSerializer,
     QuizTakerSerializer,
     MyQuizSerializer,
-    MyQuestionSerializer
+    MyQuestionSerializer,
+    ParentStatusIdSerializer,
+    MyQuestionReadSerializer
     )
 
 
@@ -123,6 +125,12 @@ class QuizNameIdListApi(generics.ListAPIView):
 class FieldNameIdListApi(generics.ListAPIView):
     queryset = ParentField.objects.all()
     serializer_class = FieldNameIdListSerializer
+    pagination_class = None
+
+
+class StatusNameIdListApi(generics.ListAPIView):
+    queryset = ParentStatus.objects.all()
+    serializer_class = ParentStatusIdSerializer
     pagination_class = None
 
 
@@ -267,7 +275,18 @@ class QuizTestApi(APIView):
             return Response(union)
         except Quiz.DoesNotExist:
             raise Http404
-        
+
+
+class QuestionFromMyQuestionApi(APIView):
+# this is for getting question from my question
+    def get(self, request, format=None):
+        f = [i.strip("[]") for i in request.query_params.getlist("ids")if i is not ',']
+        i = ''.join(f[0])
+        id_list = i.split(',')
+        # id_list = random.sample(id_list,len(id_list))
+        queryset = Question.objects.filter(id__in=id_list).order_by('?')
+        serializer = QuestionListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     # def get(self, request, format=None):
     #     try:
@@ -357,6 +376,14 @@ class MyQuizApi(generics.CreateAPIView):
 class MyQuestionApi(generics.CreateAPIView):
     queryset = MyQuestion.objects.all()
     serializer_class = MyQuestionSerializer
+
+
+# class MyQuestionReadApi(APIView):
+
+#     def get(self, request, format=None):
+#         queryset = MyQuestion.objects.filter(my_quiz=request.query_params['my_quiz'])
+#         serializer = MyQuestionReadSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
 
 # #  test   

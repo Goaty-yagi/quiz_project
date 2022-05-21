@@ -19,6 +19,11 @@ let getDefaultState = () => {
             isCorrect:0,
             isFalse:0
         },
+        currentQuizMode:{
+            myQuiz: false,
+            practice: false,
+            test: false
+        },
         gradeForConvert:'',
         numOfQuiz: 3,
         questionField: [1,2],
@@ -27,12 +32,13 @@ let getDefaultState = () => {
         quiz:[],
         quizNameId:'',
         fieldNameId:'',
+        statusNameId:'',
         randomURL:'',
         test:null,
         notice:false,
         step:1,
         onQuiz: false,
-        myQuestion: ''
+        // myQuestion: ''
     }
 }
 
@@ -44,7 +50,9 @@ export default {
         quiz:(state) => state.quiz,
         quizNameId:(state) => state.quizNameId,
         fieldNameId:(state) => state.fieldNameId,
+        statusNameId:(state) => state.statusNameId,
         gradeForConvert:(state) => state.gradeForConvert,
+        currentQuizMode:(state) => state.currentQuizMode,
         quizTaker(state, getters, rootState){
             try{
                 return rootState.signup.djangoUser.quiz_taker[0].id
@@ -59,10 +67,10 @@ export default {
                 return null
             }
         },
-        myQuestion(state, getters, rootState){
-            state.myQuestion = rootState.signup.djangoUser.my_quiz[0].my_question
-            console.log("myquestion",state.myQuestion)
-        }
+        // myQuestion(state, getters, rootState){
+        //     state.myQuestion = rootState.signup.djangoUser.my_quiz[0].my_question
+        //     console.log("myquestion",state.myQuestion)
+        // }
     },
     mutations:{
         getRandomQuestion(state,array){
@@ -116,6 +124,9 @@ export default {
         setFieldNameId(state, payload){
             state.fieldNameId = payload
         },
+        setStatusNameId(state, payload){
+            state.statusNameId = payload
+        },
         getUserStatusInfo(state, payload){
             state.userStatusDict.status = payload.status
             // state.userStatusDict.grade = payload.grade
@@ -152,6 +163,14 @@ export default {
         },
         onQuizFalse(state){
             state.onQuiz = false
+        },
+        handleCurrentQuizMode(state,payload){
+            for (let i of state.currentQuizMode){
+                console.log('CQM',i)
+                if(i == payload){
+                    state.currentQuizMode[i] = true
+                }
+            }
         }
     },
     actions:{
@@ -189,6 +208,14 @@ export default {
                 let response = await axios.get("/api/field-list/")
                 commit('setFieldNameId',response.data)
                 console.log(state.fieldNameId)
+                commit('setIsLoading', false,{root:true})
+            }
+        },
+        async getStatusNameId({ state, commit }){
+            if(state.statusNameId==false){
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get("/api/status-list/")
+                commit('setStatusNameId',response.data)
                 commit('setIsLoading', false,{root:true})
             }
         },

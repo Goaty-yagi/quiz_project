@@ -4,7 +4,7 @@ from django.db.models import F
 from django.db.models import Count
 from django.http import Http404
 
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentStatus, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	# percantage = serializers.SerializerMethodField('get_percentage')
@@ -71,6 +71,13 @@ class FieldNameIdListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ParentField
 		fields = ["id", "name"]
+
+
+class ParentStatusIdSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ParentStatus
+		fields = ["id", "name"]
+
 
 
 class QuizFilterSerializer(serializers.ModelSerializer):

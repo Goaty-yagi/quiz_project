@@ -848,6 +848,13 @@ export default {
                 .is-correct-answer{
                     background: rgb(148, 255, 235);
                 }
+                .answer-loop:hover{
+                    border: solid $base-color;
+                    // background: $base-lite-3;
+                    .answer-select{
+                        background: $base-lite-2;
+                    }
+                }
                 .answer-loop{
                     width: 95%;
                     height: 3rem;

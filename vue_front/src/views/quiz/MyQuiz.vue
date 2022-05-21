@@ -1,50 +1,61 @@
 <template>
-    <div class="my-quiz-wrapper">
+    <div class="my-quiz-wrapper" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
-            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+            <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading&&!quizOpen}">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
+            <MyQuizPractice
+            v-if="quizOpen"
+            @handleQuizOpen="handleQuizOpen"
+            />
             <!-- <QuizP
             v-if="componentHandleDict.quiz"
             :forQuizPageInfo="forQuizPageInfo"
             @backQuizHome="backQuizHome"/> -->
-            <div class="my-quiz-header">
-                <p class="title-white">My-Quiz</p>
-                <p class="register">登録数{{ length }} / {{myQuiz.max_num}}</p>
-                <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p>
-            </div>
-            <div class="my-quiz-container" v-if="$store.state.isLoading==false">
-                <div class="no-my-quiz" v-if="!showButtonAndNoQuiz">
-                    <div class="no-quiz">
-                        登録したクイズはありません。<br>
-                        クイズ画面から登録できます。<br><br>
-                        クイズを登録すると、<br>そのクイズだけ練習できます。
-                    </div>
-                    <router-link :to="{ name: 'QuizHome'}" class="btn-basegra-white-db-sq">
-                        クイズへ行く
-                    </router-link>
+            <div class="main-container" v-if="!quizOpen">
+                <div class="my-quiz-header">
+                    <p class="title-white">My-Quiz</p>
+                    <p class="register">登録数{{ length }} / {{myQuiz.max_num}}</p>
+                    <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p>
                 </div>
-                <div class=my-quiz-loop v-for="(question,questionindex) in myQuestion"
-                    v-bind:key="questionindex">
-                    <div class="each-quiz-container">
-                        <div class="question-index-container">
-                            <div class="question-index">{{ questionindex+1 }}</div>
+                <div class="my-quiz-container" v-if="$store.state.isLoading==false">
+                    <div class="no-my-quiz" v-if="!showButtonAndNoQuiz">
+                        <div class="no-quiz">
+                            登録したクイズはありません。<br>
+                            クイズ画面から登録できます。<br><br>
+                            クイズを登録すると、<br>そのクイズだけ練習できます。
                         </div>
-                        <div class="question-field">{{ convertFieldIdToInt(question.question.field[0]) }}</div>
-                        <div class="question-grade">{{ convertQuizIdToInt(question.question.quiz) }}</div>
-                        <div class="question-label">{{ question.question.label.substr(0,10)+'...' }}</div>
-                        <div class="close-container">
-                
-                            <div @click="deleteMyQuestion(question.question.id)" class="close">
-                                <i class="fas fa-times"></i>
+                        <router-link :to="{ name: 'QuizHome'}" class="btn-basegra-white-db-sq">
+                            クイズへ行く
+                        </router-link>
+                    </div>
+                    <div class=my-quiz-loop v-for="(question,questionindex) in myQuestion"
+                        v-bind:key="questionindex">
+                        <div @click="getQuestionDetailInfo(question)" class="each-quiz-container">
+                            <div class="question-index-container">
+                                <div class="question-index">{{ questionindex+1 }}</div>
+                            </div>
+                            <div class="question-field">{{ convertFieldIdToInt(question.question.field[0]) }}</div>
+                            <div class="question-grade">{{ convertQuizIdToInt(question.question.quiz) }}</div>
+                            <div class="question-label">{{ question.question.label.substr(0,10)+'...' }}</div>
+                            <div class="close-container">
+                    
+                                <div @click="deleteMyQuestion(question.question.id)" class="close">
+                                    <i class="fas fa-times"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <QuizDetail
+                    v-if="quizDetail"
+                    :questionDetailInfo="questionDetailInfo"
+                    @handleQuizDetail='handleQuizDetail'
+                    />
                 </div>
-            </div>
-            <div v-if="showButtonAndNoQuiz" class="btn-basegra-white-db-sq">
-                練習
+                <div @click="handleQuizOpen()" v-if="showButtonAndNoQuiz" class="btn-basegra-white-db-sq">
+                    練習
+                </div>
             </div>
         </div>
     </div>
@@ -53,22 +64,34 @@
 <script>
 import {mapGetters,mapActions} from 'vuex'
 import NotVerified from '@/components/login/NotVerified.vue'
-import QuizP from '@/components/quiz_components/QuizP.vue'
+import MyQuizPractice from '@/components/quiz_components/MyQuizPractice.vue'
+import QuizDetail from '@/components/quiz_components/QuizDetail.vue'
 
 export default {
     components: {
-        QuizP,
+        MyQuizPractice,
         NotVerified,
+        QuizDetail,
     },
     data(){
         return{
             myQuestion:'',
             showButtonAndNoQuiz:false,
+            quizOpen: false,
+            quizDetail: false,
+            questionDetailInfo:{
+                id:'',
+                grade:'',
+                field:'',
+                status:'',
+                label:'',
+                image:'',
+            }
         }
     },
     mounted(){
         this.getMyQuestion()
-        console.log("mounted",this.myQuestion)
+        console.log("mountedINMQ",this.statusNameId)
     },
     computed:{
         user(){
@@ -86,6 +109,10 @@ export default {
         },
         quizNameId(){
             return this.$store.getters.quizNameId
+        },
+        statusNameId(){
+            this.$store.dispatch("getStatusNameId")
+            return this.$store.getters.statusNameId
         }
 
     },
@@ -103,6 +130,22 @@ export default {
                     return i.name
                 }
             }
+        },
+        convertStatusIdToInt(statusId){
+            for(let i of this.statusNameId){
+                if(i.id==statusId){
+                    return i.name
+                }
+            }
+        },
+        getQuestionDetailInfo(question){
+            this.questionDetailInfo.id = this.convertQuizIdToInt(question.question.id)
+            this.questionDetailInfo.grade = this.convertQuizIdToInt(question.question.quiz)
+            this.questionDetailInfo.field = this.convertFieldIdToInt(question.question.field[0])
+            this.questionDetailInfo.status = this.convertStatusIdToInt(question.question.status[0])
+            this.questionDetailInfo.label = question.question.label
+            this.questionDetailInfo.image = question.question.image
+            this.handleQuizDetail()
 
         },
         getMyQuestion(){
@@ -128,6 +171,12 @@ export default {
             console.log(payload,this.myQuestion)
             this.$store.commit("deleteMyQuestion",question)
             this.$store.dispatch("createAndDeleteMyQuiz",payload)
+        },
+        handleQuizOpen(){
+            this.quizOpen = !this.quizOpen
+        },
+        handleQuizDetail(){
+            this.quizDetail = !this.quizDetail
         }
     }
 
@@ -137,13 +186,16 @@ export default {
 <style scoped lang="scss">
 @import "style/_variables.scss";
 
+.main-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+
 .my-quiz-wrapper{
     display: flex;
     justify-content: center;
     .main-wrapper{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         .my-quiz-header{
             margin-bottom: 1rem;
             .register{
@@ -171,15 +223,25 @@ export default {
                     font-weight: bold;
                     margin-bottom: 2rem;
                 }
+            
+            }
+            .my-quiz-loop:hover{
+                background: $back-lite-white;
+                border-bottom: solid $lite-gray;
             }
             .my-quiz-loop{
+                position: relative;
+                display: flex;
+                align-items: center;
+                border-bottom: solid $lite-gray;
+                transition: .5s;
                 .each-quiz-container{
+                    position: relative;
                     display: flex;
                     width: 100%;
                     margin-bottom: 1rem;
                     margin-top: 1rem;
-                    padding-bottom: 0.5rem;
-                    border-bottom: solid $lite-gray;
+                    // padding-bottom: 0.5rem;
                     align-items: center;
                     // justify-content: center;
                     .question-index-container{
@@ -210,6 +272,10 @@ export default {
                         font-size: 0.8rem;
                     }
                     .close-container{
+                        position: absolute;
+                        right: 0;
+                        margin-bottom: 0.8rem;
+                        margin-right: 0.5rem;
                         flex-basis: 5%;
                         display: flex;
                         align-items: center;

@@ -19,13 +19,17 @@
                         <div v-if="value.isCorrect" class="results"><i class="far fa-circle"></i></div>
                         <div v-if="value.isCorrect==false" class="results"><i class="fas fa-times"></i></div>
                         <div v-if="value.isCorrect==null" class="results tri"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div @click="HandleResultPage(index,index+1)" class="detail">詳細</div>
+                        <div @click="HandleResultPage(index,index+1)" class="detail">
+                            <p>
+                                詳細 =>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="buttons">
-            <div @click="backQuizHome()" class="btn-tr-white-base-cir">戻る</div>
+            <div @click="reset()" class="btn-tr-white-base-cir">戻る</div>
             <div @click="playAgain()" class="btn-tr-black-baselite-cir">もう一度</div>
         </div>
     </div>
@@ -44,6 +48,9 @@ export default {
             resultDetail: false,
         }
     },
+    mounted(){
+        console.log('mounted on result',this.currentQuizMode)
+    },
     computed:{
         getPercentage(){
             let trueNum = 0
@@ -54,6 +61,9 @@ export default {
             })
             return Math.round(trueNum/this.question_length * 100)
         },
+        currentQuizMode(){
+            return this.$store.getters.currentQuizMode
+        }
     },
     methods:{
         numOfTrue(answered_array){
@@ -191,6 +201,18 @@ export default {
                     }
                     .detail{
                         flex-basis: 40%;
+                        p{
+                            transition: .5S;
+                            
+                        }
+                        p:hover{
+                            display: inline-block;
+                            border: solid $lite-gray;
+                            padding-right: 0.5rem;
+                            padding-left: 0.5rem;
+                            background: $back-white;
+                            transition: .5S;
+                        }
                     }
                 }
             }

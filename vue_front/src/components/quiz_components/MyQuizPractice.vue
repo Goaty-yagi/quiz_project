@@ -4,13 +4,13 @@
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
             </div>
-            <Start v-if="startQuiz&&questionLength&&$store.state.isLoading==false"
+            <!-- <Start v-if="startQuiz&&questionLength&&$store.state.isLoading==false"
             :questionLength="questionLength"
             :forQuizPageInfo="forQuizPageInfo"
-            @closeStart="closeStart"/>
-            <div v-if="startQuiz==false">
+            @closeStart="closeStart"/> -->
+            <div v-if="!$store.state.isLoading">
                 <!-- {{userStatusDict.status.status[0]}} -->
-                <p class="quiz-description title-white">{{ quiz.description }}</p>
+                <p class="quiz-description title-white">My Quiz</p>
                 <div class="progress-wrapper">
                     <div v-if="result==false" class="progress-bar-outer">
                         <div id="progress" style="width:0%" class="progress-bar-inner"></div>
@@ -48,7 +48,7 @@
                             'isnot-correct-answer':resultHandleDict.isNotCorrect&&resultHandleDict.answerIDType3==answer.id||
                             resultHandleDict.answerIDType5[answer.id]==false||
                             resultHandleDict.answerIDType4[answer.answer_id]==false,
-                            'answer-hover':!result&&!maxSelectReach}"
+                            'answer-hover':!result}"
                             @click="e => result==false && onClick(answerindex,answer,question)"
                             :disabled="maxSelectReach&&answer.id in selectedAnswer==false"
                             v-for="(answer,answerindex) in question.answer"
@@ -102,9 +102,9 @@
                             <div v-if="showNextOrFinishButton&&
                             result==false" class="button-quiz-container">
                                 <div v-if="questions.length==questionLengthCounter"
-                                @click="Finish(question.question_type,question.id)" class="btn-tr-white-base-sq">FINSH</div>
+                                @click="Finish(question.question_type,question.id,question.quiz)" class="btn-tr-white-base-sq">FINSH</div>
                                 <div v-if="questions.length!=questionLengthCounter"
-                                @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
+                                @click="nextQuestion(question.question_type,question.id,question.quiz)" class="btn-tr-white-base-sq">NEXT ＞</div>
                             </div>
 
                             <!-- here for buttun in result -->
@@ -148,7 +148,7 @@ export default {
     Start
     },
     props:[
-        "forQuizPageInfo"
+        "forQuizPageInfo",
     ],
     data(){
         return{
@@ -192,16 +192,19 @@ export default {
             selectAnswerCounter:0,
             NumOfIscorrect:0,
             showError: false,
-            myQuestionIdList:[]
+            myQuestionIdList:[],
+            questions:'',
         }
     },
     created(){
         // this.getquiz()
-        this.getquestions()
+        // this.getquestions()
     },
     mounted(){
-        console.log("mounted QuizP",this.getMyQuestion)
+        console.log("mounted MYQuizP",this.getMyQuestion)
         this.getMyQuestionIds(this.getMyQuestion)
+        this.getQuestionFromMyQuestion()
+        this.$store.commit('setQuizTakerID',this.quizTaker)
         this.questionLength = this.questions.length
         this.startQuiz = true
         this.SelectedAnswerInfo = {}
@@ -221,13 +224,39 @@ export default {
         //         a.setAttribute('style',`width:${percentage}%`)}
         // }
     },
-    computed: mapGetters(['questions','quiz','getMyQuestion','getMyQuizInfo']),
+    computed: mapGetters(['getMyQuestion','getMyQuizInfo','quizTaker']),
         // myQuestion(){
         //     return this.$store.state.signup.myQuestion
         // },
     methods:{
-        ...mapActions(['getquestions']),
-        nextQuestion(questionType,questionID){
+        // ...mapActions(['getquestions']),
+        async getQuestionFromMyQuestion(){
+            this.$store.commit('setIsLoading', true)
+            var response = await axios.get(`/api/my-question-list?ids=${this.myQuestionIdList}`)
+            this.questions = this.getRandomQuestion(response.data)
+            console.log("GMQQQ",this.questions)
+            this.$store.commit('setIsLoading', false)
+        },
+        getRandomQuestion(array){
+            console.log('in randomQ', array)
+            // for (let i = array.length - 1; i >= 0; i--) {
+            //     let r = Math.floor(Math.random() * (i + 1))
+            //     let tmp = array[i]
+            //     array[i] = array[r]
+            //     array[r] = tmp
+            // }
+            for ( let k =0; k < array.length; k++){
+                for (let i = array[k].answer.length - 1; i >= 0; i--) {
+                    let r = Math.floor(Math.random() * (i + 1))
+                    let tmp = array[k].answer[i]
+                    array[k].answer[i] = array[k].answer[r]
+                    array[k].answer[r] = tmp
+                }
+            }
+            return array
+        },
+        nextQuestion(questionType,questionID,quiz){
+            this.$store.commit('setQuizID',quiz)
             this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
             this.pagination.a += 1
             this.pagination.b += 1
@@ -246,7 +275,8 @@ export default {
             // this. progressBar()
             this.scrollTop()
         },
-        Finish(questionType,questionID){
+        Finish(questionType,questionID,quiz){
+            this.$store.commit('setQuizID',quiz)
             this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
             this.updateQuizTaker()
             this.showResult = true
@@ -603,7 +633,7 @@ export default {
             this.resultHandleDict.answerIDType4 ='',
             this.resultHandleDict.answerIDType5 = ''
             this.answerIDAndOrder = {}
-            this.getquestions()
+            // this.getquestions()
         },
         backQuizHome(){
             this.$emit('backQuizHome')

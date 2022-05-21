@@ -135,6 +135,12 @@ export default{
             stop: false,
             gradeUp: false,
             currentStatusGrade:'',
+            backgroundColorList:{
+                '超初級':'rgba(255, 153, 51, 0.2)',
+                '初級':'rgba(81, 255, 0, 0.2)',
+                '中級':'rgba(191, 0, 255, 0.2)',
+                '上級':'rgba(255, 6, 6, 0.2)',
+            },
             grade:{
                 '超初級':0,
                 '初級':1,
@@ -268,7 +274,7 @@ export default{
             // 3, get chart labels which is locally set.
             // 4, get percentage for each status from user_status from quiz_taker
             // 5, set the labels and the percentages to chartData to invoke data for chart component
-
+            
             let tempDict = {}
             let tempChartAllData = this.chartAllData[this.getCurrentGradeNameFromIds(grade)].labels
             let tempArray = []
@@ -290,6 +296,7 @@ export default{
             }
             this.chartData.labels = tempChartAllData
             this.chartData.datasets[0].data = tempArray
+            this.chartData.datasets[0].backgroundColor = this.backgroundColorList[this.getCurrentGradeNameFromIds(grade)]
             this.gotInfo = true
         },
         getCurrentStatusGrade(grade){
@@ -584,7 +591,7 @@ export default{
                 .chart-loop{
                     display: inline-block;
                     .chart-header:hover{
-                        background:$base-color-tr;
+                        background:rgba(255, 6, 6, 0.2);
                         font-weight: bold;
                     }
                     .chart-header{
