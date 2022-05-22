@@ -46,7 +46,10 @@
 <script>
 export default {
     props:[
-        'questionDetailInfo'
+        'questionDetailInfo',
+        'myQuestion',
+        'showButtonAndNoQuizFalse'
+
     ],
     mounted(){
         console.log('mounted at detail',this.questionDetailInfo)
@@ -68,9 +71,20 @@ export default {
         },
         questionDelete(id){
             console.log("clicked")
-            this.$emit('deleteMyQuestion')
+            this.deleteMyQuestion(id)
             this.close()
-        }
+        },
+        deleteMyQuestion(question){
+            console.log("INDE",question,this.myQuestion.length)
+            let payload = {
+                "question":question,
+                "myQuiz":this.myQuiz.id
+            }
+            this.$emit('deleteQuestionFunForDetailPage',question)
+            console.log(payload,this.myQuestion)
+            this.$store.commit("deleteMyQuestion",question)
+            this.$store.dispatch("createAndDeleteMyQuiz",payload)
+        },
     },
 }
 </script>
@@ -132,6 +146,7 @@ export default {
         }
         .btn-gray-black-gray-sq{
             display: inline-block;
+            border: solid $base-color;
             padding-right: 0.3rem;
             padding-left: 0.3rem;
             margin-bottom: 1rem;

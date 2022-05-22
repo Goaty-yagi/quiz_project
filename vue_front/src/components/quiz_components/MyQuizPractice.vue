@@ -640,13 +640,13 @@ export default {
             this.attributeReset()
         },
         progressBar(){
-            if(this.startQuiz == false){
-                this.progressBarSwitch = true
-                console.log(this.questionLengthCounter,(this.questions.length))
-                let percentage = this.questionLengthCounter/(this.questions.length) * 100 
-                let a = document.getElementById('progress')
-                a.setAttribute('style',`width:${percentage}%`)
-            }
+            
+            this.progressBarSwitch = true
+            console.log(this.questionLengthCounter,(this.questions.length))
+            let percentage = this.questionLengthCounter/(this.questions.length) * 100 
+            let a = document.getElementById('progress')
+            a.setAttribute('style',`width:${percentage}%`)
+            
         },
         deleteMyQuestion(question){
             console.log("INDELETE",question,this.myQuestionIdList)

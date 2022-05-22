@@ -30,27 +30,30 @@
                             クイズへ行く
                         </router-link>
                     </div>
-                    <div class=my-quiz-loop v-for="(question,questionindex) in myQuestion"
+                    <div class=my-quiz-loop @click="getQuestionDetailInfo(question)" v-for="(question,questionindex) in myQuestion"
                         v-bind:key="questionindex">
-                        <div @click="getQuestionDetailInfo(question)" class="each-quiz-container">
+                        <div class="each-quiz-container">
                             <div class="question-index-container">
                                 <div class="question-index">{{ questionindex+1 }}</div>
                             </div>
                             <div class="question-field">{{ convertFieldIdToInt(question.question.field[0]) }}</div>
                             <div class="question-grade">{{ convertQuizIdToInt(question.question.quiz) }}</div>
-                            <div class="question-label">{{ question.question.label.substr(0,10)+'...' }}</div>
+                            <div class="question-label">{{ question.question.label.substr(0,15)+'...' }}</div>
                             <div class="close-container">
                     
-                                <div @click="deleteMyQuestion(question.question.id)" class="close">
+                                <!-- <div @click="deleteMyQuestion(question.question.id)" class="close">
                                     <i class="fas fa-times"></i>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
                     <QuizDetail
                     v-if="quizDetail"
                     :questionDetailInfo="questionDetailInfo"
+                    :myQuestion="myQuestion"
+                    :showButtonAndNoQuiz="showButtonAndNoQuiz"
                     @handleQuizDetail='handleQuizDetail'
+                    @deleteQuestionFunForDetailPage="deleteQuestionFunForDetailPage"                    
                     />
                 </div>
                 <div @click="handleQuizOpen()" v-if="showButtonAndNoQuiz" class="btn-basegra-white-db-sq">
@@ -139,7 +142,7 @@ export default {
             }
         },
         getQuestionDetailInfo(question){
-            this.questionDetailInfo.id = this.convertQuizIdToInt(question.question.id)
+            this.questionDetailInfo.id = question.question.id
             this.questionDetailInfo.grade = this.convertQuizIdToInt(question.question.quiz)
             this.questionDetailInfo.field = this.convertFieldIdToInt(question.question.field[0])
             this.questionDetailInfo.status = this.convertStatusIdToInt(question.question.status[0])
@@ -172,6 +175,27 @@ export default {
             this.$store.commit("deleteMyQuestion",question)
             this.$store.dispatch("createAndDeleteMyQuiz",payload)
         },
+        deleteQuestionFunForDetailPage(question){
+            console.log('length1',this.myQuestion.length)
+            this.myQuestion = this.myQuestion.filter(item =>{
+                return (item.question.id !=question)
+            })
+            if(this.myQuestion.length==0){
+                this.myQuestion = ''
+                this.showButtonAndNoQuiz = false
+            }
+            console.log('length2',this.myQuestion.length)
+        },
+        // deleteQuestionFunForDetailPage2(){
+        //     if(this.myQuestion.length==0){
+        //         this.myQuestion = ''
+        //         this.showButtonAndNoQuiz = false
+        //     }
+        // },
+        // showButtonAndNoQuizFalse(){
+        //     console.log('INSF')
+        //     this.showButtonAndNoQuiz = false
+        // },
         handleQuizOpen(){
             this.quizOpen = !this.quizOpen
         },
@@ -268,33 +292,33 @@ export default {
                         flex-basis: 20%;
                     }
                     .question-label{
-                        flex-basis: 40%;
+                        flex-basis: 50%;
                         font-size: 0.8rem;
                     }
-                    .close-container{
-                        position: absolute;
-                        right: 0;
-                        margin-bottom: 0.8rem;
-                        margin-right: 0.5rem;
-                        flex-basis: 5%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-left: 0.7rem;
-                        height: 20px;
-                        .close{
-                            position:relative;
-                            border: 0.1rem solid rgb(180, 179, 179);
-                            border-radius: 50vh;
-                            width: 1rem;
-                            height: 1rem;
-                            margin-top: auto;
-                            margin-right: auto;
-                            .fa-times{
-                                font-size: 0.8rem;
-                            }
-                        }
-                    }
+                    // .close-container{
+                    //     position: absolute;
+                    //     right: 0;
+                    //     margin-bottom: 0.8rem;
+                    //     margin-right: 0.5rem;
+                    //     flex-basis: 5%;
+                    //     display: flex;
+                    //     align-items: center;
+                    //     justify-content: center;
+                    //     margin-left: 0.7rem;
+                    //     height: 20px;
+                    //     .close{
+                    //         position:relative;
+                    //         border: 0.1rem solid rgb(180, 179, 179);
+                    //         border-radius: 50vh;
+                    //         width: 1rem;
+                    //         height: 1rem;
+                    //         margin-top: auto;
+                    //         margin-right: auto;
+                    //         .fa-times{
+                    //             font-size: 0.8rem;
+                    //         }
+                    //     }
+                    // }
                 }
             }
            
