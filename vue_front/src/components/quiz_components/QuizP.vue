@@ -89,8 +89,8 @@
                             </button>
                         </div>
                         <!-- <div  @click="deleteMyQuestion(question.id)" class="register-container"> -->
-                        <div class="quiz-footer">
-                            <div class="register-container">
+                        <div class="quiz-footer" :class="{'quiz-footer-result':result}">
+                            <div class="register-container" :class="{'register-container-result':result}">
                                 <div v-if="showError" class='error-form'>
                                     <i class="fas fa-exclamation-triangle"></i>
                                     <div>これ以上登録できません</div>
@@ -109,13 +109,21 @@
 
                             <!-- here for buttun in result -->
                             <div v-if="result" class="buttun-in-result">
-                                <div v-if="questionLengthCounter!=1" 
-                                @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
+                                <div class="back-container">
+                                    <div v-if="questionLengthCounter!=1" 
+                                    @click="resultBack()" class="btn-tr-white-base-sq back">
+                                        ＜BACK
+                                    </div>
+                                </div>
                                 <div 
                                 @click="HandleShowResult()"
-                                class="btn-base-black-db-ov">結果画面</div>
-                                <div v-if="questions.length!=questionLengthCounter"
-                                @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                                class="btn-base-black-db-ov result">結果画面</div>
+                                <div class="next-container">
+                                    <div v-if="questions.length!=questionLengthCounter"
+                                    @click="resultNext()" class="btn-tr-white-base-sq next">
+                                        NEXT＞
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -690,7 +698,8 @@ export default {
         width:80%;
         height: 2rem;
         background: rgb(238, 238, 238);
-        margin-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        margin-top: 0.5rem;
         overflow: hidden;
         .progress-bar-inner{
             position:absolute;
@@ -924,8 +933,23 @@ export default {
                 .buttun-in-result{
                     display: flex;
                     margin-top: 1rem;
+                    width: 100%;
                     z-index: 1;
-                    .btn-base-black-db-ov{
+                    .back-container{
+                        flex-basis: 45%;
+                        display: flex;
+                        justify-content: flex-end;
+                        .back{
+                            display: inline-block;
+                            padding-left: 0.5rem;
+                            padding-right: 0.5rem;
+                            padding-top: 0.2rem;
+                            padding-bottom: 0.2rem;
+                        }
+                    }
+                    .result{
+                        flex-basis: 20%;
+                        width: auto;
                         padding-left: 0.5rem;
                         padding-right: 0.5rem;
                         padding-top: 0.2rem;
@@ -934,16 +958,38 @@ export default {
                         margin-left: 0.5rem;
                         font-weight: bold;                    
                     }
-                    .btn-tr-white-base-sq{
-                        padding-left: 0.5rem;
-                        padding-right: 0.5rem;
-                        padding-top: 0.2rem;
-                        padding-bottom: 0.2rem;
-                        // margin-bottom: 0.5rem;
+                    .next-container{
+                         flex-basis: 45%;
+                         display: flex;
+                        .next{
+                            display: inline-block;
+                            padding-left: 0.5rem;
+                            padding-right: 0.5rem;
+                            padding-top: 0.2rem;
+                            padding-bottom: 0.2rem;
+                            // margin-bottom: 0.5rem;
+                        }
                     }
                 }
             }
         }
+    }
+}
+@media(max-width: 480px){
+    .progress-bar-outer{
+        margin-bottom: 0.5rem!important;
+        margin-top: 0!important;
+    }
+    .result{
+        flex-basis: 33%!important;
+    }
+    .register-container-result{
+    margin-top: 4rem!important;
+    }
+}
+@media(max-height: 960px){
+    .quiz-footer-result{
+        margin-bottom: 5rem!important;
     }
 }
 </style>

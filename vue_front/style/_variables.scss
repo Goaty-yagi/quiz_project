@@ -154,6 +154,10 @@ body{
     color:rgb(0, 0, 0);
     border: 0.1rem solid  $dark-blue;
     border-radius: 50vh;
+    transition: .5s;
+}
+.btn-base-black-db-ov:hover{
+    color: $lite-gray;
 }
 .btn-tr-black-sq{
     background: none;
