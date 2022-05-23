@@ -205,7 +205,7 @@ export default{
         console.log('hi',v)
         },
     },
-    computed: mapGetters(['quizNameId']),
+    computed: mapGetters(['quizNameId','getDjangouser']),
         
     mounted(){
         console.log('account mounted',this.$route.params.uid)
@@ -219,7 +219,7 @@ export default{
         async getUserData(){
             this.$store.commit('setIsLoading', true)
             await axios
-                .get(`/api/user/${this.$route.params.uid}`)
+                .get(`/api/user/${this.getDjangouser.UID}`)
                 .then(response => {
                     this.userData = response.data
                     this.quizTaker = response.data.quiz_taker[0]

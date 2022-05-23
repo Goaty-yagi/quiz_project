@@ -15,7 +15,7 @@
                             <router-link :to="{ name: 'Community'}"  class="nav-item"><i class="far fa-comments fas"></i>Community</router-link>
                             <router-link v-if='!user' :to="{ name: 'Login'}" class="nav-item"><i class="fas fa-sign-in-alt"></i>Login</router-link>
                             <router-link v-if='!user' :to="{ name: 'Signup'}" class="nav-item signup"><i class="fas fa-user-plus"></i>Signup</router-link>
-                            <div v-if='user' @click='getAccount($store.state.signup.user.uid)' class="nav-item"><i class="fas fa-robot"></i>Account</div>
+                            <router-link v-if='user' :to="{ name: 'Account'}" class="nav-item"><i class="fas fa-robot"></i>Account</router-link>
                             <div v-if='user' class="nav-item last" @click='logout'><i class="fas fa-sign-out-alt"></i>Logout</div>
                         </div>
                     </div>

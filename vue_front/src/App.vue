@@ -1,24 +1,22 @@
 <template>
     <div id="wrapper">
-        <div class="wrapper2">
-            <Header
-            id="header"
+        <Header
+        id="header"
+        v-if="!$store.state.signup.apiError.any"/>
+        <ConnectionError
+        id="connection-error"
+        v-if="$store.state.signup.apiError.any"/>
+        <section class="main-section" v-if="!$store.state.signup.apiError.any" :class="{'scroll-fixed':$store.state.isLoading}">
+            <router-view
+            id='router'/>
+            <Footer
+            id="footer"
+            v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!$store.getters.onSigningup&&!$store.getters.showModal"/>
+        </section>
+        <div class='mobile-header'
+        v-if="!$store.state.quiz.onQuiz">
+            <MobileHeader
             v-if="!$store.state.signup.apiError.any"/>
-            <ConnectionError
-            id="connection-error"
-            v-if="$store.state.signup.apiError.any"/>
-            <section class="main-section" v-if="!$store.state.signup.apiError.any" :class="{'scroll-fixed':$store.state.isLoading}">
-                <router-view
-                id='router'/>
-                <Footer
-                id="footer"
-                v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!$store.getters.onSigningup&&!$store.getters.showModal"/>
-            </section>
-            <div class='mobile-header'
-            v-if="!$store.state.quiz.onQuiz">
-                <MobileHeader
-                v-if="!$store.state.signup.apiError.any"/>
-            </div>
         </div>
     </div>
 </template>
@@ -96,7 +94,7 @@ export default{
   background: linear-gradient(#5B759F,#1C254C);
   position: fixed;/*固定配置*/
   top: 0; left: 0;/*左上に固定*/
-  width: 100%; height: 100%;/*画面全体を覆う*/
+  min-width: 100%; min-height: 100%;/*画面全体を覆う*/
   content: "";
   z-index: -1;/*背景にするため*/
 }

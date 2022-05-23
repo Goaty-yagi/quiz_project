@@ -29,6 +29,7 @@ export default {
         country:'',
         password:'',
         user: null,
+        registeredUser: false,
         djangoUser: null,
         UID:'',
         fasvoriteQuestion:'',
@@ -118,6 +119,7 @@ export default {
         setUser(state,payload){
             state.user = payload
             if(state.user){
+                state.registeredUser = true
                 state.UID = state.user.uid
             }
             console.log('user state changed:',state.user)
@@ -150,12 +152,13 @@ export default {
             state.tempUser.grade = '',
             state.tempUser.level = ''
             Cookies.remove('tempKey')
-            console.log('set',state.tempUser)
+            console.log('reset-TempUser',state.tempUser)
         },
         tempUserTestTrue(state){
             state.tempUser.test = true
         },
         resetQuizKeyStorage(state){
+            // this is for log out
             state.UID = null
             state.djangoUser = null
             state.emailVerified = null
@@ -168,6 +171,7 @@ export default {
             state.myQuizInfo.id = ''
             state.myQuizInfo.max = ''
             state.myQuestion = ''
+            state.registeredUser = false
             console.log('all-Reset')
         },
         setLogger(state,payload){
@@ -252,7 +256,7 @@ export default {
                     commit('setDjangoUser',response.data)
                 })
                 state.beingException = false
-                commit("resetDjangoErro")
+                commit("resetDjangoError")
                 commit("setTempUserReset")
                 state.userInfo = ''
             }
@@ -454,6 +458,7 @@ export default {
                 console.log("IF YES")
                 context.commit('setUser',ref.user)
                 context.dispatch('getDjangoUser')
+                context.commit("setTempUserReset")
                 context.commit('emailVerifiedHandler',ref.user.emailVerified)
                 console.log(context.state.user,context.state.emailVerified)
             }else{

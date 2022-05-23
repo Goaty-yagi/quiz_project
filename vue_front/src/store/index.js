@@ -39,6 +39,7 @@ export default createStore({
         "signup.emailVerified",
         "signup.apiError",
         "signup.UID",
+        "signup.registeredUser",
         "signup.myQuestion",
         "signup.myQuizInfo",
       ],  // 保存するモジュール：設定しなければ全部。
