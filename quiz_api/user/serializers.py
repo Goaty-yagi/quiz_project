@@ -57,13 +57,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            print('create', validated_data)
             quiz_taker = validated_data.pop('quiz_taker')
+            print('quiz_taker',quiz_taker,'0',quiz_taker[0])
             level = dict(quiz_taker[1])['level']
+            print('level',level)
+            ip_data = validated_data.pop('ip_data')
             user = User.objects.create(**validated_data)
             MyQuiz.objects.create(user=user)
             QuizTaker.objects.create(user=user, level=level, **quiz_taker[0])
-            ip_data = validated_data.pop('ip_data')
             IPData.objects.create(user=user, **ip_data[0])
             return user
         except:
@@ -73,17 +74,14 @@ class UserSerializer(serializers.ModelSerializer):
             # 6 = カタカナ
             # 13 = 数字
             # grade 4 = 超初級
-            print('create22', validated_data)
             ids = [7,1,6,13]
             ip_data = validated_data.pop('ip_data')
             user = User.objects.create(**validated_data)
             MyQuiz.objects.create(user=user)
             IPData.objects.create(user=user, **ip_data[0])
-            print('before grade')
             grade = ParentQuiz.objects.get(id=4)
             quiz_taker = QuizTaker.objects.create(user=user, grade=grade)
             status = ParentStatus.objects.filter(id__in=ids)
-            print('ready',status)
             for i in status:
                 UserStatus.objects.create(quiz_taker=quiz_taker, status=i, grade=grade)
             return user

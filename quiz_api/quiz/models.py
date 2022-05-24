@@ -137,6 +137,17 @@ class UserStatus(models.Model):
     is_false = models.IntegerField(default=0)
     percentage = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        if self.is_correct == 0:
+            self.percentage = 0
+        elif(self.is_false == 0&self.is_correct > 0):
+            self.percentage = 0
+        else:
+            self.percentage=(self.is_correct / (self.is_false + self.is_correct) * 100)
+        super().save(*args, **kwargs)
+
+
+
 
 class MyQuiz(models.Model):
     user = models.ForeignKey(User, related_name='my_quiz', on_delete=models.CASCADE)

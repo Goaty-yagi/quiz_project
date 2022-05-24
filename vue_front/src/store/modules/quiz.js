@@ -103,7 +103,6 @@ export default {
             state.countUpDict.questionType = IDs.questionType
         },
         getQuizInfo(state, quizInfo){
-            console.log('GQIStore',quizInfo)
             state.questionField = []
             state.quizID = ''
             state.numOfQuiz = ''
@@ -112,7 +111,6 @@ export default {
                 state.questionField = quizInfo.fieldId
             }
             state.numOfQuiz = quizInfo.quizNum
-            console.log('GQINFOStore',state.quizID,state.questionField)
         },
         getTestQuizInfo(state, quizInfo){
             state.quizID = quizInfo.quizId
@@ -150,9 +148,7 @@ export default {
             state.userStatusDict.quizTaker = payload
         },
         convertGradeFromIntToID(state, payload){
-            console.log('CGFITI',state.quizNameId,payload)
             for(let i of state.quizNameId){
-                console.log('loop',i.name,i.name==payload)
                 if(i.name == payload){
                     state.gradeForConvert = i.id
                 }

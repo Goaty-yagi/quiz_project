@@ -30,6 +30,8 @@ export default {
         }
     },
     mounted(){
+        this.scrollTop()
+        console.log("mounted-conf")
     },
     methods:{
         closeConf(){
@@ -49,7 +51,13 @@ export default {
         },
         resultHandler(){
             this.$store.commit('testHandler')
-         },
+        },
+        scrollTop(){
+            window.scrollTo({
+            top: 0,
+            // behavior: "smooth"
+            });
+        },
     }
 }
 </script>
@@ -57,21 +65,20 @@ export default {
 <style lang='scss' scoped>
 @import "style/_variables.scss";
     .test-conf{
-        top:0;
-        position: fixed;
-        background: linear-gradient(#5B759F,#1C254C);
-        width:100%;
-        height:100%;
+        display: flex;
+        align-items: center;
+        height: 100vh;
         }.conf-wrapper{
             // border: solid  rgba(243, 91, 36, 0.808);
             border-radius: 1rem;
             overflow:hidden;
             margin-left: auto;
             margin-right: auto;
+            margin-bottom: 10rem;
             // top: 50%;
             // left: 50%;
             // transform: translate(-50%, -50%);
-            margin-top:35vh;
+            // margin-top:35vh;
             }
     .button{
     border-radius: 100vh;

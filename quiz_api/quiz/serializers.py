@@ -119,6 +119,7 @@ class UserStatusSerializer(serializers.ModelSerializer):
 
 
 	def create(self, validated_data):
+		print('IN_US_serializer',validated_data)
 		is_correct = validated_data.pop('is_correct')
 		is_false = validated_data.pop('is_false')
 		
@@ -165,7 +166,8 @@ class UserStatusNameSerializer(serializers.ModelSerializer):
 		return rep
 
 class QuizTakerSerializer(serializers.ModelSerializer):
-	user_status = UserStatusNameSerializer(many=True, read_only=True, required=False)
+	# read_only on user_status deleted for user creation purpose
+	user_status = UserStatusNameSerializer(many=True, required=False)
 	class Meta:
 		model = QuizTaker
 		fields = [

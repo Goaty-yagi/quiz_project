@@ -97,7 +97,8 @@ export default {
                     email: this.$store.state.signup.email,
                     quiz_taker: [
                         {grade: this.$store.getters.getTempUser.grade},
-                        {level: this.$store.getters.getTempUser.level}
+                        {level: this.$store.getters.getTempUser.level},
+                        {user_status: this.$store.getters.getTempUser.statusList}
                     ],
                     ip_data: [{
                         city: this.IPInfo.city,
@@ -129,7 +130,7 @@ export default {
                 }
             }
             try{
-                console.log("try")
+                console.log("try",this.userInfo)
                 this.$store.dispatch('signupDjangoUser',this.userInfo)
                 // await axios({
                 //     method: 'post',

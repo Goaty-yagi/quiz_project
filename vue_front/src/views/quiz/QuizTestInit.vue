@@ -772,13 +772,17 @@ export default {
         //     await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}&grade=${this.$store.state.quiz.gradeForConvert}&level=${this.finalResult.level}`)
         // },
         getFinalResult(){
-            console.log("GFR")
+            console.log("GFR",this.currentGrade)
             this.finalResult.grade = this.currentGrade
             this.finalResult.level = this.currentLevel
             this.tempStatusDict.level = this.currentLevel
             this.$store.dispatch('convertGradeFromIntToIDForNewUser',this.currentGrade)
             this.tempStatusDict.grade = this.$store.getters.gradeForConvert
-            console.log(this.finalResult,'store',this.$store.getters.gradeForConvert,'temp',this.tempStatusDict)
+            this.tempStatusDict.grade = this.$store.state.quiz.gradeForConvert
+            if(!this.tempStatusDict.grade){
+                // 4 is 超初級. it might be chainge
+                this.tempStatusDict.grade = 4
+            }
             this.$store.commit('setTempUser',this.tempStatusDict)
             this.$store.commit('tempUserTestTrue')
             // this.updateQuizTaker()

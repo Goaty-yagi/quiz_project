@@ -5,7 +5,7 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class='home-main-wrapper'>
+            <div v-if="!showCompo" class='home-main-wrapper'>
                 <div class="home-hero">
                     <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
                     <img @click="testClick" class='hero-image' src="@/assets/logo.png">
@@ -53,9 +53,11 @@
                 <!-- unko{{$store.getters.getDjangouser.my_quiz[0].my_question}} -->
                 <!-- {{$store.getters.gettersReply}}     -->
             </div>   
-            <div class='home-conf' v-if='showCompo'>
-                <TestConf @close='showCompoHandler' />   
-            </div>
+            <!-- <div class='home-conf' v-if='showCompo'> -->
+                <TestConf 
+                @close='showCompoHandler'
+                v-if='showCompo'/>   
+            <!-- </div> -->
             <transition name="notice">
                 <NotLogin
                     v-if="tempUserTest&&showNotLogin"
@@ -313,6 +315,9 @@ export default {
                     }
                 }
             }
+        }
+        .home-conf{
+            // margin-bottom: 200px;
         }
     }
 }
