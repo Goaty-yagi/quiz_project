@@ -37,6 +37,7 @@ let getDefaultState = () => {
         test:null,
         notice:false,
         step:1,
+        // onQuiz is for footer view 
         onQuiz: false,
         // myQuestion: ''
     }
@@ -56,6 +57,13 @@ export default {
         quizTaker(state, getters, rootState){
             try{
                 return rootState.signup.djangoUser.quiz_taker[0].id
+            }catch{
+                return null
+            }
+        },
+        quizTakerObject(state, getters, rootState){
+            try{
+                return rootState.signup.djangoUser.quiz_taker[0]
             }catch{
                 return null
             }
@@ -113,8 +121,12 @@ export default {
             state.numOfQuiz = quizInfo.quizNum
         },
         getTestQuizInfo(state, quizInfo){
+            console.log('in',quizInfo)
             state.quizID = quizInfo.quizId
             state.level = quizInfo.level
+            console.log('setQ-quiz id and level',state.quizID,state.level)
+        },
+        setQuizId(state){
         },
         setQuizNameId(state, payload){
             state.quizNameId = payload
@@ -143,6 +155,7 @@ export default {
         // },
         setQuizID(state, payload){
             state.userStatusDict.grade = payload
+            console.log('setQuizID',state.userStatusDict.grade)
         },
         setQuizTakerID(state, payload){
             state.userStatusDict.quizTaker = payload
@@ -167,11 +180,17 @@ export default {
                     state.currentQuizMode[i] = true
                 }
             }
+        },
+        setQuizIdAndlevel(state, getters){
+            console.log('GEETERS',getters)
+            state.quizID = getters.grade
+            state.level = getters.level
+            console.log("SQIAL",state.level,state.quizID)
         }
     },
     actions:{
         async getquestions({ state, commit,getters }){
-            console.log('action2',state.num)
+            console.log('action2',state.quizID,state.level)
             state.questions = []
             state.quiz = []
             commit('setIsLoading', true, {root:true})
@@ -217,17 +236,21 @@ export default {
         },
         async getTestQuestions({ state, commit, getters }){
             // need things for non login
+            console.log('getquestioninfo',state.que)
             if(getters.quizID!=null){
+                // quiz_taker exist
+                console.log('true')
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get(`/api/quizzes-tests/?quiz=${getters.quizID}&level=${state.level}`)
+                let response = await axios.get(`/api/quizzes-tests/?quiz=${state.quizID}&level=${state.level}`)
                 commit('getQuiz',response.data[0])
                 commit('setQuizTakerID',getters.quizTaker)
-                commit('setQuizID',response.data[0])
+                commit('setQuizID',response.data[0].name)
                 response.data.shift()
                 commit('getRandomQuestion',response.data)
                 commit('setTestQuestions',response.data);
                 commit('setIsLoading', false,{root:true})
             }else{
+                // first questions in init
                 commit('setIsLoading', true, {root:true})
                 let response = await axios.get(`/api/quizzes-tests/?quiz=4&level=${state.level}`)
                 commit('getQuiz',response.data[0])
@@ -278,6 +301,10 @@ export default {
             }
             commit('convertGradeFromIntToID', payload)
             console.log('done convert')
-        }
+        },
+        setQuizIdAndlevelAction({ state , commit, getters }){
+            commit('setQuizIdAndlevel', getters.quizTakerObject)
+            console.log('donene')
+        },
     }
 }

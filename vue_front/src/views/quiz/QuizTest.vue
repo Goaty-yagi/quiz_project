@@ -1,5 +1,5 @@
 <template>
-    <div class="quiz-wrapper">
+    <div class="quiz-wrapper" :class="{'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
@@ -81,36 +81,12 @@
                             <!-- <div v-if="questions.length==questionLengthCounter"
                             @click="Finish(question.question_type)" class="btn-tr-white-base-sq">FINSH</div> -->
                             <div
-                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">NEXT ＞</div>
-                        </div>
-
-                        <!-- here for buttun in result -->
-                        <div v-if="result" class="buttun-in-result">
-                            <div v-if="questionLengthCounter!=1" 
-                            @click="resultBack()" class="btn-tr-white-base-sq">＜BACK</div>
-                            <div 
-                            @click="HandleShowResult()"
-                            class="btn-base-black-db-ov">結果画面</div>
-                            <div v-if="questions.length!=questionLengthCounter"
-                            @click="resultNext()" class="btn-tr-white-base-sq">NEXT＞</div>
+                            @click="nextQuestion(question.question_type,question.id)" class="btn-tr-white-base-sq">
+                                NEXT ＞
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- <Result
-                v-if="showResult"
-                :SelectedAnswerInfo='SelectedAnswerInfo'
-                :question_length='questions.length'
-                @handlePagination='handlePagination'
-                @HandleShowResult='HandleShowResult'
-                @resultAnswerHandler='resultAnswerHandler'
-                @handleResult='handleResult'
-                /> -->
-                <!-- <Result
-                v-if="showResult"
-                :question_length='questions.length'
-                :rerultAnswer='rerultAnswer'
-                @show='showDetail'/> -->
-
             </div>
             <TestResult
             v-if="finishTest"
@@ -193,25 +169,47 @@ export default {
             },
             finishTest:false,
             currentLevel:1,
-            currentGrade:"超初級",
-            correctAnswer:{}
+            currentGrade:"",
+            correctAnswer:{},
+            tempStatusDict:{
+                'status':[],
+                'grade':'',
+                'level':''
+            },
+            setQuizAndLevel:{
+                'quizId':'',
+                'level':''
+            },
+            gradeList:[
+                '超初級',
+                '初級',
+                '中級',
+                '上級'
+            ]
         }
     },
     created(){
         console.log("created")
+        this.$store.dispatch('setQuizIdAndlevelAction')
         // this.getquiz()
         this.getTestQuestions()
     },
     mounted(){
-        // let a = this.$store.commit("convertGradeFromIntToID",'超初級')
-        // console.log('mounted',a)
+        this.quizTestInfo.quizId = this.quizTakerObject.grade
+        this.currentGrade = this.quizTakerObject.grade
+        console.log('mounted',this.quizTestInfo.quizId,this.currentGrade)
+        this.currentLevel = this.quizTakerObject.level
+        this.$store.commit('onQuizTrue')
         this.SelectedAnswerInfo = {}
     },
-    computed: mapGetters(['questions','quiz']),
+    beforeUnmount(){
+        this.$store.commit('onQuizFalse')
+    },
+    computed: mapGetters(['questions','quiz', 'quizTakerObject', 'gradeForConvert']),
     methods:{
         ...mapActions(['getTestQuestions']),
         nextQuestion(questionType,questionID){
-            this.handleCounyUpDict(this.selectedAnswer,questionType,questionID)
+            this.handleCountUpDict(this.selectedAnswer,questionType,questionID)
             this.pagination.a += 1
             this.pagination.b += 1
             this.selectedIndexNum= null
@@ -219,6 +217,7 @@ export default {
             this.selectAnswerHandler(
                 questionType,
                 )
+            this.setTempStatusDict()
             this.questionLengthCounter += 1
             this.questionLengthForHTML += 1
             this.checkConsecutiveResult()
@@ -228,25 +227,9 @@ export default {
             this.selectedAnswer = {}
             this.answerIDAndOrder = {}
             this.selectAnswerCounter = 0
-            console.log(this.SelectedAnswerInfo)
+            console.log("CCC",this.SelectedAnswerInfo,'current',this.currentLevel)
             this.scrollTop()
         },
-        // Finish(questionType){
-        //     this.showResult = true
-        //     this.result = true
-        //     this.selectedIndexNum= null
-        //     this.selectAnswerHandler(
-        //         questionType,
-        //         )
-        //     this.NumOfIscorrect = 0
-        //     this.maxSelectReach = false
-        //     this.selectedOrderAnswer = {}
-        //     this.selectedAnswer = {}
-        //     this.selectAnswerCounter = 0
-        //     console.log(this.SelectedAnswerInfo)
-        //     this.resultAnswerHandler()
-        //     this.scrollTop()
-        // },
         onClick(answerindex, answer, question){
             // this is for 2 things,
             // first is for controling CSS return selectedIndexNum
@@ -519,7 +502,7 @@ export default {
             this.pagination.b = b
             this.questionLengthCounter = b
         },
-        handleCounyUpDict(selectedAnswer,questionType,questionID){
+        handleCountUpDict(selectedAnswer,questionType,questionID){
             this.countupDict.questionType = questionType
             this.countupDict.questionID = questionID
             if(questionType == 5){
@@ -577,7 +560,77 @@ export default {
             behavior: "smooth"
             });
         },
+        setTempStatusDict(){
+            console.log('IN-setSD',this.tempStatusDict,this.userStatusDict)
+            const _ = require('lodash');
+            let copyObject = _.cloneDeep(this.userStatusDict)
+            if(!this.tempStatusDict.status[0]){
+                this.tempStatusDict.status.push(copyObject)
+                console.log('pushed')
+            }
+            else{
+                for(let i in this.tempStatusDict.status){
+                    console.log('loop',i,typeof(i),this.tempStatusDict.status[i].status,copyObject.status)
+                    if(this.tempStatusDict.status[i].status==copyObject.status){
+                        console.log('true',this.tempStatusDict)
+                        if(copyObject.isCorrect){
+                            console.log('correct')
+                            this.tempStatusDict.status[i].isCorrect+=1
+                            console.log('correct',this.tempStatusDict)
+                            break
+                        }else{
+                            console.log('notcorrect')
+                            this.tempStatusDict.status[i].isFalse+=1
+                            console.log('notcorrect',this.tempStatusDict)
+                            break
+                        }
+                    }
+                    else{
+                        console.log('false',i,this.tempStatusDict.status.length -1)
+                        if(Number(i) == this.tempStatusDict.status.length -1){
+                            this.tempStatusDict.status.push(copyObject)
+                            console.log('pushed2',this.tempStatusDict.status)
+                        }
+                    }
+                }
+            }
+        },
+        
         // from here for test function
+        quizTestInfoHandler(){
+            console.log('in-QTIH',typeof(this.currentLevel),this.currentLevel,this.quizTestInfo.grade)
+            if(this.currentLevel >= 11) {
+                console.log('over 11')
+                this.currentLevel = 1;
+                console.log('CL',this.currentLevel)
+                for(let [index,i] of this.gradeList.entries()){
+                    console.log('i',i,'index',index)
+                    this.$store.commit('convertGradeFromIntToID',i)
+                    console.log(this.gradeForConvert,this.currentGrade)
+                    if(this.gradeForConvert == this.currentGrade) {
+                        this.$store.commit('convertGradeFromIntToID',this.gradeList[index +1])
+                        this.quizTestInfo.quizId = this.gradeForConvert
+                        this.currentGrade = this.gradeForConvert
+                        console.log("info",this.quizTestInfo)
+                        break
+                    }
+                }
+            }
+            else if(this.currentLevel == 0){
+                this.currentLevel = 10;
+                for(let [index,i] of this.gradeList.entries()){
+                    this.$store.commit('convertGradeFromIntToID',i)
+                    console.log(this.gradeForConvert,this.currentGrade)
+                    if(this.gradeForConvert == this.currentGrade) {
+                        this.$store.commit('convertGradeFromIntToID',this.gradeList[index -1])
+                        this.quizTestInfo.quizId = this.gradeForConvert 
+                        this.currentGrade = this.gradeForConvert
+                        break
+                    }
+                }
+            }
+            console.log("do nothing")
+        },
         checkConsecutiveResult(){
             var correctCounter = 0
         
@@ -598,6 +651,7 @@ export default {
                     if(isTrue >= 7){
                         this.LevelCounters.handleLevelUp += 1
                         this.currentLevel += 1
+                        this.quizTestInfoHandler()
                         if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
                             this.finishTest = true
                             this.getFinalResult()
@@ -615,7 +669,7 @@ export default {
                             this.questionLengthCounter = 1
                         }
                     }
-                    else if(isTrue > 4&& isTrue < 7){
+                    else if(isTrue > 4 && isTrue < 7){
                         this.finishTest = true
                         this.getFinalResult()
                         this.LevelCounters.handleLevelUp = 0
@@ -623,8 +677,10 @@ export default {
                     }
                     else{
                         this.LevelCounters.handleLevelDown += 1
-                        if(this.currentGrade !="超初級"&&this.currentLevel!=1){
+                        this.$store.commit('convertGradeFromIntToID',this.gradeList[0])
+                        if(this.currentGrade !=this.gradeForConvert&&this.currentLevel!=1){
                             this.currentLevel -= 1
+                            this.quizTestInfoHandler()
                             if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
                                 this.finishTest = true
                                 this.getFinalResult()
@@ -653,6 +709,7 @@ export default {
                     console.log("longer than 4")
                     let num4 = 0
                     num4 = Object.keys(this.SelectedAnswerInfo).length - 4
+                    // check correct answer 4 times in a row
                     for (let i = 1; i <= 4; i++){
                         console.log("forloop",this.SelectedAnswerInfo)
                         if(this.SelectedAnswerInfo[i + num4].isCorrect){
@@ -674,8 +731,9 @@ export default {
                             this.LevelCounters.handleLevelDown = 0
                         }else{
                             console.log('UP')
-                            this.quizTestInfo.level = this.currentLevel + 1
                             this.currentLevel += 1
+                            this.quizTestInfoHandler()
+                            this.quizTestInfo.level = this.currentLevel
                             this.$store.commit('getTestQuizInfo',this.quizTestInfo)
                             this.getTestQuestions()
                             this.pagination.a = 0
@@ -686,8 +744,13 @@ export default {
                         }                
                     }else if(correctCounter == 0){
                         console.log("zeroCA")
-                        if(this.currentLevel==1){
+                        this.$store.commit('convertGradeFromIntToID',this.gradeList[0])
+                        if(this.currentLevel==1&&this.currentGrade==this.gradeForConvert){
                             console.log("no more low level")
+                            this.finishTest = true
+                            this.getFinalResult()
+                            this.LevelCounters.handleLevelUp = 0
+                            this.LevelCounters.handleLevelDown = 0
                         }
                         else{
                             this.LevelCounters.handleLevelDown += 1
@@ -703,9 +766,10 @@ export default {
                                 this.LevelCounters.handleLevelUp = 0
                                 this.LevelCounters.handleLevelDown = 0
                             }else{
-                                console.log('down')
-                                this.quizTestInfo.level = this.currentLevel -1
+                                console.log('down',this.currentLevel)
                                 this.currentLevel -= 1
+                                this.quizTestInfoHandler()
+                                this.quizTestInfo.level = this.currentLevel
                                 this.$store.commit('getTestQuizInfo',this.quizTestInfo)
                                 this.getTestQuestions()
                                 correctCounter = 0
@@ -719,18 +783,27 @@ export default {
                 }
             }
         },
-        async updateQuizTaker(){
-            console.log('UQT',
-            this.$store.state.signup.djangoUser.quiz_taker)
-            this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
-            await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}&grade=${this.$store.state.quiz.gradeForConvert}&level=${this.finalResult.level}`)
-        },
+        // async updateQuizTaker(){
+        //     console.log('UQT',
+        //     this.$store.state.signup.djangoUser.quiz_taker)
+        //     this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
+        //     await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}&grade=${this.$store.state.quiz.gradeForConvert}&level=${this.finalResult.level}`)
+        // },
         getFinalResult(){
-            console.log("GFR")
+            console.log("GFR",this.currentGrade)
             this.finalResult.grade = this.currentGrade
             this.finalResult.level = this.currentLevel
-            console.log(this.finalResult)
-            this.updateQuizTaker()
+            this.tempStatusDict.level = this.currentLevel
+            this.$store.dispatch('convertGradeFromIntToIDForNewUser',this.currentGrade)
+            this.tempStatusDict.grade = this.$store.getters.gradeForConvert
+            this.tempStatusDict.grade = this.$store.state.quiz.gradeForConvert
+            if(!this.tempStatusDict.grade){
+                // 4 is 超初級. it might be chainge
+                this.tempStatusDict.grade = 4
+            }
+            this.$store.commit('setTempUser',this.tempStatusDict)
+            this.$store.commit('tempUserTestTrue')
+            // this.updateQuizTaker()
         }
     }
 }
@@ -743,7 +816,9 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 0.5rem;
+    padding-bottom: 2rem;
+    // align-items: center;
     .quiz-countainer{
         width: 100%;
         display: flex;
@@ -794,6 +869,13 @@ export default {
                 margin-top: 1rem;
                 .is-correct-answer{
                     background: rgb(148, 255, 235);
+                }
+                .answer-loop:hover{
+                    border: solid $base-color;
+                    // background: $base-lite-3;
+                    .answer-select{
+                        background: $base-lite-2;
+                    }
                 }
                 .answer-loop{
                     width: 95%;
@@ -881,14 +963,17 @@ export default {
                     }
                 }
             }
-            // .button-container{
-            //     display: flex;
-            //     margin-top: 1rem;
-            //     div{
-            //         padding-right: 0.3rem;
-            //         padding-left: 0.3rem;
-            //     }
-            // }
+            .button-quiz-container{
+                display: flex;
+                margin-top: 1rem;
+                align-items: center;
+                div{
+                    padding-top: 0.2rem;
+                    padding-bottom: 0.2rem;
+                    padding-right: 0.4rem;
+                    padding-left: 0.4rem;
+                }
+            }
             .buttun-in-result{
                 display: flex;
                 margin-top: 1rem;
