@@ -91,6 +91,8 @@
             <TestResult
             v-if="finishTest"
             :finalResult="finalResult"
+            :startGradeAndLevel="startGradeAndLevel"
+            :gradeList="gradeList"
             />
         </div>
     </div>
@@ -171,6 +173,10 @@ export default {
             currentLevel:1,
             currentGrade:"",
             correctAnswer:{},
+            startGradeAndLevel:{
+                grade:'',
+                level:''
+            },
             tempStatusDict:{
                 'status':[],
                 'grade':'',
@@ -195,6 +201,8 @@ export default {
         this.getTestQuestions()
     },
     mounted(){
+        this.startGradeAndLevel.grade = this.quizTakerObject.grade
+        this.startGradeAndLevel.level = this.quizTakerObject.level
         this.quizTestInfo.quizId = this.quizTakerObject.grade
         this.currentGrade = this.quizTakerObject.grade
         console.log('mounted',this.quizTestInfo.quizId,this.currentGrade)
@@ -676,9 +684,14 @@ export default {
                         this.LevelCounters.handleLevelDown = 0
                     }
                     else{
+                        console.log("IT",isTrue)
                         this.LevelCounters.handleLevelDown += 1
                         this.$store.commit('convertGradeFromIntToID',this.gradeList[0])
-                        if(this.currentGrade !=this.gradeForConvert&&this.currentLevel!=1){
+                        console.log('CG',this.currentGrade,'CON',this.gradeForConvert,'CL',this.currentLevel)
+                        console.log(this.currentGrade !=this.gradeForConvert&&this.currentLevel!=1)
+                        console.log(this.currentGrade !=this.gradeForConvert,this.currentLevel!=1)
+                        if(this.currentGrade !=this.gradeForConvert){
+                            console.log("dpwn start")
                             this.currentLevel -= 1
                             this.quizTestInfoHandler()
                             if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
@@ -697,6 +710,9 @@ export default {
                                 this.questionLengthCounter = 1
                                 this.SelectedAnswerInfo = {}
                             }
+                        }
+                        else{
+                            console.log('no more low level')
                         }
                     }
                     if(this.LevelCounters.handleLevelUp+this.LevelCounters.handleLevelDown == 3){
@@ -783,15 +799,17 @@ export default {
                 }
             }
         },
-        // async updateQuizTaker(){
-        //     console.log('UQT',
-        //     this.$store.state.signup.djangoUser.quiz_taker)
-        //     this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
-        //     await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}&grade=${this.$store.state.quiz.gradeForConvert}&level=${this.finalResult.level}`)
-        // },
+        async updateQuizTaker(){
+            console.log('UQT',
+            this.$store.state.signup.djangoUser.quiz_taker)
+            this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
+            await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.getters.quizTaker}&grade=${this.currentGrade}&level=${this.finalResult.level}`)
+        },
         getFinalResult(){
             console.log("GFR",this.currentGrade)
-            this.finalResult.grade = this.currentGrade
+            this.$store.commit('convertGradeFromIDToInt',this.currentGrade)
+            this.finalResult.grade = this.gradeForConvert
+            console.log('final_grade',this.gradeForConvert)
             this.finalResult.level = this.currentLevel
             this.tempStatusDict.level = this.currentLevel
             this.$store.dispatch('convertGradeFromIntToIDForNewUser',this.currentGrade)
@@ -801,9 +819,11 @@ export default {
                 // 4 is 超初級. it might be chainge
                 this.tempStatusDict.grade = 4
             }
-            this.$store.commit('setTempUser',this.tempStatusDict)
-            this.$store.commit('tempUserTestTrue')
-            // this.updateQuizTaker()
+            // this.$store.commit('setTempUser',this.tempStatusDict)
+            // this.$store.commit('tempUserTestTrue')
+            this.updateQuizTaker()
+            this.$store.commit('convertGradeFromIDToInt',this.startGradeAndLevel.grade)
+            console.log('int',this.gradeForConvert)
         }
     }
 }

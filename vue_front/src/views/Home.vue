@@ -1,5 +1,13 @@
 <template>
     <section class='home-section'>
+        <ConfettiExplosion 
+        :particleCount="150"
+        :particleSize="12"
+        :duration="3500"
+        :force="0.5"
+        :stageHeight="800"
+        :stageWidth="1600"
+        :shouldDestroyAfterDone="true"/>
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -69,6 +77,7 @@
 </template>
 
 <script>
+import ConfettiExplosion from "vue-confetti-explosion";
 import axios from 'axios'
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
@@ -83,6 +92,7 @@ export default {
         Notification,
         NotLogin,
         Chart,
+        ConfettiExplosion
     },
     data(){
         return{
@@ -154,7 +164,7 @@ export default {
         //     this.chartData.datasets.backgroundColor = this.backgroundColorList[Math.floor(Math.random() * this.backgroundColorList.length)];
         //     console.log('RANDOM',this.chartData.datasets.backgroundColor)
         //     this.showChart=true
-        // },
+        // },np,
         unko(){
             console.log('clicked')
             this.$store.commit('setTempUserNull')
@@ -238,6 +248,7 @@ export default {
                     border-right: 1px solid $base-color;
                     border-left: 1px solid $base-color;
                     border-bottom: 1px solid $base-color;
+                    box-shadow:  1px 1px 18px #888888;
                     // background: rgb(254, 254, 221);
                     padding-top: 0.5rem;
                     padding-bottom: 0.5rem;

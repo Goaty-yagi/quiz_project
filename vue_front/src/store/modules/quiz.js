@@ -167,6 +167,13 @@ export default {
                 }
             }
         },
+        convertGradeFromIDToInt(state, payload){
+            for(let i of state.quizNameId){
+                if(i.id == payload){
+                    state.gradeForConvert = i.name
+                }
+            }
+        },
         onQuizTrue(state){
             state.onQuiz = true
         },

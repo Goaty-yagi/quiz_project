@@ -117,6 +117,7 @@
             <TestResult
             v-if="finishTest"
             :finalResult="finalResult"
+            :init="init"
             />
         </div>
     </div>
@@ -201,7 +202,8 @@ export default {
                 'status':[],
                 'grade':'',
                 'level':''
-            }
+            },
+            init: true,
         }
     },
     created(){

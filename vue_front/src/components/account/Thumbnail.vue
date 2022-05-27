@@ -24,6 +24,9 @@
 import axios from 'axios'
 import Cropper from 'cropperjs';
 export default {
+    props:[
+        "getDjangouser",
+    ],
     data(){
         return{
             file:'',
@@ -37,8 +40,14 @@ export default {
     },
     mounted(){
         // this.cropper()
+        console.log('thumb mounted',this.getDjangouser)
         this.autoClick()
     },
+    // computed:{
+    //     user(){
+    //         return this.$store.state.signup.djangoUser
+    //     }
+    // },
     methods:{
         async getImage(event){
             console.log('event',event)
@@ -121,7 +130,7 @@ export default {
             const formData = new FormData();
             formData.append('thumbnail',blob, `${this.image}.png`),
             console.log('getthumb',formData.get('thumbnail')),
-            axios.patch(`/api/user/${this.$route.params.uid}`,
+            axios.patch(`/api/user/${this.getDjangouser.UID}`,
                 formData
             )
             }, 'image/png')

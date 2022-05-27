@@ -1,5 +1,14 @@
 <template>
     <div class='testresult-wrapper'>
+        <ConfettiExplosion
+        v-if="init||showConfetti()"
+        :particleCount="160"
+        :particleSize="12"
+        :duration="3500"
+        :force="0.9"
+        :stageHeight="1200"
+        :stageWidth="1600"
+        :shouldDestroyAfterDone="true"/>
         <h1 class='is-size-1 has-text-white'>-結果-</h1>
         <p class='result-text'>あなたのレベルは…</p>
         <div class="diamond-wrapper">
@@ -25,29 +34,64 @@
 </template>
 
 <script>
-import Notification from '@/components/initial/Notification.vue'
+import Notification from '@/components/initial/Notification.vue';
+import ConfettiExplosion from "vue-confetti-explosion";
 export default {
     props:[
-        "finalResult"
+        "finalResult",
+        "init",
+        "startGradeAndLevel"
     ],
      components: {
         Notification,
+        ConfettiExplosion
   },
   data(){
         return{
             showNotification: false,
+            gradeDict:{
+                '超初級':0,
+                '初級':10,
+                '中級':20,
+                '上級':30
+            }
         }
     },
+    computed:{
+        gradeForConvert(){
+            return this.$store.getters.gradeForConvert
+        }
+
+    },
     mounted(){
-        console.log('testresult')
-        setTimeout(() =>{
+        console.log('testresult',this.init,this.finalResult,this.startGradeAndLevel)
+        if(this.init){setTimeout(() =>{
         this.handleShowNotification()
         },3000)
+        }
     },
     methods:{
         handleShowNotification(){
-        this.showNotification = !this.showNotification
-    }
+            this.showNotification = !this.showNotification
+
+        },
+        showConfetti(){
+            console.log('show',this.gradeForConvert,this.gradeDict[this.finalResult.grade],this.gradeDict[this.gradeForConvert])
+            if(this.gradeDict[this.finalResult.grade] > this.gradeDict[this.gradeForConvert]){
+                console.log('grade')
+                return true
+            }
+            else if(this.gradeDict[this.finalResult.grade] == this.gradeDict[this.gradeForConvert]) {
+                if(this.finalResult.level > this.startGradeAndLevel.level){
+                    console.log('level')
+                    return true 
+                }else{
+                    return false
+                }
+            }else{
+                return false
+            }
+        },
     }
 }
 </script>

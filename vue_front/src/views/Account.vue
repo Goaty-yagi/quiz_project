@@ -95,7 +95,8 @@
         <Sent v-show='showSent'/>
         <Thumbnail v-if="showThumbnail"
         @showThumbnailFalse="showThumbnailFalse"
-        @getUserData="getUserData"/>
+        @getUserData="getUserData"
+        :getDjangouser="getDjangouser"/>
     </div>
 </template>
 
@@ -208,7 +209,7 @@ export default{
     computed: mapGetters(['quizNameId','getDjangouser']),
         
     mounted(){
-        console.log('account mounted',this.$route.params.uid)
+        console.log('account mounted',this.getDjangouser)
         this.currentPageName = ''
         this.getUserData()
         this.getCurrentPageName()
