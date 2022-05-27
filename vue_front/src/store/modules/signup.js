@@ -70,6 +70,12 @@ export default {
             id:'',
             max:'',
         },
+        gradeDict:{
+            '超初級':0,
+            '初級':10,
+            '中級':20,
+            '上級':30
+        }
     },
     getters:{
         getUID(state){
@@ -98,6 +104,9 @@ export default {
         },
         getMyQuizInfo(state){
             return state.myQuizInfo
+        },
+        quizNameIdInSignup(state, getters, rootState){
+            return rootState.quiz.quizNameId
         }
     },
     mutations:{
@@ -240,7 +249,19 @@ export default {
             console.log("before",state.myQuestion,payload)
             state.myQuestion.push(payload)
             console.log("after",state.myQuestion)
-        }
+        },
+        updateQuizTaker(state,payload) {
+            state.djangoUser.quiz_taker[0].grade = payload.grade
+            state.djangoUser.quiz_taker[0].level = payload.level
+            console.log('set', state.djangoUser)
+        },
+        updateQuizTakerMax(state, payload) {
+            // this is for session storage only to reduce API hit
+            state.djangoUser.quiz_taker[0].max_level = state.djangoUser.quiz_taker[0].level
+            state.djangoUser.quiz_taker[0].max_grade = payload
+                    
+            console.log('set_max', state.djangoUser)
+        },
     },
     actions:{
         async signupDjangoUser( {state, commit},payload ){
@@ -498,7 +519,27 @@ export default {
             context.commit('setUser',null)
             context.commit('resetQuizKeyStorage')
             router.push({ name: 'Home' })
-        }
+        },
+        updateQuizTakerAction({state, commit, getters},payload){
+            console.log('inUQTA',getters)
+            commit('updateQuizTaker',payload);
+            console.log('UPaction',getters.quizNameIdInSignup)
+            for(let i of getters.quizNameIdInSignup){
+                if(i.id == payload.grade){
+                    if(state.gradeDict[state.djangoUser.quiz_taker[0].max_grade] < state.gradeDict[i.name]){
+                        commit('updateQuizTakerMax',i.name);
+                        break
+                    }
+                    else if(state.gradeDict[state.djangoUser.quiz_taker[0].max_grade] == state.gradeDict[i.name]){
+                        if(state.djangoUser.quiz_taker[0].max_level < payload.level){
+                            commit('updateQuizTakerMax',i.name);
+                            break
+                        }
+                    }
+                }
+            }
+        },
+        
     }
 
 }

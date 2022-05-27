@@ -819,6 +819,8 @@ export default {
                 // 4 is 超初級. it might be chainge
                 this.tempStatusDict.grade = 4
             }
+            let payload = {grade:this.currentGrade,level:this.currentLevel}
+            this.$store.dispatch('updateQuizTakerAction',payload)
             // this.$store.commit('setTempUser',this.tempStatusDict)
             // this.$store.commit('tempUserTestTrue')
             this.updateQuizTaker()
