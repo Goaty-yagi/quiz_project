@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from django.http import Http404
 from django.db.models import Prefetch
@@ -24,34 +25,40 @@ from quiz.serializers import UserStatusSerializer,QuizTakerSerializer
 class UserList(APIView):
 
     def post(self, request, format=None):
-            try:
-                user_status = copy.deepcopy(request.data["quiz_taker"][2])
-                grade = copy.deepcopy(request.data["quiz_taker"][0])
-                serializer = UserSerializer(data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    print('saveed')
-                    quiz_taker = dict(serializer.data['quiz_taker'][0])
-                    quiz_taker_object = QuizTaker.objects.get(id=quiz_taker['id'])
-                    parent_quiz = ParentQuiz.objects.get(id=grade['grade'])
-                    for i in user_status["user_status"]:
-                        parent_status = ParentStatus.objects.get(id=i['status'])
-                        UserStatus.objects.create(
-                            quiz_taker=quiz_taker_object,
-                            status=parent_status,
-                            grade=parent_quiz,
-                            is_correct=i['isCorrect'],
-                            is_false=i['isFalse'])
-                    return Response(serializer.data)
-                else:
-                    raise Http404
-            except:
-                serializer = UserSerializer(data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data)
-                else:
-                    raise Http404
+            if User.objects.filter(UID=request.data['UID']).exists():
+                return HttpResponse(status=404,content='user-exists')
+            else:
+                try:
+                    user_status = copy.deepcopy(request.data["quiz_taker"][2])
+                    grade = copy.deepcopy(request.data["quiz_taker"][0])
+                    serializer = UserSerializer(data=request.data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        print('saveed')
+                        quiz_taker = dict(serializer.data['quiz_taker'][0])
+                        quiz_taker_object = QuizTaker.objects.get(id=quiz_taker['id'])
+                        parent_quiz = ParentQuiz.objects.get(id=grade['grade'])
+                        for i in user_status["user_status"]:
+                            parent_status = ParentStatus.objects.get(id=i['status'])
+                            UserStatus.objects.create(
+                                quiz_taker=quiz_taker_object,
+                                status=parent_status,
+                                grade=parent_quiz,
+                                is_correct=i['isCorrect'],
+                                is_false=i['isFalse'])
+                        return Response(serializer.data)
+                    else:
+                        raise Http404
+                except Exception as e:
+                    if e.args[0] == 'quiz_taker':
+                        serializer = UserSerializer(data=request.data)
+                        if serializer.is_valid():
+                            serializer.save()
+                            return Response(serializer.data)
+                        else:
+                            raise Http404
+                    else:
+                        raise e
             
 
 class UserAllList(generics.ListCreateAPIView):

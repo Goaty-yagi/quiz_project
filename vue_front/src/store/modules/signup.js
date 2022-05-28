@@ -10,7 +10,10 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
 } from 'firebase/auth'
 import store from '..'
 
@@ -75,7 +78,9 @@ export default {
             '初級':10,
             '中級':20,
             '上級':30
-        }
+        },
+        thirdPartyLogindata:'',
+        thirdPartyError:'',
     },
     getters:{
         getUID(state){
@@ -262,6 +267,47 @@ export default {
                     
             console.log('set_max', state.djangoUser)
         },
+        setTirdPartyLoginData(state, payload){
+            if(state.tempUser.test){
+                console.log('YES TEMP')
+                state.userInfo={
+                    UID: payload.uid,
+                    name: payload.displayName,
+                    email: payload.email,
+                    quiz_taker: [
+                        {grade: state.tempUser.grade},
+                        {level: state.tempUser.level},
+                    ],
+                }
+            }else{
+                console.log('NO TEMP')
+                state.userInfo={
+                    UID: payload.uid,
+                    name: payload.displayName,
+                    email: payload.email,
+                }
+            }
+            // try{
+            //     console.log("try",this.userInfo)
+            //     this.$store.dispatch('signupDjangoUser',this.userInfo)
+            // }
+            // catch(error){
+            //     console.log('error',error.message)
+            // }
+        },
+        setIpData(state, payload){
+            state.userInfo['ip_data'] = [{
+                city: payload.city,
+                ip: payload.ip,
+                loc: payload.loc,
+                org: payload.org,
+                postal: payload.postal,
+                region: payload.region,
+                timezone: payload.timezone,
+                country: payload.country
+            }]
+            console.log('setIpdata',state.userInfo)
+        }
     },
     actions:{
         async signupDjangoUser( {state, commit},payload ){
@@ -282,12 +328,14 @@ export default {
                 state.userInfo = ''
             }
             catch(e){
+                state.thirdPartyError = e;
                 state.userInfo = payload
                 let logger = {
                     message: "in store/signup.getDjangoUser. couldn't signup django user",
                     name: window.location.pathname,
                     actualError: e
                 }
+                console.log('error',e)
                 commit('setLogger',logger)
                 commit("checkDjangoError", e.message)
             }
@@ -452,6 +500,32 @@ export default {
                 router.push({ name: 'NotFound404' })
             }
         },
+        async googleLogin(context){
+            const provider = new GoogleAuthProvider();
+            const auth = getAuth();
+            signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                context.commit('setUser',result.user)
+                context.commit('emailVerifiedHandler',result.emailVerified)
+                context.commit('setTirdPartyLoginData',result.user)
+                context.dispatch('getIpData')
+                console.log('googlrUser',user)
+                router.push({ name: 'Home' })
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+            });
+        },
         async sendEmailVerify(context){
             context.state.actionCodeSettings['url'] = context.state.accountURL
             console.log('sendEmail',context.state.user,context.state.actionCodeSettings)
@@ -539,14 +613,27 @@ export default {
                 }
             }
         },
-        
+        getOrSignupDjangoUserForThirdParty(context){
+            context.dispatch('signupDjangoUser',context.state.userInfo)
+            console.log('GG',context.state.thirdPartyError)
+            if(context.state.thirdPartyError=='user_exist'){
+                context.dispatch('getDjangoUser',context.state.userInfo)
+            }
+        },
+        async getIpData({state, commit, getters}){
+            await axios
+            .get("https://ipinfo.io/json?token=32e16159d962c5")
+            .then(response => {
+                commit('setIpData',response.data)
+                
+            }) 
+        },
     }
-
 }
 const unsub = onAuthStateChanged(auth,(user) =>{
     store.commit('setAuthIsReady',true)
     store.commit('setUser',user)
-    console.log('unsub')
+    console.log('unsub',user)
     if(user){
         store.dispatch('getDjangoUser')
         store.commit('emailVerifiedHandler',user.emailVerified)

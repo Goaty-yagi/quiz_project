@@ -7,42 +7,45 @@
             />
         </div>
         <div :class="{'slide-in':slideIn,'slide-out':slideOut}" id="slide">
-        <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
-            <div class="field">
-                <div class="input-box" ref='formName'>
-                    <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
-                </div>       
-            </div>
-            <div class="field">
-                <div class="input-box" ref='formMail'>
-                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
-                </div>         
-            </div>
-            <div class="field">
-                <div class="input-box">
-                    <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
-                </div>         
-            </div>
-            <!-- <div class="field">
-                <div class="input-box">
-                    <i class="fas fa-globe" id='in-font'>
-                        <select class="select-box" id='Country' v-model='country' >
-                        <option hidden>Country-Name</option>
-                        <option>unko</option>
-                        </select>
-                    </i>
-                </div>         
-            </div> -->
-            <div v-if='mailError||nameError||mailInUseError' class='error-form'>
-                <i class="fas fa-exclamation-triangle"></i>
-                <div v-if='mailError'>{{ mailError}}</div>
-                <div v-if='nameError'>{{ nameError }}</div>
-                <div v-if='mailInUseError'>{{ mailInUseError }}</div>
-            </div>
-            <div>
-                <button class='fbottun'  ref='bform' id=''>次へ</button>
-            </div>
-        </form>
+            <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
+                <div class="field">
+                    <div class="input-box" ref='formName'>
+                        <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
+                    </div>       
+                </div>
+                <div class="field">
+                    <div class="input-box" ref='formMail'>
+                        <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
+                    </div>         
+                </div>
+                <div class="field">
+                    <div class="input-box">
+                        <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
+                    </div>         
+                </div>
+                <!-- <div class="field">
+                    <div class="input-box">
+                        <i class="fas fa-globe" id='in-font'>
+                            <select class="select-box" id='Country' v-model='country' >
+                            <option hidden>Country-Name</option>
+                            <option>unko</option>
+                            </select>
+                        </i>
+                    </div>         
+                </div> -->
+                <div v-if='mailError||nameError||mailInUseError' class='error-form'>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div v-if='mailError'>{{ mailError}}</div>
+                    <div v-if='nameError'>{{ nameError }}</div>
+                    <div v-if='mailInUseError'>{{ mailInUseError }}</div>
+                </div>
+                <div>
+                    <button class='fbottun'  ref='bform' id=''>次へ</button>
+                </div>
+                <div class="logo-container">
+                    <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                </div>
+            </form>
         </div>
         <transition name="slide-in">
             <Password
@@ -236,6 +239,9 @@ export default {
             // slide.setAttribute('style','display:none')
             // console.log('slide',slide)
         },
+        googleLogin(){
+            this.$store.dispatch('googleLogin')
+        }
     }
 }
 </script>
@@ -261,14 +267,14 @@ export default {
        
     }
     .field-wrapper{
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: center;
         margin-top:3rem;
-    }
-    .field-wrapper{
-
     }
     .field{
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
     }
     .label{
@@ -346,6 +352,11 @@ export default {
     text-align: center;
 	opacity: 1;
 	animation: slide-out-anim 1.5s ease-out forwards;
+}
+.logo-container{
+    .google{
+        width: 70%;
+    }
 }
 
 // @keyframes slide-in-anim {
