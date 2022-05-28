@@ -1,13 +1,13 @@
 <template>
     <section class='home-section'>
-        <ConfettiExplosion 
+        <!-- <ConfettiExplosion 
         :particleCount="150"
         :particleSize="12"
         :duration="3500"
         :force="0.5"
         :stageHeight="800"
         :stageWidth="1600"
-        :shouldDestroyAfterDone="true"/>
+        :shouldDestroyAfterDone="true"/> -->
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->

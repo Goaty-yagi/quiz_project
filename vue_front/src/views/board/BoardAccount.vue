@@ -29,6 +29,9 @@
                 <div class="tag-container">
                     <div class="tag-text">関連するタグ</div>
                     <div class="tag-wrapper">
+                        <div v-if="!getThreeUsertag">
+                            <p>現在表示できるタグはありません。</p>
+                        </div>
                         <div 
                             @click="handleTag(questionindex,tag.tag.id,'tag')"
                             class="tag"
@@ -60,10 +63,25 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
+            <div class="no-question" v-if="!handleQuestion[0]">
+                <div v-if="showQuestion.questionType.question">
+                    <p>表示できる質問はありません。</p>
+                    <p>質問をするとここに表示されます。</p>
+                </div>
+                <div v-if="showQuestion.questionType.answered">
+                    <p>表示できる質問はありません。</p>
+                    <p>質問に回答するとここに表示されます。</p>
+                </div>
+                <div v-if="showQuestion.questionType.favorite">
+                    <p>表示できる質問はありません。</p>
+                    <p>お気に入りに登録するとここに表示されます。</p>
+                </div>
+            </div>
                 <div
                     class='question-container'
                     v-for="(question,questionindex) in handleQuestion"
                     v-bind:key="questionindex">
+                    
                     <div class='question-list' v-if="spinner==false" @click="getDetail(question.slug)">
                         <div class="tag-wrapper">
                             <div 
@@ -881,6 +899,13 @@ export default {
             margin-bottom: 1rem;
         }
     }
+}
+.no-question{
+    border: solid $dull-red;
+    background: $back-gra-white;
+    width: 80%;
+    padding: 1rem 0;
+    font-weight: bold;
 }
 
 </style>
