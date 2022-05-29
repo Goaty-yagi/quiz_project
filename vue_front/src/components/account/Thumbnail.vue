@@ -129,13 +129,13 @@ export default {
             await canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('thumbnail',blob, `${this.image}.png`),
-            console.log('getthumb',formData.get('thumbnail')),
+            console.log('getthumb',formData.get('thumbnail'),this.image),
             axios.patch(`/api/user/${this.getDjangouser.UID}`,
                 formData
             )
             }, 'image/png')
             this.showThumbnailFalse()
-            location.reload()
+            // location.reload()
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
         },
         showThumbnailFalse(){

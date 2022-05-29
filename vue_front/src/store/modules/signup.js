@@ -81,6 +81,7 @@ export default {
         },
         thirdPartyLogindata:'',
         thirdPartyError:'',
+        photoURL:'',
     },
     getters:{
         getUID(state){
@@ -118,6 +119,9 @@ export default {
         },
         getThirdPartyError(state){
             return state.thirdPartyError
+        },
+        getPhotoURL(state){
+            return state.photoURL
         }
     },
     mutations:{
@@ -313,7 +317,10 @@ export default {
                 country: payload.country
             }]
             console.log('setIpdata',state.userInfo)
-        }
+        },
+        setPhotoURL(state,payload){
+            state.photoURL = payload
+        },
     },
     actions:{
         async signupDjangoUser( {state, commit},payload ){
@@ -436,7 +443,7 @@ export default {
                 }   
             }
         },
-        async signupDjangoUserForThirdParty( {state, commit},payload ){
+        async signupDjangoUserForThirdParty( {state, commit, dispatch},payload ){
             console.log("INSDUTH",payload)
             try{
                 await axios({
@@ -450,10 +457,12 @@ export default {
                 // state.beingException = false
                 commit("resetDjangoError")
                 commit("setTempUserReset")
+                // await dispatch("patchImage")
                 state.userInfo = ''
             }
             catch(e){
-                if(e.response.data = 'user-exists'){
+                console.log('e',e,e.response.data)
+                if(e.response.data = 'user-exists-django'){
                     state.thirdPartyError = e.response.data;
                     state.userInfo = payload
                 }
@@ -547,6 +556,7 @@ export default {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 // The signed-in user info.
+                context.commit('setPhotoURL',result.user.photoURL)
                 context.commit('setUser',result.user)
                 context.commit('emailVerifiedHandler',result.user.emailVerified)
                 context.commit('setTirdPartyLoginData',result.user)
@@ -654,7 +664,7 @@ export default {
             console.log('gonna signup',context.getters.getUserInfo)
             await context.dispatch('signupDjangoUserForThirdParty',context.getters.getUserInfo)
             console.log('GG',typeof(context.getters.getThirdPartyError),context.getters.getThirdPartyError=='user-exists')
-            if(context.getters.getThirdPartyError=='user-exists'){
+            if(context.getters.getThirdPartyError=='user-exists-django'){
                 await context.dispatch('getDjangoUser',context.state.userInfo)
             }
             router.push({ name: 'Account' })
@@ -668,6 +678,22 @@ export default {
                 
             }) 
         },
+        // async patchImage(context){
+        //     var list = context.getters.getDjangouser.thumbnail.split('/')
+        //     console.log('list',list)
+        //     if(list.includes('default.png')&&context.getters.getPhotoURL){
+        //         console.log('png');
+        //         const blob = await fetch(this.getPhotoURL).then(r => r.blob());
+        //         const headers = { "content-type": "multipart/form-data" };
+        //         const formData = new FormData();
+        //         formData.append('thumbnail',blob,`${blob}.png`)
+        //         console.log('getthumb',formData.get('thumbnail'),formData),
+        //         axios.patch(`/api/user/${context.getters.getDjangouser.UID}`,
+        //             formData,
+        //             {headers}
+        //         )
+        //     }
+        // },
     }
 }
 const unsub = onAuthStateChanged(auth,(user) =>{

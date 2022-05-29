@@ -25,8 +25,10 @@ from quiz.serializers import UserStatusSerializer,QuizTakerSerializer
 class UserList(APIView):
 
     def post(self, request, format=None):
+            print('API',request,request.data)
             if User.objects.filter(UID=request.data['UID']).exists():
-                return HttpResponse(status=404,content='user-exists')
+                print('exists',User.objects.filter(UID=request.data['UID']).exists())
+                return HttpResponse(status=404,content='user-exists-django')
             else:
                 try:
                     user_status = copy.deepcopy(request.data["quiz_taker"][2])

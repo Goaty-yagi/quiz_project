@@ -206,7 +206,7 @@ export default{
         console.log('hi',v)
         },
     },
-    computed: mapGetters(['quizNameId','getDjangouser']),
+    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL']),
         
     mounted(){
         console.log('account mounted',this.getDjangouser)
@@ -228,11 +228,28 @@ export default{
                     this.handleStatusParameter(this.quizTaker.grade)
                     // this.setInitUserStatus()
                     this.gotInfo = true
+                    this.patchImage()
                 })
                 .catch(error => {
-                    console.log(error)
+                    console.log('e',error)
                 })
                 this.$store.commit('setIsLoading', false)
+        },
+        async patchImage(){
+            var list = this.getDjangouser.thumbnail.split('/')
+            console.log('list',list)
+            if(list.includes('default.png')&&this.getPhotoURL){
+                console.log('png');
+                const blob = await fetch(this.getPhotoURL).then(r => r.blob());
+                const headers = { "content-type": "multipart/form-data" };
+                const formData = new FormData();
+                formData.append('thumbnail',blob,`${blob}.png`)
+                console.log('getthumb',formData.get('thumbnail'),formData),
+                axios.patch(`/api/user/${this.getDjangouser.UID}`,
+                    formData,
+                    {headers}
+                )
+            }
         },
         async resent(){
             try{
