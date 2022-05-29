@@ -112,6 +112,12 @@ export default {
         },
         quizNameIdInSignup(state, getters, rootState){
             return rootState.quiz.quizNameId
+        },
+        getUserInfo(state){
+            return state.userInfo
+        },
+        getThirdPartyError(state){
+            return state.thirdPartyError
         }
     },
     mutations:{
@@ -328,7 +334,6 @@ export default {
                 state.userInfo = ''
             }
             catch(e){
-                state.thirdPartyError = e;
                 state.userInfo = payload
                 let logger = {
                     message: "in store/signup.getDjangoUser. couldn't signup django user",
@@ -431,6 +436,39 @@ export default {
                 }   
             }
         },
+        async signupDjangoUserForThirdParty( {state, commit},payload ){
+            console.log("INSDUTH",payload)
+            try{
+                await axios({
+                    method: 'post',
+                    url: '/api/user/',
+                    data: payload,
+                })
+                .then(response => {
+                    commit('setDjangoUser',response.data)
+                })
+                // state.beingException = false
+                commit("resetDjangoError")
+                commit("setTempUserReset")
+                state.userInfo = ''
+            }
+            catch(e){
+                if(e.response.data = 'user-exists'){
+                    state.thirdPartyError = e.response.data;
+                    state.userInfo = payload
+                }
+                else{
+                    let logger = {
+                        message: "in store/signup.getDjangoUser. couldn't signup django user",
+                        name: window.location.pathname,
+                        actualError: e
+                    }
+                    console.log('error',e)
+                    commit('setLogger',logger)
+                    commit("checkDjangoError", e.message)
+                }
+            }
+        },
         async getDjangoUser({ state, commit,dispatch }){
             if(state.user&&!state.beingException){
                 console.log('GDU_pass',state.beingException)
@@ -510,12 +548,11 @@ export default {
                 const token = credential.accessToken;
                 // The signed-in user info.
                 context.commit('setUser',result.user)
-                context.commit('emailVerifiedHandler',result.emailVerified)
+                context.commit('emailVerifiedHandler',result.user.emailVerified)
                 context.commit('setTirdPartyLoginData',result.user)
                 context.dispatch('getIpData')
-                console.log('googlrUser',user)
-                router.push({ name: 'Home' })
             }).catch((error) => {
+                console.log('error',error)
                 // Handle Errors here.
                 const errorCode = error.code;
                 const errorMessage = error.message;
@@ -613,18 +650,21 @@ export default {
                 }
             }
         },
-        getOrSignupDjangoUserForThirdParty(context){
-            context.dispatch('signupDjangoUser',context.state.userInfo)
-            console.log('GG',context.state.thirdPartyError)
-            if(context.state.thirdPartyError=='user_exist'){
-                context.dispatch('getDjangoUser',context.state.userInfo)
+        async getOrSignupDjangoUserForThirdParty(context){
+            console.log('gonna signup',context.getters.getUserInfo)
+            await context.dispatch('signupDjangoUserForThirdParty',context.getters.getUserInfo)
+            console.log('GG',typeof(context.getters.getThirdPartyError),context.getters.getThirdPartyError=='user-exists')
+            if(context.getters.getThirdPartyError=='user-exists'){
+                await context.dispatch('getDjangoUser',context.state.userInfo)
             }
+            router.push({ name: 'Account' })
         },
-        async getIpData({state, commit, getters}){
+        async getIpData(context){
             await axios
             .get("https://ipinfo.io/json?token=32e16159d962c5")
             .then(response => {
-                commit('setIpData',response.data)
+                context.commit('setIpData',response.data)
+                context.dispatch('getOrSignupDjangoUserForThirdParty')
                 
             }) 
         },
