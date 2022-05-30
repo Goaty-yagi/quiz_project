@@ -49,15 +49,22 @@ export default {
                 // let checkedDict = {}
                 let checkedList = []
                 let checkedlist2 = []
+                console.log('GUT',getters.user.user_tag)
                 for(let i of getters.user.user_tag){
                     checkDict[i.tag.id] = i.total_num
                     checkedList.push(i.tag)
-                    // console.log('loop',Object.keys(checkDict).length,checkDict)
+                    console.log('loop',Object.keys(checkDict).length,checkDict)
                 }
                 if(Object.keys(checkDict).length <= 3){
-                    return checkedList
+                    console.log('list',checkedList)
+                    let checkedIdList = []
+                    for (let i of checkedList){
+                        checkedIdList.push(i.id)
+                    }
+                    return checkedIdList
                 }
                 if(Object.keys(checkDict).length > 3){
+                    console.log('333')
                     for(let m=0; m < 3; m++){
                         const aryMax = function (a, b) {return Math.max(a, b);}
                         let max = Object.values(checkDict).reduce(aryMax);
@@ -208,7 +215,7 @@ export default {
         async getRelatedQuestion({ state , getters, commit }, payload) {
             // for reccomended-question, if user and user.user_tag exist, get reccomended-question.
             // else, get question-viewed-order.
-            
+            console.log('GRQ',getters.getUserTags)
             if(getters.user){
                 try{
                     if(getters.getUserTags.length == 1){

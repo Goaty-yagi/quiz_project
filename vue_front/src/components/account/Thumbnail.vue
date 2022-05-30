@@ -135,7 +135,7 @@ export default {
             )
             }, 'image/png')
             this.showThumbnailFalse()
-            // location.reload()
+            location.reload()
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
         },
         showThumbnailFalse(){

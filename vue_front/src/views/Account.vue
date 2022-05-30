@@ -6,10 +6,10 @@
                 <div class="lds-dual-ring"></div>
             </div>
             
-            <div v-if='$store.state.isLoading==false' class="content-wrapper">
+            <div v-if='$store.state.isLoading==false&&userData' class="content-wrapper">
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
-                    <img v-bind:src="userData.thumbnail"/>
+                    <img v-bind:src="getImageURL(userData.thumbnail)"/>
                     <p class="change-img" @click='handleShowThumbnail'>画像を<br>変更する</p>
                 </div>
                 <div class="my-quiz-wrapper">
@@ -211,14 +211,14 @@ export default{
     mounted(){
         console.log('account mounted',this.getDjangouser)
         this.currentPageName = ''
-        this.getUserData()
+        this.patchImage()
         this.getCurrentPageName()
         // this.handleShowEmailVerified()
     },
     methods:{
         ...mapActions(['getQuizNameId']),
         async getUserData(){
-            this.$store.commit('setIsLoading', true)
+            // this.$store.commit('setIsLoading', true)
             await axios
                 .get(`/api/user/${this.getDjangouser.UID}`)
                 .then(response => {
@@ -228,7 +228,6 @@ export default{
                     this.handleStatusParameter(this.quizTaker.grade)
                     // this.setInitUserStatus()
                     this.gotInfo = true
-                    this.patchImage()
                 })
                 .catch(error => {
                     console.log('e',error)
@@ -236,6 +235,7 @@ export default{
                 this.$store.commit('setIsLoading', false)
         },
         async patchImage(){
+            this.$store.commit('setIsLoading', true)
             var list = this.getDjangouser.thumbnail.split('/')
             console.log('list',list)
             if(list.includes('default.png')&&this.getPhotoURL){
@@ -249,6 +249,16 @@ export default{
                     formData,
                     {headers}
                 )
+            }
+            
+            this.getUserData()
+        },
+        getImageURL(url){
+            if(this.getPhotoURL){
+                return this.getPhotoURL
+            }
+            else{
+                return url
             }
         },
         async resent(){

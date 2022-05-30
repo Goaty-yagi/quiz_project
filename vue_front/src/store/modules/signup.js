@@ -321,6 +321,9 @@ export default {
         setPhotoURL(state,payload){
             state.photoURL = payload
         },
+        resetPhotoURL(state,payload){
+            state.photoURL = ''
+        },
     },
     actions:{
         async signupDjangoUser( {state, commit},payload ){
@@ -452,7 +455,13 @@ export default {
                     data: payload,
                 })
                 .then(response => {
-                    commit('setDjangoUser',response.data)
+                    if(response.status==222){
+                        console.log('response222')
+                        commit('resetPhotoURL')
+                        commit('setDjangoUser',response.data)
+                    }else{
+                        commit('setDjangoUser',response.data)
+                    }
                 })
                 // state.beingException = false
                 commit("resetDjangoError")
@@ -461,21 +470,21 @@ export default {
                 state.userInfo = ''
             }
             catch(e){
-                console.log('e',e,e.response.data)
-                if(e.response.data = 'user-exists-django'){
-                    state.thirdPartyError = e.response.data;
-                    state.userInfo = payload
+                // console.log('e',e,e.response.data)
+                // if(e.response.data = 'user-exists-django'){
+                //     state.thirdPartyError = e.response.data;
+                //     state.userInfo = payload
+                // }
+                // else{
+                let logger = {
+                    message: "in store/signup.getDjangoUser. couldn't signup django user",
+                    name: window.location.pathname,
+                    actualError: e
                 }
-                else{
-                    let logger = {
-                        message: "in store/signup.getDjangoUser. couldn't signup django user",
-                        name: window.location.pathname,
-                        actualError: e
-                    }
-                    console.log('error',e)
-                    commit('setLogger',logger)
-                    commit("checkDjangoError", e.message)
-                }
+                console.log('error',e)
+                commit('setLogger',logger)
+                commit("checkDjangoError", e.message)
+                // }
             }
         },
         async getDjangoUser({ state, commit,dispatch }){
@@ -661,12 +670,7 @@ export default {
             }
         },
         async getOrSignupDjangoUserForThirdParty(context){
-            console.log('gonna signup',context.getters.getUserInfo)
             await context.dispatch('signupDjangoUserForThirdParty',context.getters.getUserInfo)
-            console.log('GG',typeof(context.getters.getThirdPartyError),context.getters.getThirdPartyError=='user-exists')
-            if(context.getters.getThirdPartyError=='user-exists-django'){
-                await context.dispatch('getDjangoUser',context.state.userInfo)
-            }
             router.push({ name: 'Account' })
         },
         async getIpData(context){

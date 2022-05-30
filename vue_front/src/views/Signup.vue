@@ -42,8 +42,13 @@
                 <div>
                     <button class='fbottun'  ref='bform' id=''>次へ</button>
                 </div>
-                <div class="logo-container">
-                    <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                <div class="signup-footer">
+                    <p>アカウントをお持ちですか</p>
+                    <router-link :to="{ name: 'Login'}" class="to-login">ログイン画面へ移動=></router-link>
+                    <p>Googleアカウントでログイン</p>
+                    <a class="logo-container">
+                        <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                    </a>
                 </div>
             </form>
         </div>
@@ -353,9 +358,28 @@ export default {
 	opacity: 1;
 	animation: slide-out-anim 1.5s ease-out forwards;
 }
-.logo-container{
-    .google{
-        width: 70%;
+.signup-footer{
+    p{
+        color: white;
+        margin-top: 0.5rem;
+        font-weight: bold;
+    }
+    .to-login:hover{
+        background: rgba(252, 252, 252, 0.3);
+        font-weight: bold;
+    }
+    .to-login{
+        display: inline-block;
+        color: $lite-gray;
+        padding: 0.2rem 0.5rem;
+        margin: 0.4rem;
+        border: solid $base-color;
+        transition: .5s;
+    }
+    .logo-container{
+        .google{
+            width: 70%;        
+        }
     }
 }
 

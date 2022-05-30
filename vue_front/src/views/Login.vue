@@ -32,6 +32,10 @@
                         <div>
                             <button :disable='!userError||!passError||!manyError' class='fbottun' ref='bform'>ログイン</button>
                         </div>
+                        <p>Googleアカウントでログイン</p>
+                        <a class="logo-container">
+                            <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                        </a>
                 </form>
             </div>
         </div>
@@ -137,6 +141,9 @@ export default {
                 '短時間にリクエストを複数受けたため一時的にリクエストを停止します。暫く経ってもう一度お試しください。' :''               
             }
         },
+        googleLogin(){
+            this.$store.dispatch('googleLogin')
+        },
         scrollTop(){
             window.scrollTo({
                 top: 0,
@@ -172,7 +179,7 @@ export default {
     }
     .field{
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         align-self: center;
     }
@@ -280,4 +287,15 @@ export default {
         color:white;
         margin-top:1rem;
     }
+    .logo-container{
+        .google{
+            width: 70%;
+        }
+    }
+// .flex-wrapper{
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
+// }
 </style>

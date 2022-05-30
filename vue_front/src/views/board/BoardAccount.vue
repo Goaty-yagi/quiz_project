@@ -63,18 +63,18 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <div class="no-question" v-if="!handleQuestion[0]">
+            <div class="no-question" v-if="!handleQuestion[0]&&tag==false">
                 <div v-if="showQuestion.questionType.question">
                     <p>表示できる質問はありません。</p>
-                    <p>質問をするとここに表示されます。</p>
+                    <p v-if="showQuestion.questionStatus.all">質問をするとここに表示されます。</p>
                 </div>
                 <div v-if="showQuestion.questionType.answered">
                     <p>表示できる質問はありません。</p>
-                    <p>質問に回答するとここに表示されます。</p>
+                    <p v-if="showQuestion.questionStatus.all">質問に回答するとここに表示されます。</p>
                 </div>
                 <div v-if="showQuestion.questionType.favorite">
                     <p>表示できる質問はありません。</p>
-                    <p>お気に入りに登録するとここに表示されます。</p>
+                    <p v-if="showQuestion.questionStatus.all">お気に入りに登録するとここに表示されます。</p>
                 </div>
             </div>
                 <div
@@ -181,14 +181,21 @@ export default {
             const _ = require('lodash');
             let used_num_list = []
             let userTag = _.cloneDeep(this.user.user_tag)
+            console.log('UT',userTag)
             if(userTag){
                 if(userTag.length == 1){
                     return userTag
                 }
                 else if(userTag.length == 2){
+                    
                     used_num_list.push(userTag.reduce((a,b)=>a.used_num>b.used_num?a:b))
                     used_num_list.push(userTag.reduce((a,b)=>a.used_num<b.used_num?a:b))
-                    return used_num_list
+                    if(used_num_list[0].id == used_num_list[1].id){
+                        return userTag
+                    }
+                    else{
+                        return used_num_list
+                    }
                 }
                 else if(userTag.length >= 3){
                     while (used_num_list.length < 3){
