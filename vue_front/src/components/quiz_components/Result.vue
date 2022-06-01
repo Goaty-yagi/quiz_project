@@ -141,6 +141,8 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
+    height: auto;
+    overflow: scroll;
     // min-height:90vh;
     .result-title{
         .result{
@@ -161,6 +163,8 @@ export default {
         border: solid $base-color;
         border-radius: 0.5rem;
         width: 90%;
+        height: 350px;
+        overflow: scroll;
         .result-scroll-header{
             margin-top: 0.5rem;
             .question-length{

@@ -39,6 +39,9 @@ export default {
         return{
         }
     },
+    mounted(){
+        this.scrollTop()
+    },
     methods: {
         getDetail(slug){
             console.log('slugdayo',slug)
@@ -61,6 +64,12 @@ export default {
             dt = new Date(newDate)
             var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
             return stringDT.replace(/\//g,'-')
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         },      
     }
 

@@ -235,11 +235,13 @@ export default {
         .my-quiz-container{
             width: 95%;
             min-height: 300px;
+            max-height: 350px;
             border: solid $base-color;
             border-radius: 5px;
             background: $back-white;
             padding-top: 1rem;
             padding-bottom: 1rem;
+            overflow: scroll;
             .no-my-quiz{
                 margin:2rem;
                 .no-quiz{

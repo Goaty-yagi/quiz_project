@@ -190,7 +190,7 @@ export default {
             },
             quizNum:{
                 general: 3,
-                all: 5,
+                all: 20,
             },
             showEachGrade: false,
             // showEachOptions: false,
