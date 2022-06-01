@@ -144,6 +144,7 @@ export default {
             tag:false,
             active: null,
             spinner:false,
+            showOnes:false,
             onNotification:{
                 onReply:false,
                 onAnswer:false,
@@ -169,6 +170,12 @@ export default {
                 }
             }
         }
+    },
+    watch:{
+        showOnes:function(v) {if (v == true){
+            console.log('go set',this.showOnes)
+            this.setTime()
+        }}
     },
     computed:{
         user(){
@@ -312,7 +319,7 @@ export default {
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
-        this.setTime()
+        // this.setTime()
     },
     beforeUnmount(){
         window.removeEventListener('scroll', this.handleScroll)
@@ -486,6 +493,7 @@ export default {
             console.log('reset is done',this.onNotification.showReplyNotify)
         },
         setTime(){
+            console.log('insettime')
             if(this.onNotification.onReply||this.onNotification.onAnswer){
                 this.onNotification.show = true
                 setTimeout(this.resetNotifications, 4500) 
@@ -500,6 +508,7 @@ export default {
                         console.log("second loop",answer)
                         if(answer.on_reply==true&&answer.user.UID==this.user.UID){
                             this.onNotification.onReply = true
+                            this.showOnes = true
                         }
                     }
                 }
@@ -512,6 +521,7 @@ export default {
         handleOnAnswer(question){
             if(question.on_answer&&question.user.UID==this.user.UID){
                 this.onNotification.onAnswer = true
+                this.showOnes = true
                 return true      
             }else{
                 return false
@@ -520,18 +530,17 @@ export default {
         handleOnReply2(question){
             if(question.on_reply&&question.user.UID==this.user.UID){
                 this.onNotification.onReply = true
+                this.showOnes = true
                 return true      
             }else{
                 return false
             }
         },
         onReplayCheck(questionAnswer){
-            console.log('in ORC',questionAnswer)
             for(let answer of questionAnswer){
-                console.log('loop',answer)
                 if(answer.on_reply==true){
-                    console.log("check on_reply",answer.on_reply)
                     if(answer.user.UID==this.user.UID){
+                        this.showOnes = true
                     return true
                     }
                 }

@@ -229,13 +229,21 @@ export default{
                     this.userData = response.data
                     this.quizTaker = response.data.quiz_taker[0]
                     console.log('inGet', this.userData,this.userStatus)
-                    this.handleStatusParameter(this.quizTaker.grade)
                     // this.setInitUserStatus()
                     this.gotInfo = true
                 })
-                .catch(error => {
-                    console.log('e',error)
+                .catch(e => {
+                    console.log('e',e)
+                    let logger = {
+                        message: "in Account/signup.getUserData. couldn't get django user",
+                        name: window.location.pathname,
+                        actualError: e
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit("checkDjangoError",e.message)
+                    this.$store.commit('setIsLoading', false)
                 })
+                this.handleStatusParameter(this.quizTaker.grade)
                 this.$store.commit('setIsLoading', false)
         },
         async patchImage(){

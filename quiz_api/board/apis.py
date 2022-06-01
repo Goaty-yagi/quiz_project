@@ -319,6 +319,7 @@ class FavoriteQuestionUpdate(generics.RetrieveUpdateDestroyAPIView):
 class FavoriteQuestionCreate(generics.CreateAPIView):
     queryset = UserFavoriteQuestion.objects.select_related('user').prefetch_related('question')
     serializer_class = FavoriteQuestionSerializer
+
     
 
 # class AnsweredQuestionList(generics.ListAPIView):

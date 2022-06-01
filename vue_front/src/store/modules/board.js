@@ -191,15 +191,15 @@ export default {
         handleNotifications(context, payload){
             if(payload == "reply"){
                 context.state.notifications.reply = true
-                setTimeout(context.commit, 3000,"resetNotifications")      
+                setTimeout(context.commit, 4500,"resetNotifications")      
             }
             if(payload == "answer"){
                 context.state.notifications.answer = true
-                setTimeout(context.commit, 3000,"resetNotifications")
+                setTimeout(context.commit, 4500,"resetNotifications")
             }
             if(payload == "post"){
                 context.state.notifications.post = true
-                setTimeout(context.commit, 4000,"resetNotifications")
+                setTimeout(context.commit, 4500,"resetNotifications")
             }
         },
         async getSearchQuestion(state,payload){            
@@ -274,7 +274,7 @@ export default {
                 await axios.get(url)
                     .then(response => {
                     state.notificationApi = response.data
-                    console.log('gotAPI',state.answeredQuestion)
+                    console.log('gotAPI',state.answeredQuestion,state.notificationApi)
                     })                    
                 }
             catch{(error => {

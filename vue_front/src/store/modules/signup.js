@@ -52,7 +52,8 @@ export default {
         },
         favoriteQuestion:'',
         logger:{
-            actualError:'',
+            actualErrorName:'',
+            actualErrorMessage:'',
             message:'',
             name:''
         },
@@ -199,7 +200,8 @@ export default {
             console.log('all-Reset')
         },
         setLogger(state,payload){
-            state.logger.actualError = payload.actualError
+            state.logger.actualErrorName = payload.actualErrorName
+            state.logger.actualErrorMessage = payload.actualErrorMessage
             state.logger.name = payload.name
             state.logger.message = payload.message
         },
@@ -211,6 +213,10 @@ export default {
                 state.beingException = true
                 console.log('set-being-exception',state.beingException)
             }
+        },
+        reloadForExceptionTrueForGeneralApiError(state){
+            state.reloadForException = true
+            console.log('setRUFEtrue')
         },
         reloadForExceptionTrue(state){
             if(state.user&&!state.djangoUser){
@@ -346,9 +352,11 @@ export default {
             catch(e){
                 state.userInfo = payload
                 let logger = {
-                    message: "in store/signup.getDjangoUser. couldn't signup django user",
+                    message: "in store/signup.SignupDjangoUser. couldn't signup django user",
                     name: window.location.pathname,
-                    actualError: e
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+
                 }
                 console.log('error',e)
                 commit('setLogger',logger)
@@ -379,9 +387,10 @@ export default {
                         console.log('catchdayo',e.message)
                         commit("checkDjangoError", e.message)
                         let logger = {
-                            message: "in store/signup.getDjangoUserForException. couldn't signup django user",
+                            message: "in store/signup.SignupDjangoUserException1. couldn't signup django user",
                             name: window.location.pathname,
-                            actualError: e
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
                         }
                         commit('setLogger',logger)
                         commit("checkDjangoError", e.message)
@@ -414,9 +423,10 @@ export default {
                     catch(e){
                         commit("checkDjangoError", e.message)
                         let logger = {
-                            message: "in store/signup.signup.DjangoUserForException. ipinfo error",
+                            message: "in store/signup.SignupDjangoUserException2. couldn't signup django user",
                             name: window.location.pathname,
-                            actualError: e
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
                         }
                         commit('setLogger',logger)
                         router.push({ name: 'NotFound404' })
@@ -436,9 +446,10 @@ export default {
                     catch(e){
                         commit("checkDjangoError", e.message)
                         let logger = {
-                            message: "in store/signup.getDjangoUserForException. couldn't signup django user",
+                            message: "in store/signup.SignupDjangoUserException3. couldn't signup django user",
                             name: window.location.pathname,
-                            actualError: e
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
                         }
                         commit('setLogger',logger)
                         router.push({ name: 'NotFound404' })
@@ -477,9 +488,10 @@ export default {
                 // }
                 // else{
                 let logger = {
-                    message: "in store/signup.getDjangoUser. couldn't signup django user",
+                    message: "in store/signup.SignupDjangoUserFoeThirdParty. couldn't signup django user",
                     name: window.location.pathname,
-                    actualError: e
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
                 }
                 console.log('error',e)
                 commit('setLogger',logger)
@@ -506,9 +518,10 @@ export default {
                 catch(e){
                     console.log('catch')
                     let logger = {
-                        message: "in store/signup.getDjangoUser. couldn't get django user",
+                        message: "in store/signup.getDjangoUser. couldn't signup django user",
                         name: window.location.pathname,
-                        actualError: e
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
                     }
                     commit('setLogger',logger)
                     commit("checkDjangoError", e.message)
@@ -530,8 +543,16 @@ export default {
                         .then(response => {
                             state.favoriteQuestion = response.data
                             })
-                        .catch(error => {
-                            console.log(error)
+                        .catch(e => {
+                            let logger = {
+                                message: "in store/signup.getFavoriteQuestion. couldn't get favoriteQuestion ",
+                                name: window.location.pathname,
+                                actualErrorName: e.name,
+                                actualErrorMessage: e.message,
+                            }
+                            commit('setLogger',logger)
+                            commit("checkDjangoError", e.message)
+                        
                         })
                     }
                 }catch{
@@ -552,7 +573,8 @@ export default {
                 let logger = {
                     message: "in store/signup.signup. couldn't signup firebase user",
                     name: window.location.pathname,
-                    actualError: e
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
                 }
                 context.commit('setLogger',logger)
                 router.push({ name: 'NotFound404' })
@@ -572,15 +594,22 @@ export default {
                 context.commit('emailVerifiedHandler',result.user.emailVerified)
                 context.commit('setTirdPartyLoginData',result.user)
                 context.dispatch('getIpData')
-            }).catch((error) => {
-                console.log('error',error)
+            }).catch((e) => {
+                let logger = {
+                    message: "in store/signup.googleLogin. couldn't Login firebase user",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
                 // Handle Errors here.
-                const errorCode = error.code;
-                const errorMessage = error.message;
+                const errorCode = e.code;
+                const errorMessage = e.message;
                 // The email of the user's account used.
-                const email = error.email;
+                const email = e.email;
                 // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error);
+                const credential = GoogleAuthProvider.credentialFromError(e);
                 // ...
             });
         },
@@ -593,9 +622,15 @@ export default {
             console.log('insentV')
             try{
                 await context.state.user.sendEmailVerification()
-            }catch{
-                console.log('error in sent')
-                throw new Error('could not sent validation')
+            }catch(e){
+                // let logger = {
+                //     message: "in store/signup.googleLogin. couldn't sentValidation firebase user",
+                //     name: window.location.pathname,
+                //     actualErrorName: e.code,
+                //     actualErrorMessage: e.message,
+                // }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
             }
         },
         async login(context, {email,password}){

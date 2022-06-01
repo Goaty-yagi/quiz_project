@@ -1,6 +1,6 @@
 <template>
 <div class='not-wrapper'>
-  <h1 class='title is-1 mt-4'> サーバーエラー</h1>
+  <h1 class='title is-1 mt-4'> サーバーエラー500</h1>
   <h1 class='subtitle is-3'> サーバーが混み合っています。しばらく経ってからご利用ください。</h1>
   <div>
     <button>エラー報告をする</button>
