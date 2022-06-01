@@ -96,7 +96,9 @@
         <Thumbnail v-if="showThumbnail"
         @showThumbnailFalse="showThumbnailFalse"
         @getUserData="getUserData"
-        :getDjangouser="getDjangouser"/>
+        :getDjangouser="getDjangouser"
+        :minContainerHeight="minContainerHeight"
+        :minContainerWidth="minContainerWidth"/>
     </div>
 </template>
 
@@ -136,6 +138,9 @@ export default{
             stop: false,
             gradeUp: false,
             currentStatusGrade:'',
+            widthForCropper:'',
+            minContainerHeight:'',
+            minContainerWidth:'',
             backgroundColorList:{
                 '超初級':'rgba(255, 153, 51, 0.2)',
                 '初級':'rgba(81, 255, 0, 0.2)',
@@ -199,17 +204,16 @@ export default{
     created(){
         this.getQuizNameId()
     },
-    watch:{
-        userData:function(v) {
-            
-        this.userData = v
-        console.log('hi',v)
-        },
-    },
-    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL']),
+    // watch:{
+    //     widthForCropper:function(v) {
+    //     console.log(this.widthForCropper)
+    //     },
+    // },
+    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL', 'quizTakerObject']),
         
     mounted(){
-        console.log('account mounted',this.getDjangouser)
+        console.log('account mounted',this.quizTakerObject)
+        window.addEventListener('resize', this.getWidth)
         this.currentPageName = ''
         this.patchImage()
         this.getCurrentPageName()
@@ -238,17 +242,22 @@ export default{
             this.$store.commit('setIsLoading', true)
             var list = this.getDjangouser.thumbnail.split('/')
             console.log('list',list)
-            if(list.includes('default.png')&&this.getPhotoURL){
-                console.log('png');
-                const blob = await fetch(this.getPhotoURL).then(r => r.blob());
-                const headers = { "content-type": "multipart/form-data" };
-                const formData = new FormData();
-                formData.append('thumbnail',blob,`${blob}.png`)
-                console.log('getthumb',formData.get('thumbnail'),formData),
-                axios.patch(`/api/user/${this.getDjangouser.UID}`,
-                    formData,
-                    {headers}
-                )
+            try{
+                if(list.includes('default.png')&&this.getPhotoURL){
+                    console.log('png');
+                    const blob = await fetch(this.getPhotoURL).then(r => r.blob());
+                    const headers = { "content-type": "multipart/form-data" };
+                    const formData = new FormData();
+                    formData.append('thumbnail',blob,`${blob}.png`)
+                    console.log('getthumb',formData.get('thumbnail'),formData),
+                    axios.patch(`/api/user/${this.getDjangouser.UID}`,
+                        formData,
+                        {headers}
+                    )
+                }
+            }
+            catch{
+                // doing nothig
             }
             
             this.getUserData()
@@ -393,7 +402,19 @@ export default{
         // },
         goCommunityAccount(){
             router.push("/board/account")
-        },      
+        },
+        // getScrollY(){
+        //     this.widthForCropper = window.innerWidth
+        //     console.log('width',this.widthForCropper)
+        // },
+        getWidth(){
+            this.widthForCropper = window.innerWidth
+            if(this.widthForCropper > 820 < 1200){
+                this.minContainerHeight = 800
+                this.minContainerWidth = 800
+            }
+            console.log('width2',this.widthForCropper)
+        } 
     }
 }
 </script>

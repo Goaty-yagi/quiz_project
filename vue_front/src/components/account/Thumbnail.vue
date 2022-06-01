@@ -26,6 +26,8 @@ import Cropper from 'cropperjs';
 export default {
     props:[
         "getDjangouser",
+        "minContainerWidth",
+        "minContainerHeight"
     ],
     data(){
         return{
@@ -43,11 +45,25 @@ export default {
         console.log('thumb mounted',this.getDjangouser)
         this.autoClick()
     },
-    // computed:{
-    //     user(){
-    //         return this.$store.state.signup.djangoUser
-    //     }
-    // },
+    computed:{
+        user(){
+            return this.$store.state.signup.djangoUser
+        },
+        width(){
+            if(this.minContainerWidth == 800){
+                return 800
+            }else{
+                return 400
+            }
+        },
+        height(){
+            if(this.minContainerHeight == 800){
+                return 800
+            }else{
+                return 400
+            }
+        }
+    },
     methods:{
         async getImage(event){
             console.log('event',event)
@@ -63,7 +79,8 @@ export default {
             zoomOnTouch: true,
             aspectRatio: 1,
             dragMode: 'move',
-            minContainerHeight:400,
+            minContainerHeight:this.height,
+            minContainerWidth:this.width,
             crop(event) {
                     console.log(event.detail.x);
                     console.log(event.detail.y);
@@ -115,7 +132,8 @@ export default {
         //      });
         // },
         async userUpdate(){
-            const canvas = this.cropper.getCroppedCanvas({
+            try{
+                const canvas = this.cropper.getCroppedCanvas({
                 width: 160,
                 height: 90,
                 minCropBoxHeight: 300,
@@ -130,16 +148,26 @@ export default {
             const formData = new FormData();
             formData.append('thumbnail',blob, `${this.image}.png`),
             console.log('getthumb',formData.get('thumbnail'),this.image),
-            axios.patch(`/api/user/${this.getDjangouser.UID}`,
+            this.a = axios.patch(`/api/user/${this.getDjangouser.UID}`,
                 formData
             )
             }, 'image/png')
             this.showThumbnailFalse()
-            location.reload()
+            this.$store.commit('setIsLoading', true)
+            setTimeout(this.reload,1000)
+            }
+            catch(e){
+                this.showThumbnailFalse()
+                console.log('fale',e)
+            }
             // this.$router.go({path: this.$router.currentRoute.path, force: true})
         },
         showThumbnailFalse(){
             this.$emit('showThumbnailFalse')
+        },
+        reload(){
+            // this.$store.commit('setIsLoading', false)
+            location.reload()
         }
     }
 }

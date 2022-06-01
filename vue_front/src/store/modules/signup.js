@@ -488,6 +488,7 @@ export default {
             }
         },
         async getDjangoUser({ state, commit,dispatch }){
+            // commit('setIsLoading', true, {root:true})
             if(state.user&&!state.beingException){
                 console.log('GDU_pass',state.beingException)
                 try{
@@ -513,6 +514,7 @@ export default {
                     commit("checkDjangoError", e.message)
                 }
             }
+            // commit('setIsLoading', false, {root:true})
         },
         async getFavoriteQuestion({ state, commit }){
             state.favoriteQuestion = null
