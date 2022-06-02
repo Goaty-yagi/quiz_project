@@ -147,8 +147,8 @@ export default {
             await canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('thumbnail',blob, `${this.image}.png`),
-            console.log('getthumb',formData.get('thumbnail'),this.image),
-            this.a = axios.patch(`/api/user/${this.getDjangouser.UID}`,
+            console.log('getthumb',formData.get('thumbnail'),this.image,blob),
+            axios.patch(`/api/user/${this.getDjangouser.UID}`,
                 formData
             )
             }, 'image/png')

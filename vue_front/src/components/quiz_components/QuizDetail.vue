@@ -52,7 +52,11 @@ export default {
 
     ],
     mounted(){
+        this.$store.commit('showModalTrue')
         console.log('mounted at detail',this.questionDetailInfo)
+    },
+    beforeUnmount(){
+        this.$store.commit('showModalFalse')
     },
     computed:{
         myQuiz(){
@@ -71,6 +75,7 @@ export default {
         },
         questionDelete(id){
             console.log("clicked")
+            this.$store.dispatch("handleNotifications", 'reply')
             this.deleteMyQuestion(id)
             this.close()
         },

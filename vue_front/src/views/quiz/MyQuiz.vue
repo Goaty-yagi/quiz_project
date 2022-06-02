@@ -1,5 +1,10 @@
 <template>
     <div class="my-quiz-wrapper" :class="{'laoding-center':$store.state.isLoading}">
+        <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
+            <div class="notification-text">
+                削除しました。
+            </div>
+        </div>
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading&&!quizOpen}">
                 <!-- <i class="fas fa-cog"></i> -->
