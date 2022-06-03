@@ -78,7 +78,6 @@
 
 <script>
 import ConfettiExplosion from "vue-confetti-explosion";
-import axios from 'axios'
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
 import NotLogin from '@/components/login/NotLogin.vue'
@@ -129,10 +128,11 @@ export default {
     mounted(){
         // this.test()
         // this.reload()
-        console.log('mounted',window.location.href,window.location.pathname)
+        const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
+        console.log('mounted',regionNames.of('JP'))
         this.scrollTop()
         this.setInitUserStatus()
-        console.log('mounted',this.$store.state.signup.djangoUser)
+        // console.log('mounted',this.$store.state.signup.djangoUser)
         // Cookies.set('unko','chinko')
         // this.$store.dispatch("getAnsweredQuestion")
         // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")

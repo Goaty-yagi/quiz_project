@@ -83,6 +83,7 @@ export default {
         thirdPartyLogindata:'',
         thirdPartyError:'',
         photoURL:'',
+        countryData:'',
     },
     getters:{
         getUID(state){
@@ -560,6 +561,28 @@ export default {
                 }
             }
         },
+        // async getCountryData({ state, commit,dispatch }){
+        //     // commit('setIsLoading', true, {root:true})
+        //         console.log('country')
+        //         try{
+        //             await fetch('@/vue_front/src/assets/country.json')
+        //             .then(response => {
+        //                 console.log('res',response.data)
+        //             })
+        //         }
+        //         catch(e){
+        //             console.log('catch',e)
+        //             // let logger = {
+        //             //     message: "in store/signup.getDjangoUser. couldn't signup django user",
+        //             //     name: window.location.pathname,
+        //             //     actualErrorName: e.name,
+        //             //     actualErrorMessage: e.message,
+        //             // }
+        //             // commit('setLogger',logger)
+        //             // commit("checkDjangoError", e.message)
+        //         }
+            
+        // },
         async signup(context, {email,password}){
             console.log('signup in')
             try {

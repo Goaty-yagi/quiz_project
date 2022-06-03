@@ -1,10 +1,28 @@
 <template>
-    <div class="signin-wrapper">
+    <div class="signin-wrapper" :class="{'scroll-fixed':fixedScroll}">
         <div class="flex-wrapper">
             <p class='title-white'>ユーザー登録</p>
             <Progress
             v-if='showProgress'
             />
+        </div>
+        <div v-if="showSellect" class="country-select">
+            <div class='country-relative'>
+                <div class="close-container">
+                    <div @click="showSelectionFalse()" class="close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <p class='country-title'>出身国を選んでください</p>
+                <p v-if="country" class="addedCountry">{{ country }}</p>
+                <div
+                class='each-country'
+                @click="addCountry(countryData[num-1][num-1].J_name)"
+                v-for="(num,countryindex) of countryData.length"
+                v-bind:key="countryindex">
+                    <p v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
+                </div>
+            </div>
         </div>
         <div :class="{'slide-in':slideIn,'slide-out':slideOut}" id="slide">
             <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
@@ -23,16 +41,15 @@
                         <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
                     </div>         
                 </div>
-                <!-- <div class="field">
-                    <div class="input-box">
-                        <i class="fas fa-globe" id='in-font'>
-                            <select class="select-box" id='Country' v-model='country' >
-                            <option hidden>Country-Name</option>
-                            <option>unko</option>
-                            </select>
+                <div class="field">
+                    <div @click="showSelectionTrue()" class="input-box">
+                        <i class="fas fa-globe" id='in-font'>                            
                         </i>
+                        <p v-if='!country' id='infont-text'>Country</p>
+                        <p v-if='country' id='infont-text'>{{ country }}</p>
+                        <p v-if='!country' class='down'>⌵</p>
                     </div>         
-                </div> -->
+                </div>
                 <div v-if='mailError||nameError||mailInUseError' class='error-form'>
                     <i class="fas fa-exclamation-triangle"></i>
                     <div v-if='mailError'>{{ mailError}}</div>
@@ -89,6 +106,7 @@
 </template>
 
 <script>
+import {mapGetters,mapActions} from 'vuex'
 import Progress from '@/components/signin/Progress.vue'
 import Sent from '@/components/signin/Sent.vue'
 import ID from '@/components/signin/ID.vue'
@@ -96,6 +114,7 @@ import Password from '@/components/signin/Password.vue'
 import RegisterConfirm from '@/components/signin/RegisterConfirm.vue'
 import Registered from '@/components/signin/Registered.vue'
 import Edit from '@/components/signin/Edit.vue'
+import country from '../assets/country.json';
 
 
 export default {
@@ -114,7 +133,7 @@ export default {
             username:'',
             email:'',
             email2:'',
-            // country:'',
+            country:'',
             nameError:null,
             mailError:null,
             mailInUseError:null,
@@ -125,20 +144,21 @@ export default {
             showEdit:false,
             showPassword: false,
             slideIn:true,
-            slideOut:false
-            // afterPassword:false
-
+            slideOut:false,
+            showSellect:false,
+            countryData:country.country,
+            // afterPassword:false,
+            
         }
     },
     updated(){
-        
         this.showButtonHandler()
         console.log(this.$store.state.signup.username)
         // this.getClass()
     },
     mounted(){
         this.$store.commit('handleOnSigningup')
-        console.log('mounted',this.$store.getters.onSigningup)
+        // console.log('mounted',this.country)
         this.step = this.$store.state.step
     },
     beforeUnmount(){
@@ -154,6 +174,7 @@ export default {
         mailInUseError:function(v) {if (v != '') { this.$refs.formMail.classList.add('form-error')}
         else{this.$refs.formName.classList.remove('form-error')}},
     },
+    computed: mapGetters(['fixedScroll']),
     methods:{
         async submitForm(){
             // validate email
@@ -178,7 +199,7 @@ export default {
                 this.$store.commit('getUsername',this.username)
                 this.$store.commit('getEmail',this.email)
                 this.$store.commit('getEmail2',this.email2)
-                // this.$store.commit('getCountry',this.country)
+                this.$store.commit('getCountry',this.country)
                 }                
             }
         },
@@ -201,7 +222,7 @@ export default {
             if(this.username!=''&&
                 this.email!=''&&
                 this.email2!=''
-                // &&this.country!=''
+                &&this.country!=''
                 ){
                     this.showButton = false
             }
@@ -225,11 +246,11 @@ export default {
                     this.email2 = this.$store.signup.state.email2
                 }
             }
-            // if(item == 'Country'){
-            //     if(this.$store.signup.state.country !=''){
-            //         this.country = this.$store.signup.state.country
-            //     }
-            // }
+            if(item == 'Country'){
+                if(this.$store.signup.state.country !=''){
+                    this.country = this.$store.signup.state.country
+                }
+            }
         },
         showPasswordTrue(){
             this.showPassword = true
@@ -246,6 +267,20 @@ export default {
         },
         googleLogin(){
             this.$store.dispatch('googleLogin')
+        },
+        showSelectionTrue(){
+            this.showSellect = true
+            // this.$store.commit('showModalTrue')
+            this.$store.commit('fixedScrollTrue')
+        },
+        showSelectionFalse(){
+            this.showSellect = false
+            // this.$store.commit('showModalFalse')
+            this.$store.commit('fixedScrollFalse')
+        },
+        addCountry(country){
+            this.country = country
+            this.showSelectionFalse()
         }
     }
 }
@@ -255,17 +290,67 @@ export default {
 @import "style/_variables.scss";
     .signin-wrapper{
         width:100%;
+        height: 100vh;
         position: relative;
         flex-direction: column;
         display: flex;
         padding-top:5rem;
         // justify-content: center;
         align-items: center;
-        overflow:scroll;
+        // overflow:scroll;
+        .country-select{
+            position: absolute;
+            width: 85%;
+            max-width: 400px;
+            height: 75%;
+            max-height: 500px;
+            border: solid grey;
+            border-top: 0.3rem solid grey;
+            border-bottom: 0.3rem solid grey;
+            top: 2rem;
+            margin-top: 0.1rem;
+            margin-bottom: 0.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            min-height: 5rem;
+            background: $back-tr-white;
+            transition: .5s;
+            z-index: 1;
+            overflow: scroll;
+            .country-relative{
+                position: relative;
+                .close-container{
+                    margin-top: -1rem;
+                    .close{
+                        // position: absolute;
+                    }
+                }
+                .country-title{
+                    margin-top: 1.5rem;
+                    padding-bottom: 1rem;
+                }
+                .addedCountry{
+                        // background: red;
+                        margin-bottom: 0.5rem;
+                        font-weight: bold;
+                        background: rgba(162, 161, 161, 0.3);
+                    }
+                .each-country{
+                    font-size: 0.8rem;
+                    margin-top: 0.1rem;
+                    margin-bottom: 0.1rem;
+                    transition: .5s;
+                }
+                .each-country:hover{
+                    background: $lite-gray;
+                    
+                }
+            }
+        }
         .title-white{
             margin-bottom: 1rem;
         }
-        }
+    }
     .signin-text{
         color:white;
         font-size:2rem;
@@ -313,12 +398,38 @@ export default {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        
-    }#in-font{
+        position: relative;
+        .down{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            color:rgb(75, 75, 75);
+            
+        }
+    }
+    #in-font{
         margin-left:0.5rem;
         color:rgb(158, 158, 158); 
         transition:0.3s;
         position:relative;
+    }
+    #infont-text {
+        font-size: 0.8rem;
+        margin-left:0.5rem;
+        color:rgb(75, 75, 75);
+        font-weight: 450;
+        transition:0.3s;
+        font-style: italic;
+    }
+    ::placeholder {
+        font-style: italic;
+        color:rgb(75, 75, 75);
+        margin-left:0.5rem;
+        font-weight: 400;
+        transition:0.3s;
     }
     #in-font:focus-within{
         color:rgb(92, 92, 92);
