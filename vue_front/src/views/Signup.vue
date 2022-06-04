@@ -1,107 +1,109 @@
 <template>
     <div class="signin-wrapper" :class="{'scroll-fixed':fixedScroll}">
-        <div class="flex-wrapper">
-            <p class='title-white'>ユーザー登録</p>
-            <Progress
-            v-if='showProgress'
-            />
-        </div>
-        <div v-if="showSellect" class="country-select">
-            <div class='country-relative'>
-                <div class="close-container">
-                    <div @click="showSelectionFalse()" class="close">
-                        <i class="fas fa-times"></i>
+        <div class="signin-container">
+            <div class="flex-wrapper">
+                <p class='title-white'>ユーザー登録</p>
+                <Progress
+                v-if='showProgress'
+                />
+            </div>
+            <div v-if="showSellect" class="country-select">
+                <div class='country-relative'>
+                    <div class="close-container">
+                        <div @click="showSelectionFalse()" class="close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <p class='country-title'>出身国を選んでください</p>
+                    <p v-if="country" class="addedCountry">{{ country }}</p>
+                    <div
+                    class='each-country'
+                    @click="addCountry(countryData[num-1][num-1].J_name)"
+                    v-for="(num,countryindex) of countryData.length"
+                    v-bind:key="countryindex">
+                        <p v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
                     </div>
                 </div>
-                <p class='country-title'>出身国を選んでください</p>
-                <p v-if="country" class="addedCountry">{{ country }}</p>
-                <div
-                class='each-country'
-                @click="addCountry(countryData[num-1][num-1].J_name)"
-                v-for="(num,countryindex) of countryData.length"
-                v-bind:key="countryindex">
-                    <p v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
-                </div>
             </div>
-        </div>
-        <div :class="{'slide-in':slideIn,'slide-out':slideOut}" id="slide">
-            <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
-                <div class="field">
-                    <div class="input-box" ref='formName'>
-                        <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
-                    </div>       
-                </div>
-                <div class="field">
-                    <div class="input-box" ref='formMail'>
-                        <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
-                    </div>         
-                </div>
-                <div class="field">
-                    <div class="input-box">
-                        <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
-                    </div>         
-                </div>
-                <div class="field">
-                    <div @click="showSelectionTrue()" class="input-box">
-                        <i class="fas fa-globe" id='in-font'>                            
-                        </i>
-                        <p v-if='!country' id='infont-text'>Country</p>
-                        <p v-if='country' id='infont-text'>{{ country }}</p>
-                        <p v-if='!country' class='down'>⌵</p>
-                    </div>         
-                </div>
-                <div v-if='mailError||nameError||mailInUseError' class='error-form'>
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div v-if='mailError'>{{ mailError}}</div>
-                    <div v-if='nameError'>{{ nameError }}</div>
-                    <div v-if='mailInUseError'>{{ mailInUseError }}</div>
-                </div>
-                <div>
-                    <button class='fbottun'  ref='bform' id=''>次へ</button>
-                </div>
-                <div class="signup-footer">
-                    <p>アカウントをお持ちですか</p>
-                    <router-link :to="{ name: 'Login'}" class="to-login">ログイン画面へ移動=></router-link>
-                    <p>Googleアカウントでログイン</p>
-                    <a class="logo-container">
-                        <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
-                    </a>
-                </div>
-            </form>
-        </div>
-        <transition name="slide-in">
-            <Password
-            class="components"
-            v-if='$store.state.step==2&&showPassword&&!showEdit'
-            @handle='showProgressHandler'
-            @confHandle='showRegiConfHandler'
-            @handleAfterPassword='handleAfterPassword'
-            />
-        </transition>
-        <transition name="notice">
-            <RegisterConfirm
-            v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
-            @handle='showProgressHandler'
-            @edithandle='showEditHandler'
-            @sentHandle='showSentHandler'
-            @showPasswordFalse='showPasswordFalse'
-            />
-        </transition>
-        <transition name="notice">
-          <Sent
-            v-if='showSent&&$store.state.step==3'
-            @handle='showProgressHandler'
-            @sentHandle='showSentHandler'
-            />
-        </transition>
-        <transition name="slide-in">
-            <Edit
-                v-if='showEdit&&!showPassword'
+            <div :class="{'slide-in':slideIn,'slide-out':slideOut}" id="slide">
+                <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
+                    <div class="field">
+                        <div class="input-box" ref='formName'>
+                            <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
+                        </div>       
+                    </div>
+                    <div class="field">
+                        <div class="input-box" ref='formMail'>
+                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
+                        </div>         
+                    </div>
+                    <div class="field">
+                        <div class="input-box">
+                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
+                        </div>         
+                    </div>
+                    <div class="field">
+                        <div @click="showSelectionTrue()" class="input-box">
+                            <i class="fas fa-globe" id='in-font'>                            
+                            </i>
+                            <p v-if='!country' id='infont-text'>Country</p>
+                            <p v-if='country' id='infont-text'>{{ country }}</p>
+                            <p v-if='!country' class='down'>⌵</p>
+                        </div>         
+                    </div>
+                    <div v-if='mailError||nameError||mailInUseError' class='error-form'>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div v-if='mailError'>{{ mailError}}</div>
+                        <div v-if='nameError'>{{ nameError }}</div>
+                        <div v-if='mailInUseError'>{{ mailInUseError }}</div>
+                    </div>
+                    <div>
+                        <button class='fbottun'  ref='bform' id=''>次へ</button>
+                    </div>
+                    <div class="signup-footer">
+                        <p>アカウントをお持ちですか</p>
+                        <router-link :to="{ name: 'Login'}" class="to-login">ログイン画面へ移動=></router-link>
+                        <p>Googleアカウントでログイン</p>
+                        <a class="logo-container">
+                            <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <transition name="slide-in">
+                <Password
+                class="components"
+                v-if='$store.state.step==2&&showPassword&&!showEdit'
                 @handle='showProgressHandler'
                 @confHandle='showRegiConfHandler'
+                @handleAfterPassword='handleAfterPassword'
+                />
+            </transition>
+            <transition name="notice">
+                <RegisterConfirm
+                v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
+                @handle='showProgressHandler'
                 @edithandle='showEditHandler'
-                :showProgress='showProgress'/>
-        </transition>
+                @sentHandle='showSentHandler'
+                @showPasswordFalse='showPasswordFalse'
+                />
+            </transition>
+            <transition name="notice">
+            <Sent
+                v-if='showSent&&$store.state.step==3'
+                @handle='showProgressHandler'
+                @sentHandle='showSentHandler'
+                />
+            </transition>
+            <transition name="slide-in">
+                <Edit
+                    v-if='showEdit&&!showPassword'
+                    @handle='showProgressHandler'
+                    @confHandle='showRegiConfHandler'
+                    @edithandle='showEditHandler'
+                    :showProgress='showProgress'/>
+            </transition>
+        </div>
     </div>
 </template>
 
@@ -291,64 +293,71 @@ export default {
     .signin-wrapper{
         width:100%;
         height: 100vh;
-        position: relative;
         flex-direction: column;
         display: flex;
         padding-top:5rem;
         // justify-content: center;
         align-items: center;
         // overflow:scroll;
-        .country-select{
-            position: absolute;
-            width: 85%;
-            max-width: 400px;
-            height: 75%;
-            max-height: 500px;
-            border: solid grey;
-            border-top: 0.3rem solid grey;
-            border-bottom: 0.3rem solid grey;
-            top: 2rem;
-            margin-top: 0.1rem;
-            margin-bottom: 0.5rem;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            min-height: 5rem;
-            background: $back-tr-white;
-            transition: .5s;
-            z-index: 1;
-            overflow: scroll;
-            .country-relative{
-                position: relative;
-                .close-container{
-                    margin-top: -1rem;
-                    .close{
-                        // position: absolute;
+        .signin-container{
+            width:100%;
+            height: 100vh;
+            position: relative;
+            flex-direction: column;
+            display: flex;
+            align-items: center;
+            .country-select{
+                position: absolute;
+                width: 85%;
+                max-width: 400px;
+                height: 75%;
+                max-height: 500px;
+                border: solid grey;
+                border-top: 0.3rem solid grey;
+                border-bottom: 0.3rem solid grey;
+                top: 2rem;
+                margin-top: 0.1rem;
+                margin-bottom: 0.5rem;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+                min-height: 5rem;
+                background: $back-tr-white;
+                transition: .5s;
+                z-index: 1;
+                overflow: scroll;
+                .country-relative{
+                    position: relative;
+                    .close-container{
+                        margin-top: -1rem;
+                        .close{
+                            // position: sticky;
+                        }
                     }
-                }
-                .country-title{
-                    margin-top: 1.5rem;
-                    padding-bottom: 1rem;
-                }
-                .addedCountry{
-                        // background: red;
-                        margin-bottom: 0.5rem;
-                        font-weight: bold;
-                        background: rgba(162, 161, 161, 0.3);
+                    .country-title{
+                        margin-top: 1.5rem;
+                        padding-bottom: 1rem;
                     }
-                .each-country{
-                    font-size: 0.8rem;
-                    margin-top: 0.1rem;
-                    margin-bottom: 0.1rem;
-                    transition: .5s;
-                }
-                .each-country:hover{
-                    background: $lite-gray;
-                    
+                    .addedCountry{
+                            // background: red;
+                            margin-bottom: 0.5rem;
+                            font-weight: bold;
+                            background: rgba(162, 161, 161, 0.3);
+                        }
+                    .each-country{
+                        font-size: 0.8rem;
+                        margin-top: 0.1rem;
+                        margin-bottom: 0.1rem;
+                        transition: .5s;
+                    }
+                    .each-country:hover{
+                        background: $lite-gray;
+                        
+                    }
                 }
             }
-        }
-        .title-white{
-            margin-bottom: 1rem;
+            .title-white{
+                margin-bottom: 1rem;
+            }
         }
     }
     .signin-text{

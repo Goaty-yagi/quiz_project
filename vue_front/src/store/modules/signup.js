@@ -241,7 +241,6 @@ export default {
             }
         },
         checkDjangoError(state,payload){
-            console.log('checkDE',payload)
             if(state.apiError.django){
                 router.push({ name: 'ConnectionError' })
             }
