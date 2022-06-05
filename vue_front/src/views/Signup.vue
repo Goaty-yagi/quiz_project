@@ -44,6 +44,7 @@
                     </div>
                     <div class="field">
                         <div @click="showSelectionTrue()" class="input-box">
+                            <input required class="text-box select-dammy-box" type='text' :focus='false' v-model='country' placeholder="Country">
                             <i class="fas fa-globe" id='in-font'>                            
                             </i>
                             <p v-if='!country' id='infont-text'>Country</p>
@@ -58,7 +59,7 @@
                         <div v-if='mailInUseError'>{{ mailInUseError }}</div>
                     </div>
                     <div>
-                        <button class='fbottun'  ref='bform' id=''>次へ</button>
+                        <button class='fbottun' ref='bform' id=''>次へ</button>
                     </div>
                     <div class="signup-footer">
                         <p>アカウントをお持ちですか</p>
@@ -76,11 +77,11 @@
                 v-if='$store.state.step==2&&showPassword&&!showEdit'
                 @handle='showProgressHandler'
                 @confHandle='showRegiConfHandler'
-                @handleAfterPassword='handleAfterPassword'
                 />
             </transition>
             <transition name="notice">
                 <RegisterConfirm
+                class="registaer-confirm"
                 v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
                 @handle='showProgressHandler'
                 @edithandle='showEditHandler'
@@ -101,7 +102,9 @@
                     @handle='showProgressHandler'
                     @confHandle='showRegiConfHandler'
                     @edithandle='showEditHandler'
-                    :showProgress='showProgress'/>
+                    :showProgress='showProgress'
+                    :country='country'
+                    :countryData='countryData'/>
             </transition>
         </div>
     </div>
@@ -148,9 +151,7 @@ export default {
             slideIn:true,
             slideOut:false,
             showSellect:false,
-            countryData:country.country,
-            // afterPassword:false,
-            
+            countryData:country.country,            
         }
     },
     updated(){
@@ -165,6 +166,7 @@ export default {
     },
     beforeUnmount(){
         this.$store.commit('handleOnSigningup')
+        this.$store.commit('fixedScrollFalse')
     },
     watch:{
         showButton:function(v) {if (v == false) { this.$refs.bform.classList.add('button-hover')}
@@ -223,9 +225,8 @@ export default {
         showButtonHandler(){
             if(this.username!=''&&
                 this.email!=''&&
-                this.email2!=''
-                &&this.country!=''
-                ){
+                this.email2!=''&&
+                this.country!=''){
                     this.showButton = false
             }
             else{
@@ -293,12 +294,7 @@ export default {
     .signin-wrapper{
         width:100%;
         height: 100vh;
-        flex-direction: column;
-        display: flex;
         padding-top:5rem;
-        // justify-content: center;
-        align-items: center;
-        // overflow:scroll;
         .signin-container{
             width:100%;
             height: 100vh;
@@ -502,7 +498,10 @@ export default {
         }
     }
 }
-
+.select-dammy-box{
+    caret-color: transparent;
+    margin-left: 1rem;
+}
 // @keyframes slide-in-anim {
 // 	0% {
 // 		opacity: 0;
@@ -537,8 +536,9 @@ export default {
         
 	}
 }
-
-
+.registaer-confirm{
+    z-index: 1;
+}
 .slide-in-enter-active {
   animation: slide-in  ease-out 1.5s;
 }

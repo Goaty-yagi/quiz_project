@@ -15,12 +15,12 @@
                         <div class="text-box" id='mail'>{{ $store.state.signup.email }}</div>
                 </div>         
             </div>
-            <!-- <div class="field">
+            <div class="field">
                 <div class="input-box">
                     <div><i class="fas fa-globe" id='in-font'></i></div>
                     <div class="text-box">{{ $store.state.signup.country }}</div>
                 </div>         
-            </div> -->
+            </div>
             <div class="field">
                 <div class="input-box">
                     <i class="fas fa-unlock-alt" id='in-font'></i>
@@ -66,6 +66,16 @@ export default {
             ],
         }
     },
+    mounted(){
+        this.$store.commit('fixedScrollTrue')
+        this.getCountry()
+        console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
+        console.log('mounted at confiem',this.$store.getters.fixedScroll)
+
+    },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+    },
     computed:{
         user(){
             try{
@@ -95,6 +105,7 @@ export default {
                     UID: this.$store.state.signup.user.uid,
                     name: this.$store.state.signup.username,
                     email: this.$store.state.signup.email,
+                    country: this.$store.state.signup.country,
                     quiz_taker: [
                         {grade: this.$store.getters.getTempUser.grade},
                         {level: this.$store.getters.getTempUser.level},
@@ -117,6 +128,7 @@ export default {
                     UID: this.$store.state.signup.user.uid,
                     name: this.$store.state.signup.username,
                     email: this.$store.state.signup.email,
+                    country: this.$store.state.signup.country,
                     ip_data: [{
                         city: this.IPInfo.city,
                         ip: this.IPInfo.ip,
@@ -193,10 +205,6 @@ export default {
                 this.gotIP = true
             }
         }    
-    },
-    mounted(){
-        this.getCountry()
-        console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
     },
 }
 </script>

@@ -1,5 +1,23 @@
 <template>
     <div class="password-wrapper">
+        <div v-if="showSellect" class="country-select">
+            <div class='country-relative'>
+                <div class="close-container">
+                    <div @click="showSelectionFalse()" class="close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <p class='country-title'>出身国を選んでください</p>
+                <p v-if="country" class="addedCountry">{{ country }}</p>
+                <div
+                class='each-country'
+                @click="addCountry(countryData[num-1][num-1].J_name)"
+                v-for="(num,countryindex) of countryData.length"
+                v-bind:key="countryindex">
+                    <p class='country-name' v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
+                </div>
+            </div>
+        </div>
         <form class="id-form" @submit.prevent='submitForm' >
             <div class='field-wrapper'>
                 <div class="field">
@@ -12,25 +30,25 @@
                         <i class="far fa-envelope" id='in-font'><input required class="text-box" v-model='email' type='email'  id='E-mail' placeholder="E-mail"></i>
                     </div>         
                 </div>
-                <!-- <div class="field">
-                    <div class="input-box">
-                        <i class="fas fa-globe" id='in-font'></i>
-                        <select class="select-box"  id='Country' v-model='country' >
-                        <option>{{ $store.state.signup.country }}</option>
-                        <option>unko</option>
-                        </select>
-                    </div>         
-                </div>
-                     -->
+                <div class="field">
+                        <div @click="showSelectionTrue()" class="input-box">
+                            <input required class="text-box select-dammy-box" type='text' v-model='country' :placeholder="country">
+                            <i class="fas fa-globe" id='in-font'>                            
+                            </i>
+                            <p v-if='country' id='infont-text'>{{ country }}</p>
+                            <p v-if='!country' class='down'>⌵</p>
+                        </div>         
+                    </div>
+                    
                 <div class="field">
                     <div class="input-box">
-                        <i class="fas fa-unlock-alt" id='in-font'><input required v-model='password' class="text-box" :type="inputType"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required v-model='password' class="text-box" autocomplete :type="inputType"></i>
                         <i :class="[passType ? 'fas fa-eye-slash':'fas fa-eye']" id='eye' @click='click' ></i>
                     </div>      
                 </div>
                 <div class="field">
                     <div class="input-box">
-                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType2" v-model='password2' placeholder="Conf Password"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType2" autocomplete v-model='password2' placeholder="Conf Password"></i>
                             <i :class="[passType2 ? 'fas fa-eye-slash':'fas fa-eye']" id='eye' @click='click2' ></i>
                     </div>          
                 </div>
@@ -60,7 +78,7 @@ export default {
     data(){
         return{
             username:this.$store.state.signup.username,
-            // country:this.$store.state.signup.country,
+            country:this.$store.state.signup.country,
             password:this.$store.state.signup.password,
             email:this.$store.state.signup.email,
             password2:'',
@@ -73,11 +91,13 @@ export default {
             mailError:false,
             passType:false,
             passType2:false,
+            showSellect:false
             
         }
     },
     props:[
-        'showProgress'
+        'showProgress',
+        'countryData'
     ],
     mounted(){
         this.progressHandle()
@@ -155,15 +175,41 @@ export default {
                     this.$emit('edithandle')
                     this.$store.commit('getPassword',this.password)
                     this.$store.commit('getUsername',this.username)
-                    // this.$store.commit('getCountry',this.country)
+                    this.$store.commit('getEmail',this.email)
+                    this.$store.commit('getEmail2',this.email2)
+                    this.$store.commit('getCountry',this.country)
             }
         },
+        showSelectionTrue(){
+            this.showSellect = true
+            // this.$store.commit('showModalTrue')
+            this.$store.commit('fixedScrollTrue')
+        },
+        showSelectionFalse(){
+            this.showSellect = false
+            // this.$store.commit('showModalFalse')
+            this.$store.commit('fixedScrollFalse')
+        },
+        addCountry(country){
+            this.country = country
+            this.showSelectionFalse()
+        }
     },        
 }
 </script>
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
+.password-wrapper{
+    width:100%;
+    height: 100vh;
+    flex-direction: column;
+    display: flex;
+    // padding-top:5rem;
+    // justify-content: center;
+    align-items: center;
+
+}
     .id-form{
         margin-bottom: 100px;
         width:100vw;
@@ -244,12 +290,10 @@ export default {
         background: $back-white;
         // margin-left:0.5rem;
     }
-    // .eye-wrapper{
-    //     position:relative;
-    //     width: 100%;
-    //     height:35%;
-    
-    // }
+    .select-dammy-box{
+        caret-color: transparent;
+        margin-left: 1rem;
+    }
     #eye{
         position:absolute;
         right:0;
@@ -288,4 +332,59 @@ export default {
     p {
         color:white;
     }
+.country-select{
+    position: absolute;
+    width: 85%;
+    max-width: 400px;
+    height: 75%;
+    max-height: 500px;
+    border: solid grey;
+    border-top: 0.3rem solid grey;
+    border-bottom: 0.3rem solid grey;
+    top: 2rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    min-height: 5rem;
+    background: $back-tr-white;
+    transition: .5s;
+    z-index: 1;
+    overflow: scroll;
+    .country-relative{
+        position: relative;
+        .close-container{
+            margin-top: -1rem;
+            .close{
+                // position: sticky;
+            }
+        }
+        .country-title{
+            color: $dark-blue;
+            margin-top: 1.5rem;
+            padding-bottom: 1rem;
+        }
+        .addedCountry{
+                // background: red;
+                color: black;
+                margin-bottom: 0.5rem;
+                font-weight: bold;
+                background: rgba(162, 161, 161, 0.3);
+            }
+        .each-country{
+            color: black;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            margin-bottom: 0.3rem;
+            transition: .5s;
+            .country-name{
+                color: black;
+            }
+        }
+        .each-country:hover{
+            background: $lite-gray;
+            
+        }
+    }
+}
 </style>

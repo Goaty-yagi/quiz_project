@@ -21,6 +21,13 @@
 export default {
     props:[
     ],
+    mounted(){
+        this.$store.commit('fixedScrollTrue')
+        this.$emit('handle')
+    },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+    },
     methods:{
         addStep(){
             this.$router.push({ name: 'Account' })
@@ -29,9 +36,6 @@ export default {
             // this.$store.commit('addStep')
         }
     },
-    mounted(){
-        this.$emit('handle')
-    }
 }
 </script>
 
