@@ -15,7 +15,7 @@
                         </div>
                     </div>
                     <p class='country-title'>出身国を選んでください</p>
-                    <p v-if="country" class="addedCountry">{{ country }}</p>
+                    <p v-if="viewableCountry" class="addedCountry">{{ viewableCountry }}</p>
                     <div
                     class='each-country'
                     @click="addCountry(countryData[num-1][num-1].J_name)"
@@ -44,11 +44,11 @@
                     </div>
                     <div class="field">
                         <div @click="showSelectionTrue()" class="input-box">
-                            <input required class="text-box select-dammy-box" type='text' :focus='false' v-model='country' placeholder="Country">
+                            <input required class="text-box select-dammy-box" type='text' :focus='false' v-model='viewableCountry' placeholder="Country">
                             <i class="fas fa-globe" id='in-font'>                            
                             </i>
-                            <p v-if='!country' id='infont-text'>Country</p>
-                            <p v-if='country' id='infont-text'>{{ country }}</p>
+                            <!-- <p v-if='!country' id='infont-text'>Country</p> -->
+                            <p v-if='viewableCountry' id='infont-text'>{{ viewableCountry }}</p>
                             <p v-if='!country' class='down'>⌵</p>
                         </div>         
                     </div>
@@ -83,6 +83,7 @@
                 <RegisterConfirm
                 class="registaer-confirm"
                 v-if='$store.state.step==2&&showRegiConf&&!showEdit&&!showSent'
+                :viewableCountry="viewableCountry"
                 @handle='showProgressHandler'
                 @edithandle='showEditHandler'
                 @sentHandle='showSentHandler'
@@ -102,8 +103,9 @@
                     @handle='showProgressHandler'
                     @confHandle='showRegiConfHandler'
                     @edithandle='showEditHandler'
+                    @setCountryForEdit="setCountryForEdit"
                     :showProgress='showProgress'
-                    :country='country'
+                    :viewableCountry='viewableCountry'
                     :countryData='countryData'/>
             </transition>
         </div>
@@ -139,6 +141,7 @@ export default {
             email:'',
             email2:'',
             country:'',
+            viewableCountry:'',
             nameError:null,
             mailError:null,
             mailInUseError:null,
@@ -282,8 +285,22 @@ export default {
             this.$store.commit('fixedScrollFalse')
         },
         addCountry(country){
-            this.country = country
+            this.country = this.convertCountryToTwoCode(country)
+            this.viewableCountry = country
+            console.log('check',this.viewableCountry,this.country)
             this.showSelectionFalse()
+        },
+        convertCountryToTwoCode(country){
+            console.log('in', this.countryData.length)
+            for(let i = 0; i<this.countryData.length; i++){
+                console.log('convert',this.countryData[i][i].J_name,country)
+                if(this.countryData[i][i].J_name == country){
+                    return this.countryData[i][i].two_code
+                }
+            }
+        },
+        setCountryForEdit(country){
+            this.viewableCountry = country
         }
     }
 }

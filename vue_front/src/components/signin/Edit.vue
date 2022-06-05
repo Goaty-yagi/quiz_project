@@ -8,13 +8,13 @@
                     </div>
                 </div>
                 <p class='country-title'>出身国を選んでください</p>
-                <p v-if="country" class="addedCountry">{{ country }}</p>
+                <p v-if="viewCountry" class="addedCountry">{{ viewCountry }}</p>
                 <div
                 class='each-country'
                 @click="addCountry(countryData[num-1][num-1].J_name)"
                 v-for="(num,countryindex) of countryData.length"
                 v-bind:key="countryindex">
-                    <p class='country-name' v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
+                    <p class='country-name' v-if="viewCountry!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
                 </div>
             </div>
         </div>
@@ -32,11 +32,11 @@
                 </div>
                 <div class="field">
                         <div @click="showSelectionTrue()" class="input-box">
-                            <input required class="text-box select-dammy-box" type='text' v-model='country' :placeholder="country">
+                            <input required class="text-box select-dammy-box" type='text' v-model='viewCountry' :placeholder="country">
                             <i class="fas fa-globe" id='in-font'>                            
                             </i>
-                            <p v-if='country' id='infont-text'>{{ country }}</p>
-                            <p v-if='!country' class='down'>⌵</p>
+                            <p v-if='viewCountry' id='infont-text'>{{ viewCountry }}</p>
+                            <p v-if='!viewCountry' class='down'>⌵</p>
                         </div>         
                     </div>
                     
@@ -79,6 +79,7 @@ export default {
         return{
             username:this.$store.state.signup.username,
             country:this.$store.state.signup.country,
+            viewCountry: this.viewableCountry,
             password:this.$store.state.signup.password,
             email:this.$store.state.signup.email,
             password2:'',
@@ -97,6 +98,7 @@ export default {
     },
     props:[
         'showProgress',
+        'viewableCountry',
         'countryData'
     ],
     mounted(){
@@ -191,8 +193,20 @@ export default {
             this.$store.commit('fixedScrollFalse')
         },
         addCountry(country){
-            this.country = country
+            this.country = this.convertCountryToTwoCode(country)
+            this.viewCountry = country
+            this.$emit('setCountryForEdit',country)
+            console.log('check',this.viewCountry,this.country)
             this.showSelectionFalse()
+        },
+        convertCountryToTwoCode(country){
+            console.log('in', this.countryData.length)
+            for(let i = 0; i<this.countryData.length; i++){
+                console.log('convert',this.countryData[i][i].J_name,country)
+                if(this.countryData[i][i].J_name == country){
+                    return this.countryData[i][i].two_code
+                }
+            }
         }
     },        
 }

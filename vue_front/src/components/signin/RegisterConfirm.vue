@@ -18,7 +18,7 @@
             <div class="field">
                 <div class="input-box">
                     <div><i class="fas fa-globe" id='in-font'></i></div>
-                    <div class="text-box">{{ $store.state.signup.country }}</div>
+                    <div class="text-box">{{ viewableCountry }}</div>
                 </div>         
             </div>
             <div class="field">
@@ -46,6 +46,9 @@ import ID from './ID.vue'
 import axios from 'axios'
 export default {
   components: { ID },
+  props:[
+        'viewableCountry',
+    ],
     data(){
         return{
             error: null,
