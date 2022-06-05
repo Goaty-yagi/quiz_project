@@ -209,16 +209,21 @@ export default{
     //     console.log(this.widthForCropper)
     //     },
     // },
-    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL', 'quizTakerObject','fixedScroll']),
+    computed: mapGetters(['quizNameId','getDjangouser','getEmailVerified','getPhotoURL', 'quizTakerObject','fixedScroll']),
         
     mounted(){
-        console.log('account mounted',this.quizTakerObject)
+        this.$store.commit('fixedScrollFalse')
+        console.log('account mounted',this.quizTakerObject,this.fixedScroll)
         this.scrollFixedForUnmailverified()
         window.addEventListener('resize', this.getWidth)
         this.currentPageName = ''
         this.patchImage()
         this.getCurrentPageName()
         // this.handleShowEmailVerified()
+    },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+        this.$store.commit('showModalFalse')
     },
     methods:{
         ...mapActions(['getQuizNameId']),
@@ -425,7 +430,7 @@ export default{
             console.log('width2',this.widthForCropper)
         },
         scrollFixedForUnmailverified(){
-            if(!this.getEmailVerified&&this.$store.state.isLoading==false){
+            if(!this.getEmailVerified){
                 this.$store.commit('fixedScrollTrue')
                 this.$store.commit('showModalTrue')
             }

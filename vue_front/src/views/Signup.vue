@@ -168,6 +168,7 @@ export default {
         this.step = this.$store.state.step
     },
     beforeUnmount(){
+        alert('is that okay ')
         this.$store.commit('handleOnSigningup')
         this.$store.commit('fixedScrollFalse')
     },
