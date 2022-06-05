@@ -1,5 +1,5 @@
 <template>
-    <div class="quiz-home-wrapper" :class="{'scroll-fixed':fixedScroll}">
+    <div class="quiz-home-wrapper" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <QuizP
             v-if="componentHandleDict.quiz"
@@ -213,6 +213,7 @@ export default {
         
     },
     mounted(){
+        this.scrollFixedForUnmailverified()
         this.scrollTop()
         this.getCurrentPageName()
         this.optionDict.currentCategory = ''
@@ -348,6 +349,12 @@ export default {
             }
             else{
                 return true
+            }
+        },
+        scrollFixedForUnmailverified(){
+            if(!this.getEmailVerified&&this.$store.state.isLoading==false){
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
             }
         }
         // goQuiz(){

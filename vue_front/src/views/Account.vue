@@ -1,5 +1,5 @@
 <template>
-    <div class="account-wrapper" :class="{'laoding-center':$store.state.isLoading}">
+    <div class="account-wrapper" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -209,10 +209,11 @@ export default{
     //     console.log(this.widthForCropper)
     //     },
     // },
-    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL', 'quizTakerObject']),
+    computed: mapGetters(['quizNameId','getDjangouser','getPhotoURL', 'quizTakerObject','fixedScroll']),
         
     mounted(){
         console.log('account mounted',this.quizTakerObject)
+        this.scrollFixedForUnmailverified()
         window.addEventListener('resize', this.getWidth)
         this.currentPageName = ''
         this.patchImage()
@@ -422,7 +423,13 @@ export default{
                 this.minContainerWidth = 800
             }
             console.log('width2',this.widthForCropper)
-        } 
+        },
+        scrollFixedForUnmailverified(){
+            if(!this.getEmailVerified&&this.$store.state.isLoading==false){
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
+            }
+        }
     }
 }
 </script>
@@ -430,6 +437,11 @@ export default{
 <style lang="scss" scoped>
 @import "style/_variables.scss";
 // @import 'cropperjs/dist/cropper.css';
+.scroll-fixed{
+    width:100%;
+    display: flex;
+    justify-content: center;
+}
 .account-wrapper{
     display: flex;
     justify-content: center;

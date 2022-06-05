@@ -72,6 +72,8 @@ export default {
             this.$store.commit('reset')
         },
         unShow(){
+            this.$store.commit('fixedScrollFalse')
+            this.$store.commit('showModalFalse')
             this.$emit('handleShowNotLogin')
         }
     }

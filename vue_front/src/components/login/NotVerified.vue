@@ -47,8 +47,12 @@ export default {
         },
         backHome(){
             router.push('/' )
+            this.$store.commit('fixedScrollFalse')
+            this.$store.commit('showModalFalse')
         },
         unShow(){
+            this.$store.commit('fixedScrollFalse')
+            this.$store.commit('showModalFalse')
             this.$emit('handleShowEmailVerified')
         }
     }

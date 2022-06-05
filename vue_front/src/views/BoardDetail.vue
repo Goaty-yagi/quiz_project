@@ -438,9 +438,13 @@ export default {
                 this.$store.commit('handleFixedScroll')
                 }else{
                     this.handleShowEmailVerified()
+                    this.$store.commit('fixedScrollTrue')
+                    this.$store.commit('showModalTrue')
                 }
             }else{
                 this.handleShowNotLogin()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
             }
 
             // this.handleScrollFixed()

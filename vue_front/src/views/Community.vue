@@ -372,8 +372,13 @@ export default {
                 // this.a()
             }else if(!this.emailVerified&&this.roginUser){
                 this.handleShowEmailVerified()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
             }else{
-                this.handleShowNotLogin()        
+                this.handleShowNotLogin()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
+                   
             }
         },
         handleShowEmailVerified(){
