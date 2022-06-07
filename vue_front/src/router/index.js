@@ -12,6 +12,7 @@ import NotFound404 from '../views/not-found/NotFound404.vue'
 import ConnectionError from '../views/not-found/ConnectionError.vue'
 import Signup from '../views/Signup.vue'
 import Account from '../views/Account.vue'
+import Dboard from '../views/Dboard.vue'
 import Login from '../views/Login.vue'
 import Policy from '../views/Policy.vue'
 import Community from '../views/Community.vue'
@@ -63,11 +64,11 @@ const routes = [
     component: MyQuiz,
     meta:{login:true,beingException:true}
   },
-//   {
-//     path: '/test',
-//     name: 'Test',
-//     component: Test
-//   },
+  {
+    path: '/dboard',
+    name: 'Dboard',
+    component: Dboard
+  },
   {
     path: '/signup',
     name: 'Signup',
