@@ -5,13 +5,13 @@
                 <p class='password-text'>パスワード設定</p>
                 <div class="field">
                     <div class="input-box" ref='pass'>
-                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType" v-model='password' placeholder="Password"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required autocomplete class="text-box" :type="inputType" v-model='password' placeholder="Password"></i>
                         <i :class="[passType ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click' ></i>
                     </div>      
                 </div>
                 <div class="field">
                     <div class="input-box">
-                        <i class="fas fa-unlock-alt" id='in-font'><input required class="text-box" :type="inputType2" v-model='password2' placeholder="Conf Password"></i>
+                        <i class="fas fa-unlock-alt" id='in-font'><input required autocomplete class="text-box" :type="inputType2" v-model='password2' placeholder="Conf Password"></i>
                         <i :class="[passType2 ? 'fas fa-eye':'fas fa-eye-slash']" id='eye' @click='click2' ></i>
                     </div>          
                 </div>
@@ -84,6 +84,7 @@ export default {
             '' : '@password is less than 8 char'
             if (this.passwordError == ''&&this.passwordError2 == ''){
                 this.$emit('confHandle')
+                this.$emit('handleAfterPassword')
                 this.$store.commit('getPassword',this.password)         
             }
         },
@@ -94,7 +95,7 @@ export default {
             this.passType2 = !this.passType2
         },
         goPolicy(){
-            this.$router.push({name:'Policy'})
+            window.open('/policy', '_blank');
         }
     }
         
@@ -108,8 +109,9 @@ export default {
         flex-direction: column;
         align-items: flex-start;;
         display: flex;
-        
+        position: absolute;
         align-items: center;
+        margin-top: 100px;
         }
     .password-text{
         color:white;
@@ -176,6 +178,13 @@ export default {
     }
     .check-box-wrapper{
         margin-top: 1.5rem;
+        cursor: move;
+        border: solid transparent;
+        transition: .5s;
+        
+    }
+    .check-box-wrapper:hover{
+        border: solid $lite-gray;
     }
     #eye{
         position:absolute;

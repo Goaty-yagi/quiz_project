@@ -1,8 +1,10 @@
 from gettext import install
 from pickletools import read_floatnl, read_long1
 import secrets
+from ssl import Purpose
 from django.db.models import F
 from rest_framework import serializers
+from user.models import User
 from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLiked, BoardAnswerLiked, BoardParentCenterTag, BoardCenterTag, BoardUserTag, UserFavoriteQuestion
 
 # from user.models import User
@@ -133,6 +135,7 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 		print("liked_answer_data:",liked_answer_data)
 		answer = BoardAnswer.objects.create(**validated_data)
 		BoardAnswerLiked.objects.create(answer=answer)
+		print('answer',type(answer))
 		return answer
 
 	# def create(self, validated_data):
@@ -161,6 +164,7 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "post_on_going",
 				  "vote_on_going",
 				  "on_answer",
+				  "on_reply",
 				  "tag", 
 				  "vote", 
 				  "user",
@@ -220,7 +224,8 @@ class BoardQuestionCreateSerializer(serializers.ModelSerializer):
 					print("if done")
 				else:
 					BoardUserTag.objects.create(tag=tag, user=user, used_num=1)
-			BoardQuestionLiked.objects.create(question=question, **liked_num_data)
+			a = BoardQuestionLiked.objects.create(question=question, **liked_num_data)
+			print('created',a.liked_num,a.question)
 			return question
 
 
@@ -340,7 +345,118 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 			print("Q",Q.id)
 			if UserFavoriteQuestion.objects.filter(user=user,question__id=Q.id).exists():
 				favorite_question[0].question.remove(Q)
+				print('removed')
 				return favorite_question[0]
 		favorite_question[0].question.add(Q)
+		print('created')
 		return favorite_question[0]
 		
+
+
+# fron here for user storage Purpose
+
+class NonEmailUserSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = User
+		fields = ["UID",
+                  ]
+
+class BoardQuestionStorageSerializer(serializers.ModelSerializer):
+	user = NonEmailUserSerializer
+
+	class Meta:
+		model = BoardQuestion
+		fields = ["id",
+				  "title", 
+				  "description", 
+				  "slug", 
+				  "solved",
+				  "select_best_on_going",
+				  "post_on_going",
+				  "vote_on_going",
+				  "on_answer",
+				  "tag", 
+				  "vote", 
+				  "img",
+				  "viewed",
+				  "user",
+				  "created_on", 
+				  ]
+
+
+class BoardAnswerStorageSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "question", 
+				  "description", 
+				  "created_on",
+				  "on_reply",
+				  "best",
+				  ]
+		read_only_field = ['questions']
+
+
+class BoardLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardQuestionLiked
+		fields = ["id",
+				  "question", 
+				  "liked_num",
+				  ]
+		read_only_field = ["question"]
+
+
+class AnswerLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardAnswerLiked
+		fields = ["id", 
+				  "answer", 
+				  "liked_num",
+				  ]
+
+class UserTagStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "used_num",
+				  "viewed_num",
+				  "total_num"
+				  ]
+		read_only_field = ['tag']
+		depth=1
+
+
+class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
+	# question = BoardQuestionListSerializer(many=True)
+	class Meta:
+		model = UserFavoriteQuestion
+		fields = ["id",
+				  "question",
+				  ]
+
+
+# user optimization end
+
+# from here for board notifications
+
+class AnswerAndReplyOnQuestionSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardQuestion
+		fields = ["id", 
+				  "on_answer",
+				  "on_reply",
+				  ]
+
+
+class ReplyOnAnswerSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "on_reply",
+				  ]

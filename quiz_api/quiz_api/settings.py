@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'debug_toolbar',
+    'django_cleanup.apps.CleanupConfig',
+    # 'django_ipware'
     # 'django-rest-knox',
     # 'boto3',
     # 'knox',

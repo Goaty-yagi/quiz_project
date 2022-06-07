@@ -6,11 +6,11 @@
                 <div class="lds-dual-ring"></div>
             </div>
             <div v-if="$store.state.isLoading==false" class='main-container'>
-                <div :class="{'notification-blue':onNotification.onAnswer||onNotification.onReply}">
-                    <div class="notification-text text1" v-if="onNotification.onAnswer">
+                <div v-if="onNotification.show" :class="{'notification-blue':onNotification.show}">
+                    <div class="notification-text" v-if="onNotification.onAnswer">
                         新しい回答があります。
                     </div>
-                    <div class="notification-text text2" v-if="onNotification.onReply">
+                    <div class="notification-text" v-if="onNotification.onReply">
                         新しい返信があります。
                     </div>
                 </div>
@@ -27,10 +27,13 @@
                     </div>
                 </div>
                 <div class="tag-container">
-                    <div class="tag-text">よく使うタグ</div>
+                    <div class="tag-text">関連するタグ</div>
                     <div class="tag-wrapper">
+                        <div v-if="!getThreeUsertag">
+                            <p>現在表示できるタグはありません。</p>
+                        </div>
                         <div 
-                            @click="handleTag(questionindex,tag.id,'tag')"
+                            @click="handleTag(questionindex,tag.tag.id,'tag')"
                             class="tag"
                             :class="{'animation-tag':active==questionindex}" 
                             v-for="(tag,questionindex) in getThreeUsertag"
@@ -56,14 +59,29 @@
                     <div :class="{'option-selected': showQuestion.questionStatus.onVoting}" @click="handleQuestionStatus('onVoting')" class="select-item">投票中</div>
                     <div v-if="showQuestion.questionType.answered" :class="{'option-selected': showQuestion.questionStatus.best}" @click="handleQuestionStatus('best')" class="select-item">ベスト</div>
                 </div>
-                <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': spinner }">
+                <div class="is-loading-bar has-text-centered middle-loading" v-bind:class="{'is-loading': spinner }">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
+            </div>
+            <div class="no-question" v-if="!handleQuestion[0]&&tag==false">
+                <div v-if="showQuestion.questionType.question">
+                    <p>表示できる質問はありません。</p>
+                    <p v-if="showQuestion.questionStatus.all">質問をするとここに表示されます。</p>
+                </div>
+                <div v-if="showQuestion.questionType.answered">
+                    <p>表示できる質問はありません。</p>
+                    <p v-if="showQuestion.questionStatus.all">質問に回答するとここに表示されます。</p>
+                </div>
+                <div v-if="showQuestion.questionType.favorite">
+                    <p>表示できる質問はありません。</p>
+                    <p v-if="showQuestion.questionStatus.all">お気に入りに登録するとここに表示されます。</p>
+                </div>
             </div>
                 <div
                     class='question-container'
                     v-for="(question,questionindex) in handleQuestion"
                     v-bind:key="questionindex">
+                    
                     <div class='question-list' v-if="spinner==false" @click="getDetail(question.slug)">
                         <div class="tag-wrapper">
                             <div 
@@ -71,12 +89,19 @@
                                 v-for="(tag,tagindex) in question.tag" 
                                 v-bind:key="tagindex">{{ tag.tag }}
                             </div>
-                            <div class="on-answer-container">
-                                <div class="on-answer" v-if="handleOnAnswer(question.on_answer)">
-                                    <span class="span1"> NEW</span><span class="span2">ANSWER</span>
+                            <div class="on-answer-wrapper">
+                                <div class="on-answer" v-if="handleOnAnswer(question)||handleOnReply2(question)">
+                                        <div class="on-answer-container" v-if="handleOnAnswer(question)">
+                                            <span class="span1"> NEW</span><span class="span2">ANSWER</span>
+                                        </div>
+                                        <div class="on-answer-container" v-if="handleOnReply2(question)">
+                                            <span class="span1"> NEW</span><span class="span2">Reply</span>
+                                        </div>
                                 </div>
                                 <div class="on-answer" v-if="onReplayCheck(question.answer)">
-                                    <span class="span1"> NEW</span><span class="span2">REPLY</span>
+                                    <div class="on-answer-container">
+                                        <span class="span1"> NEW</span><span class="span2">REPLY</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -84,8 +109,8 @@
                         <div class="question-description" v-if="question.description">{{ question.description.substr(0,10)+'...' }}</div>
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
-                            <div class="good" v-if="question.liked_num">{{ question.liked_num[0].liked_num }}</div>
-                            <div class="date">作成日：{{ question.created_on }}</div>
+                            <div class="good" v-if="question">{{ viewedNum(question.liked_num) }}</div>
+                            <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                         </div>
                     </div>   
                 </div>
@@ -119,10 +144,13 @@ export default {
             tag:false,
             active: null,
             spinner:false,
+            showOnes:false,
             onNotification:{
                 onReply:false,
                 onAnswer:false,
+                show: false
             },
+            showNotifications: false,
             temporaryStatus:'',
             showQuestion:{
                 questionType:{
@@ -143,22 +171,38 @@ export default {
             }
         }
     },
+    watch:{
+        showOnes:function(v) {if (v == true){
+            console.log('go set',this.showOnes)
+            this.setTime()
+        }}
+    },
     computed:{
         user(){
             return this.$store.getters.getDjangouser
         },
+        // notifications(){
+        //     return this.$store.getters.notifications
+        // },
         getThreeUsertag(){
             const _ = require('lodash');
             let used_num_list = []
             let userTag = _.cloneDeep(this.user.user_tag)
+            console.log('UT',userTag)
             if(userTag){
                 if(userTag.length == 1){
                     return userTag
                 }
                 else if(userTag.length == 2){
+                    
                     used_num_list.push(userTag.reduce((a,b)=>a.used_num>b.used_num?a:b))
                     used_num_list.push(userTag.reduce((a,b)=>a.used_num<b.used_num?a:b))
-                    return used_num_list
+                    if(used_num_list[0].id == used_num_list[1].id){
+                        return userTag
+                    }
+                    else{
+                        return used_num_list
+                    }
                 }
                 else if(userTag.length >= 3){
                     while (used_num_list.length < 3){
@@ -203,6 +247,7 @@ export default {
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
+                console.log('AQ',this.getAnsweredQuestion)
                 this.questions = this.getAnsweredQuestion
                 console.log("best",this.showQuestion.questionStatus.best)
                 if(this.showQuestion.questionStatus.best){
@@ -242,10 +287,14 @@ export default {
                 this.questions = this.$store.state.board.reccomendedQuestion
                 return this.handleStatus(this.questions.results)
             }else if(this.showQuestion.questionType.favorite){
-                this.questions = this.$store.state.signup.favoriteQuestion
-                return this.handleStatus(this.questions.results)
+                if(this.$store.state.signup.favoriteQuestion){
+                     this.questions = this.$store.state.signup.favoriteQuestion
+                    return this.handleStatus(this.questions.results)
+                }else{
+                    this.questions = ''
+                    return this.handleStatus(this.questions)
+                }
             }else if(this.showQuestion.questionType.tag){
-                console.log('tagQuestion dayo' ,this.tagQuestion)
                 this.questions = this.tagQuestion
                 return this.handleStatus(this.questions.results)
             }
@@ -257,6 +306,7 @@ export default {
         this.getUserQuestion()
         this.scrollTop()
         this.$store.dispatch("getAnsweredQuestion")
+        this.$store.dispatch("getFavoriteQuestion")
     },
     mounted(){
         console.log('THREE',this.getThreeUsertag)
@@ -269,28 +319,13 @@ export default {
         this.handleOnReply()
         this.$store.dispatch('getRelatedQuestion')
         this.reccomendedQuestion = this.$store.state.board.reccomendedQuestion
+        // this.setTime()
     },
     beforeUnmount(){
         window.removeEventListener('scroll', this.handleScroll)
         window.removeEventListener('scroll', this.getScrollY)
     },
     methods:{
-        // async getAnsweredQuestion() {
-        //     this.$store.commit('setIsLoading', true)
-        //     console.log("ingetRQ in account")
-        //     var url = `/api/board/question-answered?user=${this.user.UID}`
-        //     try{
-        //         await axios.get(url)
-        //             .then(response => {
-        //             getAnsweredQuestion = response.data
-        //             })
-        //             this.handleOnReply()
-        //         }
-        //     catch{(error => {
-        //             console.log(error)
-        //     })}
-        //     this.$store.commit('setIsLoading', false)
-        // },
         getDetail(slug){
             router.push(`/board-detail/${slug}` )
         },
@@ -335,7 +370,7 @@ export default {
                 .get(`/api/board/tag-question?tag=${tagID}`)
                 .then(response => {
                     this.tagQuestion = response.data
-                    console.log("GTQ",this.tagQuestion)
+                    console.log("GTQ",this.tagQuestion,tagID,tag)
                     this.handleQuestionType(tag)
                 })
                 .catch(error => {
@@ -453,23 +488,49 @@ export default {
                 // }
             
         },
+        resetNotifications(){
+            this.onNotification.show = false
+            console.log('reset is done',this.onNotification.showReplyNotify)
+        },
+        setTime(){
+            console.log('insettime')
+            if(this.onNotification.onReply||this.onNotification.onAnswer){
+                this.onNotification.show = true
+                setTimeout(this.resetNotifications, 4500) 
+            }
+        },
         handleOnReply(){
-            console.log("handleOnREPLY", this.getAnsweredQuestion)
-            for(let question of this.getAnsweredQuestion.results){
-                console.log("first loop",question.answer)
-                for(let answer of question.answer){
-                    console.log("second loop",answer)
-                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                        this.onNotification.onReply = true
+            try{
+                console.log("handleOnREPLY", this.getAnsweredQuestion)
+                for(let question of this.getAnsweredQuestion.results){
+                    console.log("first loop",question.answer)
+                    for(let answer of question.answer){
+                        console.log("second loop",answer)
+                        if(answer.on_reply==true&&answer.user.UID==this.user.UID){
+                            this.onNotification.onReply = true
+                            this.showOnes = true
+                        }
                     }
                 }
+                console.log("end")
             }
-            console.log("end")
+            catch{
+
+            }
         },
-        handleOnAnswer(onAnswer){
-            console.log("onanswer")
-            if(onAnswer){
+        handleOnAnswer(question){
+            if(question.on_answer&&question.user.UID==this.user.UID){
                 this.onNotification.onAnswer = true
+                this.showOnes = true
+                return true      
+            }else{
+                return false
+            }
+        },
+        handleOnReply2(question){
+            if(question.on_reply&&question.user.UID==this.user.UID){
+                this.onNotification.onReply = true
+                this.showOnes = true
                 return true      
             }else{
                 return false
@@ -479,12 +540,12 @@ export default {
             for(let answer of questionAnswer){
                 if(answer.on_reply==true){
                     if(answer.user.UID==this.user.UID){
+                        this.showOnes = true
                     return true
                     }
-                }else{
-                    return false
                 }
             }
+            return false
         },
         scrollTop(){
             window.scrollTo({
@@ -535,6 +596,37 @@ export default {
                 this.getTagQuestion(tagID, tag)
             }
         },
+        dateConvert(date){
+            var date = date
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+                dt = dt.setHours(dt.getHours()-12)
+                date = new Date(dt)
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            return stringDT.replace(/\//g,'-')
+        },
+        viewedNum(likedNum){
+            console.log('in_liked',likedNum)
+            try{
+                if(likedNum){
+                    return likedNum[0].liked_num
+                }
+                else{
+                    return 0
+                }
+            }
+            catch{
+                return 0
+            }
+        }
     }
 }
 </script>
@@ -567,6 +659,7 @@ export default {
     height: auto;
     min-height: 80vh;
     width: 100vw;
+    margin-bottom: 1rem;
     flex-direction: column;
     align-items: center;
 }
@@ -574,18 +667,16 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     .notification-blue{
         display: flex;
+        display: flex;
         flex-direction: column;
-        .text1{
-            border-bottom: solid rgb(26, 209, 255);
-            padding-bottom:0.5rem;
-            width:100%;
-        }
-        .text2{
-            margin-top: 0.5rem;
+        .notification-text{
+            margin-top: 1rem;
         }
     }
+    
     .user-info{
         border: solid $base-color;
         border-radius: 0.5rem;
@@ -644,6 +735,10 @@ export default {
                 font-size: 1rem;
                 font-weight: bold;
                 color:$dark-blue;
+                transition: 0.5s;
+            }
+            .tag:hover{
+                color: gray
             }
         }
         p{
@@ -667,6 +762,9 @@ export default {
             padding: 0.2rem;
             background: linear-gradient(rgba(91, 117, 159, 0.9),rgba(28, 37, 76, 0.9));
             transition:0.5s;
+        }
+        div:hover{
+            font-weight: bold;
         }
         .selected{
             background: $base-color;
@@ -694,6 +792,9 @@ export default {
             padding: 0.2rem;
             transition:0.5s;
         }
+        .select-item:hover{
+            font-weight: bold;
+        }
         .option-selected{
             color: black;
             font-weight: bold;
@@ -701,64 +802,78 @@ export default {
             border:0.1rem solid $dark-blue;
         }
     }
+    .middle-loading{
+        margin-top: 2rem;
+    }
     .question-container{
         width: 90%;
+        .question-list:hover{
+            background: $base-lite-3;
+        }
         .question-list{
-        border: solid $base-color;
-        margin-bottom: 0.5rem;
-        width:100%;
-        background: rgb(252, 252, 252);
-        display: flex;
-        flex-direction: column;
-        .tag-wrapper{
+            border: solid $base-color;
+            margin-bottom: 0.5rem;
+            width:100%;
+            background: rgb(252, 252, 252);
             display: flex;
-            width: 100%;
-            .tag{
-                border: solid black;
-                border-radius: 50vh;
-                background: rgb(230, 230, 230);
-                margin-top: 0.5rem;
-                margin-left: 0.3rem;
-                margin-bottom: 0.5rem;
-                padding: 0.5rem;
-                min-width: 3rem;
-            }
-            .on-answer-container{
-                position:relative;
-                width:100%;
-                .on-answer{
-                    display: flex;
-                    position: absolute;
-                    right: 0;
-                    flex-direction: column;
-                    width:3.7rem;
+            flex-direction: column;
+            .tag-wrapper{
+                display: flex;
+                width: 100%;
+                .tag{
+                    border: solid black;
+                    border-radius: 50vh;
+                    background: rgb(230, 230, 230);
                     margin-top: 0.5rem;
-                    margin-right: 0.3rem;
-                    padding-right:0.2rem;
-                    padding-left:0.2rem;
-                    color: red;
-                    border: solid red;
-                    border-radius: 0.5rem;
-                    .span2{
-                        margin-top: -0.5rem;
-                        font-size: 0.6rem;                   
+                    margin-left: 0.3rem;
+                    margin-bottom: 0.5rem;
+                    padding: 0.5rem;
+                    min-width: 3rem;
+                }
+                .on-answer-wrapper{
+                    position:relative;
+                    width:100%;
+                    .on-answer{
+                        position: absolute;
+                        right: 0;
+                        flex-direction: column;
+                        width:3.7rem;
+                        margin-top: 0.5rem;
+                        margin-right: 0.3rem;
+                        padding-right:0.2rem;
+                        padding-left:0.2rem; 
+                        .on-answer-container{
+                            display: flex;
+                            flex-direction: column;
+                            color: red;
+                            border: solid red;
+                            border-radius: 0.5rem;
+                            margin-bottom: 0.3rem;     
+                        }
+                        .span1{
+                            font-weight: bold;
+                        }
+                        .span2{
+                            margin-top: -0.5rem;
+                            font-size: 0.6rem;
+                            font-weight: bold;             
+                        }
                     }
                 }
             }
-        }
-        .good-like-wrapper{
-            display: flex;
-            .fa-heart{
-                color: rgb(221, 36, 221);
-                margin-left: 0.5rem;
-                margin-right: 0.3rem;
-                margin-top: 0.2rem;
+            .good-like-wrapper{
+                display: flex;
+                .fa-heart{
+                    color: rgb(221, 36, 221);
+                    margin-left: 0.5rem;
+                    margin-right: 0.3rem;
+                    margin-top: 0.2rem;
+                }
+                .date{
+                    margin-left: 0.5rem;
+                }
             }
-            .date{
-                margin-left: 0.5rem;
-            }
         }
-    }
     }
     .question-list-dammy{
         background: gray;
@@ -800,6 +915,13 @@ export default {
             margin-bottom: 1rem;
         }
     }
+}
+.no-question{
+    border: solid $dull-red;
+    background: $back-gra-white;
+    width: 80%;
+    padding: 1rem 0;
+    font-weight: bold;
 }
 
 </style>

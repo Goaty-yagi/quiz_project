@@ -1,0 +1,2495 @@
+{
+    "data": "country",
+    "country": [
+        {
+            "0": {
+                "degits": 352,
+                "two_code": "IS",
+                "three_code": "ISL",
+                "J_name": "アイスランド",
+                "E_name": "Iceland",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "1": {
+                "degits": 372,
+                "two_code": "IE",
+                "three_code": "IRL",
+                "J_name": "アイルランド",
+                "E_name": "Ireland",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "2": {
+                "degits": 31,
+                "two_code": "AZ",
+                "three_code": "AZE",
+                "J_name": "アゼルバイジャン",
+                "E_name": "Azerbaijan",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "3": {
+                "degits": 4,
+                "two_code": "AF",
+                "three_code": "AFG",
+                "J_name": "アフガニスタン",
+                "E_name": "Afghanistan",
+                "area": "中東"
+            }
+        },
+        {
+            "4": {
+                "degits": 840,
+                "two_code": "US",
+                "three_code": "USA",
+                "J_name": "アメリカ合衆国",
+                "E_name": "United States",
+                "area": "北アメリカ"
+            }
+        },
+        {
+            "5": {
+                "degits": 16,
+                "two_code": "AS",
+                "three_code": "ASM",
+                "J_name": "アメリカ領サモア",
+                "E_name": "American Sam",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "6": {
+                "degits": 850,
+                "two_code": "VI",
+                "three_code": "VIR",
+                "J_name": "アメリカ領ヴァージン諸島",
+                "E_name": "Virgin Islands, U.S.",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "7": {
+                "degits": 784,
+                "two_code": "AE",
+                "three_code": "ARE",
+                "J_name": "アラブ首長国連邦",
+                "E_name": "United Arab Emirates",
+                "area": "中東"
+            }
+        },
+        {
+            "8": {
+                "degits": 12,
+                "two_code": "DZ",
+                "three_code": "DZA",
+                "J_name": "アルジェリア",
+                "E_name": "Algeria",
+                "area": "北アフリカ"
+            }
+        },
+        {
+            "9": {
+                "degits": 32,
+                "two_code": "AR",
+                "three_code": "ARG",
+                "J_name": "アルゼンチン",
+                "E_name": "Argentina",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "10": {
+                "degits": 533,
+                "two_code": "AW",
+                "three_code": "ABW",
+                "J_name": "アルバ",
+                "E_name": "Aruba",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "11": {
+                "degits": 8,
+                "two_code": "AL",
+                "three_code": "ALB",
+                "J_name": "アルバニア",
+                "E_name": "Albania",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "12": {
+                "degits": 51,
+                "two_code": "AM",
+                "three_code": "ARM",
+                "J_name": "アルメニア",
+                "E_name": "Armenia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "13": {
+                "degits": 660,
+                "two_code": "AI",
+                "three_code": "AIA",
+                "J_name": "アンギラ",
+                "E_name": "Anguilla",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "14": {
+                "degits": 24,
+                "two_code": "AO",
+                "three_code": "AGO",
+                "J_name": "アンゴラ",
+                "E_name": "Angola",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "15": {
+                "degits": 28,
+                "two_code": "AG",
+                "three_code": "ATG",
+                "J_name": "アンティグア・バーブーダ",
+                "E_name": "Antigua and Ba",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "16": {
+                "degits": 20,
+                "two_code": "AD",
+                "three_code": "AND",
+                "J_name": "アンドラ",
+                "E_name": "Andorra",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "17": {
+                "degits": 887,
+                "two_code": "YE",
+                "three_code": "YEM",
+                "J_name": "イエメン",
+                "E_name": "Yemen",
+                "area": "中東"
+            }
+        },
+        {
+            "18": {
+                "degits": 826,
+                "two_code": "GB",
+                "three_code": "GBR",
+                "J_name": "イギリス",
+                "E_name": "United Kingdo",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "19": {
+                "degits": 86,
+                "two_code": "IO",
+                "three_code": "IOT",
+                "J_name": "イギリス領インド洋地域",
+                "E_name": "British Indian Ocean Territory",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "20": {
+                "degits": 92,
+                "two_code": "VG",
+                "three_code": "VGB",
+                "J_name": "イギリス領ヴァージン諸島",
+                "E_name": "Virgin Islands, British",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "21": {
+                "degits": 376,
+                "two_code": "IL",
+                "three_code": "ISR",
+                "J_name": "イスラエル",
+                "E_name": "Israel",
+                "area": "中東"
+            }
+        },
+        {
+            "22": {
+                "degits": 380,
+                "two_code": "IT",
+                "three_code": "ITA",
+                "J_name": "イタリア",
+                "E_name": "Italy",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "23": {
+                "degits": 368,
+                "two_code": "IQ",
+                "three_code": "IRQ",
+                "J_name": "イラク",
+                "E_name": "Iraq",
+                "area": "中東"
+            }
+        },
+        {
+            "24": {
+                "degits": 364,
+                "two_code": "IR",
+                "three_code": "IRN",
+                "J_name": "イラン・イスラム共和国",
+                "E_name": "Iran, Islamic Republic of",
+                "area": "中東"
+            }
+        },
+        {
+            "25": {
+                "degits": 356,
+                "two_code": "IN",
+                "three_code": "IND",
+                "J_name": "インド",
+                "E_name": "India",
+                "area": "南アジア"
+            }
+        },
+        {
+            "26": {
+                "degits": 360,
+                "two_code": "ID",
+                "three_code": "IDN",
+                "J_name": "インドネシア",
+                "E_name": "Indonesia",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "27": {
+                "degits": 876,
+                "two_code": "WF",
+                "three_code": "WLF",
+                "J_name": "ウォリス・フツナ",
+                "E_name": "Wallis and Fut",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "28": {
+                "degits": 800,
+                "two_code": "UG",
+                "three_code": "UGA",
+                "J_name": "ウガンダ",
+                "E_name": "Uganda",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "29": {
+                "degits": 804,
+                "two_code": "UA",
+                "three_code": "UKR",
+                "J_name": "ウクライナ",
+                "E_name": "Ukraine",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "30": {
+                "degits": 860,
+                "two_code": "UZ",
+                "three_code": "UZB",
+                "J_name": "ウズベキスタン",
+                "E_name": "Uzbekistan",
+                "area": "中央アジア"
+            }
+        },
+        {
+            "31": {
+                "degits": 858,
+                "two_code": "UY",
+                "three_code": "URY",
+                "J_name": "ウルグアイ",
+                "E_name": "Uruguay",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "32": {
+                "degits": 218,
+                "two_code": "EC",
+                "three_code": "ECU",
+                "J_name": "エクアドル",
+                "E_name": "Ecuador",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "33": {
+                "degits": 818,
+                "two_code": "EG",
+                "three_code": "EGY",
+                "J_name": "エジプト",
+                "E_name": "Egypt",
+                "area": "北アフリカ"
+            }
+        },
+        {
+            "34": {
+                "degits": 233,
+                "two_code": "EE",
+                "three_code": "EST",
+                "J_name": "エストニア",
+                "E_name": "Estonia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "35": {
+                "degits": 748,
+                "two_code": "SZ",
+                "three_code": "SWZ",
+                "J_name": "エスワティニ",
+                "E_name": "Eswatini",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "36": {
+                "degits": 231,
+                "two_code": "ET",
+                "three_code": "ETH",
+                "J_name": "エチオピア",
+                "E_name": "Ethiopia",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "37": {
+                "degits": 232,
+                "two_code": "ER",
+                "three_code": "ERI",
+                "J_name": "エリトリア",
+                "E_name": "Eritrea",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "38": {
+                "degits": 222,
+                "two_code": "SV",
+                "three_code": "SLV",
+                "J_name": "エルサルバドル",
+                "E_name": "El Salvador",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "39": {
+                "degits": 512,
+                "two_code": "OM",
+                "three_code": "OMN",
+                "J_name": "オマーン",
+                "E_name": "Oman",
+                "area": "中東"
+            }
+        },
+        {
+            "40": {
+                "degits": 528,
+                "two_code": "NL",
+                "three_code": "NLD",
+                "J_name": "オランダ",
+                "E_name": "Netherlands",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "41": {
+                "degits": 36,
+                "two_code": "AU",
+                "three_code": "AUS",
+                "J_name": "オーストラリア",
+                "E_name": "Australia",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "42": {
+                "degits": 40,
+                "two_code": "AT",
+                "three_code": "AUT",
+                "J_name": "オーストリア",
+                "E_name": "Austria",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "43": {
+                "degits": 248,
+                "two_code": "AX",
+                "three_code": "ALA",
+                "J_name": "オーランド諸島",
+                "E_name": "_land Islands",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "44": {
+                "degits": 398,
+                "two_code": "KZ",
+                "three_code": "KAZ",
+                "J_name": "カザフスタン",
+                "E_name": "Kazakhstan",
+                "area": "中央アジア"
+            }
+        },
+        {
+            "45": {
+                "degits": 634,
+                "two_code": "QA",
+                "three_code": "QAT",
+                "J_name": "カタール",
+                "E_name": "Qatar",
+                "area": "中東"
+            }
+        },
+        {
+            "46": {
+                "degits": 124,
+                "two_code": "CA",
+                "three_code": "CAN",
+                "J_name": "カナダ",
+                "E_name": "Canada",
+                "area": "北アメリカ"
+            }
+        },
+        {
+            "47": {
+                "degits": 120,
+                "two_code": "CM",
+                "three_code": "CMR",
+                "J_name": "カメルーン",
+                "E_name": "Cameroon",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "48": {
+                "degits": 116,
+                "two_code": "KH",
+                "three_code": "KHM",
+                "J_name": "カンボジア",
+                "E_name": "Cambodia",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "49": {
+                "degits": 132,
+                "two_code": "CV",
+                "three_code": "CPV",
+                "J_name": "カーボベルデ",
+                "E_name": "Cape Verde",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "50": {
+                "degits": 328,
+                "two_code": "GY",
+                "three_code": "GUY",
+                "J_name": "ガイアナ",
+                "E_name": "Guyana",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "51": {
+                "degits": 266,
+                "two_code": "GA",
+                "three_code": "GAB",
+                "J_name": "ガボン",
+                "E_name": "Gabon",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "52": {
+                "degits": 270,
+                "two_code": "GM",
+                "three_code": "GMB",
+                "J_name": "ガンビア",
+                "E_name": "Gambia",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "53": {
+                "degits": 288,
+                "two_code": "GH",
+                "three_code": "GHA",
+                "J_name": "ガーナ",
+                "E_name": "Ghana",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "54": {
+                "degits": 831,
+                "two_code": "GG",
+                "three_code": "GGY",
+                "J_name": "ガーンジー",
+                "E_name": "Guernsey",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "55": {
+                "degits": 196,
+                "two_code": "CY",
+                "three_code": "CYP",
+                "J_name": "キプロス",
+                "E_name": "Cyprus",
+                "area": "地中海地域"
+            }
+        },
+        {
+            "56": {
+                "degits": 531,
+                "two_code": "CW",
+                "three_code": "CUW",
+                "J_name": "キュラソー",
+                "E_name": "Cura_ao",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "57": {
+                "degits": 192,
+                "two_code": "CU",
+                "three_code": "CUB",
+                "J_name": "キューバ",
+                "E_name": "Cuba",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "58": {
+                "degits": 296,
+                "two_code": "KI",
+                "three_code": "KIR",
+                "J_name": "キリバス",
+                "E_name": "Kiribati",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "59": {
+                "degits": 417,
+                "two_code": "KG",
+                "three_code": "KGZ",
+                "J_name": "キルギス",
+                "E_name": "Kyrgyzstan",
+                "area": "中央アジア"
+            }
+        },
+        {
+            "60": {
+                "degits": 324,
+                "two_code": "GN",
+                "three_code": "GIN",
+                "J_name": "ギニア",
+                "E_name": "Guinea",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "61": {
+                "degits": 624,
+                "two_code": "GW",
+                "three_code": "GNB",
+                "J_name": "ギニアビサウ",
+                "E_name": "Guinea-Bissau",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "62": {
+                "degits": 300,
+                "two_code": "GR",
+                "three_code": "GRC",
+                "J_name": "ギリシャ",
+                "E_name": "Greece",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "63": {
+                "degits": 414,
+                "two_code": "KW",
+                "three_code": "KWT",
+                "J_name": "クウェート",
+                "E_name": "Kuwait",
+                "area": "中東"
+            }
+        },
+        {
+            "64": {
+                "degits": 184,
+                "two_code": "CK",
+                "three_code": "COK",
+                "J_name": "クック諸島",
+                "E_name": "Cook Islands",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "65": {
+                "degits": 162,
+                "two_code": "CX",
+                "three_code": "CXR",
+                "J_name": "クリスマス島",
+                "E_name": "Christmas Isla",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "66": {
+                "degits": 191,
+                "two_code": "HR",
+                "three_code": "HRV",
+                "J_name": "クロアチア",
+                "E_name": "Croatia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "67": {
+                "degits": 320,
+                "two_code": "GT",
+                "three_code": "GTM",
+                "J_name": "グアテマラ",
+                "E_name": "Guatemala",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "68": {
+                "degits": 312,
+                "two_code": "GP",
+                "three_code": "GLP",
+                "J_name": "グアドループ",
+                "E_name": "Guadeloupe",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "69": {
+                "degits": 316,
+                "two_code": "GU",
+                "three_code": "GUM",
+                "J_name": "グアム",
+                "E_name": "Guam",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "70": {
+                "degits": 304,
+                "two_code": "GL",
+                "three_code": "GRL",
+                "J_name": "グリーンランド",
+                "E_name": "Greenland",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "71": {
+                "degits": 308,
+                "two_code": "GD",
+                "three_code": "GRD",
+                "J_name": "グレナダ",
+                "E_name": "Grenada",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "72": {
+                "degits": 136,
+                "two_code": "KY",
+                "three_code": "CYM",
+                "J_name": "ケイマン諸島",
+                "E_name": "Cayman Island",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "73": {
+                "degits": 404,
+                "two_code": "KE",
+                "three_code": "KEN",
+                "J_name": "ケニア",
+                "E_name": "Kenya",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "74": {
+                "degits": 166,
+                "two_code": "CC",
+                "three_code": "CCK",
+                "J_name": "ココス（キーリング）諸島",
+                "E_name": "Cocos (Keeling",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "75": {
+                "degits": 188,
+                "two_code": "CR",
+                "three_code": "CRI",
+                "J_name": "コスタリカ",
+                "E_name": "Costa Rica",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "76": {
+                "degits": 174,
+                "two_code": "KM",
+                "three_code": "COM",
+                "J_name": "コモロ",
+                "E_name": "Comoros",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "77": {
+                "degits": 170,
+                "two_code": "CO",
+                "three_code": "COL",
+                "J_name": "コロンビア",
+                "E_name": "Colombia",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "78": {
+                "degits": 178,
+                "two_code": "CG",
+                "three_code": "COG",
+                "J_name": "コンゴ共和国",
+                "E_name": "Congo",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "79": {
+                "degits": 180,
+                "two_code": "CD",
+                "three_code": "COD",
+                "J_name": "コンゴ民主共和国",
+                "E_name": "Congo, the Democratic Republic of the",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "80": {
+                "degits": 384,
+                "two_code": "CI",
+                "three_code": "CIV",
+                "J_name": "コートジボワール",
+                "E_name": "C_te d'Ivoire",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "81": {
+                "degits": 682,
+                "two_code": "SA",
+                "three_code": "SAU",
+                "J_name": "サウジアラビア",
+                "E_name": "Saudi Arabia",
+                "area": "中東"
+            }
+        },
+        {
+            "82": {
+                "degits": 239,
+                "two_code": "GS",
+                "three_code": "SGS",
+                "J_name": "サウスジョージア・サウスサンドウィッチ諸島",
+                "E_name": "South Georgia and the South Sandwich Islands",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "83": {
+                "degits": 882,
+                "two_code": "WS",
+                "three_code": "WSM",
+                "J_name": "サモア",
+                "E_name": "Samoa",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "84": {
+                "degits": 678,
+                "two_code": "ST",
+                "three_code": "STP",
+                "J_name": "サントメ・プリンシペ",
+                "E_name": "Sao Tome and",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "85": {
+                "degits": 666,
+                "two_code": "PM",
+                "three_code": "SPM",
+                "J_name": "サンピエール島・ミクロン島",
+                "E_name": "Saint Pierre an",
+                "area": "北アメリカ"
+            }
+        },
+        {
+            "86": {
+                "degits": 674,
+                "two_code": "SM",
+                "three_code": "SMR",
+                "J_name": "サンマリノ",
+                "E_name": "San Marino",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "87": {
+                "degits": 652,
+                "two_code": "BL",
+                "three_code": "BLM",
+                "J_name": "サン・バルテルミー",
+                "E_name": "Saint Barth_le",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "88": {
+                "degits": 663,
+                "two_code": "MF",
+                "three_code": "MAF",
+                "J_name": "サン・マルタン（フランス領）",
+                "E_name": "Saint Martin (F",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "89": {
+                "degits": 894,
+                "two_code": "ZM",
+                "three_code": "ZMB",
+                "J_name": "ザンビア",
+                "E_name": "Zambia",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "90": {
+                "degits": 694,
+                "two_code": "SL",
+                "three_code": "SLE",
+                "J_name": "シエラレオネ",
+                "E_name": "Sierra Leone",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "91": {
+                "degits": 760,
+                "two_code": "SY",
+                "three_code": "SYR",
+                "J_name": "シリア・アラブ共和国",
+                "E_name": "Syrian Arab Re",
+                "area": "中東"
+            }
+        },
+        {
+            "92": {
+                "degits": 702,
+                "two_code": "SG",
+                "three_code": "SGP",
+                "J_name": "シンガポール",
+                "E_name": "Singapore",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "93": {
+                "degits": 534,
+                "two_code": "SX",
+                "three_code": "SXM",
+                "J_name": "シント・マールテン（オランダ領）",
+                "E_name": "Sint Maarten (",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "94": {
+                "degits": 262,
+                "two_code": "DJ",
+                "three_code": "DJI",
+                "J_name": "ジブチ",
+                "E_name": "Djibouti",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "95": {
+                "degits": 292,
+                "two_code": "GI",
+                "three_code": "GIB",
+                "J_name": "ジブラルタル",
+                "E_name": "Gibraltar",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "96": {
+                "degits": 388,
+                "two_code": "JM",
+                "three_code": "JAM",
+                "J_name": "ジャマイカ",
+                "E_name": "Jamaica",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "97": {
+                "degits": 832,
+                "two_code": "JE",
+                "three_code": "JEY",
+                "J_name": "ジャージー",
+                "E_name": "Jersey",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "98": {
+                "degits": 268,
+                "two_code": "GE",
+                "three_code": "GEO",
+                "J_name": "ジョージア",
+                "E_name": "Georgia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "99": {
+                "degits": 716,
+                "two_code": "ZW",
+                "three_code": "ZWE",
+                "J_name": "ジンバブエ",
+                "E_name": "Zimbabwe",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "100": {
+                "degits": 756,
+                "two_code": "CH",
+                "three_code": "CHE",
+                "J_name": "スイス",
+                "E_name": "Switzerland",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "101": {
+                "degits": 752,
+                "two_code": "SE",
+                "three_code": "SWE",
+                "J_name": "スウェーデン",
+                "E_name": "Sweden",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "102": {
+                "degits": 724,
+                "two_code": "ES",
+                "three_code": "ESP",
+                "J_name": "スペイン",
+                "E_name": "Spain",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "103": {
+                "degits": 740,
+                "two_code": "SR",
+                "three_code": "SUR",
+                "J_name": "スリナム",
+                "E_name": "Suriname",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "104": {
+                "degits": 144,
+                "two_code": "LK",
+                "three_code": "LKA",
+                "J_name": "スリランカ",
+                "E_name": "Sri Lanka",
+                "area": "南アジア"
+            }
+        },
+        {
+            "105": {
+                "degits": 703,
+                "two_code": "SK",
+                "three_code": "SVK",
+                "J_name": "スロバキア",
+                "E_name": "Slovakia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "106": {
+                "degits": 705,
+                "two_code": "SI",
+                "three_code": "SVN",
+                "J_name": "スロベニア",
+                "E_name": "Slovenia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "107": {
+                "degits": 744,
+                "two_code": "SJ",
+                "three_code": "SJM",
+                "J_name": "スヴァールバル諸島およびヤンマイエン島",
+                "E_name": "Svalbard and J",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "108": {
+                "degits": 729,
+                "two_code": "SD",
+                "three_code": "SDN",
+                "J_name": "スーダン",
+                "E_name": "Sudan",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "109": {
+                "degits": 686,
+                "two_code": "SN",
+                "three_code": "SEN",
+                "J_name": "セネガル",
+                "E_name": "Senegal",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "110": {
+                "degits": 688,
+                "two_code": "RS",
+                "three_code": "SRB",
+                "J_name": "セルビア",
+                "E_name": "Serbia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "111": {
+                "degits": 659,
+                "two_code": "KN",
+                "three_code": "KNA",
+                "J_name": "セントクリストファー・ネイビス",
+                "E_name": "Saint Kitts and",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "112": {
+                "degits": 670,
+                "two_code": "VC",
+                "three_code": "VCT",
+                "J_name": "セントビンセントおよびグレナディーン諸島",
+                "E_name": "Saint Vincent and the Grenadines",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "113": {
+                "degits": 654,
+                "two_code": "SH",
+                "three_code": "SHN",
+                "J_name": "セントヘレナ・アセンションおよびトリスタンダクーニャ",
+                "E_name": "Saint Helena, Ascension and Tristan da Cunha",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "114": {
+                "degits": 662,
+                "two_code": "LC",
+                "three_code": "LCA",
+                "J_name": "セントルシア",
+                "E_name": "Saint Lucia",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "115": {
+                "degits": 690,
+                "two_code": "SC",
+                "three_code": "SYC",
+                "J_name": "セーシェル",
+                "E_name": "Seychelles",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "116": {
+                "degits": 706,
+                "two_code": "SO",
+                "three_code": "SOM",
+                "J_name": "ソマリア",
+                "E_name": "Somalia",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "117": {
+                "degits": 90,
+                "two_code": "SB",
+                "three_code": "SLB",
+                "J_name": "ソロモン諸島",
+                "E_name": "Solomon Islan",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "118": {
+                "degits": 764,
+                "two_code": "TH",
+                "three_code": "THA",
+                "J_name": "タイ",
+                "E_name": "Thailand",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "119": {
+                "degits": 762,
+                "two_code": "TJ",
+                "three_code": "TJK",
+                "J_name": "タジキスタン",
+                "E_name": "Tajikistan",
+                "area": "中央アジア"
+            }
+        },
+        {
+            "120": {
+                "degits": 834,
+                "two_code": "TZ",
+                "three_code": "TZA",
+                "J_name": "タンザニア",
+                "E_name": "Tanzania, United Republic of",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "121": {
+                "degits": 796,
+                "two_code": "TC",
+                "three_code": "TCA",
+                "J_name": "タークス・カイコス諸島",
+                "E_name": "Turks and Caic",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "122": {
+                "degits": 203,
+                "two_code": "CZ",
+                "three_code": "CZE",
+                "J_name": "チェコ",
+                "E_name": "Czechia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "123": {
+                "degits": 148,
+                "two_code": "TD",
+                "three_code": "TCD",
+                "J_name": "チャド",
+                "E_name": "Chad",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "124": {
+                "degits": 788,
+                "two_code": "TN",
+                "three_code": "TUN",
+                "J_name": "チュニジア",
+                "E_name": "Tunisia",
+                "area": "北アフリカ"
+            }
+        },
+        {
+            "125": {
+                "degits": 152,
+                "two_code": "CL",
+                "three_code": "CHL",
+                "J_name": "チリ",
+                "E_name": "Chile",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "126": {
+                "degits": 798,
+                "two_code": "TV",
+                "three_code": "TUV",
+                "J_name": "ツバル",
+                "E_name": "Tuvalu",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "127": {
+                "degits": 208,
+                "two_code": "DK",
+                "three_code": "DNK",
+                "J_name": "デンマーク",
+                "E_name": "Denmark",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "128": {
+                "degits": 772,
+                "two_code": "TK",
+                "three_code": "TKL",
+                "J_name": "トケラウ",
+                "E_name": "Tokelau",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "129": {
+                "degits": 780,
+                "two_code": "TT",
+                "three_code": "TTO",
+                "J_name": "トリニダード・トバゴ",
+                "E_name": "Trinidad and T",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "130": {
+                "degits": 795,
+                "two_code": "TM",
+                "three_code": "TKM",
+                "J_name": "トルクメニスタン",
+                "E_name": "Turkmenistan",
+                "area": "中央アジア"
+            }
+        },
+        {
+            "131": {
+                "degits": 792,
+                "two_code": "TR",
+                "three_code": "TUR",
+                "J_name": "トルコ",
+                "E_name": "Turkey",
+                "area": "中東"
+            }
+        },
+        {
+            "132": {
+                "degits": 776,
+                "two_code": "TO",
+                "three_code": "TON",
+                "J_name": "トンガ",
+                "E_name": "Tonga",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "133": {
+                "degits": 768,
+                "two_code": "TG",
+                "three_code": "TGO",
+                "J_name": "トーゴ",
+                "E_name": "Togo",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "134": {
+                "degits": 276,
+                "two_code": "DE",
+                "three_code": "DEU",
+                "J_name": "ドイツ",
+                "E_name": "Germany",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "135": {
+                "degits": 214,
+                "two_code": "DO",
+                "three_code": "DOM",
+                "J_name": "ドミニカ共和国",
+                "E_name": "Dominican Rep",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "136": {
+                "degits": 212,
+                "two_code": "DM",
+                "three_code": "DMA",
+                "J_name": "ドミニカ国",
+                "E_name": "Dominica",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "137": {
+                "degits": 566,
+                "two_code": "NG",
+                "three_code": "NGA",
+                "J_name": "ナイジェリア",
+                "E_name": "Nigeria",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "138": {
+                "degits": 520,
+                "two_code": "NR",
+                "three_code": "NRU",
+                "J_name": "ナウル",
+                "E_name": "Nauru",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "139": {
+                "degits": 516,
+                "two_code": "NA",
+                "three_code": "NAM",
+                "J_name": "ナミビア",
+                "E_name": "Namibia",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "140": {
+                "degits": 570,
+                "two_code": "NU",
+                "three_code": "NIU",
+                "J_name": "ニウエ",
+                "E_name": "Niue",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "141": {
+                "degits": 558,
+                "two_code": "NI",
+                "three_code": "NIC",
+                "J_name": "ニカラグア",
+                "E_name": "Nicaragua",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "142": {
+                "degits": 562,
+                "two_code": "NE",
+                "three_code": "NER",
+                "J_name": "ニジェール",
+                "E_name": "Niger",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "143": {
+                "degits": 540,
+                "two_code": "NC",
+                "three_code": "NCL",
+                "J_name": "ニューカレドニア",
+                "E_name": "New Caledonia",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "144": {
+                "degits": 554,
+                "two_code": "NZ",
+                "three_code": "NZL",
+                "J_name": "ニュージーランド",
+                "E_name": "New Zealand",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "145": {
+                "degits": 524,
+                "two_code": "NP",
+                "three_code": "NPL",
+                "J_name": "ネパール",
+                "E_name": "Nepal",
+                "area": "南アジア"
+            }
+        },
+        {
+            "146": {
+                "degits": 578,
+                "two_code": "NO",
+                "three_code": "NOR",
+                "J_name": "ノルウェー",
+                "E_name": "Norway",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "147": {
+                "degits": 574,
+                "two_code": "NF",
+                "three_code": "NFK",
+                "J_name": "ノーフォーク島",
+                "E_name": "Norfolk Island",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "148": {
+                "degits": 332,
+                "two_code": "HT",
+                "three_code": "HTI",
+                "J_name": "ハイチ",
+                "E_name": "Haiti",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "149": {
+                "degits": 348,
+                "two_code": "HU",
+                "three_code": "HUN",
+                "J_name": "ハンガリー",
+                "E_name": "Hungary",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "150": {
+                "degits": 334,
+                "two_code": "HM",
+                "three_code": "HMD",
+                "J_name": "ハード島とマクドナルド諸島",
+                "E_name": "Heard Island and McDonald Islands",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "151": {
+                "degits": 336,
+                "two_code": "VA",
+                "three_code": "VAT",
+                "J_name": "バチカン市国",
+                "E_name": "Holy See (Vatican City State)",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "152": {
+                "degits": 548,
+                "two_code": "VU",
+                "three_code": "VUT",
+                "J_name": "バヌアツ",
+                "E_name": "Vanuatu",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "153": {
+                "degits": 44,
+                "two_code": "BS",
+                "three_code": "BHS",
+                "J_name": "バハマ",
+                "E_name": "Bahamas",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "154": {
+                "degits": 60,
+                "two_code": "BM",
+                "three_code": "BMU",
+                "J_name": "バミューダ",
+                "E_name": "Bermuda",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "155": {
+                "degits": 52,
+                "two_code": "BB",
+                "three_code": "BRB",
+                "J_name": "バルバドス",
+                "E_name": "Barbados",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "156": {
+                "degits": 50,
+                "two_code": "BD",
+                "three_code": "BGD",
+                "J_name": "バングラデシュ",
+                "E_name": "Bangladesh",
+                "area": "南アジア"
+            }
+        },
+        {
+            "157": {
+                "degits": 48,
+                "two_code": "BH",
+                "three_code": "BHR",
+                "J_name": "バーレーン",
+                "E_name": "Bahrain",
+                "area": "中東"
+            }
+        },
+        {
+            "158": {
+                "degits": 586,
+                "two_code": "PK",
+                "three_code": "PAK",
+                "J_name": "パキスタン",
+                "E_name": "Pakistan",
+                "area": "南アジア"
+            }
+        },
+        {
+            "159": {
+                "degits": 591,
+                "two_code": "PA",
+                "three_code": "PAN",
+                "J_name": "パナマ",
+                "E_name": "Panama",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "160": {
+                "degits": 598,
+                "two_code": "PG",
+                "three_code": "PNG",
+                "J_name": "パプアニューギニア",
+                "E_name": "Papua New Gu",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "161": {
+                "degits": 585,
+                "two_code": "PW",
+                "three_code": "PLW",
+                "J_name": "パラオ",
+                "E_name": "Palau",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "162": {
+                "degits": 600,
+                "two_code": "PY",
+                "three_code": "PRY",
+                "J_name": "パラグアイ",
+                "E_name": "Paraguay",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "163": {
+                "degits": 275,
+                "two_code": "PS",
+                "three_code": "PSE",
+                "J_name": "パレスチナ",
+                "E_name": "Palestinian Territory, Occupied",
+                "area": "中東"
+            }
+        },
+        {
+            "164": {
+                "degits": 612,
+                "two_code": "PN",
+                "three_code": "PCN",
+                "J_name": "ピトケアン",
+                "E_name": "Pitcairn",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "165": {
+                "degits": 242,
+                "two_code": "FJ",
+                "three_code": "FJI",
+                "J_name": "フィジー",
+                "E_name": "Fiji",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "166": {
+                "degits": 608,
+                "two_code": "PH",
+                "three_code": "PHL",
+                "J_name": "フィリピン",
+                "E_name": "Philippines",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "167": {
+                "degits": 246,
+                "two_code": "FI",
+                "three_code": "FIN",
+                "J_name": "フィンランド",
+                "E_name": "Finland",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "168": {
+                "degits": 234,
+                "two_code": "FO",
+                "three_code": "FRO",
+                "J_name": "フェロー諸島",
+                "E_name": "Faroe Islands",
+                "area": "北ヨーロッパ"
+            }
+        },
+        {
+            "169": {
+                "degits": 238,
+                "two_code": "FK",
+                "three_code": "FLK",
+                "J_name": "フォークランド（マルビナス）諸島",
+                "E_name": "Falkland Island",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "170": {
+                "degits": 250,
+                "two_code": "FR",
+                "three_code": "FRA",
+                "J_name": "フランス",
+                "E_name": "France",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "171": {
+                "degits": 254,
+                "two_code": "GF",
+                "three_code": "GUF",
+                "J_name": "フランス領ギアナ",
+                "E_name": "French Guiana",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "172": {
+                "degits": 258,
+                "two_code": "PF",
+                "three_code": "PYF",
+                "J_name": "フランス領ポリネシア",
+                "E_name": "French Polyne",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "173": {
+                "degits": 260,
+                "two_code": "TF",
+                "three_code": "ATF",
+                "J_name": "フランス領南方・南極地域",
+                "E_name": "French Southe",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "174": {
+                "degits": 76,
+                "two_code": "BR",
+                "three_code": "BRA",
+                "J_name": "ブラジル",
+                "E_name": "Brazil",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "175": {
+                "degits": 100,
+                "two_code": "BG",
+                "three_code": "BGR",
+                "J_name": "ブルガリア",
+                "E_name": "Bulgaria",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "176": {
+                "degits": 854,
+                "two_code": "BF",
+                "three_code": "BFA",
+                "J_name": "ブルキナファソ",
+                "E_name": "Burkina Faso",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "177": {
+                "degits": 96,
+                "two_code": "BN",
+                "three_code": "BRN",
+                "J_name": "ブルネイ・ダルサラーム",
+                "E_name": "Brunei Daruss",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "178": {
+                "degits": 108,
+                "two_code": "BI",
+                "three_code": "BDI",
+                "J_name": "ブルンジ",
+                "E_name": "Burundi",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "179": {
+                "degits": 64,
+                "two_code": "BT",
+                "three_code": "BTN",
+                "J_name": "ブータン",
+                "E_name": "Bhutan",
+                "area": "南アジア"
+            }
+        },
+        {
+            "180": {
+                "degits": 74,
+                "two_code": "BV",
+                "three_code": "BVT",
+                "J_name": "ブーベ島",
+                "E_name": "Bouvet Island",
+                "area": "南極"
+            }
+        },
+        {
+            "181": {
+                "degits": 630,
+                "two_code": "PR",
+                "three_code": "PRI",
+                "J_name": "プエルトリコ",
+                "E_name": "Puerto Rico",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "182": {
+                "degits": 704,
+                "two_code": "VN",
+                "three_code": "VNM",
+                "J_name": "ベトナム",
+                "E_name": "Viet Nam",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "183": {
+                "degits": 204,
+                "two_code": "BJ",
+                "three_code": "BEN",
+                "J_name": "ベナン",
+                "E_name": "Benin",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "184": {
+                "degits": 862,
+                "two_code": "VE",
+                "three_code": "VEN",
+                "J_name": "ベネズエラ・ボリバル共和国",
+                "E_name": "Venezuela, Bolivarian Republic of",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "185": {
+                "degits": 112,
+                "two_code": "BY",
+                "three_code": "BLR",
+                "J_name": "ベラルーシ",
+                "E_name": "Belarus",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "186": {
+                "degits": 84,
+                "two_code": "BZ",
+                "three_code": "BLZ",
+                "J_name": "ベリーズ",
+                "E_name": "Belize",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "187": {
+                "degits": 56,
+                "two_code": "BE",
+                "three_code": "BEL",
+                "J_name": "ベルギー",
+                "E_name": "Belgium",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "188": {
+                "degits": 604,
+                "two_code": "PE",
+                "three_code": "PER",
+                "J_name": "ペルー",
+                "E_name": "Peru",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "189": {
+                "degits": 340,
+                "two_code": "HN",
+                "three_code": "HND",
+                "J_name": "ホンジュラス",
+                "E_name": "Honduras",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "190": {
+                "degits": 70,
+                "two_code": "BA",
+                "three_code": "BIH",
+                "J_name": "ボスニア・ヘルツェゴビナ",
+                "E_name": "Bosnia and He",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "191": {
+                "degits": 72,
+                "two_code": "BW",
+                "three_code": "BWA",
+                "J_name": "ボツワナ",
+                "E_name": "Botswana",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "192": {
+                "degits": 535,
+                "two_code": "BQ",
+                "three_code": "BES",
+                "J_name": "ボネール、シント・ユースタティウスおよびサバ",
+                "E_name": "Bonaire, Saint Eustatius and Saba",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "193": {
+                "degits": 68,
+                "two_code": "BO",
+                "three_code": "BOL",
+                "J_name": "ボリビア多民族国",
+                "E_name": "Bolivia, Plurinational State of",
+                "area": "南アメリカ"
+            }
+        },
+        {
+            "194": {
+                "degits": 620,
+                "two_code": "PT",
+                "three_code": "PRT",
+                "J_name": "ポルトガル",
+                "E_name": "Portugal",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "195": {
+                "degits": 616,
+                "two_code": "PL",
+                "three_code": "POL",
+                "J_name": "ポーランド",
+                "E_name": "Poland",
+                "area": "東ヨ[ロッパ"
+            }
+        },
+        {
+            "196": {
+                "degits": 446,
+                "two_code": "MO",
+                "three_code": "MAC",
+                "J_name": "マカオ",
+                "E_name": "Macau",
+                "area": "東アジア"
+            }
+        },
+        {
+            "197": {
+                "degits": 807,
+                "two_code": "MK",
+                "three_code": "MKD",
+                "J_name": "マケドニア旧ユーゴスラビア共和国",
+                "E_name": "Macedonia, the former Yugoslav Republic of",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "198": {
+                "degits": 450,
+                "two_code": "MG",
+                "three_code": "MDG",
+                "J_name": "マダガスカル",
+                "E_name": "Madagascar",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "199": {
+                "degits": 175,
+                "two_code": "YT",
+                "three_code": "MYT",
+                "J_name": "マヨット",
+                "E_name": "Mayotte",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "200": {
+                "degits": 454,
+                "two_code": "MW",
+                "three_code": "MWI",
+                "J_name": "マラウイ",
+                "E_name": "Malawi",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "201": {
+                "degits": 466,
+                "two_code": "ML",
+                "three_code": "MLI",
+                "J_name": "マリ",
+                "E_name": "Mali",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "202": {
+                "degits": 470,
+                "two_code": "MT",
+                "three_code": "MLT",
+                "J_name": "マルタ",
+                "E_name": "Malta",
+                "area": "地中海地域"
+            }
+        },
+        {
+            "203": {
+                "degits": 474,
+                "two_code": "MQ",
+                "three_code": "MTQ",
+                "J_name": "マルティニーク",
+                "E_name": "Martinique",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "204": {
+                "degits": 458,
+                "two_code": "MY",
+                "three_code": "MYS",
+                "J_name": "マレーシア",
+                "E_name": "Malaysia",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "205": {
+                "degits": 833,
+                "two_code": "IM",
+                "three_code": "IMN",
+                "J_name": "マン島",
+                "E_name": "Isle of Man",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "206": {
+                "degits": 584,
+                "two_code": "MH",
+                "three_code": "MHL",
+                "J_name": "マーシャル諸島",
+                "E_name": "Marshall Island",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "207": {
+                "degits": 583,
+                "two_code": "FM",
+                "three_code": "FSM",
+                "J_name": "ミクロネシア連邦",
+                "E_name": "Micronesia, Federated States of",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "208": {
+                "degits": 104,
+                "two_code": "MM",
+                "three_code": "MMR",
+                "J_name": "ミャンマー",
+                "E_name": "Myanmar",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "209": {
+                "degits": 484,
+                "two_code": "MX",
+                "three_code": "MEX",
+                "J_name": "メキシコ",
+                "E_name": "Mexico",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "210": {
+                "degits": 508,
+                "two_code": "MZ",
+                "three_code": "MOZ",
+                "J_name": "モザンビーク",
+                "E_name": "Mozambique",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "211": {
+                "degits": 492,
+                "two_code": "MC",
+                "three_code": "MCO",
+                "J_name": "モナコ",
+                "E_name": "Monaco",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "212": {
+                "degits": 462,
+                "two_code": "MV",
+                "three_code": "MDV",
+                "J_name": "モルディブ",
+                "E_name": "Maldives",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "213": {
+                "degits": 498,
+                "two_code": "MD",
+                "three_code": "MDA",
+                "J_name": "モルドバ共和国",
+                "E_name": "Moldova, Republic of",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "214": {
+                "degits": 504,
+                "two_code": "MA",
+                "three_code": "MAR",
+                "J_name": "モロッコ",
+                "E_name": "Morocco",
+                "area": "北アフリカ"
+            }
+        },
+        {
+            "215": {
+                "degits": 496,
+                "two_code": "MN",
+                "three_code": "MNG",
+                "J_name": "モンゴル",
+                "E_name": "Mongolia",
+                "area": "東アジア"
+            }
+        },
+        {
+            "216": {
+                "degits": 499,
+                "two_code": "ME",
+                "three_code": "MNE",
+                "J_name": "モンテネグロ",
+                "E_name": "Montenegro",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "217": {
+                "degits": 500,
+                "two_code": "MS",
+                "three_code": "MSR",
+                "J_name": "モントセラト",
+                "E_name": "Montserrat",
+                "area": "中央アメリカ"
+            }
+        },
+        {
+            "218": {
+                "degits": 480,
+                "two_code": "MU",
+                "three_code": "MUS",
+                "J_name": "モーリシャス",
+                "E_name": "Mauritius",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "219": {
+                "degits": 478,
+                "two_code": "MR",
+                "three_code": "MRT",
+                "J_name": "モーリタニア",
+                "E_name": "Mauritania",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "220": {
+                "degits": 400,
+                "two_code": "JO",
+                "three_code": "JOR",
+                "J_name": "ヨルダン",
+                "E_name": "Jordan",
+                "area": "中東"
+            }
+        },
+        {
+            "221": {
+                "degits": 418,
+                "two_code": "LA",
+                "three_code": "LAO",
+                "J_name": "ラオス人民民主共和国",
+                "E_name": "Lao People's Democratic Republic",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "222": {
+                "degits": 428,
+                "two_code": "LV",
+                "three_code": "LVA",
+                "J_name": "ラトビア",
+                "E_name": "Latvia",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "223": {
+                "degits": 440,
+                "two_code": "LT",
+                "three_code": "LTU",
+                "J_name": "リトアニア",
+                "E_name": "Lithuania",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "224": {
+                "degits": 438,
+                "two_code": "LI",
+                "three_code": "LIE",
+                "J_name": "リヒテンシュタイン",
+                "E_name": "Liechtenstein",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "225": {
+                "degits": 434,
+                "two_code": "LY",
+                "three_code": "LBY",
+                "J_name": "リビア",
+                "E_name": "Libya",
+                "area": "北アフリカ"
+            }
+        },
+        {
+            "226": {
+                "degits": 430,
+                "two_code": "LR",
+                "three_code": "LBR",
+                "J_name": "リベリア",
+                "E_name": "Liberia",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "227": {
+                "degits": 442,
+                "two_code": "LU",
+                "three_code": "LUX",
+                "J_name": "ルクセンブルク",
+                "E_name": "Luxembourg",
+                "area": "西ヨーロッパ"
+            }
+        },
+        {
+            "228": {
+                "degits": 646,
+                "two_code": "RW",
+                "three_code": "RWA",
+                "J_name": "ルワンダ",
+                "E_name": "Rwanda",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "229": {
+                "degits": 642,
+                "two_code": "RO",
+                "three_code": "ROU",
+                "J_name": "ルーマニア",
+                "E_name": "Romania",
+                "area": "東ヨーロッパ"
+            }
+        },
+        {
+            "230": {
+                "degits": 426,
+                "two_code": "LS",
+                "three_code": "LSO",
+                "J_name": "レソト",
+                "E_name": "Lesotho",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "231": {
+                "degits": 422,
+                "two_code": "LB",
+                "three_code": "LBN",
+                "J_name": "レバノン",
+                "E_name": "Lebanon",
+                "area": "中東"
+            }
+        },
+        {
+            "232": {
+                "degits": 638,
+                "two_code": "RE",
+                "three_code": "REU",
+                "J_name": "レユニオン",
+                "E_name": "R_union",
+                "area": "インド洋地域"
+            }
+        },
+        {
+            "233": {
+                "degits": 643,
+                "two_code": "RU",
+                "three_code": "RUS",
+                "J_name": "ロシア連邦",
+                "E_name": "Russian Feder",
+                "area": "ロシア"
+            }
+        },
+        {
+            "234": {
+                "degits": 158,
+                "two_code": "TW",
+                "three_code": "TWN",
+                "J_name": "中国台湾省（中華民国）",
+                "E_name": "Taiwan, Province of China",
+                "area": "東アジア"
+            }
+        },
+        {
+            "235": {
+                "degits": 140,
+                "two_code": "CF",
+                "three_code": "CAF",
+                "J_name": "中央アフリカ共和国",
+                "E_name": "Central African",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "236": {
+                "degits": 156,
+                "two_code": "CN",
+                "three_code": "CHN",
+                "J_name": "中華人民共和国",
+                "E_name": "China",
+                "area": "東アジア"
+            }
+        },
+        {
+            "237": {
+                "degits": 580,
+                "two_code": "MP",
+                "three_code": "MNP",
+                "J_name": "北マリアナ諸島",
+                "E_name": "Northern Maria",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "238": {
+                "degits": 710,
+                "two_code": "ZA",
+                "three_code": "ZAF",
+                "J_name": "南アフリカ",
+                "E_name": "South Africa",
+                "area": "南アフリカ"
+            }
+        },
+        {
+            "239": {
+                "degits": 728,
+                "two_code": "SS",
+                "three_code": "SSD",
+                "J_name": "南スーダン",
+                "E_name": "South Sudan",
+                "area": "東アフリカ"
+            }
+        },
+        {
+            "240": {
+                "degits": 10,
+                "two_code": "AQ",
+                "three_code": "ATA",
+                "J_name": "南極",
+                "E_name": "Antarctica",
+                "area": "南極"
+            }
+        },
+        {
+            "241": {
+                "degits": 581,
+                "two_code": "UM",
+                "three_code": "UMI",
+                "J_name": "合衆国領有小離島",
+                "E_name": "United States Minor Outlying Islands",
+                "area": "オセアニア"
+            }
+        },
+        {
+            "242": {
+                "degits": 410,
+                "two_code": "KR",
+                "three_code": "KOR",
+                "J_name": "大韓民国",
+                "E_name": "Korea, Republic of",
+                "area": "東アジア"
+            }
+        },
+        {
+            "243": {
+                "degits": 392,
+                "two_code": "JP",
+                "three_code": "JPN",
+                "J_name": "日本",
+                "E_name": "Japan",
+                "area": "東アジア"
+            }
+        },
+        {
+            "244": {
+                "degits": 408,
+                "two_code": "KP",
+                "three_code": "PRK",
+                "J_name": "朝鮮民主主義人民共和国",
+                "E_name": "Korea, Democratic People's Republic of",
+                "area": "東アジア"
+            }
+        },
+        {
+            "245": {
+                "degits": 626,
+                "two_code": "TL",
+                "three_code": "TLS",
+                "J_name": "東ティモール",
+                "E_name": "Timor-Leste",
+                "area": "東南アジア"
+            }
+        },
+        {
+            "246": {
+                "degits": 732,
+                "two_code": "EH",
+                "three_code": "ESH",
+                "J_name": "西サハラ",
+                "E_name": "Western Sahar",
+                "area": "西アフリカ"
+            }
+        },
+        {
+            "247": {
+                "degits": 226,
+                "two_code": "GQ",
+                "three_code": "GNQ",
+                "J_name": "赤道ギニア",
+                "E_name": "Equatorial Gui",
+                "area": "中央アフリカ"
+            }
+        },
+        {
+            "248": {
+                "degits": 344,
+                "two_code": "HK",
+                "three_code": "HKG",
+                "J_name": "香港",
+                "E_name": "Hong Kong",
+                "area": "東アジア"
+            }
+        }
+    ]
+}

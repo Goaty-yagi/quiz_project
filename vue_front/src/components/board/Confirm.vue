@@ -2,7 +2,7 @@
     <div class="l-wrapper">
         <div class="main-wrapper">
             <div class="create-question-wrapper">
-                <div class="title-black">
+                <div class="title-blue">
                     <p>質問投稿</p>
                 </div>
                 <div class="form">
@@ -27,7 +27,7 @@
                     <div class="line"></div>
 
                     <div class="question-description">
-                        <p class="title-black">質問文</p>
+                        <p class="title-blue">質問文</p>
                     </div>
                     <div class='text-field'>
                         <div class='form-text'>
@@ -37,7 +37,7 @@
                     <div class='confirm-message'>この内容で投稿しますか。
                     </div>
                     <div class="button-group">
-                            <div @click="this.$emit('handleShowConfirm')">戻る</div>
+                            <div class="back" @click="this.$emit('handleShowConfirm')">戻る</div>
                             <button class="btn-tr-black-base-sq" @click='publish'>投稿する</button>
                     </div>            
                 </div>
@@ -59,6 +59,9 @@ export default {
     },
     mounted(){
         console.log("mounted_confirm",this.$store.state.board.title)
+    },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
     },
     methods:{
         async publish(){
@@ -126,7 +129,7 @@ export default {
     .create-question-wrapper{
         top:0;
         left:0;
-        background: $back-tr-white;
+        background: linear-gradient(to bottom right, #ffffff,#dddddd);;;
         border: solid $dark-blue;
         width:100%;
         height: auto;
@@ -184,7 +187,7 @@ export default {
             }
             .line{
                 width: 80%;
-                border-bottom: 0.2rem solid $dark-blue;
+                border-bottom: 0.2rem solid $middle-blue;
                 margin-top: 2rem;
                 margin-bottom: 1rem;
             }
@@ -222,10 +225,26 @@ export default {
                 display:flex;
                 margin:1rem;
                 justify-content: center;
+                .back{
+                    padding-right: 0.9rem;
+                    padding-left: 0.9rem;
+                    padding-top: 0.3rem;
+                    padding-bottom: 0.3rem;
+                    transition: 0.5s;
+                    border: solid $lite-gray;
+                }
+                .back:hover{
+                    background: $lite-gray;
+                }
                 .btn-tr-black-base-sq{
                     margin-left: 0.5rem;
                     padding-right: 0.5rem;
                     padding-left: 0.5rem;
+                    transition: 0.5s;
+                }
+                .btn-tr-black-base-sq:hover{
+                    background: $base-color;
+                    color: white;
                 }
             }
         }   

@@ -1,4 +1,3 @@
-from this import d
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,13 +6,16 @@ from rest_framework.generics import GenericAPIView
 
 
 from django.db.models import Q
-from rest_framework import status
 from django.db.models import Max
 from django.db.models import Prefetch
 
 import random
 import operator
 import copy
+from itertools import chain
+
+
+
 from django.http import Http404
 
 from board.models import (
@@ -42,6 +44,8 @@ from board.serializers import (
     UserTagSerializer, 
     CenterTagSerializer, 
     FavoriteQuestionSerializer, 
+    ReplyOnAnswerSerializer,
+    AnswerAndReplyOnQuestionSerializer
     # CenterOnlyTagSerializer
     )
 
@@ -72,6 +76,35 @@ class BoardQuestionList(generics.ListAPIView):
         
     serializer_class = BoardQuestionListSerializer
     pagination_class = PageNumberPagination
+
+
+class ViewedOrderedQuestion(generics.ListAPIView):
+    queryset = BoardQuestion.objects.prefetch_related(
+        "tag", 
+        "tag__parent_tag",
+        "tag__user",
+        'answer',
+        'answer__question',
+        'answer__question__user',
+        'answer__question__tag',
+        'answer__question__tag__parent_tag',
+        'answer__question__tag__user',
+        'answer__reply',
+        'answer__user',
+        'answer__liked_answer',
+        'answer__liked_answer__user',
+        'liked_num',
+        'liked_num__user',
+        'liked_num__question',
+        'liked_num__question__user',
+        'liked_num__question__tag',
+        ).select_related(
+            'user'
+        ).order_by('-viewed')
+        
+    serializer_class = BoardQuestionListSerializer
+    pagination_class = PageNumberPagination
+
 
 
 class BoardQuestionCreate(generics.CreateAPIView):
@@ -286,6 +319,7 @@ class FavoriteQuestionUpdate(generics.RetrieveUpdateDestroyAPIView):
 class FavoriteQuestionCreate(generics.CreateAPIView):
     queryset = UserFavoriteQuestion.objects.select_related('user').prefetch_related('question')
     serializer_class = FavoriteQuestionSerializer
+
     
 
 # class AnsweredQuestionList(generics.ListAPIView):
@@ -325,9 +359,10 @@ class AnsweredQuestionList(GenericAPIView):
     def get(self, request, format=None):
         user = request.query_params.getlist("user")
         try:
-            question_queryset  = self.queryset.filter(
+            question_queryset = self.queryset.filter(
                 answer__user = user[0],
-            ).distinct()
+            ).distinct().order_by('-on_reply')
+            print("oeder",question_queryset)
             page = self.paginate_queryset(question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
@@ -456,7 +491,7 @@ class UserQuestionList(GenericAPIView):
         try:
             user_question_queryset = self.queryset.filter(
                 user__UID=uid
-            )
+            ).order_by('-on_reply','-on_answer')
             page = self.paginate_queryset(user_question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
@@ -497,9 +532,8 @@ class RelatedQuestionList(GenericAPIView):
     def get(self, request, format=None):
         print("request",request)
         request_tag_list = request.query_params.getlist("tag")
-        uid = request.query_params.getlist("uid")[0]
-        print("uid",uid)
         try:
+            uid = request.query_params.getlist("uid")[0]
             solved_queryset = self.queryset.exclude(user__UID=uid).filter(
                 tag__in = request_tag_list,
                 solved = True
@@ -515,10 +549,26 @@ class RelatedQuestionList(GenericAPIView):
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
             data = result.data
-            # serializer = BoardQuestionListSerializer(question, many=True)
             return Response(data)
-        except BoardQuestion.DoesNotExist:
-            raise Http404
+        except:
+            try:
+                solved_queryset = self.queryset.filter(
+                tag__in = request_tag_list,
+                solved = True
+                ).distinct()
+                unsolved_queryset = self.queryset.filter(
+                    tag__in = request_tag_list,
+                    solved = False
+                ).distinct()
+                question = set_random_object(solved_queryset, unsolved_queryset)
+                page = self.paginate_queryset(question)
+                print('page',self.queryset)
+                serializer = self.get_serializer(page, many=True)
+                result = self.get_paginated_response(serializer.data)
+                data = result.data
+                return Response(data)
+            except BoardQuestion.DoesNotExist:
+                raise Http404
 
 
 class SearchQuestionList(GenericAPIView):
@@ -611,6 +661,30 @@ class SearchQuestionList(GenericAPIView):
         data = result.data
         return Response(data)
 
+
+class UserAnswerAndQuestionApi(APIView):
+    def get(self, request):
+        print("request",request)
+        user_UID = request.query_params['user']
+        print(user_UID)
+        try:
+            # q = Q()
+            # q.add(Q(on_answer=True),Q.OR)
+            # q.add(Q(on_reply=True),Q.OR)
+            question = BoardQuestion.objects.filter(user_id=user_UID).filter(Q(on_answer=True) | Q(on_reply=True)).all()
+            answer  = BoardAnswer.objects.filter(
+                user_id = user_UID,
+                on_reply = True
+                )
+            print('got question ', question, answer)
+            print('got answer', answer)
+            serializer = AnswerAndReplyOnQuestionSerializer(question, many=True)
+            serializer2 = ReplyOnAnswerSerializer(answer, many=True)
+            union = list(chain([serializer.data], [serializer2.data]))
+            return Response(union)
+        except :
+            raise Http404
+
 # class Conbine():
 #     def __init__(self, keywords=''):
 #         string = ''
@@ -686,38 +760,3 @@ def set_random_object(solved_queryset, unsolved_queryset):
     return random_id_list
 
 
-# class RelatedQuestion(generics.ListAPIView):
-#     queryset = BoardQuestion.objects.fi()
-#     serializer_class = BoardQuestionListSerializer
-#     lookup_field = 'slug'
-
-
-# class UserTagCreateApi(APIView):
-#     def post(self, request, format=None):
-#         print("self",self.__dict__)
-#         print("requesti",request)
-#         serializer = UserTagSerializer(data=request.data)
-#         print(serializer)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # try:
-        #     queryset = BoardUserTag.objects.create(request,
-        #     field=request.query_params['field'],
-        #     module=request.query_params['module'])
-        #     quiz_num = int(request.query_params['num'])
-        #     question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-        #     serializer = QuestionListSerializer(question, many=True)
-        #     return Response(serializer.data)
-        # except Question.DoesNotExist:
-        #     raise Http404
-
-# class QuestionLikedRead(generics.ListAPIView):
-#     queryset = BoardQuestionLiked.objects.all()
-#     serializer_class = BoardLikedReadSerializer
-
-
-# class QuestionLikedCreate(generics.CreateAPIView):
-#     queryset = BoardQuestionLiked.objects.all()
-#     serializer_class = BoardLikedCreateSerializer

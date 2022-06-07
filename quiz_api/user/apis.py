@@ -2,20 +2,73 @@ from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from django.http import Http404
 from django.db.models import Prefetch
+from django.http import QueryDict
+
+import copy
+# from ipware import get_client_ip
 
 from user.models import User
 from board.models import BoardQuestion, BoardAnswer
-from user.serializers import UserSerializer,UserStrageSerializer
+from user.serializers import UserSerializer,UserStrageSerializer, SimpleUserSerializer
+from quiz.models import UserStatus, QuizTaker, ParentStatus, ParentQuiz
+from quiz.serializers import UserStatusSerializer,QuizTakerSerializer
+
+# class UserList(generics.ListCreateAPIView):
+#     # parser_classes = (MultiPartParser, FormParser)
+#     queryset = User.objects.select_related('favorite_question_set').all()
+#     serializer_class = UserSerializer
+#     lookup_field = 'UID'
+
+class UserList(APIView):
+
+    def post(self, request, format=None):
+            print('API',request,request.data)
+            if User.objects.filter(UID=request.data['UID']).exists():
+                query_set = User.objects.get(UID=request.data['UID'])
+                serializer = UserStrageSerializer(query_set)
+                return Response(serializer.data,status=222)
+            else:
+                try:
+                    user_status = copy.deepcopy(request.data["quiz_taker"][2])
+                    grade = copy.deepcopy(request.data["quiz_taker"][0])
+                    serializer = UserSerializer(data=request.data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        print('saveed')
+                        quiz_taker = dict(serializer.data['quiz_taker'][0])
+                        quiz_taker_object = QuizTaker.objects.get(id=quiz_taker['id'])
+                        parent_quiz = ParentQuiz.objects.get(id=grade['grade'])
+                        for i in user_status["user_status"]:
+                            parent_status = ParentStatus.objects.get(id=i['status'])
+                            UserStatus.objects.create(
+                                quiz_taker=quiz_taker_object,
+                                status=parent_status,
+                                grade=parent_quiz,
+                                is_correct=i['isCorrect'],
+                                is_false=i['isFalse'])
+                        return Response(serializer.data)
+                    else:
+                        raise Http404
+                except Exception as e:
+                    if e.args[0] == 'quiz_taker':
+                        serializer = UserSerializer(data=request.data)
+                        if serializer.is_valid():
+                            serializer.save()
+                            return Response(serializer.data)
+                        else:
+                            raise Http404
+                    else:
+                        raise e
 
 
-class UserList(generics.ListCreateAPIView):
+class UserAllList(generics.ListCreateAPIView):
     # parser_classes = (MultiPartParser, FormParser)
-    queryset = User.objects.select_related('favorite_question_set').all()
-    serializer_class = UserSerializer
-    lookup_field = 'UID'
+    queryset = User.objects.all()
+    serializer_class = SimpleUserSerializer
 
 
 class UserDetail(generics.RetrieveUpdateAPIView ):
@@ -74,7 +127,12 @@ class UserDetail(generics.RetrieveUpdateAPIView ):
         'liked_num__question__tag',
         'liked_answer',
         'liked_answer__answer',
-        'liked_answer__user')
+        'liked_answer__user',
+        'quiz_taker',
+        'quiz_taker__user',
+        'quiz_taker__grade',
+        'quiz_taker__user_status',
+        )
         # Prefetch('answer', queryset=BoardAnswer.objects.select_related('user', 'question'), to_attr="user_answer"),        
     serializer_class = UserStrageSerializer
     lookup_field = 'UID'

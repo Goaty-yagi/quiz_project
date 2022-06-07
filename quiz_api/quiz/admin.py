@@ -1,6 +1,19 @@
 from django.contrib import admin
 import nested_admin
-from .models import Quiz, Question, Answer, QuizTaker, UsersAnswer
+from .models import (
+	Quiz, 
+	Question, 
+	Answer, 
+	QuizTaker, 
+	ParentQuiz,
+	ParentField,
+	ParentStatus,
+	QuestionType,
+	UserStatus,
+	MyQuiz,
+	MyQuestion
+	)
+
 
 class AnswerInline(nested_admin.NestedTabularInline):
 	model = Answer
@@ -22,17 +35,24 @@ class AnswerAdmin(nested_admin.NestedModelAdmin):
 	inlines = [AnswerInline]
 
 
-class UserAnswerInline(admin.TabularInline):
-	model = UsersAnswer
+# class UserAnswerInline(admin.TabularInline):
+# 	model = UsersAnswer
 
 
-class QuizTakerAdmin(admin.ModelAdmin):
-	inlines = [UserAnswerInline,]
+# class QuizTakerAdmin(admin.ModelAdmin):
+# 	inlines = [UserAnswerInline,]
 
 
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Question, AnswerAdmin)
 admin.site.register(Answer)
-admin.site.register(QuizTaker, QuizTakerAdmin)
-admin.site.register(UsersAnswer)
+admin.site.register(QuizTaker)
+# admin.site.register(UsersAnswer)
+admin.site.register(ParentQuiz)
+admin.site.register(ParentField)
+admin.site.register(ParentStatus)
+admin.site.register(QuestionType)
+admin.site.register(UserStatus)
+admin.site.register(MyQuiz)
+admin.site.register(MyQuestion)
 

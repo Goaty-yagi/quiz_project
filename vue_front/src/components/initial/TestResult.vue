@@ -1,5 +1,14 @@
 <template>
     <div class='testresult-wrapper'>
+        <ConfettiExplosion
+        v-if="init||showConfetti()"
+        :particleCount="160"
+        :particleSize="12"
+        :duration="3500"
+        :force="0.9"
+        :stageHeight="1200"
+        :stageWidth="1600"
+        :shouldDestroyAfterDone="true"/>
         <h1 class='is-size-1 has-text-white'>-結果-</h1>
         <p class='result-text'>あなたのレベルは…</p>
         <div class="diamond-wrapper">
@@ -10,34 +19,85 @@
                 <div class='diamond'/>
             </div>
             <div class='text-wrapper'>
-                <p class='text'>初級LV５</p>
+                <p class='text'>{{ finalResult.grade }}</p>
+                <p class='level-text'>Lv,{{ finalResult.level }}</p>
             </div>
         </div>
         <div class='font-wrapper'>
             <i class="fab fa-angellist"></i>
         </div>
+        <transition name="notice">
+            <Notification
+            v-if="showNotification"/>
+        </transition>
     </div>
 </template>
 
 <script>
-
+import Notification from '@/components/initial/Notification.vue';
+import ConfettiExplosion from "vue-confetti-explosion";
 export default {
+    props:[
+        "finalResult",
+        "init",
+        "startGradeAndLevel"
+    ],
+     components: {
+        Notification,
+        ConfettiExplosion
+  },
+  data(){
+        return{
+            showNotification: false,
+            gradeDict:{
+                '超初級':0,
+                '初級':10,
+                '中級':20,
+                '上級':30
+            }
+        }
+    },
+    computed:{
+        gradeForConvert(){
+            return this.$store.getters.gradeForConvert
+        }
+
+    },
     mounted(){
-        console.log('testresult')
-        setTimeout(() =>{
-        // this.$store.commit('testHandler');
-        this.$store.commit('noticeHandler');
+        console.log('testresult',this.init,this.finalResult,this.startGradeAndLevel)
+        if(this.init){setTimeout(() =>{
+        this.handleShowNotification()
         },3000)
+        }
+    },
+    methods:{
+        handleShowNotification(){
+            this.showNotification = !this.showNotification
+
+        },
+        showConfetti(){
+            console.log('show',this.gradeForConvert,this.gradeDict[this.finalResult.grade],this.gradeDict[this.gradeForConvert])
+            if(this.gradeDict[this.finalResult.grade] > this.gradeDict[this.gradeForConvert]){
+                console.log('grade')
+                return true
+            }
+            else if(this.gradeDict[this.finalResult.grade] == this.gradeDict[this.gradeForConvert]) {
+                if(this.finalResult.level > this.startGradeAndLevel.level){
+                    console.log('level')
+                    return true 
+                }else{
+                    return false
+                }
+            }else{
+                return false
+            }
+        },
     }
 }
 </script>
 
-<style scoped>
-    .testresult-wrapper{
-        /* height: 100vh; */
-        width: 100vw;
-        line-height:initial;
-        padding-top: 3rem;
+<style scoped lang="scss">
+.testresult-wrapper{
         
 }
     /* // this is only for i phone5 */
@@ -179,6 +239,10 @@ export default {
         color:black;
         font-weight: bold;
         margin: 0 auto;
+    }
+    .level-text{
+        font-weight: bold;
+        font-size: 1.5rem;
     }
     .font-wrapper{
         font-size:10rem;

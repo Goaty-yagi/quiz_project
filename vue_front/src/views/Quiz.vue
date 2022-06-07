@@ -1,135 +1,128 @@
 <template>
-  <div class="quiz-wrapper">
+    <div class="quiz-wrapper">
+        <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
+            <div class="lds-dual-ring"></div>
+        </div>
+        <div class='quiz-countainer'>
+            <div  v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
+                <Start
+                v-show='!this.$store.state.test'
+                :showQuiz='showQuiz'
+                :quizzes='quizzes'
+                :questions='questions'
+                @handle="handleSHowQuiz"/>
     
-    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
-      <div class="lds-dual-ring"></div>
-    </div>
-      <div class='quiz-countainer'>
-        <div  v-if="quizzes[0]&&questions[0]&&$store.state.isLoading==false">
-          <div>
-            <Start
-            v-show='!this.$store.state.test'
-            :showQuiz='showQuiz'
-            :quizzes='quizzes'
-            :questions='questions'
-            @handle="handleSHowQuiz"/>
-    
-            <div v-if="showQuiz && counter < questions.length + 1">
-              <progress v-if="showAnswerDetail==false" class="progress" :value="progress(counter,questions.length)" max="100"/>
-              <div class=question-grade> 
-                <p v-show="!this.$store.state.test" class='quiz-title'>初級</p>
-                <p v-show="this.$store.state.test" class='quiz-title'>実力テスト</p>
-              </div>              
-              <div v-for="(question,questionindex) in questions.slice(a,b)"
-                  v-bind:key="questionindex">
-                <div class='question-wrapper'>
-                  <div class="question-header"><i class='q'>Q</i>第{{ counter }}問</div>
-                  <div class='question-body'>{{ question.label }}</div>
-                </div>
-              <div>
-            </div>
-            <div :class='showPic(question.image)'>
-              <img  v-bind:src="question.get_image"/>
-            </div>
+                <div v-if="showQuiz && counter < questions.length + 1">
+                    <progress v-if="showAnswerDetail==false" class="progress" :value="progress(counter,questions.length)" max="100"/>
+                    <div class=question-grade> 
+                        <p v-show="!this.$store.state.test" class='quiz-title'>初級</p>
+                        <p v-show="this.$store.state.test" class='quiz-title'>実力テスト</p>
+                    </div>              
+                    <div v-for="(question,questionindex) in questions.slice(a,b)"
+                    v-bind:key="questionindex">
+                        <div class='question-wrapper'>
+                            <div class="question-header"><i class='q'>Q</i>第{{ counter }}問</div>
+                            <div class='question-body'>{{ question.label }}</div>
+                        </div>
+                        <div :class='showPic(question.image)'>
+                            <img  v-bind:src="question.get_image"/>
+                        </div>
 
                 <!-- answer part -->
                 
-            <div class='answer-flex'    
-              v-for="(answer,answerindex) in question.answer"
-              v-bind:key="answerindex">
-              <div class='answer-container' 
-                @click="onClicked(answer,question.field)"
-                :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
-                >
-                <div class='order-container'>
-                  <p class="answer-index">{{ String.fromCharCode(answerindex+65) }}</p>
-                </div>
-                <p class="answer-label">{{ answer.label }}</p>
-                <div class="order-space" v-if="question.field=='並び替え'&&showAnswerDetail==false">        
-                    <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
-                    class ='order-num'
-                    >{{sort.indexOf(answer.answer_id)+1}}</p>
-                </div>
+                        <div class='answer-flex'    
+                        v-for="(answer,answerindex) in question.answer"
+                        v-bind:key="answerindex">
+                            <div class='answer-container' 
+                            @click="onClicked(answer,question.field)"
+                            :class="classHandler(sort,answer.label,selectedAnswer[0],question.field,answer.answer_id,selectedAnswerArray,question.correct_answer,counter)"
+                            >
+                                <div class='order-container'>
+                                    <p class="answer-index">{{ String.fromCharCode(answerindex+65) }}</p>
+                                </div>
+                                <p class="answer-label">{{ answer.label }}</p>
+                                <div class="order-space" v-if="question.field=='並び替え'&&showAnswerDetail==false">        
+                                    <p v-if="sort.includes(answer.answer_id)&&showAnswerDetail==false"
+                                    class ='order-num'
+                                    >{{sort.indexOf(answer.answer_id)+1}}</p>
+                                </div>
 
-                <div class='' >
-                  <div class="">
-                    <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-                      v-if="question.field!='並び替え' && showAnswerDetail">
-                      <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
-                    </div>
-                    <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
-                      v-if="question.field=='並び替え' && showAnswerDetail">
-                      <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
-                    </div>
-                </div>
-                <div class=''
-                  id='result-order-num'
-                  v-if="question.field=='並び替え' && showAnswerDetail">
-                  <p id='result-num' class='has-text-weight-bold	'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
-                </div>
-              </div>
-            </div>
-
-                  </div>
-                  
-                <button
-                  class="button"
-                  id='color-button'
-                  v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
-                  @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
-                <button
-                class="button"
-                id='color-button'
-                v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
-                  @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
+                                <div class='' >
+                                    <div class="">
+                                        <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                                        v-if="question.field!='並び替え' && showAnswerDetail">
+                                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                                        </div>
+                                        <div class='result-font' :class="getResultFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))"
+                                        v-if="question.field=='並び替え' && showAnswerDetail">
+                                        <i id='result-font' :class='returnFont(getDetailFont(answer.answer_id,question.correct_answer,selectedAnswerArray,counter,question.field))'></i>
+                                        </div>
+                                    </div>
+                                    <div class=''
+                                    id='result-order-num'
+                                    v-if="question.field=='並び替え' && showAnswerDetail">
+                                        <p id='result-num' class='has-text-weight-bold'>{{ question.correct_answer.indexOf(answer.answer_id)+1}}</p> 
+                                    </div>
+                                </div>
+                            </div>
+                        <button
+                        class="button"
+                        id='color-button'
+                        v-show='selectedAnswer!="" && counter != questions.length && showAnswerDetail==false || sort.length==question.answer.length&&counter != questions.length'
+                        @click="nextQuestion(sort,selectedAnswer,question.correct_answer,question.field)">Next ></button>
+                        <button
+                        class="button"
+                        id='color-button'
+                        v-show="selectedAnswer!=''&& counter == questions.length && showAnswerDetail==false ||sort.length==question.answer.length && counter == questions.length"
+                        @click="showResult(sort,selectedAnswer,question.correct_answer,question.field)">Finish</button>
 
               <!-- detail part -->
               
-              <div class="">
-                <p class="control">
-                  <button
-                    class="button"
-                    v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
-                      @click="detailHandler('back')">
-                      ＜ Back
-                  </button>
-                </p>
-                <p class="control">
-                  <button
-                  class=""
-                  v-show="showAnswerDetail"
-                    @click="detailHandler('backToResult',QL=questions.length)">結果に戻る
-                  </button>
-                </p>
-                <p class="control">
-                  <button
-                  class="button"
-                  v-show='counter != questions.length && showAnswerDetail'
-                    @click="detailHandler('next')">Next ＞</button>
-                </p>
-              </div>
-            </div>
-          </div>
+                        <div class="">
+                            <p class="control">
+                                <button
+                                    class="button"
+                                    v-show="counter != questions.length && showAnswerDetail&& counter!=1 ||showAnswerDetail&&counter!=1"
+                                    @click="detailHandler('back')">
+                                    ＜ Back
+                                </button>
+                            </p>
+                            <p class="control">
+                                <button
+                                class=""
+                                v-show="showAnswerDetail"
+                                    @click="detailHandler('backToResult',QL=questions.length)">結果に戻る
+                                </button>
+                            </p>
+                            <p class="control">
+                                <button
+                                class="button"
+                                v-show='counter != questions.length && showAnswerDetail'
+                                    @click="detailHandler('next')">Next ＞</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
         <!-- //result page// -->
 
-          <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
-            <Result
-              v-show='!this.$store.state.test'
-              :question_length='questions.length'
-              :rerultAnswer='rerultAnswer'
-              @show='showDetail'/>
-          </div>
-       </div>
-      </div>
+                <div v-if="showQuiz && showAnswerDetail==false && counter > questions.length">
+                    <Result
+                    v-show='!this.$store.state.test'
+                    :question_length='questions.length'
+                    :rerultAnswer='rerultAnswer'
+                    @show='showDetail'/>
+                </div>
+            </div>
+        </div>
     </div>
-      <TestResult
-        v-if='this.$store.state.test&&counter-1 == questions.length&&$store.state.isLoading==false'/>
-      <transition name="notice">
-        <Notification
-          v-if='this.$store.state.notice&&counter-1 == questions.length'
-          />
-      </transition>
-  </div>
+    <TestResult
+    v-if='this.$store.state.test&&counter-1 == questions.length&&$store.state.isLoading==false'/>
+        <transition name="notice">
+            <Notification
+            v-if='this.$store.state.notice&&counter-1 == questions.length'
+            />
+        </transition>
+    </div>
 </template>
 
 <script>
@@ -164,8 +157,8 @@ export default {
   },
   created(){
     this.$store.commit('setIsLoading', true)
-    this.getquiz()
-    this.getquestions()
+    this.getquiz2()
+    this.getquestions2()
     this.testHandler()
     //   setTimeout(() =>{
     //   this.$store.commit('setIsLoading', false);
@@ -183,10 +176,10 @@ export default {
       this.$store.commit('reset')
       console.log('beforDeth')
     },
-  computed: mapGetters(['questions','quizzes']),
+  computed: mapGetters(['questions2','quizzes2']),
 
   methods:{
-    ...mapActions(['getquiz','getquestions']),
+    ...mapActions(['getquiz2','getquestions2']),
     
     progress(counter,question_length){
       console.log(counter / question_length *100)

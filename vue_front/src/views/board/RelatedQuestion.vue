@@ -23,7 +23,7 @@
                         <div class='good-like-wrapper'>
                             <i class="far fa-heart"></i>
                             <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                            <div class="date">作成日：{{ question.created_on }}</div>
+                            <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                         </div>
                     </div>        
                 </div>
@@ -39,12 +39,38 @@ export default {
         return{
         }
     },
+    mounted(){
+        this.scrollTop()
+    },
     methods: {
         getDetail(slug){
             console.log('slugdayo',slug)
             // this.$store.commit('getSlug',slug)
             router.push(`/board-detail/${slug}` )
-        },        
+        },
+        dateConvert(date){
+            var date = date
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+                dt = dt.setHours(dt.getHours()-12)
+                date = new Date(dt)
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            return stringDT.replace(/\//g,'-')
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        },      
     }
 
 }
@@ -73,6 +99,9 @@ export default {
         .question-wrapper{
             margin: 1rem;
             width: 85%;
+            .question-list:hover{
+                    background: $base-lite-3;
+                }
             .question-list{
                 border: solid $base-color;
                 margin-bottom: 0.5rem;

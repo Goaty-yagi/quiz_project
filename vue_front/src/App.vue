@@ -1,42 +1,31 @@
 <template>
-  <div id="wrapper">
-    <div class="wrapper2">
-      
-       <Header/>
-      
-      
-      
-        <section class="main-section" :class="{'scrll-fixed':$store.state.isLoading}">
-          <router-view
+    <div id="wrapper">
+        <Header
+        id="header"
+        v-if="!$store.state.signup.apiError.any"/>
+        <ConnectionError
+        id="connection-error"
+        v-if="$store.state.signup.apiError.any"/>
+        <section class="main-section" v-if="!$store.state.signup.apiError.any" :class="{'scroll-fixed':$store.state.isLoading}">
+            <router-view
             id='router'/>
-           <!-- <div v-if='user&&emailVerified==false&&this.$store.state.step==1'>
-             <div class='main-notification-wrapper'>
-                  <div class='main-notice-wrapper'>
-                      <img class='main-image' src="@/assets/logo.png">
-                      <p class='main-text1'>メール承認が完了していません。</p>
-                      <p class='main-text1'>メール承認を完了してください。</p>
-                      <p @click='resent' class='main-text1'>承認メールを送る。</p>                      
-                      <button  @click='addStep' class='button' id='color-button'><p>次へ</p></button>
-                  </div>
-              </div>
-           </div>
-           <Sent v-if='showSent'/> -->
-            <div class='mobile-header'>
-          <MobileHeader/>
-        </div>
-        <Footer/>
-          <!-- <Footer
-          v-if='!this.$router.path==quizurl'
-          /> -->
+            <Footer
+            id="footer"
+            v-if="!$store.state.isLoading&&!$store.state.quiz.onQuiz&&!$store.getters.onSigningup&&!$store.getters.showModal"/>
         </section>
+        <div class='mobile-header'
+        v-if="!$store.state.quiz.onQuiz">
+            <MobileHeader
+            v-if="!$store.state.signup.apiError.any"/>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
 import Footer from '@/components/html_components/Footer.vue'
 import Header from '@/components/html_components/Header.vue'
 import MobileHeader from '@/components/html_components/MobileHeader.vue'
+import ConnectionError from '@/views/not-found/ConnectionError.vue'
 import Sent from '@/components/signin/Sent.vue'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -47,6 +36,7 @@ export default{
     // const mediaQuery = () =>  window.matchMedia("(max-width: 896px)")
     return{
       user: computed(() => store.state.signup.user),
+      djangoUser: computed(() => store.state.signup.djangoUser),
       email: computed(() => store.state.signup.email),
       password: computed(() => store.state.signup.password),
       emailVerified: computed(() => store.state.signup.emailVerified),
@@ -63,7 +53,8 @@ export default{
     Footer,
     Sent,
     Header,
-    MobileHeader
+    MobileHeader,
+    ConnectionError
   },
   methods:{
     storeReset(){
@@ -103,7 +94,7 @@ export default{
   background: linear-gradient(#5B759F,#1C254C);
   position: fixed;/*固定配置*/
   top: 0; left: 0;/*左上に固定*/
-  width: 100%; height: 100%;/*画面全体を覆う*/
+  min-width: 100%; min-height: 100%;/*画面全体を覆う*/
   content: "";
   z-index: -1;/*背景にするため*/
 }
@@ -111,20 +102,34 @@ export default{
    position:absolute;
 
 }
+#header{
+    // position: fixed;
+    // top: 0;
+    // left: 0;
+    // height: 100px;
+    // z-index: 100;
+}
+#router{
+  min-height: 80vh;
+//   padding-bottom: 5rem;
+}
+#footer{
+    // z-index: -1;
+}
+#connection-error{
+  height: 100vh;
+}
 .main-header{
   position:relative;
   bottom:0;
 }
 .main-section{
   // background: linear-gradient(#5B759F,#1C254C);
+  // margin-top: 60px;
   width: 100vw;
-  height:90vh;
-
-  // border:solid orange;
-  // width: 80%;
-  // margin: 0 auto;
-  // max-width: 90%
+  // min-height:100vh;
 }
+
 // .router{
 //   border:solid green;
 //   width: 60%;
@@ -168,18 +173,7 @@ export default{
   }
 }    
   // here intend to be pablic css
-  #register-button{
-    background: none;
-    color:black;
-    border: 0.1rem solid  $base-color;
-    transition:0.3s;
-  }
-  #register-button:hover{
-    background: $base-color;
-    color:white;
-    font-weight: bold;
-    border: 0.1rem solid  darken($base-color,10%);
-  }
+  
   #color-button{
     background: linear-gradient($base-lite,$base-color);
     color:white;
@@ -235,13 +229,14 @@ export default{
       .form-error{
         border: solid red;
       }
-@media(min-width: 428px){
+@media(min-width: 630px){
   .mobile-header{
     display:none;
   }
   .wrapper{
     position:relative
   }.main-section{
+    // margin-top: 120px;
     // background: linear-gradient(#5B759F,#1C254C);
     // width: 100vw;
     // height:100vh;

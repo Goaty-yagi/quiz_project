@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div  class="board-detail-wrapper" :class="{'scrll-fixed':showAnswerPage||showReplyPage,'laoding-center':$store.state.isLoading}">
+    <div  class="board-detail-wrapper" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -8,21 +8,21 @@
             </div>
             <div class="question-wrapper" v-if="question&&relatedQuestion.results&&$store.state.isLoading==false">
                 <p class='title-white'>質問板</p>
-                <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
-                    <div class="notification-text">
-                        返信しました。
+                    <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
+                        <div class="notification-text">
+                            返信しました。
+                        </div>
                     </div>
-                </div>
-                <div v-if="$store.state.board.notifications.answer" :class="{'notification-blue':$store.state.board.notifications.answer}">
-                    <div class="notification-text">
-                        回答しました。
+                    <div v-if="$store.state.board.notifications.answer" :class="{'notification-blue':$store.state.board.notifications.answer}">
+                        <div class="notification-text">
+                            回答しました。
+                        </div>
                     </div>
-                </div>
-                <div v-if="$store.state.board.notifications.post" :class="{'notification-blue':$store.state.board.notifications.post}">
-                    <div class="notification-text">
-                        投稿しました。
+                    <div v-if="$store.state.board.notifications.post" :class="{'notification-blue':$store.state.board.notifications.post}">
+                        <div class="notification-text">
+                            投稿しました。
+                        </div>
                     </div>
-                </div>
                 <div class='question-box'> 
                     <div class="question-box-header">
                         <div class="image">
@@ -30,7 +30,7 @@
                         </div>
                         <div class="username-date">
                             <p> {{ question.user.name}}さん </p>
-                            <p> {{ question.created_on }} </p>
+                            <p> {{ dateConvert(question.created_on) }} </p>
                         </div>
                         <div class="question-status-container">
                             <p class="question-status"> {{ handleQuestionStatus(question.solved) }} </p>
@@ -66,7 +66,9 @@
                             </div>
                         </div>
                     </div>
-                    <button v-if="question.user.UID != $store.state.signup.user.uid" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    <div>
+                        <button v-if="question.user.UID != UID" class="btn-base-white-db-sq" @click='handleShowAnswerPage'>回答する</button>
+                    </div>
                     <!-- <button @click="handleNotifications('reply')" >unko</button> -->
                 </div>
                 <div class="relative-box">
@@ -87,7 +89,7 @@
                             <div class='good-like-wrapper'>
                                 <i class="far fa-heart"></i>
                                 <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                <div class="date">投稿日：{{ question.created_on }}</div>
+                                <div class="date">投稿日：{{ dateConvert(question.created_on) }}</div>
                             </div>
                         </div>        
                     </div>
@@ -108,7 +110,7 @@
                             <img class='img' v-bind:src="answer.user.thumbnail"/>
                             <div class="username-date">
                                 <p> {{ answer.user.name}}さん </p>
-                                <p> {{ answer.created_on }} </p>
+                                <p> {{ dateConvert(answer.created_on) }} </p>
                             </div>
                         </div>
                         <p class="answer-description-container">{{ answer.description }} </p>
@@ -117,11 +119,13 @@
                             <i v-if="answerDict[answer.id].addedAnswerLiked" class="fas fa-heart"></i>
                             <p class="good"> {{ answerDict[answer.id].liked_num }} </p>
                         </div>
-                        <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
-                         class='btn-base-white-db-sq' 
-                         @click='handleReplyPage(answer.id, answer.description)'>
-                         返信する
-                         </button>
+                        <div v-if="loginUser">
+                            <button v-if="question.user.UID == $store.state.signup.user.uid && answer.reply.length == 0"
+                            class='btn-base-white-db-sq' 
+                            @click='handleReplyPage(answer.id, answer.description)'>
+                            返信する
+                            </button>
+                        </div>
                         <!-- reply should be appir if post user or replyer -->
                         <div class='reply-wrapper' v-if='answer.reply[0]'>
                             <div>コメント</div>
@@ -136,11 +140,13 @@
                                     </div>
                                 </div>
                                 <p class="replay-description">{{ reply.description }}</p>
-                                <button v-if='$store.state.signup.user.uid==question.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID!=question.user.UID || $store.state.signup.user.uid==answer.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID==question.user.UID'
-                                 class='btn-base-white-db-sq' 
-                                 @click='handleReplyPage(answer.id, reply.description)'>
-                                 返信する
-                                 </button>
+                                <div v-if="loginUser">
+                                    <button v-if='$store.state.signup.user.uid==question.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID!=question.user.UID || $store.state.signup.user.uid==answer.user.UID && answer.reply.slice(-1)[0].id==reply.id && answer.reply.slice(-1)[0].user.UID==question.user.UID'
+                                    class='btn-base-white-db-sq' 
+                                    @click='handleReplyPage(answer.id, reply.description)'>
+                                    返信する
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class='line-flex'>
@@ -149,19 +155,35 @@
                     </div>
                 </div>
             </div>
-        <Answer v-if='showAnswerPage'
-         @handleShowAnswerPage='handleShowAnswerPage'
-         @getDetail="getDetail"
-         :questionTitle='questionTitle'
-         :questionDescription='questionDescription'
-         :questionId='questionId'
-         />
-        <Reply v-if='showReplyPage'
-         @handleShowReplyPage='handleShowReplyPage'
-         @getDetail="getDetail"
-         :answerId='answerId'
-         :reply="reply"
-         />
+            <transition name="notice">
+                <NotVerified
+                    class="components"
+                    v-if="showEmailVerified"
+                    @handleShowEmailVerified="handleShowEmailVerified"
+                />
+            </transition>
+            <transition name="notice">
+                <NotLogin
+                    class="components"
+                    v-if="showNotLogin"
+                    @handleShowNotLogin="handleShowNotLogin"
+                />
+            </transition>
+            <Answer v-if='showAnswerPage'
+            class="components"
+            @handleShowAnswerPage='handleShowAnswerPage'
+            @getDetail="getDetail"
+            :questionTitle='questionTitle'
+            :questionDescription='questionDescription'
+            :questionId='questionId'
+            />
+            <Reply v-if='showReplyPage'
+            class="components"
+            @handleShowReplyPage='handleShowReplyPage'
+            @getDetail="getDetail"
+            :answerId='answerId'
+            :reply="reply"
+            />
         <!-- {{ questions }} -->
         <!-- <div class=question 
          v-for="(question,questionindex) in questions"
@@ -181,12 +203,16 @@
 <script>
 import axios from 'axios'
 import {router} from "../main.js"
+import NotVerified from '@/components/login/NotVerified.vue'
+import NotLogin from '@/components/login/NotLogin.vue'
 import  Answer from '@/components/board/Answer.vue'
 import  Reply from '@/components/board/Reply.vue'
 export default {
     components: {
         Answer,
-        Reply
+        Reply,
+        NotVerified,
+        NotLogin
   },
     data(){
         return{
@@ -214,19 +240,58 @@ export default {
             checkedLikedUserList:[],
             relatedQuestion:'',
             slicedRelatedQuestion:'',
-            questionTags:[]
+            questionTags:[],
+            showEmailVerified:false,
+            showNotLogin: false,
         }
     },
     mounted() {
         this.getDetail()
         console.log("mounted_detail",this.$route.params.slug)
     },
+    beforeUnmount(){
+        console.log('beforeUNMOUNT')
+        this.$store.dispatch('getDjangoUser')
+    },
     computed:{
         user(){
             return this.$store.state.signup.djangoUser
+        },
+        UID(){
+            try{
+                return this.$store.state.signup.djangoUser.UID
+            }catch{
+                return ''
+            }
+        },
+        loginUser(){
+            return this.$store.state.signup.user
+        },
+        emailVerified(){
+            return this.$store.getters.getEmailVerified
+        },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
         }
     },
     methods: {
+        dateConvert(date){
+            var date = date
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+                dt = dt.setHours(dt.getHours()-12)
+                date = new Date(dt)
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            return stringDT.replace(/\//g,'-')
+        },
         async getDetail(slug="") {
             this.$store.commit('setIsLoading', true)
             this.scrollTop()
@@ -253,33 +318,24 @@ export default {
                     // this.patchOnAnswer()
                     this.questionPatch()
                     this.makeAnswerDict()
+                    console.log("after_makeAD")
                     this.getQuestionTagList(this.question.tag)
+                    console.log("after_taglist")
                     this.getRelatedQuestion()
+                    console.log("after_relation")
                     this.countViewedNumUp()
+                    console.log("after_numup")
                     this.favoriteCheck()
-                    })
+                    console.log("after_favocheck")
+                    // if(!this.loginUser){
+                    //     this.$store.commit('setIsLoading', false)
+                    // }
+                })
                 .catch(error => {
                     console.log(error)
             })
             // this.$store.commit('setIsLoading', false)
         },
-        // async patchOnAnswer(slug=""){
-        //     if(slug==""){
-        //         var url = `/api/board/question/${this.$route.params.slug}`
-        //     }else{
-        //         var url = `/api/board/question/${slug}`
-        //     }
-        //     console.log("gonna if patch answer",this.question.on_answer==true&&this.question.user.UID==this.user.UID)
-        //     if(this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-        //         console.log('PatchAnswer url',url)
-        //         axios.patch(
-        //             url,
-        //             { on_answer: false }) 
-        //         console.log("go store AQ and DU")
-        //         await this.$store.dispatch('getDjangoUser')
-        //         await this.$store.dispatch('getAnsweredQuestion')
-        //     }
-        // },
         async patchOnReply(){
             console.log("patchOnReply",this.allAnswer)
             for(let answer of this.allAnswer){
@@ -302,17 +358,31 @@ export default {
             // relatedQuestion.results Start from here.
             // => deleteSameQuestion to delete the same question in RQ as detail Q.
             // => makeRandomSlicedArray to make random sliced RQ array
-            this.$store.commit('setIsLoading', true)
-            if(this.questionTags.length == 1){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
+            if(this.user){
+                this.$store.commit('setIsLoading', true)
+                if(this.questionTags.length == 1){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&uid=${this.user.UID}`
+                }
+                if(this.questionTags.length == 2){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&uid=${this.user.UID}`
+                }
+                if(this.questionTags.length == 3){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
+                }
             }
-            if(this.questionTags.length == 2){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&uid=${this.user.UID}`
+            else{
+                console.log('elsedayo')
+                this.$store.commit('setIsLoading', true)
+                if(this.questionTags.length == 1){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}`
+                }
+                if(this.questionTags.length == 2){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}`
+                }
+                if(this.questionTags.length == 3){
+                    var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
+                }
             }
-            if(this.questionTags.length == 3){
-                var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}&uid=${this.user.UID}`
-            }
-            console.log("url:",url)
             try{
                 await axios.get(url)
                     .then(response => {
@@ -322,7 +392,8 @@ export default {
             catch{(error => {
                     console.log(error)
             })}
-            this.$store.commit('getRelatedQuestion', this.relatedQuestion.results)
+            console.log('after-try',this.relatedQuestion)
+            this.$store.commit('setRelatedQuestion', this.relatedQuestion.results)
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
             this.$store.commit('setIsLoading', false)
@@ -338,25 +409,44 @@ export default {
             })
         },
         handleAddedFavorite(){
-            this.addedFavorite=!this.addedFavorite
-            this.createFavorite()
+            if(this.user){
+                this.addedFavorite=!this.addedFavorite
+                this.createFavorite()
+            }else{
+                this.handleShowNotLogin()
+            }
         },
         async countViewedNumUp(){
-            for (let i =0; i < this.question.tag.length; i++){
-                await axios({
-                method: 'post',
-                url: '/api/board/user-tag/create/',
-                data: {
-                    user: this.$store.state.signup.user.uid,
-                    tag: this.question.tag[i].id
-                },
-                
-            })
-
+            if(this.loginUser){
+                for (let i =0; i < this.question.tag.length; i++){
+                    await axios({
+                    method: 'post',
+                    url: '/api/board/user-tag/create/',
+                    data: {
+                        user: this.$store.state.signup.user.uid,
+                        tag: this.question.tag[i].id
+                        },  
+                    })
+                }
             }
         },
         handleShowAnswerPage(){
-            this.showAnswerPage = !this.showAnswerPage
+            console.log('clicked')
+            if(this.user){
+                if(this.emailVerified){
+                this.showAnswerPage = !this.showAnswerPage
+                this.$store.commit('handleFixedScroll')
+                }else{
+                    this.handleShowEmailVerified()
+                    this.$store.commit('fixedScrollTrue')
+                    this.$store.commit('showModalTrue')
+                }
+            }else{
+                this.handleShowNotLogin()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
+            }
+
             // this.handleScrollFixed()
         },
         getReply(reply){
@@ -364,8 +454,10 @@ export default {
         },
         handleShowReplyPage(){
             this.showReplyPage = !this.showReplyPage
+            this.$store.commit('handleFixedScroll')
         },
         handleReplyPage(id, reply=''){
+            this.$store.commit('handleFixedScroll')
             this.getAnswerId(id)
             this.showReplyPage = !this.showReplyPage
             this.getReply(reply)
@@ -386,6 +478,7 @@ export default {
             }
         },
         getQuestionTagList(questionTags){
+            console.log("GQTL",questionTags)
             this.questionTags = []
             for(let tag of questionTags){
                 this.questionTags.push(tag.id)
@@ -410,12 +503,13 @@ export default {
             console.log(this.slicedRelatedQuestion)
         },
         deleteSameQuestion(){
-            for(let q of this.relatedQuestion.results){
-                if (q.id == this.question.id){
-                    this.relatedQuestion.results.splice(this.relatedQuestion.results.indexOf(q),1)
-                    break
+            if(this.loginUser){
+                for(let q of this.relatedQuestion.results){
+                    if (q.id == this.question.id){
+                        this.relatedQuestion.results.splice(this.relatedQuestion.results.indexOf(q),1)
+                        break
+                    }
                 }
-                
             }
         },
         getRandomQuestion(array){
@@ -434,38 +528,22 @@ export default {
                 }}
                 return array
             },
-        // resetNotifications(){
-        //     this.notifications.answer = false
-        //     this.notifications.reply = false
-        // },
-        // handleNotifications(elem){
-        //     if(elem == "reply"){
-        //         this.notifications.reply = true
-        //         setTimeout(this.resetNotifications, 3000)
-                
-        //     }
-        //     if(elem == "answer"){
-        //         console.log("in answer")
-        //         this.notifications.answer = true
-        //         setTimeout(this.resetNotifications, 3000)
-        //     }            
-        // },
-        // getLikedNum(liked_num){
-        //     this.liked_num = liked_num
-        //     return this.liked_num
-        // },
         getRelatedSlug(slug){
             this.getDetail(slug)
-            this.$forceUpdate();
-        },
+            router.push(slug)
+            },
         addLikedNum(){
-            this.liked_num += 1
-            this.addedLiked = true
-            for(let i=0; i<this.likedUserIdList.length; i++){
-                this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+            if(this.user){
+                this.liked_num += 1
+                this.addedLiked = true
+                for(let i=0; i<this.likedUserIdList.length; i++){
+                    this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
+                }
+                this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
+                this.countUpLiked()
+            }else{
+                this.handleShowNotLogin()
             }
-            this.checkedLikedUserList.push(this.$store.state.signup.user.uid)
-            this.countUpLiked()
         },
         clearAllLiked(){
             this.addedLiked = false
@@ -475,30 +553,41 @@ export default {
         },
         checkUserLiked(){
             // this is for question like
-            this.clearAllLiked()
-            for(let i of this.likedUserIdList){
-                if(i.UID == this.$store.state.signup.user.uid){
-                this.addedLiked = true
-                }
-            }
-            console.log("likedhere",this.addedLiked)
-            // this is for answer like
-            for(let answerId in this.answerDict){
-                // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
-                for( let user of this.answerDict[answerId].likedUsers[0]){
-                    if(user == this.$store.state.signup.user.uid){
-                        this.answerDict[answerId].addedAnswerLiked = true
+            if(this.loginUser){
+                this.clearAllLiked()
+                for(let i of this.likedUserIdList){
+                    if(i.UID == this.$store.state.signup.user.uid){
+                    this.addedLiked = true
                     }
                 }
+                console.log("likedhere",this.addedLiked)
+                // this is for answer like
+                for(let answerId in this.answerDict){
+                    // console.log(Array.isArray(this.answerDict[answerId].likedUsers))
+                    for( let user of this.answerDict[answerId].likedUsers[0]){
+                        if(user == this.$store.state.signup.user.uid){
+                            this.answerDict[answerId].addedAnswerLiked = true
+                        }
+                    }
+                }   
             }
         },
         favoriteCheck(){
-            this.addedFavorite = false
-            for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
-                if(this.question.id==i.id){
-                    this.addedFavorite = true
-                    break
+            try{
+                if(this.$store.state.signup.djangoUser.favorite_question[0]){
+                    this.addedFavorite = false
+                    for(let i of this.$store.state.signup.djangoUser.favorite_question[0].question){
+                        console.log('loop',this.addedFavorite,i,this.question.id)
+                        if(this.question.id==i){
+                            this.addedFavorite = true
+                            console.log(this.addedFavorite)
+                            break
+                        }
+                    }
                 }
+            }
+            catch{
+                
             }
         },
         countUpLiked(){
@@ -514,53 +603,76 @@ export default {
         },
         async questionPatch(){
             // patch view count_up and on_answer
-            if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-                console.log('count', this.questionSlug)
-                await axios.patch(`/api/board/question/${this.questionSlug}`,{
-                    viewed: this.viewed + 1,
-                    on_answer: false
-                })
-                this.$store.dispatch('getDjangoUser')
-                this.$store.dispatch('getAnsweredQuestion')
-            }else if(this.questionUserBoolean == false){
-                axios.patch(`/api/board/question/${this.questionSlug}`,{
-                    viewed: this.viewed + 1
-                })
+            console.log("inPatch-question")
+            if(this.user){
+                console.log("patch Question",this.questionUserBoolean,this.question.on_answer,this.question.on_reply,this.question.user.UID,this.user.UID)
+                if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.on_reply==true&&this.question.user.UID==this.user.UID){
+                    console.log('count', this.questionSlug)
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_answer: false,
+                        on_reply: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch 2')
+                }
+                else if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_answer: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch answer')
+                }
+                else if(!this.questionUserBoolean&&this.question.on_reply&&this.question.user.UID==this.user.UID){
+                    console.log("in_reply")
+                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1,
+                        on_reply: false
+                    })
+                    this.$store.dispatch('getDjangoUser')
+                    this.$store.dispatch('getAnsweredQuestion')
+                    console.log('done patch reply')
+                }
+                else if(this.questionUserBoolean == false){
+                    axios.patch(`/api/board/question/${this.questionSlug}`,{
+                        viewed: this.viewed + 1
+                    })
+                    console.log('done patch count')
+                }
             }
         },
-        // setAnswerBoolean(){
-        //     for(let answer of this.allAnswer){
-        //         this.addedAnswerLiked[answer.id] = false
-        //     }
-        //     console.log('boo',this.addedAnswerLiked)
-        // },
         makeAnswerDict(){
             // liked_answer start from here to make each answer dict
             // to hold information
             console.log("in make dict",this.allAnswer)
             for(let answer of this.allAnswer){
-                console.log(answer)
+                console.log(answer,'id',answer.id)
                 this.answerDict[answer.id] = {
                     "liked_id":answer.liked_answer[0].id,
                     "liked_num":answer.liked_answer[0].liked_num,
                     "addedAnswerLiked":false,
                     "likedUsers":[answer.liked_answer[0].user]
                 }
+                console.log("oneloop done")
             }
             console.log('answer-dict',this.answerDict)
             this.checkUserLiked()
         },
         addAnsweerLikedNum(answerId){
             // add answer id start from here. answerDict has each answers liked num.
-            // invoke answerId to att liked num, then addedAnswerLiked = true  
-            this.answerDict[answerId].liked_num += 1
-            this.answerDict[answerId].addedAnswerLiked = true
-            // for(let i=0; i<this.likedUserIdList.length; i++){
-            //     this.checkedLikedUserList.push(this.likedUserIdList[i].UID)
-            // }
-            this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
-            console.log("is addliked",this.answerDict)
-            this.countUpLikedAnswer(answerId)
+            // invoke answerId to att liked num, then addedAnswerLiked = true 
+            if(this.user){
+                this.answerDict[answerId].liked_num += 1
+                this.answerDict[answerId].addedAnswerLiked = true
+                this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
+                console.log("is addliked",this.answerDict)
+                this.countUpLikedAnswer(answerId)
+            }else{
+                this.handleShowNotLogin()
+            }
         },
         countUpLikedAnswer(answerId){
             console.log("countUpLikedAnswer")
@@ -570,6 +682,14 @@ export default {
                     liked_num: this.answerDict[answerId].liked_num
                 })
                 console.log('done')
+        },
+        handleShowEmailVerified(){
+            console.log('V')
+            this.showEmailVerified = !this.showEmailVerified
+            console.log('V',this.showEmailVerified)
+        },
+        handleShowNotLogin(){
+            this.showNotLogin = !this.showNotLogin
         },
         scrollTop(){
             window.scrollTo({
@@ -598,20 +718,24 @@ export default {
 .scroll{
     position:fixed;
 }
+.components{
+    z-index: 3;
+}
 
 .board-detail-wrapper{
     display: flex;
     justify-content: center;
     width: 100vw;
     min-height: 80vh;
-    align-items: center;
+    margin-bottom: 1rem;
+    // align-items: center;
 }
 .question-wrapper{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    // width: 100%;
     .question-box{
         border: solid $base-color;
         border-radius: 0.5rem;
@@ -625,7 +749,7 @@ export default {
                 width:  3rem;   
                 height: 3rem;
                 margin: 0.5rem; 
-            }
+                }
             }
             .username-date{
                 display: flex;
@@ -692,6 +816,7 @@ export default {
             }
             .viewed-wrapper{
                 flex-basis: 40%;
+                display: flex;
                 .viewed{
                 margin-left: 1rem;
                 margin-right: 0.5rem;
@@ -783,9 +908,9 @@ export default {
                     }
                 }
             }
-            .question-list:hover{
-                background: rgb(230, 230, 230);
-            }
+            // .question-list:hover{
+            //     background: rgb(230, 136, 136);
+            // }
         }
         .see-more{
             display: flex;
@@ -916,5 +1041,26 @@ export default {
             }
         }
     }
+}
+.icon{
+    animation: icon 0.5s ;
+
+}
+@keyframes icon {
+    0% {
+        transform: scale(1);
+        
+        opacity: 0;
+      }
+    30%{
+        opacity: 1;
+    }
+    80%{
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
 }
 </style>

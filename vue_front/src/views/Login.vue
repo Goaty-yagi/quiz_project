@@ -2,8 +2,8 @@
     <div>
         <div class="login-wrapper">
             <div class="flex-wrapper">
+                <p class='title-white'>ログイン</p>
                 <form class="id-form" @submit.prevent='submitForm' >
-                        <p class='login-text'>ログイン</p>
                         <div class="field">
                             <div class="input-box">
                                 <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
@@ -30,17 +30,21 @@
                             <p @click='goSignup' class='text'>ユーザー登録</p>
                         </div>
                         <div>
-                            <button class='fbottun' ref='bform'>ログイン</button>
+                            <button :disable='!userError||!passError||!manyError' class='fbottun' ref='bform'>ログイン</button>
                         </div>
+                        <p>Googleアカウントでログイン</p>
+                        <a class="logo-container">
+                            <img class="google" @click="googleLogin()" src="@/assets/btn_google.png">
+                        </a>
                 </form>
             </div>
         </div>
         <div>
         <SentPassReset v-if='showSentPassReset'/>
-        <NotVerified v-if='showNotVerified'
+        <!-- <NotVerified v-if='showNotVerified'
         @handleShowSent = 'handleShowSent'
          />
-        <Sent v-show='showSent'/>
+        <Sent v-show='showSent'/> -->
   </div>
     </div>
 </template>
@@ -50,6 +54,7 @@ import {router} from "../main.js"
 import SentPassReset from '@/components/login/SentPassReset.vue'
 import NotVerified from '@/components/login/NotVerified.vue'
 import Sent from '@/components/signin/Sent.vue'
+
 export default {
     components:{
         SentPassReset,
@@ -70,6 +75,9 @@ export default {
             showNotVerified:false,
             store: this.$store.state.signup
         }
+    },
+    mounted(){
+        this.scrollTop()
     },
     updated(){
         console.log('login check ',this.store.user)
@@ -115,27 +123,32 @@ export default {
             this.showSent = true
             console.log('showsent')
         },
-        async submitForm(){            
+        async submitForm(){      
             try{
                 await this.$store.dispatch('login',{
                 email:this.email,
                 password:this.password})
-                if(this.store.checkedEmail!=true){
-                    this.handleShowNotVerified()
-                }else{
-                    router.push('/')
+                console.log("done")
+                router.push('/')
                 this.$store.commit('reset')
-                }
             }catch(err){
-                console.log(typeof(err),err.code)
+                console.log('er',typeof(err),err.code)
                 this.userError = err.code == 'auth/user-not-found'?
                 'ユーザーが存在しません。' : '' 
                 this.passError = err.code == 'auth/wrong-password'?
                 'パスワードが違います。' : ''
                 this.manyError = err.code == 'auth/too-many-requests'?
                 '短時間にリクエストを複数受けたため一時的にリクエストを停止します。暫く経ってもう一度お試しください。' :''               
-            }     
-        }
+            }
+        },
+        googleLogin(){
+            this.$store.dispatch('googleLogin')
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+            });
+        },
     }
 }
 </script>
@@ -143,14 +156,17 @@ export default {
 
 <style scoped lang='scss'>
 @import "style/_variables.scss";
-    .login-wrapper{
-        width:100vw;
-        flex-direction: column;
-        display: flex;
-        padding-top:5rem;
-        // justify-content: center;
-        align-items: center;
-        }
+.login-wrapper{
+    width:100vw;
+    flex-direction: column;
+    display: flex;
+    // padding-top:5rem;
+    // justify-content: center;
+    align-items: center;
+    .id-form{
+        margin-top: 2rem;
+    }
+    }
     .login-text{
         color:white;
         font-size:1.2rem;
@@ -163,7 +179,7 @@ export default {
     }
     .field{
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         align-self: center;
     }
@@ -176,7 +192,7 @@ export default {
     }.label:not(:last-child) {
         margin-bottom: initial;
 }
-    input[type="text"]:focus {
+    input[type="password"]:focus {
         outline: none;
         }
     input[type="email"]:focus {
@@ -247,22 +263,39 @@ export default {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        
     }
     .text:hover{
-        background: grey;
+        background: $base-white;
+        color: $dark-blue;
+        font-weight: bold;
     }
     .text{
         color:white;margin-top:1rem;
         border: 0.1rem solid white;
         border-radius: 0.5rem;
         width: 60%;
-        transition:0.5s;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        transition:0.8s;
     }
     .error-form{
         width: 17rem;
+        background: $back-tr-white;
     }
     p{
         color:white;
         margin-top:1rem;
     }
+    .logo-container{
+        .google{
+            width: 70%;
+        }
+    }
+// .flex-wrapper{
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
+// }
 </style>

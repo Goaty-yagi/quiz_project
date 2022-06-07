@@ -7,24 +7,29 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "bulma": "^0.9.3",
-    "core-js": "^3.6.5",
+    "axios": "^0.27.2",
+    "bulma": "^0.9.4",
+    "chart.js": "^3.8.0",
+    "chartjs-plugin-datalabels": "^2.0.0",
+    "core-js": "^3.22.7",
     "cropperjs": "^1.5.12",
+    "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0",
+    "vue": "^3.2.36",
+    "vue-chartjs": "^4.1.0",
+    "vue-confetti-explosion": "^1.0.1",
+    "vue-router": "^4.0.15",
     "vue-select": "^4.0.0-beta.3",
     "vue-uuid": "^3.0.0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2"
+    "@vue/cli-plugin-babel": "^5.0.4",
+    "@vue/cli-plugin-router": "^5.0.4",
+    "@vue/cli-plugin-vuex": "^5.0.4",
+    "@vue/cli-service": "^5.0.4",
+    "@vue/compiler-sfc": "^3.2.36",
+    "sass": "^1.52.1",
+    "sass-loader": "^13.0.0"
   }
 }

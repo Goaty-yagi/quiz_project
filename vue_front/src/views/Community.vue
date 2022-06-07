@@ -1,6 +1,6 @@
 <template>
 <!-- this scroll fixed should be change -->
-    <div class="community-wrapper scroll_area" :class="{'scrll-fixed':showCreateQuestion, 'laoding-center':$store.state.isLoading}">
+    <div class="community-wrapper scroll_area" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
@@ -9,8 +9,8 @@
             <div class="community-container" v-if="$store.state.isLoading==false">
                 <div class="header-flex">
                     <h1 class='title-white'>質問板</h1>
-                    <i @click="goAccount()" class="fas fa-user user-font"></i>
-                    <i v-if="handleOnReplyAndOnAnswer" class="fas fa-exclamation"></i>
+                    <i v-if="emailVerified" @click="goAccount()" class="fas fa-user user-font"></i>
+                    <i v-if="$store.getters.notificationApi" class="fas fa-exclamation"></i>
                     <!-- <i @click="goAccount()" class="fas fa-address-book user-font"></i> -->
                 </div>
                 <!-- <div v-if="notifications" :class="{'notification-blue':notifications}">
@@ -45,18 +45,29 @@
                         :parentTagDict="parentTagDict"
                         @handleShowConfirm='handleShowConfirm'
                         @handleShowCreateQuestion='handleShowCreateQuestion'/>
+                    <transition name="notice">
+                    <NotVerified
+                        v-if="showEmailVerified"
+                        @handleShowEmailVerified="handleShowEmailVerified"
+                        />
+                    </transition>
+                    <transition name="notice">
+                    <NotLogin
+                        v-if="showNotLogin"
+                        @handleShowNotLogin="handleShowNotLogin"
+                        />
+                    </transition>
                     <Confirm
                         v-if='showConfirm'
                         @handleShowConfirm='handleShowConfirm'
                         @getDetail='getDetail'
-                        @handleNotifications='handleNotifications'
                     />
 
                     <!-- here is for searched questions -->
                     <div v-if='showQuestionStatus.search'>
                         <div class="search-title title-blue">検索結果</div>
                         <div class="no-found" v-if="questions.results==false">
-                            <p>お探しの質問は見つかりませんでした。</p>
+                            <p class="no-found-word">お探しの質問は見つかりませんでした。</p>
                             <div class="route">
                                 <div @click="goHome()"><i class="fas fa-home" ></i><p>ホームへ戻る</p></div>
                                 <div @click="handleShowQuestionStatusSearch()"><i class="far fa-comments"></i><p>質問板へ戻る</p></div>
@@ -65,7 +76,7 @@
                         <div
                         v-for="(question,questionindex) in questions.results"
                         v-bind:key="questionindex">
-                            <div class='question-list' @click="getDetail(question.slug)">
+                            <div class='question-list l-question-list' @click="getDetail(question.slug)">
                                 <div 
                                     class="tag-wrapper">
                                     <div 
@@ -78,7 +89,7 @@
                                 <div class='good-like-wrapper'>
                                     <i class="far fa-heart"></i>
                                     <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                    <div class="date">作成日：{{ question.created_on }}</div>
+                                    <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                                 </div>
                             </div>        
                         </div>
@@ -102,7 +113,7 @@
                             <div class='good-like-wrapper'>
                                 <i class="far fa-heart"></i>
                                 <div class="good" v-if="question.liked_num[0]">{{ question.liked_num[0].liked_num }}</div>
-                                <div class="date">作成日：{{ remove_T_Z(question.created_on) }}</div>
+                                <div class="date">作成日：{{ dateConvert(question.created_on) }}</div>
                             </div>
                         </div>        
                     </div>
@@ -122,15 +133,30 @@
 
 <script>
 import axios from 'axios'
+// import { computed } from 'vue'
+// import { useStore } from 'vuex'
+import NotVerified from '@/components/login/NotVerified.vue'
+import NotLogin from '@/components/login/NotLogin.vue'
 import {router} from "../main.js"
 import  CreateQuestion from '@/components/board/CreateQuestion.vue'
 import  Confirm from '@/components/board/Confirm.vue'
 import  Search from '@/components/board/Search.vue'
 export default {
+    // setup(){
+    //     const store = useStore()
+    //     return{
+    //         user: computed(() => store.state.signup.user),
+    //         email: computed(() => store.state.signup.email),
+    //         password: computed(() => store.state.signup.password),
+    //         emailVerified: computed(() => store.state.signup.emailVerified),
+    //     }
+    // },
     components: {
         CreateQuestion,
         Confirm,
-        Search
+        Search,
+        NotVerified,
+        NotLogin
   },
     data(){
         return{
@@ -140,6 +166,8 @@ export default {
             wordList: [],
             parentTagDict:{},       
             showCreateQuestion: false,
+            showEmailVerified: false,
+            showNotLogin: false,
             showConfirm: false,
             scrollFixed: false,
             scroll_position: '100',
@@ -166,12 +194,14 @@ export default {
     },
     created(){
         console.log('created')
+        // this.$store.dispatch('getAnsweredQuestion')
         this.$store.dispatch('getDjangoUser')
-        this.$store.dispatch('getAnsweredQuestion')
+        // this.$store.dispatch('getNotificationApi')
     },
     beforeMount(){
         // this.getQuestion()
         console.log('before-mounted')
+        this.$store.dispatch('getNotificationApi')
     },
     mounted() {
         window.addEventListener('scroll', this.handleScroll)
@@ -182,13 +212,15 @@ export default {
         this.handleOnAnswerOrReply()
         this.$store.dispatch('getRelatedQuestion')
         this.getQuestion()
-        console.log('mounted',this.reccomendedQuestion)
+        this.showEmailVerified = false
+        this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     beforeUnmount(){
-        console.log("BD")
         window.removeEventListener('scroll', this.handleScroll)
         window.removeEventListener('scroll', this.getScrollY)
-        console.log("removed")
+        this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     // unmounted(){
     //     console.log("DSTROY")
@@ -202,101 +234,33 @@ export default {
         user(){
             return this.$store.state.signup.djangoUser
         },
+        roginUser(){
+            return this.$store.state.signup.user
+        },
         notification(){
             return 
         },
         reccomendedQuestion(){
             return this.$store.getters.gettersReccomendedQuestion
         },
-        handleOnReplyAndOnAnswer(){
-            // this is for community_page to display if user have notifications
-            for(let question2 of this.user.question){
-                if(question2.on_answer==true&&question2.user.UID==this.user.UID){
-                    console.log("onAnswer_dayo")
-                    return true
-                }
-            }
-            console.log("answercheck start", this.$store.getters.gettersAnsweredQuestions)
-            let answeredQuestion = this.$store.getters.gettersAnsweredQuestions.results
-            for(let question of answeredQuestion){
-                console.log(question)
-                for(let answer of question.answer){
-                    console.log(answer.id)
-                    if(answer.on_reply==true&&answer.user.UID==this.user.UID){
-                        console.log("onreply_dayo")
-                        return  true
-                    }
-                }
-            }return false
-            // Object.keys(answeredQuestion).forEach(key =>{
-            //     console.log(key)
-            //     for(let answer of answeredQuestion[key].answer){
-            //         if(answer.on_reply==true){
-            //             return true
-            //         }
-            //     }
-            //     // this.showQuestion.questionStatus[key] = false
-            // })
-            // for(let question of getters.gettersAnsweredQuestions){
-            //     console.log(question)
-            //     for(let answer of question.answer){
-            //         console.log(answer.id)
-            //         if(answer.on_reply==true&&answer.user.UID==getters.user.UID){
-            //             return  true
-            //         }
-            //     for(let question2 of getters.user.question){
-            //             if(question2.on_answer==true&&question2.user.UID==getters.user.UID){
-            //                 return true
-            //             }else{
-            //                 return false
-            //             }
-            //         }
-            //     }
-                
-            // }
+        emailVerified(){
+            return this.$store.getters.getEmailVerified
         },
-        // getUserTags(){
-        //     let checkDict = {}  
-        //     // let checkedDict = {}
-        //     let checkedList = []
-        //     let checkedlist2 = []
-        //     for(let i of this.user.user_tag){
-        //         checkDict[i.tag] = i.total_num
-        //         checkedList.push(i.tag)
-        //     }
-        //     console.log("computed",checkDict)
-        //     if(Object.keys(checkDict).length <= 3){
-        //         return checkedList
-        //     }
-        //     if(Object.keys(checkDict).length > 3){
-        //         for(let m=0; m < 3; m++){
-        //             const aryMax = function (a, b) {return Math.max(a, b);}
-        //             let max = Object.values(checkDict).reduce(aryMax);
-        //             const result = Object.keys(checkDict).reduce( (r, key) => { 
-        //                 return checkDict[key] === max ? key : r 
-        //                 }, null);
-        //             // checkedDict[result] = max
-        //             delete checkDict[result]
-        //             checkedlist2.push(result)
-        //         }
-        //         return checkedlist2
-        //     }
-        // },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
+        },
         handleQuestions(){
             console.log("in handlequestion")
             if(this.showQuestionStatus.recent){
-                console.log("return_recen:",this.temporaryQuestion)
                 this.questions = this.temporaryQuestion
-                console.log("Q_resilts",this.questions.results)
                 return this.questions.results
             }
             else if(this.showQuestionStatus.reccomend){
-                console.log("return_reco:",this.reccomendedQuestion)
+                console.log('RECCOMEND',this.reccomendedQuestion)
                 this.questions = this.reccomendedQuestion
                 return this.questions.results
             }
             else if(this.showQuestionStatus.search){
-                console.log("return_search:")
                 this.questions = this.searchedQuestion
                 return this.questions.results
             }
@@ -319,7 +283,6 @@ export default {
             this.getParentTag()
         },
         async getAdditionalQuestion(next){
-            console.log("addQ",next)
             if(next!=null){
                 await axios
                 .get(next)
@@ -332,8 +295,6 @@ export default {
                     if(this.questions.next==null){
                         this.bottomScrollActionHandler = false
                         this.scrollBottom = false
-                        // window.removeEventListener('scroll', this.handleScroll)
-                        // window.removeEventListener('scroll', this.getScrollY)
                     }
                 })
                 .catch(error => {
@@ -342,12 +303,10 @@ export default {
             }
         },
         async getParentTag(){
-            console.log('in_get_parentTag')
             await axios
                 .get('/api/board/parent-tag')
                 .then(response => {
                     let parentTags = response.data
-                    console.log('parentTags',parentTags)
                     this.getParentTagDict(parentTags)
                 })
                 .catch(error => {
@@ -359,34 +318,8 @@ export default {
                 this.onAnswerOrReply = true
             }
         },
-        // async getRelatedQuestion() {
-        //     // this.$store.commit('setIsLoading', true)
-        //     console.log("ingetRQ",this.getUserTags)
-        //     if(this.getUserTags.length == 1){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}`
-        //     }
-        //     if(this.getUserTags.length == 2){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}`
-        //     }
-        //     if(this.getUserTags.length == 3){
-        //         var url = `/api/board/question/filter-list?tag=${this.getUserTags[0]}&tag=${this.getUserTags[1]}&tag=${this.getUserTags[2]}`
-        //     }
-        //     console.log("url:",url)
-        //     try{
-        //         await axios.get(url)
-        //             .then(response => {
-        //             this.reccomendedQuestion = response.data
-        //             console.log(this.reccomendedQuestion.length,this.reccomendedQuestion)
-        //             })
-        //         }
-        //     catch{(error => {
-        //             console.log(error)
-        //     })}
-        //     // this.$store.commit('setIsLoading', false)
-        // },
         async getSearchQuestion(){
             this.$store.commit('setIsLoading', true)
-            console.log('Gsearch')
             await axios
                 .get(`/api/board/question/search/?keyword=${this.wordList}`)
                 .then(response => {
@@ -428,22 +361,34 @@ export default {
         getParentTagDict(parentTags){
             for (let i of parentTags){
                 this.parentTagDict[i.parent_tag] = i.center_tag
-                console.log("PD",parentTags,this.parentTagDict)
             }
         },
         handleShowCreateQuestion(){
             console.log('showCreate')
-            this.showCreateQuestion = !this.showCreateQuestion
-            this.handleScrollFixed()
-            this.a()
+            if(this.emailVerified&&this.roginUser){
+                this.showCreateQuestion = !this.showCreateQuestion
+                this.$store.commit('handleFixedScroll')
+                // this.handleScrollFixed()
+                // this.a()
+            }else if(!this.emailVerified&&this.roginUser){
+                this.handleShowEmailVerified()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
+            }else{
+                this.handleShowNotLogin()
+                this.$store.commit('fixedScrollTrue')
+                this.$store.commit('showModalTrue')
+                   
+            }
+        },
+        handleShowEmailVerified(){
+            this.showEmailVerified = !this.showEmailVerified
+        },
+        handleShowNotLogin(){
+            this.showNotLogin = !this.showNotLogin
         },
         handleShowConfirm(){
             this.showConfirm = !this.showConfirm
-            console.log('confurm',this.showConfirm)
-        },
-        remove_T_Z(datatime){
-            const time = datatime.replace(/T|Z/g,' ')
-            return time
         },
         getDetail(slug){
             console.log('slugdayo',slug)
@@ -465,11 +410,11 @@ export default {
             }
             // this.showQuestionStatus[key] = true
         },
-        handleScrollFixed(){
-            this.scrollFixed = !this.scrollFixed
-        },
+        // handleScrollFixed(){
+        //     this.scrollFixed = !this.scrollFixed
+        // },
         handleShowQuestionStatusSearch(){
-            showQuestionStatus.search = false
+            this.showQuestionStatus.search = false
         },
         goHome(){
             router.push("/")
@@ -487,11 +432,9 @@ export default {
             this.scrollY = window.scrollY
         },
         handleScroll(){
-            console.log("inSCROLL")
             var doch = document.querySelector('.scroll_area').scrollHeight
             var winh = window.innerHeight; //ウィンドウの高さ
             var bottom = doch - winh; //ページ全体の高さ - ウィンドウの高さ = ページの最下部位置
-            console.log("inSCROLL2","doch",doch,"winh",winh,'bottom',bottom,'scTOP',this.scrollY,this.bottomScrollActionHandler)
             if (bottom+100 <= this.scrollY&&this.bottomScrollActionHandler) {
                 this.bottomScrollActionHandler = false
                 this.scrollBottom = true
@@ -515,20 +458,28 @@ export default {
         //         this.notifications = true
         //         setTimeout(this.resetNotifications, 3000)    
         // },
-        a(){
-            this.scroll_position = window.pageYOffset;
-            this.styles.top = this.scroll_position
-            console.log(this.scroll_position,)
-        
-        // const elem = document.getElementById('scroll');
-        // elem.style.top = scroll_position
-        // console.log('scroll', scroll_position)
-        // window.scrollTo({
-        //     top: scroll_position,
-        //     behavior: "smooth"
-        //     });
-        //     console.log("unko")
-        }
+        // a(){
+        //     this.scroll_position = window.pageYOffset;
+        //     this.styles.top = this.scroll_position
+        //     console.log(this.scroll_position,)
+        // },
+        dateConvert(date){
+            var date = date
+            var time = ''
+            var newDate = ''
+            var dt = new Date(date)
+            if(dt.getHours() > 11){
+                time = " PM"
+                dt = dt.setHours(dt.getHours()-12)
+                date = new Date(dt)
+            }else{
+                time = " AM"
+            }
+            newDate = date + time + " UTC"
+            dt = new Date(newDate)
+            var stringDT = dt.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            return stringDT.replace(/\//g,'-')
+        },
     }
 }
 </script>
@@ -563,7 +514,11 @@ export default {
                     margin-right: 1rem;
                     margin-top: 1rem;
                     font-size: 2rem;
-                    color: $dark-blue
+                    color: $dark-blue;
+                    transition: 0.5s;
+                }
+                .user-font:hover{
+                    color: gray;
                 }
                 .fa-exclamation{
                     position:absolute;
@@ -601,7 +556,11 @@ export default {
                     padding-left: 0.5rem;
                     background: $back-white;
                     width: 90%;
+                    // transition: 0.5s;
                     }
+                    // .search:focus{
+                    //     border: solid $dark-blue;
+                    // }
                 }
                 .fa-search:focus-within{
                     color:rgb(80, 80, 80);
@@ -646,10 +605,15 @@ export default {
                 width: 85%;
                 .search-title{
                     margin-top: 2rem;
+                    margin-bottom: 2rem;
+                    border-bottom: 0.2rem solid $dark-blue;
+                    display: inline-block;
                 }
                 .no-found{
-                    p{
+                    .no-found-word{
                         margin-top:0.5rem;
+                        color: $middle-blue;
+                        margin-bottom: 1rem;
                     }
                     .route{
                         display:flex;
@@ -665,6 +629,9 @@ export default {
                             transition:0.3s;
                         }
                     }
+                }
+                .question-list:hover{
+                    background: $base-lite-3;
                 }
                 .question-list{
                     border: solid $base-color;

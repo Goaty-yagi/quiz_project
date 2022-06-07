@@ -18,7 +18,7 @@
             <div class="field">
                 <div class="input-box">
                     <div><i class="fas fa-globe" id='in-font'></i></div>
-                    <div class="text-box">{{ $store.state.signup.country }}</div>
+                    <div class="text-box">{{ viewableCountry }}</div>
                 </div>         
             </div>
             <div class="field">
@@ -46,79 +46,168 @@ import ID from './ID.vue'
 import axios from 'axios'
 export default {
   components: { ID },
+  props:[
+        'viewableCountry',
+    ],
     data(){
         return{
             error: null,
             errorMessage:'このメールアドレスはすでに使われています。',
             errorMessage2:'登録できませんでした。もう一度お試しください。',
+            userInfo:'',
+            gotIP:false,
+            IPInfo:[
+                {city:"",
+                ip:"",
+                loc:"",
+                org:"",
+                postal:"",
+                region:"",
+                timezone:"",
+                country:""
+                }
+            ],
         }
     },
-    methods:{
-       async addStep(){
-            // try{
-                await this.$store.dispatch('signup',{
-                        email: this.$store.state.signup.email,
-                        password: this.$store.state.signup.password
-                        })
-                        this.$emit('confHandle')
-                        this.$emit('sentHandle')
-                        this.$store.commit('addStep')
-                        this.$emit('handle')
-                        console.log('start django add')
-                        this.registerUserOndDjango()
-                        
-                
-            // }catch(err){
-            //     this.error = this.errorMessage2
-            //     console.log('catch error',this.error)
-            //     }
-            
+    mounted(){
+        this.$store.commit('fixedScrollTrue')
+        this.getCountry()
+        console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
+        console.log('mounted at confiem',this.$store.getters.fixedScroll)
 
-            // await this.handleSubmit()
-            // if (this.error == null){
-                
-            // }
+    },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+    },
+    computed:{
+        user(){
+            try{
+                return this.$store.state.signup.djangoUser
+            }
+            catch{
+                return null
+            }
         },
-        registerUserOndDjango(){
-            console.log('start add')
-            axios({
-                method: 'post',
-                url: '/api/user/',
-                data: {
+    },
+    methods:{
+        async addStep(){
+            await this.$store.dispatch('signup',{
+            email: this.$store.state.signup.email,
+            password: this.$store.state.signup.password
+            })
+            this.$emit('confHandle')
+            this.$emit('sentHandle')
+            this.$store.commit('addStep')
+            this.$emit('handle')
+            await this.registerUserAndDjango()
+        },
+        async registerUserAndDjango(){
+            if(this.$store.getters.getTempUser.test){
+                console.log('YES TEMP')
+                this.userInfo={
                     UID: this.$store.state.signup.user.uid,
                     name: this.$store.state.signup.username,
                     email: this.$store.state.signup.email,
-                    grade: 'unko',
-                    country: this.$store.state.signup.country
-                },
-            })
+                    country: this.$store.state.signup.country,
+                    quiz_taker: [
+                        {grade: this.$store.getters.getTempUser.grade},
+                        {level: this.$store.getters.getTempUser.level},
+                        {user_status: this.$store.getters.getTempUser.statusList}
+                    ],
+                    ip_data: [{
+                        city: this.IPInfo.city,
+                        ip: this.IPInfo.ip,
+                        loc: this.IPInfo.loc,
+                        org: this.IPInfo.org,
+                        postal: this.IPInfo.postal,
+                        region: this.IPInfo.region,
+                        timezone: this.IPInfo.timezone,
+                        country: this.IPInfo.country
+                    }]
+                }
+            }else{
+                console.log('NO TEMP')
+                this.userInfo={
+                    UID: this.$store.state.signup.user.uid,
+                    name: this.$store.state.signup.username,
+                    email: this.$store.state.signup.email,
+                    country: this.$store.state.signup.country,
+                    ip_data: [{
+                        city: this.IPInfo.city,
+                        ip: this.IPInfo.ip,
+                        loc: this.IPInfo.loc,
+                        org: this.IPInfo.org,
+                        postal: this.IPInfo.postal,
+                        region: this.IPInfo.region,
+                        timezone: this.IPInfo.timezone,
+                        country: this.IPInfo.country
+                    }]
+                }
+            }
+            try{
+                console.log("try",this.userInfo)
+                this.$store.dispatch('signupDjangoUser',this.userInfo)
+                // await axios({
+                //     method: 'post',
+                //     url: '/api/user/',
+                //     data: this.userInfo
+                    // {
+                    //     UID: this.$store.state.signup.user.uid,
+                    //     name: this.$store.state.signup.username,
+                    //     email: this.$store.state.signup.email,
+                    //     quiz_taker: [
+                    //         {grade: this.$store.getters.getTempUser.grade},
+                    //         {level: this.$store.getters.getTempUser.level}
+                    //     ],
+                        // ip_data: [{
+                        //    city: this.IPInfo.city,
+                        //    ip: this.IPInfo.ip,
+                        //    loc: this.IPInfo.loc,
+                        //    org: this.IPInfo.org,
+                        //    postal: this.IPInfo.postal,
+                        //    region: this.IPInfo.region,
+                        //    timezone: this.IPInfo.timezone,
+                        //    country: this.IPInfo.country
+                        // }]
+                    // },
+                // })
+            }
+            catch(error){
+                console.log('error',error.message)
+                }
+            
         },
-        goEdit(){
-            this.$emit('edithandle')
+        async goEdit(){
+            this.$emit('showPasswordFalse')
             this.$emit('handle')
+            this.$emit('edithandle')
         },
-        // async handleSubmit(){
-        //     try {
-        //         await this.$store.dispatch('sentValidation',{
-        //             email: this.$store.state.signup.email,
-        //             password: this.$store.state.signup.password
-        //             })
-        //             this.$store.dispatch('')
-        //     } catch (err){
-        //         this.error = this.errorMessage2
-        //         console.log('catch error',this.error)
-        //     }
-        // },
-        // errorMessageHandler(error){
-        //     if ( error == 'Firebase: Error (auth/email-already-in-use).'){
-        //         this.error = this.errorMessage
-        //     }else{
-        //         this.error = this.errorMessage2
-        //     }
-        // }        
-    },
-    mounted(){
-        console.log('mail',this.$store.state.signup.email, 'password',this.$store.state.signup.password)
+        async getCountry(){
+            if(!this.gotIP){
+                await axios
+                .get("https://ipinfo.io/json?token=32e16159d962c5")
+                // .then(response => {
+                //     this.IPInfo = response.data
+                //     console.log(this.IPInfo)
+                //     })
+                .then(response => {
+                    let IP = response.data
+                    this.IPInfo.city = IP.city
+                    this.IPInfo.ip = IP.ip
+                    this.IPInfo.loc = IP.loc
+                    this.IPInfo.org = IP.org
+                    this.IPInfo.postal = IP.postal
+                    this.IPInfo.region = IP.region
+                    this.IPInfo.timezone = IP.timezone
+                    this.IPInfo.country = IP.country
+                    console.log(this.IPInfo)
+                    })
+                .catch(error => {
+                    console.log(error)
+                })
+                this.gotIP = true
+            }
+        }    
     },
 }
 </script>
@@ -167,10 +256,10 @@ export default {
         margin-right: 1rem;
         height: 3rem;
         position:relative;
-        font-size:0.5rem;
+        font-size:1.5rem;
     }
     #in-font{
-        font-size:1.5rem;
+        // font-size:1rem;
         margin-left: 1rem;
         position:absolute;
         left:0;
@@ -182,7 +271,7 @@ export default {
         right:0;
         top:0;
         bottom: 0;
-        font-size:1.3rem;
+        font-size:1.2rem;
         font-weight: bold;
         margin-top:0.5rem;
         margin-left:3rem;
@@ -190,7 +279,6 @@ export default {
     }
     #mail{
         overflow-wrap: break-word;
-        font-size:1rem;
         line-height: 0.9rem;
         margin-top:0.8rem;        
     }

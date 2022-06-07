@@ -1,21 +1,21 @@
 <template>
     <div class='shape-wrapper'>
-        <div class="shape-contaner" ref='text1'>
+        <div class="shape-container" ref='text1'>
             <div class="parallel-quadrangle" ref='step1'></div>
             <p v-if='$store.state.step==1'> 情報入力</p>
             <p v-if='$store.state.step!=1'>1</p>
         </div>
-        <div class="shape-contaner" id='second' ref='text2'>
+        <div class="shape-container" id='second' ref='text2'>
             <div class="parallel-quadrangle" ref='step2'></div>
             <p v-if='$store.state.step!=2'>2</p>
             <p class='ips-text' v-if='$store.state.step==2'>パスワード<wbr>入力</p>
         </div>
-        <div class="shape-contaner" id='three' ref='text3'>
+        <div class="shape-container" id='three' ref='text3'>
             <div class="parallel-quadrangle" ref='step3'></div>
             <p v-if='$store.state.step!=3'> 3</p>
-            <p class='ps-text' v-if='$store.state.step==3'>メール承認<wbr></p>
+            <p v-if='$store.state.step==3'>メール承認<wbr></p>
         </div>
-        <div class="shape-contaner" ref='text4'>
+        <div class="shape-container" ref='text4'>
             <div class="parallel-quadrangle" ref='step4'></div>
             <p v-if='$store.state.step!=4' id='done'>完了</p>
             <p v-if='$store.state.step==4'>登録完了</p>
@@ -92,7 +92,7 @@ export default {
         // align-content: stretch; 
 
     }
-    .shape-contaner{
+    .shape-container{
         margin-left: 4%;
         margin-right: 4%;
         position:relative;
@@ -100,19 +100,18 @@ export default {
         overflow: visible;
         white-space:nowrap;
     }
-    .shape-contaner.text#second p{
+    .shape-container.text#second p{
         // white-space:initial;
         font-size:0.8rem;
         top:55%;
         line-height:1rem
     }
-    .shape-contaner.text#three p{
+    .shape-container.text#three p{
         // white-space:initial;
         font-size:0.8rem;
-        top:7%;
         line-height:1rem
     }
-    .shape-contaner p{
+    .shape-container p{
         position:absolute;
         color:rgb(56, 55, 55);
         top: 50%;
@@ -125,7 +124,7 @@ export default {
         top: 70%;
         font-size:initial;
     }
-    .shape-contaner.text p{
+    .shape-container.text p{
         position:absolute;
         color:white;
         top: 70%;
@@ -133,31 +132,31 @@ export default {
         font-size:initial;
         font-weight: bold;
     }
-    .shape-contaner.text .id-text{
+    .shape-container.text .id-text{
         left:45%;
     }
     
     .parallel-quadrangle {
-	width: 3rem;
-	height: 2rem;
-    left:20%;
-	transform: skewX(25deg);
-    position: relative;
-    border:solid $base-color;
-    border-width: 0.2rem 0.2rem 0rem 0.2rem;
-	background: $back-white;
-    }.parallel-quadrangle:after{
-        content: "";
-        position: absolute;
         width: 3rem;
         height: 2rem;
-        left: -1.17rem;
-        top: 1.75rem;
-        transform: skewX(348grad);
+        left:20%;
+        transform: skewX(25deg);
+        position: relative;
         border:solid $base-color;
-        border-width: 0rem 0.2rem 0.2rem 0.2rem;
+        border-width: 0.2rem 0.2rem 0 0.2rem;
         background: $back-white;
-        }
+        }.parallel-quadrangle:after{
+            content: "";
+            position: absolute;
+            width: 3rem;
+            height: 2rem;
+            left: -1.22rem;
+            top: 1.75rem;
+            transform: skewX(348grad);
+            border:solid $base-color;
+            border-width: 0 0.2rem 0.2rem 0.2rem;
+            background: $back-white;
+            }
     .parallel-quadrangle.steps{
         width: 5rem;
         background: $base-color;
