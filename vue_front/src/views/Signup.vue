@@ -21,7 +21,7 @@
                     @click="addCountry(countryData[num-1][num-1].J_name)"
                     v-for="(num,countryindex) of countryData.length"
                     v-bind:key="countryindex">
-                        <p v-if="country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
+                        <p v-if="userData.country!=countryData[num-1][num-1].J_name" >{{countryData[num-1][num-1].J_name}}</p>
                     </div>
                 </div>
             </div>
@@ -29,17 +29,17 @@
                 <form v-if='showProgress' @submit.prevent='submitForm' class="field-wrapper">
                     <div class="field">
                         <div class="input-box" ref='formName'>
-                            <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='username' id='Username' placeholder="Username"></i>
+                            <i class="fas fa-robot" id='in-font'><input required class="text-box" type='text' v-model='userData.username' id='Username' placeholder="Username"></i>
                         </div>       
                     </div>
                     <div class="field">
                         <div class="input-box" ref='formMail'>
-                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email' id='E-mail' placeholder="E-mail"></i>
+                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='userData.email' id='E-mail' placeholder="E-mail"></i>
                         </div>         
                     </div>
                     <div class="field">
                         <div class="input-box">
-                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='email2' id='Confirm' placeholder="Confirm"></i>
+                            <i class="far fa-envelope" id='in-font'><input required class="text-box" type='email' v-model='userData.email2' id='Confirm' placeholder="Confirm"></i>
                         </div>         
                     </div>
                     <div class="field">
@@ -49,7 +49,7 @@
                             </i>
                             <!-- <p v-if='!country' id='infont-text'>Country</p> -->
                             <p v-if='viewableCountry' id='infont-text'>{{ viewableCountry }}</p>
-                            <p v-if='!country' class='down'>⌵</p>
+                            <p v-if='!userData.country' class='down'>⌵</p>
                         </div>         
                     </div>
                     <div v-if='mailError||nameError||mailInUseError' class='error-form'>
@@ -113,6 +113,7 @@
 </template>
 
 <script>
+import {router} from "../main.js"
 import {mapGetters,mapActions} from 'vuex'
 import Progress from '@/components/signin/Progress.vue'
 import Sent from '@/components/signin/Sent.vue'
@@ -125,6 +126,19 @@ import country from '../assets/country.json';
 
 
 export default {
+    beforeRouteLeave (to, from, next) {
+        console.log(this.filled)
+        if(this.filled){
+            let answer = window.confirm("本当に離れますか？　保存されていないデータは破棄されます。")
+            if (answer) {
+                next()
+            } else {
+                next(false)
+            }
+        }else{
+            next(true)
+        }
+    },
     components:{
         Progress,
         Sent,
@@ -137,10 +151,12 @@ export default {
     data(){
         return{
             step:0,
-            username:'',
-            email:'',
-            email2:'',
-            country:'',
+            userData:{
+                username:'',
+                email:'',
+                email2:'',
+                country:'',
+            },
             viewableCountry:'',
             nameError:null,
             mailError:null,
@@ -154,21 +170,29 @@ export default {
             slideIn:true,
             slideOut:false,
             showSellect:false,
-            countryData:country.country,            
+            countryData:country.country,       
+            filled: false,  
         }
     },
     updated(){
         this.showButtonHandler()
+        this.filled=true
         console.log(this.$store.state.signup.username)
         // this.getClass()
     },
+    created(){
+        // let a = window.addEventListener("beforeunload",this.confirmFun());
+        // console.log('created',a)
+    },
     mounted(){
+        window.addEventListener('beforeunload',this.handleBeforeUnload)
         this.$store.commit('handleOnSigningup')
         // console.log('mounted',this.country)
         this.step = this.$store.state.step
     },
     beforeUnmount(){
-        alert('is that okay ')
+        window.removeEventListener('beforeunload',this.handleBeforeUnload)
+        this.$store.commit('stepClear')
         this.$store.commit('handleOnSigningup')
         this.$store.commit('fixedScrollFalse')
     },
@@ -184,16 +208,19 @@ export default {
     },
     computed: mapGetters(['fixedScroll']),
     methods:{
+        test () {
+      console.log('test')
+    },
         async submitForm(){
             // validate email
             // console.log('clicked1')
-            this.nameError = this.username.length < 21 ?
+            this.nameError = this.userData.username.length < 21 ?
             '' : '@name must be less than 20 chars'
-            this.mailError = this.email == this.email2 ?
+            this.mailError = this.userData.email == this.userData.email2 ?
             '' : '@addresses are not the same'
             console.log(this.nameError)
             if (this.nameError == ''&& this.mailError ==''){
-                await this.$store.dispatch('checkEmail',this.email)
+                await this.$store.dispatch('checkEmail',this.userData.email)
                 console.log(this.$store.state.signup.checkedEmail)
                 this.mailInUseError = this.$store.state.signup.checkedEmail ?
                 '' : '@address is already in use'
@@ -204,10 +231,10 @@ export default {
                 this.showPasswordTrue()
                 this.showProgressHandler()
                 this.$store.commit('addStep')
-                this.$store.commit('getUsername',this.username)
-                this.$store.commit('getEmail',this.email)
-                this.$store.commit('getEmail2',this.email2)
-                this.$store.commit('getCountry',this.country)
+                this.$store.commit('getUsername',this.userData.username)
+                this.$store.commit('getEmail',this.userData.email)
+                this.$store.commit('getEmail2',this.userData.email2)
+                this.$store.commit('getCountry',this.userData.country)
                 }                
             }
         },
@@ -227,10 +254,10 @@ export default {
             this.showProgress = false
         },
         showButtonHandler(){
-            if(this.username!=''&&
-                this.email!=''&&
-                this.email2!=''&&
-                this.country!=''){
+            if(this.userData.username!=''&&
+                this.userData.mail!=''&&
+                this.userData.email2!=''&&
+                this.viewableCountry!=''){
                     this.showButton = false
             }
             else{
@@ -240,22 +267,22 @@ export default {
         getFilledItems(item){
             if(item == 'Username'){
                 if(this.$store.signup.state.username !=''){
-                    this.username = this.$store.signup.state.username
+                    this.userData.username = this.$store.signup.state.username
                 }
             }
             if(item == 'E-mail'){
                 if(this.$store.signup.state.email !=''){
-                    this.email = this.$store.signup.state.email
+                    this.userData.email = this.$store.signup.state.email
                 }
             }
             if(item == 'Confirm'){
                 if(this.$store.signup.state.email2 !=''){
-                    this.email2 = this.$store.signup.state.email2
+                    this.userData.email2 = this.$store.signup.state.email2
                 }
             }
             if(item == 'Country'){
                 if(this.$store.signup.state.country !=''){
-                    this.country = this.$store.signup.state.country
+                    this.userData.country = this.$store.signup.state.country
                 }
             }
         },
@@ -302,6 +329,23 @@ export default {
         },
         setCountryForEdit(country){
             this.viewableCountry = country
+        },
+        // beforeRouteLeave (to, from, next) {
+        //     if (window.confirm("Do you really want to leave?")) {
+        //         window.open("exit.html", "Thanks for Visiting!");
+        //         console.log('yes')
+        //     }else{
+        //         console.log('no')
+        //     }
+        //     },
+        handleBeforeUnload(e){
+            e.preventDefault()
+            alert('unko')
+            console.log('konnnichiha',e)
+            const message =
+                "Are you sure you want to leave? All provided data will be lost.";
+            e.returnValue = message;
+            return e.returnValue;
         }
     }
 }

@@ -95,7 +95,7 @@ export default {
             this.passType2 = !this.passType2
         },
         goPolicy(){
-            this.$router.push({name:'Policy'})
+            window.open('/policy', '_blank');
         }
     }
         
@@ -178,6 +178,13 @@ export default {
     }
     .check-box-wrapper{
         margin-top: 1.5rem;
+        cursor: move;
+        border: solid transparent;
+        transition: .5s;
+        
+    }
+    .check-box-wrapper:hover{
+        border: solid $lite-gray;
     }
     #eye{
         position:absolute;

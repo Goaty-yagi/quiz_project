@@ -256,10 +256,10 @@ export default {
         margin-right: 1rem;
         height: 3rem;
         position:relative;
-        font-size:0.5rem;
+        font-size:1.5rem;
     }
     #in-font{
-        font-size:1.5rem;
+        // font-size:1rem;
         margin-left: 1rem;
         position:absolute;
         left:0;
@@ -271,7 +271,7 @@ export default {
         right:0;
         top:0;
         bottom: 0;
-        font-size:1.3rem;
+        font-size:1.2rem;
         font-weight: bold;
         margin-top:0.5rem;
         margin-left:3rem;
@@ -279,7 +279,6 @@ export default {
     }
     #mail{
         overflow-wrap: break-word;
-        font-size:1rem;
         line-height: 0.9rem;
         margin-top:0.8rem;        
     }
