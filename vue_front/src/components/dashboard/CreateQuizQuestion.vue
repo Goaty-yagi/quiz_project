@@ -84,7 +84,7 @@
                             </div>
                             <select required class="text-box" >
                                 <option
-                                    v-for="(id,idindex) in quizNameId" 
+                                    v-for="(id,idindex) in fieldNameId" 
                                     v-bind:key="idindex">
                                     <p class="option">{{ id.name }}</p>
                                 </option>
@@ -102,13 +102,19 @@
                             </textarea>
                         </div>       
                     </div>
-                    <div class="answer-wrapper">
-                        <div class="answer-title">
-                            <p>Answer</p>
+                    <div class="answer-wrapper" >
+                        <div class="answer-title-container">
+                            <i @click="subtractAnswer()" class="fas fa-minus"></i>
+                            <div class="answer-title">
+                                <p>Answer</p>
+                            </div>
+                            <i @click="addAnswer()" class="fas fa-plus"></i>
                         </div>
-                        <div class="answer-container">
+                        <div class="answer-container"
+                            v-for="(num) of answerNum" 
+                                v-bind:key="num">
                             <div class="num">
-                                <p>1</p>
+                                <p>{{ num }}</p>
                             </div>
                             <input class="answer-label" type="text">
                             <div class="checkbox-container">
@@ -149,20 +155,29 @@ export default {
             showSideBar: true,
             formData:{
                 description:''
-            }
+            },
+            answerNum:2,
         }
     },
     mounted(){
         console.log('mounted at create-question',this.showSideBar)
     },
-    computed: mapGetters(['quizNameId']),
+    computed: mapGetters(['quizNameId','fieldNameId']),
     methods:{
         handleShowSideBar(){
             console.log(this.showSideBar)
             this.showSideBar = !this.showSideBar 
             console.log(this.showSideBar)
+        },
+        addAnswer(){
+            this.answerNum += 1
+        },
+        subtractAnswer(){
+            if(this.answerNum > 1){
+                this.answerNum -= 1
+            }
         }
-    }
+    },
 }
 </script>
 
@@ -272,15 +287,45 @@ export default {
         display: flex;
         align-items: center;
         flex-direction: column;
-        .answer-title{
-            border: solid $base-color;
-            border-radius: 0.5rem;
-            padding-right: 0.5rem;
-            padding-left: 0.5rem;
-            background: $dark-blue;
-            margin-bottom: 0.2rem;
-            color: $base-white;
-            font-weight: bold;
+        .answer-title-container{
+            display: flex;
+            align-items: center;
+            .fa-minus{
+                margin-right: 0.5rem;
+                border: solid gray;
+                border-radius: 50vh;
+                padding: 0.1rem;
+                background: $lite-gray;
+                font-size: 0.8rem;
+                transition: .5s;
+            }
+            .fa-minus:hover{
+                border: solid $dark-blue;
+                color: $base-color;
+            }
+            .answer-title{
+                border: solid $base-color;
+                border-radius: 0.5rem;
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+                background: $dark-blue;
+                margin-bottom: 0.2rem;
+                color: $base-white;
+                font-weight: bold;
+            }
+            .fa-plus{
+                margin-left: 0.5rem;
+                border: solid gray;
+                border-radius: 50vh;
+                padding: 0.1rem;
+                background: $lite-gray;
+                font-size: 0.8rem;
+                transition: .5s;
+            }
+            .fa-plus:hover{
+                border: solid $dark-blue;
+                color: $base-color;
+            }
         }
         .answer-container{
             display: flex;
@@ -290,6 +335,7 @@ export default {
             border: solid $base-color;
             border-radius: 0.5rem;
             background: $back-white;
+            margin-bottom: 0.4rem;
             .num{
                 display: flex;
                 align-items: center;
