@@ -32,6 +32,7 @@ let getDefaultState = () => {
         quiz:[],
         quizNameId:'',
         fieldNameId:'',
+        questionTypeId:'',
         statusNameId:'',
         randomURL:'',
         test:null,
@@ -54,6 +55,7 @@ export default {
         statusNameId:(state) => state.statusNameId,
         gradeForConvert:(state) => state.gradeForConvert,
         currentQuizMode:(state) => state.currentQuizMode,
+        questionTypeId:(state) => state.questionTypeId,
         quizTaker(state, getters, rootState){
             try{
                 return rootState.signup.djangoUser.quiz_taker[0].id
@@ -136,6 +138,9 @@ export default {
         },
         setStatusNameId(state, payload){
             state.statusNameId = payload
+        },
+        setQuestionTypeId(state, payload){
+            state.questionTypeId = payload
         },
         getUserStatusInfo(state, payload){
             state.userStatusDict.status = payload.status
@@ -239,6 +244,17 @@ export default {
                 let response = await axios.get("/api/status-list/")
                 commit('setStatusNameId',response.data)
                 commit('setIsLoading', false,{root:true})
+            }
+        },
+        async getQuestionTypeId({ state, commit }){
+            console.log('question-type1')
+            if(state.questionTypeId==false){
+                console.log('question-type')
+                commit('setIsLoading', true, {root:true})
+                let response = await axios.get("/api/question-types")
+                commit('setQuestionTypeId',response.data)
+                commit('setIsLoading', false,{root:true})
+                console.log('inGet',state.questionTypeId)
             }
         },
         async getTestQuestions({ state, commit, getters }){

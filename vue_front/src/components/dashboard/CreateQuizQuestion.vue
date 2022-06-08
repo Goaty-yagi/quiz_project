@@ -1,5 +1,5 @@
 <template>
-    <div class="create-question-wrapper">
+    <div v-if="questionTypeId" class="create-question-wrapper">
         <div class="main-wrapper">
             <div class="create-question-container" v-if="$store.state.isLoading==false">
                 <form @submit.prevent='submitForm' class="field-wrapper">
@@ -10,7 +10,7 @@
                                     quiz_grade
                                 </div>
                             </div>
-                            <select required class="text-box" >
+                            <select required class="text-box" v-model='formQuestionData.grade'>
                                 <option
                                     v-for="(id,idindex) in quizNameId" 
                                     v-bind:key="idindex">
@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="text-box level">
-                                <input required input type="number" value="1" min="1" max="10" step="1">
+                                <input required type="number" min="1" max="10" step="1" v-model="formQuestionData.level">
                             </div>
                         </div>         
                     </div>
@@ -38,9 +38,9 @@
                                     quiz_type
                                 </div>
                             </div>
-                            <select required class="text-box" >
+                            <select required class="text-box" v-model="formQuestionData.questionType">
                                 <option
-                                    v-for="(id,idindex) in quizNameId" 
+                                    v-for="(id,idindex) in questionTypeId"
                                     v-bind:key="idindex">
                                     <p class="option">{{ id.name }}</p>
                                 </option>
@@ -82,7 +82,7 @@
                                     quiz_field
                                 </div>
                             </div>
-                            <select required class="text-box" >
+                            <select required class="text-box" v-model="formQuestionData.field">
                                 <option
                                     v-for="(id,idindex) in fieldNameId" 
                                     v-bind:key="idindex">
@@ -98,7 +98,7 @@
                                     quiz_label
                                 </div>
                             </div>
-                            <textarea required class="text-box" v-on:focus="onFocus" v-model='formData.description'>
+                            <textarea required class="text-box" v-on:focus="onFocus" v-model='formQuestionData.description'>
                             </textarea>
                         </div>       
                     </div>
@@ -121,7 +121,7 @@
                                 <p>true?</p>
                                 <input class="checkbox" type="checkbox">
                             </div>
-                            <div class="correct-order-container">
+                            <div v-if="formQuestionData.questionType=='並び替え'" class="correct-order-container">
                                 <div class="correct-order">
                                     <p>order?</p>
                                     <input required input type="number" value="1" min="1" max="10" step="1">
@@ -153,17 +153,33 @@ export default {
     data(){
         return{
             showSideBar: true,
-            formData:{
-                description:''
+            formQuestionData:{
+                grade:'初級',
+                level:1,
+                questionType:'選択',
+                description:'',
+            },
+            formAnswerDataList:[],
+            formAnswerData:{
+                label:'',
+                isCorrect:'',
+                order:'',
             },
             answerNum:2,
         }
     },
-    mounted(){
-        console.log('mounted at create-question',this.showSideBar)
+    created(){
+        this.$store.dispatch('getQuestionTypeId')
     },
-    computed: mapGetters(['quizNameId','fieldNameId']),
+    beforeMount(){
+        // this.$store.dispatch('getQuestionTypeId')
+    },
+    mounted(){
+        console.log('mounted at create-question',this.questionTypeId)
+    },
+    computed: mapGetters(['quizNameId','fieldNameId','questionTypeId']),
     methods:{
+        // ...mapActions(['getQuestionTypeId']),
         handleShowSideBar(){
             console.log(this.showSideBar)
             this.showSideBar = !this.showSideBar 

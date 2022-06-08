@@ -53,6 +53,7 @@ export default createStore({
         "board.centerTag",
         "quiz.quizNameId",
         "quiz.fieldNameId",
+        // "quiz.questionTypeId"
         ],
       storage: window.sessionStorage
     }),
