@@ -47,6 +47,38 @@ class QuestionListSerializer(serializers.ModelSerializer):
 	# def get_answers_count(self, obj):
 	# 	return obj.answer_set.all().count()
 
+class QuestionCreateSerializer(serializers.ModelSerializer):
+	answer = AnswerListSerializer(many=True)
+	
+	class Meta:
+		model = Question
+		fields = [
+			"id",
+			"quiz_level",
+			"quiz", 
+			"label", 
+			"image", 
+			"get_image", 
+			'field', 
+			'question_type',
+			'status',
+			'correct_answer', 
+			'max_select',
+			'taken_num',
+			'answer']
+	
+	def create(self, validated_data):
+		print('IN_Create_serializer',validated_data)
+		answers = validated_data.pop('answer')
+		field = validated_data.pop('field')
+		print('A',answers)
+		print('F',field)
+		question = Question.objects.create(**validated_data)
+		question.field.add(field[0])
+		print('Q',question,'A',answers)
+		for answer in answers:
+			Answer.objects.create(question=question, **answer)	
+		return question
 
 class QuizListSerializer(serializers.ModelSerializer):
 	# questions_count = serializers.SerializerMethodField()

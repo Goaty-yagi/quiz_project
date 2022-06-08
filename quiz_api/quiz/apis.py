@@ -28,7 +28,7 @@ from quiz.serializers import (
     MyQuizSerializer,
     MyQuestionSerializer,
     ParentStatusIdSerializer,
-    MyQuestionReadSerializer
+    QuestionCreateSerializer
     )
 
 
@@ -107,6 +107,12 @@ def pick_random_object(queryset,quiz_num):
         #         random_id_list.append(question.id)
         #         a = set(random_id_list)
         #         random_id_list = list(a)
+
+class QuestionCreateApi(generics.CreateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionCreateSerializer
+    pagination_class = None
+
 
 class QuizListApi(generics.ListAPIView):
     queryset = Quiz.objects.all()

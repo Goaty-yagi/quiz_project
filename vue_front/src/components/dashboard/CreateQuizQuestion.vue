@@ -10,7 +10,7 @@
                                     quiz_grade
                                 </div>
                             </div>
-                            <select required class="text-box" v-model='formQuestionData.grade'>
+                            <select required class="text-box" v-model='formQuestionData.quiz'>
                                 <option
                                     v-for="(id,idindex) in quizNameId" 
                                     v-bind:key="idindex">
@@ -38,7 +38,7 @@
                                     quiz_type
                                 </div>
                             </div>
-                            <select required class="text-box" v-model="formQuestionData.questionType">
+                            <select required class="text-box" v-model="formQuestionData.question_type">
                                 <option
                                     v-for="(id,idindex) in questionTypeId"
                                     v-bind:key="idindex">
@@ -75,6 +75,7 @@
                             </div>
                         </div>
                     </div> -->
+                    {{ formQuestionData}}
                     <div class="field">
                         <div class="input-box" ref='formName'>
                             <div class='each-title-container'>
@@ -98,7 +99,7 @@
                                     quiz_label
                                 </div>
                             </div>
-                            <textarea required class="text-box" v-on:focus="onFocus" v-model='formQuestionData.description'>
+                            <textarea required class="text-box" v-on:focus="onFocus" v-model='formQuestionData.label'>
                             </textarea>
                         </div>       
                     </div>
@@ -111,22 +112,23 @@
                             <i @click="addAnswer()" class="fas fa-plus"></i>
                         </div>
                         <div class="answer-container"
-                            v-for="(num) of answerNum" 
+                            v-for="(num) of handleAnswerLength" 
                                 v-bind:key="num">
                             <div class="num">
                                 <p>{{ num }}</p>
                             </div>
-                            <input class="answer-label" type="text">
+                            <input class="answer-label" type="text" placeholder="答え" v-model='formAnswerDataList[num-1].label'>
                             <div class="checkbox-container">
                                 <p>true?</p>
-                                <input class="checkbox" type="checkbox">
+                                <input class="checkbox" type="checkbox" v-model='formAnswerDataList[num-1].is_correct'>
                             </div>
                             <div v-if="formQuestionData.questionType=='並び替え'" class="correct-order-container">
                                 <div class="correct-order">
                                     <p>order?</p>
-                                    <input required input type="number" value="1" min="1" max="10" step="1">
+                                    <input required input type="number" min="1" max="10" step="1" v-model='formAnswerDataList[num-1].answer_id'>
                                 </div>
                             </div>
+                            <!-- unko{{ formAnswerDataList[num-1] }} -->
                         </div>
                     </div>
                     <!-- <div v-if='mailError||nameError||mailInUseError' class='error-form'>
@@ -136,7 +138,7 @@
                         <div v-if='mailInUseError'>{{ mailInUseError }}</div>
                     </div> -->
                     <div>
-                        <button class='fbottun' ref='bform' id=''>次へ</button>
+                        <button class='fbottun' ref='bform' id=''>作成する</button>
                     </div>
                 </form>
             </div>
@@ -154,18 +156,27 @@ export default {
         return{
             showSideBar: true,
             formQuestionData:{
-                grade:'初級',
-                level:1,
-                questionType:'選択',
-                description:'',
+                quiz:'初級',
+                quiz_level:1,
+                question_type:'選択',
+                field:'ひらがな',
+                label:'',
+                status:'',
+                max_select:'',
+                image:''
             },
-            formAnswerDataList:[],
+            formAnswerDataList:[{
+                label:'',
+                is_correct:'',
+                answer_id:'',
+            },],
             formAnswerData:{
                 label:'',
-                isCorrect:'',
-                order:'',
+                is_correct:'',
+                answer_id:'',
             },
-            answerNum:2,
+            answerNum: 1,
+            handleAnswerLength: 1,
         }
     },
     created(){
@@ -175,7 +186,21 @@ export default {
         // this.$store.dispatch('getQuestionTypeId')
     },
     mounted(){
-        console.log('mounted at create-question',this.questionTypeId)
+        console.log('mounted at create-question',this.formAnswerDataList)
+    },
+    watch:{
+        answerNum:function(v) {
+            console.log('v',v)
+            if (this.handleAnswerLength > v){
+                this.handleAnswerLength = v
+                this.formAnswerDataList.pop()   
+            } else {
+                const _ = require('lodash');
+                let copyObject = _.cloneDeep(this.formAnswerData)
+                this.formAnswerDataList.push(copyObject)
+                this.handleAnswerLength = v
+            }
+        }
     },
     computed: mapGetters(['quizNameId','fieldNameId','questionTypeId']),
     methods:{
@@ -191,6 +216,66 @@ export default {
         subtractAnswer(){
             if(this.answerNum > 1){
                 this.answerNum -= 1
+            }
+        },
+        async submitForm(){
+            console.log('start add')
+            this.setAllFormData()
+            // await axios({
+            //     method: 'post',
+            //     url: '/api/questions-create/',
+            //     data: {
+            //         title: this.$store.state.board.title,
+            //         description: this.$store.state.board.description,
+            //         user: this.$store.state.signup.user.uid,
+            //         slug: this.uuid,
+            //         liked_num:{},
+            //         tag: this.getTagId()
+            //     },
+                
+            // })
+        },
+        setAllFormData(){
+            // need to think about status part regarding of field
+            if(this.formQuestionData.question_type == "多答") {
+                let counter = 0
+                for(let i of this.formAnswerDataList){
+                    if(i.is_correct) {
+                        counter += 1
+                    }
+                }
+                if(counter >= 1){
+                    console.log('error more than 2')
+                } else if(this.formAnswerDataList.length == counter) {
+                    console.log('error all ture')
+                } else {
+                    this.formQuestionData.max_select = counter
+                }
+            }
+            this.formQuestionData.question_type = this.convertQuizTypeToId(this.formQuestionData.question_type)
+            this.formQuestionData.quiz = this.convertQuizGradeToId(this.formQuestionData.quiz)
+            this.formQuestionData.field = this.convertQuizFieldToId(this.formQuestionData.field)
+            console.log("set", this.formQuestionData)
+        },
+        convertQuizGradeToId(grade) {
+            for (let i of this.quizNameId){
+                if (i.name == grade){
+                    return i.id
+                }
+            }
+        },
+        convertQuizTypeToId(type) {
+            for (let i of this.questionTypeId){
+                if (i.name == type){
+                    return i.id
+                }
+            }
+        },
+        convertQuizFieldToId(field) {
+            for (let i of this.fieldNameId){
+                if (i.name == field){
+                    return i.id
+                }
             }
         }
     },

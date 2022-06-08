@@ -24,6 +24,7 @@ from quiz.apis import (
   MyQuestionApi,
   QuestionFromMyQuestionApi,
   StatusNameIdListApi,
+  QuestionCreateApi
   # MyQuestionReadApi
   )
 
@@ -49,6 +50,7 @@ urlpatterns = [
   path('quizzes-tests/', QuizTestApi.as_view()),
   path('quizzes-name-id/', QuizNameIdListApi.as_view()),
   path('questions/', QuestionListApi.as_view()),
+  path('questions-create/', QuestionCreateApi.as_view()),
   path('question-types/', QuestionTypeApi.as_view()),
   path('questions/quizzes/', QuizFilteredListApi.as_view()),
   path('questions/fields/', FieldFilteredListApi.as_view()),

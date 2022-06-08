@@ -79,7 +79,7 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question,related_name='answer', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question,related_name='answer', blank=True, null=True,  on_delete=models.CASCADE)
     label = models.CharField(max_length=100)
     is_correct = models.BooleanField(default=False)
     taken_num = models.IntegerField(default=0)
