@@ -10,7 +10,7 @@
                                     quiz_grade
                                 </div>
                             </div>
-                            <select required class="text-box" v-model='formQuestionData.quiz'>
+                            <select required class="text-box" v-model='tempQuiz'>
                                 <option
                                     v-for="(id,idindex) in quizNameId" 
                                     v-bind:key="idindex">
@@ -84,10 +84,11 @@
                                 </div>
                             </div>
                             <select required class="text-box" v-model="formQuestionData.field">
+                                <option disabled>{{ tempField }}</option>
                                 <option
-                                    v-for="(id,idindex) in fieldNameId" 
+                                    v-for="(id,idindex) in quizFieldList"
                                     v-bind:key="idindex">
-                                    <p class="option">{{ id.name }}</p>
+                                    <p class="option">{{ id }}</p>
                                 </option>
                             </select>
                         </div>       
@@ -117,15 +118,15 @@
                             <div class="num">
                                 <p>{{ num }}</p>
                             </div>
-                            <input class="answer-label" type="text" placeholder="答え" v-model='formAnswerDataList[num-1].label'>
-                            <div class="checkbox-container">
+                            <input required class="answer-label" type="text" placeholder="答え" v-model='formAnswerDataList[num-1].label'>
+                            <div v-if="formQuestionData.question_type!='並び替え'" class="checkbox-container">
                                 <p>true?</p>
                                 <input class="checkbox" type="checkbox" v-model='formAnswerDataList[num-1].is_correct'>
                             </div>
-                            <div v-if="formQuestionData.questionType=='並び替え'" class="correct-order-container">
+                            <div v-if="formQuestionData.question_type=='並び替え'" class="correct-order-container">
                                 <div class="correct-order">
                                     <p>order?</p>
-                                    <input required input type="number" min="1" max="10" step="1" v-model='formAnswerDataList[num-1].answer_id'>
+                                    <input required input type="number" min="1" :max="handleAnswerLength" step="1" v-model='formAnswerDataList[num-1].answer_id'>
                                 </div>
                             </div>
                             <!-- unko{{ formAnswerDataList[num-1] }} -->
@@ -137,6 +138,13 @@
                         <div v-if='nameError'>{{ nameError }}</div>
                         <div v-if='mailInUseError'>{{ mailInUseError }}</div>
                     </div> -->
+                    <p class="po">{{formAnswerDataList }}</p>
+                    <div v-if="!errorOccurred" class="space-height"></div>
+                    <div v-if="errorOccurred" :class="{'notification-fixed-red':errorOccurred}">
+                        <div class="notification-text">
+                           {{ errorMessage }}
+                        </div>
+                    </div>
                     <div>
                         <button class='fbottun' ref='bform' id=''>作成する</button>
                     </div>
@@ -155,11 +163,14 @@ export default {
     data(){
         return{
             showSideBar: true,
+            tempQuiz:'初級',
+            tempField:'フィールドを選択してください。',
+            // tempQuizType: '選択',
             formQuestionData:{
                 quiz:'初級',
                 quiz_level:1,
                 question_type:'選択',
-                field:'ひらがな',
+                field:'フィールドを選択してください。',
                 label:'',
                 status:'',
                 max_select:'',
@@ -169,14 +180,70 @@ export default {
                 label:'',
                 is_correct:'',
                 answer_id:'',
-            },],
+            },
+            {
+                label:'',
+                is_correct:'',
+                answer_id:'',
+            },
+            {
+                label:'',
+                is_correct:'',
+                answer_id:'',
+            },
+            {
+                label:'',
+                is_correct:'',
+                answer_id:'',
+            },
+            ],
             formAnswerData:{
                 label:'',
                 is_correct:'',
                 answer_id:'',
             },
-            answerNum: 1,
-            handleAnswerLength: 1,
+            // formDataError:{
+            //     noFieldError:{
+            //         error: false,
+            //         message: "クイズフィールドを選んでください。"
+            //     },
+            //     noSetAnswerIdError:{
+            //         error: false,
+            //         message: "答えの順番を指定してください。"
+            //     },
+            //     wrongNumOrderError:{
+            //         error: false,
+            //         message: "答えの順番に間違いがあります。"
+            //     },
+            //     notSelectOneError:{
+            //         error: false,
+            //         message: "正解を一つ選んでください。"
+            //     },
+            //     noMoreThanThreeError:{
+            //         error: false,
+            //         message: "多答問題は答えを３つ以上指定してください。"
+            //     },
+            //     moreThanTwoError:{
+            //         error: false,
+            //         message: "多答問題は正解を２つ以上指定してください。"
+            //     },
+            //     AllTrueError:{
+            //         error: false,
+            //         message: "全ての答えが正解になっています。"
+            //     },
+            formDataError:{
+                noFieldError: "クイズフィールドを選んでください。",
+                noSetAnswerIdError: "答えの順番を指定してください。",
+                wrongNumOrderError:"答えの順番に間違いがあります。",
+                notSelectOneError: "正解を一つ選んでください。",
+                noMoreThanThreeError: "多答問題は答えを３つ以上指定してください。",
+                moreThanTwoError:"多答問題は正解を２つ以上指定してください。",
+                AllTrueError:"全ての答えが正解になっています。"
+                },
+            errorOccurred: false,
+            errorMessage:'',
+            answerNum: 4,
+            handleAnswerLength: 4,
         }
     },
     created(){
@@ -186,7 +253,7 @@ export default {
         // this.$store.dispatch('getQuestionTypeId')
     },
     mounted(){
-        console.log('mounted at create-question',this.formAnswerDataList)
+        console.log('mounted at create-question',this.quizNameId,this.fieldNameId)
     },
     watch:{
         answerNum:function(v) {
@@ -200,9 +267,40 @@ export default {
                 this.formAnswerDataList.push(copyObject)
                 this.handleAnswerLength = v
             }
-        }
+        },
+        tempQuiz:function(v) {
+            console.log('T',v)
+            this.formQuestionData.quiz = v
+            this.formQuestionData.field = this.tempField
+        },
+        // tempQuizType:function(v) {
+        //     this.formQuestionData.question_type = v
+        //     for(let i of this.formAnswerDataList) {
+        //         i.is_correct = ''
+        //     }
+        // }
     },
-    computed: mapGetters(['quizNameId','fieldNameId','questionTypeId']),
+    computed:{
+        quizNameId() {
+            return this.$store.getters.quizNameId
+        },
+        fieldNameId() {
+            return this.$store.getters.fieldNameId
+        },
+        questionTypeId() {
+            return this.$store.getters.questionTypeId
+        },
+        quizFieldList() {
+            let list = [];
+            for (let i of this.fieldNameId) {
+                if (this.convertQuizGradeToId(this.tempQuiz) == i.grade) {
+                    list.push(i.name)
+                }
+            }
+            return list
+        },
+    },
+    // mapGetters(['quizNameId','fieldNameId','questionTypeId']),
     methods:{
         // ...mapActions(['getQuestionTypeId']),
         handleShowSideBar(){
@@ -237,25 +335,91 @@ export default {
         },
         setAllFormData(){
             // need to think about status part regarding of field
-            if(this.formQuestionData.question_type == "多答") {
+            if (this.formQuestionData.field == this.tempField) {
+                this.errorMessage = this.formDataError.noFieldError
+                this.setTimeForNotification()
+                return 
+            }
+            if(this.formQuestionData.question_type == "並び替え") {
+                this.formAnswerDataList.forEach((elem, index) => {
+                    this.formAnswerDataList[index].is_correct = ''
+                })
+                let answerIdList = []
+                this.formAnswerDataList.forEach((elem, index) => {
+                    answerIdList.push(elem.answer_id)
+                    if(!this.formAnswerDataList[index].answer_id) {
+                        this.errorMessage = this.formDataError.noSetAnswerIdError
+                        this.setTimeForNotification()
+                        return 
+                    } 
+                })
+                console.log('alist',answerIdList)
+                const answerIdListSet = [... new Set(answerIdList)];
+                console.log('slist',answerIdListSet )
+                if(answerIdListSet.length == answerIdList.length){
+                    console.log('GOT')
+                } else {
+                    this.errorMessage = this.formDataError.wrongNumOrderError
+                    this.setTimeForNotification()
+                    return 
+                }
+            } else {
                 let counter = 0
                 for(let i of this.formAnswerDataList){
                     if(i.is_correct) {
                         counter += 1
                     }
                 }
-                if(counter >= 1){
-                    console.log('error more than 2')
-                } else if(this.formAnswerDataList.length == counter) {
-                    console.log('error all ture')
-                } else {
-                    this.formQuestionData.max_select = counter
+                if(this.formQuestionData.question_type == "選択") {
+                    if(counter !=1) {
+                        this.errorMessage = this.formDataError.notSelectOneError
+                        this.setTimeForNotification()
+                        return 
+                    } else {
+                        this.formAnswerDataList.forEach((elem,index) =>{
+                            if(elem.answer_id) {
+                                this.formAnswerDataList[index].answer_id = ''
+                            }
+                        })
+                            
+                        console.log('GOs')
+                    }
+                }
+                else if(this.formQuestionData.question_type == "多答") {
+                    if(this.formAnswerDataList.length < 3) {
+                        this.errorMessage = this.formDataError.noMoreThanThreeError
+                        this.setTimeForNotification()
+                        return
+                    } else if(counter == 1) {
+                        this.errorMessage = this.formDataError.moreThanTwoError
+                        this.setTimeForNotification()
+                        return
+                    } else if(this.formAnswerDataList.length == counter) {
+                        this.errorMessage = this.formDataError.AllTrueError
+                        this.setTimeForNotification()
+                        return
+                    } else {
+                        this.formQuestionData.max_select = counter
+                        this.formAnswerDataList.forEach((elem,index) =>{
+                            if(elem.answer_id) {
+                                this.formAnswerDataList[index].answer_id = ''
+                            }
+                        })
+                        console.log('GOt')
+                    }
                 }
             }
             this.formQuestionData.question_type = this.convertQuizTypeToId(this.formQuestionData.question_type)
             this.formQuestionData.quiz = this.convertQuizGradeToId(this.formQuestionData.quiz)
             this.formQuestionData.field = this.convertQuizFieldToId(this.formQuestionData.field)
             console.log("set", this.formQuestionData)
+        },
+        setTimeForNotification(){
+            this.errorOccurred = true
+            setTimeout(this.errorOccurredFalse, 3000);
+        },
+        errorOccurredFalse(){
+            this.errorOccurred = false
         },
         convertQuizGradeToId(grade) {
             for (let i of this.quizNameId){
@@ -286,7 +450,9 @@ export default {
 @import "style/_variables.scss";
 
 
-
+.po{
+    color: white;
+}
 .create-question-wrapper{
     width: 100%;
     margin: 0;margin-top: 2rem;
@@ -296,10 +462,12 @@ export default {
 .field-wrapper{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    width: 100%;
     .field{
         display: flex;
         justify-content: center;
+        width: 100%;
         // border: solid red;
         .input-box{
             display: flex;
@@ -388,6 +556,7 @@ export default {
         display: flex;
         align-items: center;
         flex-direction: column;
+        width: 100%;
         .answer-title-container{
             display: flex;
             align-items: center;
@@ -464,6 +633,9 @@ export default {
                 margin-left: 0.5rem;
             }
         }
+    }
+    .space-height{
+        min-height: 3rem;
     }
     // .additional-field-wrapper{
     //     width: 100%;

@@ -72,9 +72,10 @@ class QuestionCreateSerializer(serializers.ModelSerializer):
 		answers = validated_data.pop('answer')
 		field = validated_data.pop('field')
 		print('A',answers)
-		print('F',field)
+		print('F',field[0].parent_status.id)
 		question = Question.objects.create(**validated_data)
 		question.field.add(field[0])
+		question.status.add(field[0].parent_status.id)
 		print('Q',question,'A',answers)
 		for answer in answers:
 			Answer.objects.create(question=question, **answer)	
@@ -102,7 +103,7 @@ class QuizNameIdListSerializer(serializers.ModelSerializer):
 class FieldNameIdListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ParentField
-		fields = ["id", "name"]
+		fields = ["id", "name", "grade", "parent_status"]
 
 
 class ParentStatusIdSerializer(serializers.ModelSerializer):

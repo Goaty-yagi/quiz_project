@@ -392,6 +392,26 @@ input[type="text"]:focus {
         color: blue;
     }
 }
+.notification-fixed-red{
+    animation: notification 3s;
+    animation-fill-mode: forwards;
+    border: solid red;
+    background: rgba(255, 221, 241, 0.8);
+    bottom: 5rem;
+    height: 3rem;
+    // min-height: 3rem;
+    width: 80%;
+    max-width: 550px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .notification-text{
+        font-weight: bold;
+        color: blue;
+    }
+}
 // .notification-confirm{
 //     animation-fill-mode: forwards;
 //     border: solid $lite-blue;

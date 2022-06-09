@@ -32,14 +32,6 @@ class Quiz(models.Model):
     def __str__(self):
         return self.description
 
-
-class ParentField(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
 class ParentStatus(models.Model):
     name = models.CharField(max_length=100)
     grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
@@ -47,6 +39,15 @@ class ParentStatus(models.Model):
     def __str__(self):
         return self.name
 
+
+
+class ParentField(models.Model):
+    name = models.CharField(max_length=100)
+    grade = models.ForeignKey(ParentQuiz, on_delete=models.CASCADE)
+    parent_status = models.ForeignKey(ParentStatus, default=1, blank=True, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 class QuestionType(models.Model):
     name = models.CharField(max_length=100)
