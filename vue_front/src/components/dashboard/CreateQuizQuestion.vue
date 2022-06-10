@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="text-box level">
-                                <input required type="number" min="1" max="10" step="1" v-model="formQuestionData.level">
+                                <input required type="number" min="1" max="10" step="1" v-model="formQuestionData.quiz_level">
                             </div>
                         </div>         
                     </div>
@@ -47,35 +47,7 @@
                             </select>
                         </div>       
                     </div>
-                    <!-- <div class="additional-field-wrapper">
-                        <div class="additional-field">
-                            <div class="input-box">
-                                <div class='each-title-container'>
-                                    <div class="each-title">
-                                        quiz_field
-                                    </div>
-                                </div>
-                                <div class="text-box">
-                                    <input required input type="number" value="1" min="1" max="10" step="1">
-                                </div>
-                            </div>
-                            <div class="input-box" ref='formName'>
-                                <div class='each-title-container'>
-                                    <div class="each-title">
-                                        quiz_field
-                                    </div>
-                                </div>
-                                <select required class="text-box" >
-                                    <option
-                                        v-for="(id,idindex) in quizNameId" 
-                                        v-bind:key="idindex">
-                                        <p class="option">{{ id.name }}</p>
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div> -->
-                    {{ formQuestionData}}
+                    <!-- {{ formQuestionData}} -->
                     <div class="field">
                         <div class="input-box" ref='formName'>
                             <div class='each-title-container'>
@@ -115,30 +87,25 @@
                         <div class="answer-container"
                             v-for="(num) of handleAnswerLength" 
                                 v-bind:key="num">
-                            <div class="num">
-                                <p>{{ num }}</p>
+                            <div class="num-con">
+                                <p class="num">{{ num }}</p>
                             </div>
                             <input required class="answer-label" type="text" placeholder="答え" v-model='formAnswerDataList[num-1].label'>
-                            <div v-if="formQuestionData.question_type!='並び替え'" class="checkbox-container">
-                                <p>true?</p>
-                                <input class="checkbox" type="checkbox" v-model='formAnswerDataList[num-1].is_correct'>
-                            </div>
-                            <div v-if="formQuestionData.question_type=='並び替え'" class="correct-order-container">
-                                <div class="correct-order">
-                                    <p>order?</p>
-                                    <input required input type="number" min="1" :max="handleAnswerLength" step="1" v-model='formAnswerDataList[num-1].answer_id'>
+                            <div class="right-side-answer-container">
+                                <div v-if="formQuestionData.question_type!='並び替え'" class="checkbox-container">
+                                    <p>true</p>
+                                    <input class="checkbox" type="checkbox" v-model='formAnswerDataList[num-1].is_correct'>
+                                </div>
+                                <div v-if="formQuestionData.question_type=='並び替え'" class="correct-order-container">
+                                    <div class="correct-order">
+                                        <p>order</p>
+                                        <input required input type="number" min="1" :max="handleAnswerLength" step="1" v-model='formAnswerDataList[num-1].answer_id'>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- unko{{ formAnswerDataList[num-1] }} -->
                         </div>
                     </div>
-                    <!-- <div v-if='mailError||nameError||mailInUseError' class='error-form'>
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div v-if='mailError'>{{ mailError}}</div>
-                        <div v-if='nameError'>{{ nameError }}</div>
-                        <div v-if='mailInUseError'>{{ mailInUseError }}</div>
-                    </div> -->
-                    <p class="po">{{formAnswerDataList }}</p>
+                    <!-- <p class="po">{{formAnswerDataList }}</p> -->
                     <div v-if="!errorOccurred" class="space-height"></div>
                     <div v-if="errorOccurred" :class="{'notification-fixed-red':errorOccurred}">
                         <div class="notification-text">
@@ -155,7 +122,9 @@
 </template>
 
 <script>
-import {mapGetters,mapActions} from 'vuex'
+import {mapGetters,mapActions} from 'vuex';
+import axios from 'axios'
+
 export default {
     components: {
         
@@ -178,61 +147,33 @@ export default {
             },
             formAnswerDataList:[{
                 label:'',
-                is_correct:'',
-                answer_id:'',
+                is_correct:false,
+                answer_id:0,
             },
             {
                 label:'',
-                is_correct:'',
-                answer_id:'',
+                is_correct:false,
+                answer_id:0,
             },
             {
                 label:'',
-                is_correct:'',
-                answer_id:'',
+                is_correct:false,
+                answer_id:0,
             },
             {
                 label:'',
-                is_correct:'',
-                answer_id:'',
+                is_correct:false,
+                answer_id:0,
             },
             ],
             formAnswerData:{
                 label:'',
-                is_correct:'',
-                answer_id:'',
+                is_correct:false,
+                answer_id:0,
             },
-            // formDataError:{
-            //     noFieldError:{
-            //         error: false,
-            //         message: "クイズフィールドを選んでください。"
-            //     },
-            //     noSetAnswerIdError:{
-            //         error: false,
-            //         message: "答えの順番を指定してください。"
-            //     },
-            //     wrongNumOrderError:{
-            //         error: false,
-            //         message: "答えの順番に間違いがあります。"
-            //     },
-            //     notSelectOneError:{
-            //         error: false,
-            //         message: "正解を一つ選んでください。"
-            //     },
-            //     noMoreThanThreeError:{
-            //         error: false,
-            //         message: "多答問題は答えを３つ以上指定してください。"
-            //     },
-            //     moreThanTwoError:{
-            //         error: false,
-            //         message: "多答問題は正解を２つ以上指定してください。"
-            //     },
-            //     AllTrueError:{
-            //         error: false,
-            //         message: "全ての答えが正解になっています。"
-            //     },
             formDataError:{
                 noFieldError: "クイズフィールドを選んでください。",
+                // highLevelError: "レベルは１０以内の数字を入力してください。",
                 noSetAnswerIdError: "答えの順番を指定してください。",
                 wrongNumOrderError:"答えの順番に間違いがあります。",
                 notSelectOneError: "正解を一つ選んでください。",
@@ -244,6 +185,7 @@ export default {
             errorMessage:'',
             answerNum: 4,
             handleAnswerLength: 4,
+            formDataReady: false,
         }
     },
     created(){
@@ -317,21 +259,24 @@ export default {
             }
         },
         async submitForm(){
-            console.log('start add')
             this.setAllFormData()
-            // await axios({
-            //     method: 'post',
-            //     url: '/api/questions-create/',
-            //     data: {
-            //         title: this.$store.state.board.title,
-            //         description: this.$store.state.board.description,
-            //         user: this.$store.state.signup.user.uid,
-            //         slug: this.uuid,
-            //         liked_num:{},
-            //         tag: this.getTagId()
-            //     },
-                
-            // })
+            try{
+                if(this.formDataReady){
+                    await axios({
+                        method: 'post',
+                        url: '/api/questions-create/',
+                        data: {
+                            'quiz': this.formQuestionData.quiz,
+                            'label': this.formQuestionData.label,
+                            'field': [this.formQuestionData.field],
+                            'question_type':this.formQuestionData.question_type,
+                            'quiz_level': this.formQuestionData.quiz_level,
+                            'answer': this.formAnswerDataList}
+                    })
+                }
+            } catch(e) {
+                console.log('error',e)
+            }
         },
         setAllFormData(){
             // need to think about status part regarding of field
@@ -342,7 +287,7 @@ export default {
             }
             if(this.formQuestionData.question_type == "並び替え") {
                 this.formAnswerDataList.forEach((elem, index) => {
-                    this.formAnswerDataList[index].is_correct = ''
+                    this.formAnswerDataList[index].is_correct = false
                 })
                 let answerIdList = []
                 this.formAnswerDataList.forEach((elem, index) => {
@@ -353,11 +298,9 @@ export default {
                         return 
                     } 
                 })
-                console.log('alist',answerIdList)
                 const answerIdListSet = [... new Set(answerIdList)];
-                console.log('slist',answerIdListSet )
                 if(answerIdListSet.length == answerIdList.length){
-                    console.log('GOT')
+                    this.formDataReady = true
                 } else {
                     this.errorMessage = this.formDataError.wrongNumOrderError
                     this.setTimeForNotification()
@@ -378,11 +321,10 @@ export default {
                     } else {
                         this.formAnswerDataList.forEach((elem,index) =>{
                             if(elem.answer_id) {
-                                this.formAnswerDataList[index].answer_id = ''
+                                this.formAnswerDataList[index].answer_id = 0
                             }
                         })
-                            
-                        console.log('GOs')
+                        this.formDataReady = true
                     }
                 }
                 else if(this.formQuestionData.question_type == "多答") {
@@ -402,10 +344,10 @@ export default {
                         this.formQuestionData.max_select = counter
                         this.formAnswerDataList.forEach((elem,index) =>{
                             if(elem.answer_id) {
-                                this.formAnswerDataList[index].answer_id = ''
+                                this.formAnswerDataList[index].answer_id = 0
                             }
                         })
-                        console.log('GOt')
+                        this.formDataReady = true
                     }
                 }
             }
@@ -482,6 +424,7 @@ export default {
             overflow:hidden;
             .each-title-container{
                 flex-basis: 30%;
+                min-width: 40%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -497,6 +440,8 @@ export default {
             }
             .text-box{
                 flex-basis: 70%;
+                width: 30%;
+                height: auto;
                 background: transparent;
                 border: none;
                 margin-right: 1rem;
@@ -601,36 +546,47 @@ export default {
             display: flex;
             align-items: center;
             // justify-content: center;
-            width: 80%;
+            min-width: 80%;
             border: solid $base-color;
             border-radius: 0.5rem;
             background: $back-white;
             margin-bottom: 0.4rem;
-            .num{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 2rem;
-                height: 2rem;
-                background: $dark-blue;
-                border-radius: 50vh;
-                border: solid $base-color;
-                color: $base-white;
-                font-weight: bold;
-                margin: 0.2rem 0.5rem;
-            }
-            .answer-label{
-                width: 50%;
-                height: 2rem;
-                padding: 0 0.5rem;
-            }
-            .checkbox-container{
-                margin-left: 1rem;
-                .checkbox{
+            .num-con{
+                flex-basis: 10%;
+                .num {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 2rem;
+                    height: 2rem;
+                    background: $dark-blue;
+                    border-radius: 50vh;
+                    border: solid $base-color;
+                    color: $base-white;
+                    font-weight: bold;
+                    margin: 0.2rem 0.5rem;
                 }
             }
-            .correct-order-container{
-                margin-left: 0.5rem;
+            .answer-label{
+                height: 2rem;
+                flex-basis: 70%;
+                padding: 0 0.5rem;
+            }
+            .right-side-answer-container{
+                flex-basis: 16%;
+                display: flex;
+                justify-content: flex-end;
+                width: 10%;
+                padding-right: 0.1rem;
+                // margin-right: 1rem;
+                .checkbox-container{
+                    margin-left: 1rem;
+                    .checkbox{
+                    }
+                }
+                .correct-order-container{
+                    margin-left: 0.5rem;
+                }
             }
         }
     }

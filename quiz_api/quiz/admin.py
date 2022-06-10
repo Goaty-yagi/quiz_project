@@ -17,7 +17,7 @@ from .models import (
 
 class AnswerInline(nested_admin.NestedTabularInline):
 	model = Answer
-	extra = 4
+	extra = 0
 	amx_num =4
 
 

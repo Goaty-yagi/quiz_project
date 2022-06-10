@@ -48,7 +48,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
 	# 	return obj.answer_set.all().count()
 
 class QuestionCreateSerializer(serializers.ModelSerializer):
-	answer = AnswerListSerializer(many=True)
+	answer = AnswerListSerializer(many=True,required=False)
 	
 	class Meta:
 		model = Question

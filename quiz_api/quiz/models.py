@@ -81,10 +81,10 @@ class Question(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question,related_name='answer', blank=True, null=True,  on_delete=models.CASCADE)
-    label = models.CharField(max_length=100)
-    is_correct = models.BooleanField(default=False)
+    label = models.CharField(max_length=100,blank=True, null=True)
+    is_correct = models.BooleanField(default=False, blank=True, null=True)
     taken_num = models.IntegerField(default=0)
-    answer_id = models.IntegerField(default=0)
+    answer_id = models.IntegerField(default=0, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):

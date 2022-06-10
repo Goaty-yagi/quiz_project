@@ -112,7 +112,7 @@ class QuestionCreateApi(generics.CreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionCreateSerializer
     pagination_class = None
-
+    
 
 class QuizListApi(generics.ListAPIView):
     queryset = Quiz.objects.all()
