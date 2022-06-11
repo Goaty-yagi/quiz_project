@@ -48,7 +48,13 @@ export default {
     },
     mounted(){
         console.log('thumb mounted',this.imageType)
+        this.$store.commit('onQuizTrue')
+        this.$store.commit('fixedScrollTrue')
         this.autoClick()
+    },
+    beforeUnmount(){
+        this.$store.commit('onQuizFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     computed:{
         user(){

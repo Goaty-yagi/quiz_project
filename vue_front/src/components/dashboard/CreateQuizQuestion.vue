@@ -1,8 +1,8 @@
 <template>
-    <div v-if="questionTypeId" class="create-question-wrapper">
+    <div v-if="questionTypeId" class="create-question-wrapper" :class="{'scroll-fixed':fixedScroll, 'laoding-center':$store.state.isLoading}">
         <div class="main-wrapper">
             <div class="create-question-container" v-if="$store.state.isLoading==false">
-                <form @submit.prevent='submitForm' class="field-wrapper">
+                <form @submit.prevent='showConfirmTrue' class="field-wrapper">
                     <div class="field">
                         <div class="input-box" ref='formName'>
                             <div class='each-title-container'>
@@ -129,6 +129,11 @@
         <Thumbnail v-if="showThumbnail"
         @showThumbnailFalse="showThumbnailFalse"
         @setImageBlob="setImageBlob"/>
+        <QuizConfirm
+        v-if="showConfirm"
+        :questionDetailInfo="questionDetailInfo"
+        @submitForm="submitForm"
+        @showConfirmFalse="showConfirmFalse"/>
     </div>
 </template>
 
@@ -136,71 +141,80 @@
 import {mapGetters,mapActions} from 'vuex';
 import axios from 'axios'
 import Thumbnail from '@/components/account/Thumbnail.vue'
+import QuizConfirm from '@/components/dashboard/QuizConfirm.vue'
+
+function initialData() {
+    return{
+        showThumbnail: false,
+        showSideBar: true,
+        showConfirm: false,
+        tempQuiz:'初級',
+        tempField:'フィールドを選択してください。',
+        // tempQuizType: '選択',
+        questionDetailInfo:{},
+        formQuestionData:{
+            quiz:'初級',
+            quiz_level:1,
+            question_type:'選択',
+            field:'フィールドを選択してください。',
+            label:'',
+            status:'',
+            max_select:'',
+            image:''
+        },
+        formAnswerDataList:[{
+            label:'',
+            is_correct:false,
+            answer_id:0,
+        },
+        {
+            label:'',
+            is_correct:false,
+            answer_id:0,
+        },
+        {
+            label:'',
+            is_correct:false,
+            answer_id:0,
+        },
+        {
+            label:'',
+            is_correct:false,
+            answer_id:0,
+        },
+        ],
+        formAnswerData:{
+            label:'',
+            is_correct:false,
+            answer_id:0,
+        },
+        formDataError:{
+            noFieldError: "クイズフィールドを選んでください。",
+            // highLevelError: "レベルは１０以内の数字を入力してください。",
+            noSetAnswerIdError: "答えの順番を指定してください。",
+            wrongNumOrderError:"答えの順番に間違いがあります。",
+            notSelectOneError: "正解を一つ選んでください。",
+            noMoreThanThreeError: "多答問題は答えを３つ以上指定してください。",
+            moreThanTwoError:"多答問題は正解を２つ以上指定してください。",
+            AllTrueError:"全ての答えが正解になっています。"
+            },
+        errorOccurred: false,
+        errorMessage:'',
+        answerNum: 4,
+        handleAnswerLength: 4,
+        formDataReady: false,
+        image: '',
+    }
+}
 
 export default {
     components: {
-        Thumbnail
+        Thumbnail,
+        QuizConfirm
     },
     data(){
-        return{
-            showThumbnail: false,
-            showSideBar: true,
-            tempQuiz:'初級',
-            tempField:'フィールドを選択してください。',
-            // tempQuizType: '選択',
-            formQuestionData:{
-                quiz:'初級',
-                quiz_level:1,
-                question_type:'選択',
-                field:'フィールドを選択してください。',
-                label:'',
-                status:'',
-                max_select:'',
-                image:''
-            },
-            formAnswerDataList:[{
-                label:'',
-                is_correct:false,
-                answer_id:0,
-            },
-            {
-                label:'',
-                is_correct:false,
-                answer_id:0,
-            },
-            {
-                label:'',
-                is_correct:false,
-                answer_id:0,
-            },
-            {
-                label:'',
-                is_correct:false,
-                answer_id:0,
-            },
-            ],
-            formAnswerData:{
-                label:'',
-                is_correct:false,
-                answer_id:0,
-            },
-            formDataError:{
-                noFieldError: "クイズフィールドを選んでください。",
-                // highLevelError: "レベルは１０以内の数字を入力してください。",
-                noSetAnswerIdError: "答えの順番を指定してください。",
-                wrongNumOrderError:"答えの順番に間違いがあります。",
-                notSelectOneError: "正解を一つ選んでください。",
-                noMoreThanThreeError: "多答問題は答えを３つ以上指定してください。",
-                moreThanTwoError:"多答問題は正解を２つ以上指定してください。",
-                AllTrueError:"全ての答えが正解になっています。"
-                },
-            errorOccurred: false,
-            errorMessage:'',
-            answerNum: 4,
-            handleAnswerLength: 4,
-            formDataReady: false,
-            image: '',
-        }
+        return initialData()
+        
     },
     created(){
         this.$store.dispatch('getQuestionTypeId')
@@ -255,6 +269,9 @@ export default {
             }
             return list
         },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
+        },
     },
     // mapGetters(['quizNameId','fieldNameId','questionTypeId']),
     methods:{
@@ -299,51 +316,10 @@ export default {
                     .patch(
                         `/api/questions-image-dispatch/${response.data.id}`,formdata)
                 }
-                //         const formdata = new FormData
-                //         console.log(this.formQuestionData.image)
-                //         formdata.append('image',this.formQuestionData.image,`${this.formQuestionData.image}.png`)
-                //         formdata.append('quiz',this.formQuestionData.quiz)
-                //         formdata.append('label',this.formQuestionData.label)
-                //         formdata.append('level',this.formQuestionData.level)
-                //         formdata.append('answer',this.formAnswerDataList)
-                //         formdata.append('question_type',this.formQuestionData.question_type)
-                //         await axios
-                //             .post('/api/questions-image-create/',formdata)                        
-                //             .then(response =>{
-                //                 axios
-                //                 .patch(
-                //                     `/api/questions-image-dispatch/${response.data.id}`,{
-                //                         field:[this.formQuestionData.question_type],
-                //                         status:[this.formQuestionData.question_type]})
-                //                 .then(
-                //                     axios
-                //                     .post(
-                //                         '/api/answers-create/',{
-                //                             id:response.data.id,
-                //                             answer:this.formAnswerDataList
-                //                         }
-                //                     )
-                //                 )
-                            
-                //             })
-                //     } else {
-                //         await axios({
-                //             method: 'post',
-                //             url: '/api/questions-create/',                            
-                //             data: {
-                //                 'quiz': this.formQuestionData.quiz,
-                //                 'label': this.formQuestionData.label,
-                //                 'field': [this.formQuestionData.field],
-                //                 'question_type':this.formQuestionData.question_type,
-                //                 'quiz_level': this.formQuestionData.quiz_level,
-                //                 'answer': this.formAnswerDataList
-                //             },
-                //         })
-                //     }
-                // }
             } catch(e) {
                 console.log('error',e)
             }
+            this.allResetVars()
         },
         setAllFormData(){
             // need to think about status part regarding of field
@@ -460,7 +436,33 @@ export default {
         setImageBlob(blob,url) {
             console.log('set-blob',blob)
             this.image = url
+            this.questionDetailInfo.image = url
             this.formQuestionData.image = blob
+        },
+        showConfirmTrue(){
+            this.setQuestionDetailInfo()
+            this.setAllFormData()
+            if(this.formDataReady){
+                this.$store.commit('fixedScrollTrue')
+                this.showConfirm = true
+            }
+        },
+        showConfirmFalse() {
+            this.showConfirm = false
+            this.$store.commit('fixedScrollFalse')
+        },
+        allResetVars() {
+            Object.assign(this.$data, initialData())
+        },
+        setQuestionDetailInfo() {
+            console.log('info')
+            this.questionDetailInfo.grade = this.formQuestionData.quiz
+            this.questionDetailInfo.level = this.formQuestionData.quiz_level
+            this.questionDetailInfo.question_type = this.formQuestionData.question_type
+            this.questionDetailInfo.field = this.formQuestionData.field
+            this.questionDetailInfo.label = this.formQuestionData.label
+            this.questionDetailInfo.answers = this.formAnswerDataList
+            console.log('doneinfo')
         }
     },
 }
@@ -478,6 +480,12 @@ export default {
     margin: 0;margin-top: 2rem;
     display: flex;
     justify-content: center;
+    .create-question-container{
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 .field-wrapper{
     display: flex;
