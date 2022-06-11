@@ -128,6 +128,7 @@ export default {
     mounted(){
         // this.test()
         // this.reload()
+        this.aaa()
         const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
         console.log('mounted',regionNames.of('JP'))
         this.scrollTop()
@@ -218,6 +219,11 @@ export default {
             this.slideIn = !this.slideIn
             this.slideOut = !this.slideOut
         },
+        aaa(){
+            let b = document.getElementsByClassName('hero-title')
+            console.log('aaa',b,b.length)
+            b[2].style.backgroundColor = 'red'
+        }
         // reload(){
         //     console.log('reload_enter',this.$store.state.signup.beingException)
         //     if(this.$store.state.signup.beingException){

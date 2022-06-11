@@ -24,10 +24,14 @@
 import axios from 'axios'
 import Cropper from 'cropperjs';
 export default {
+    // set imageType in parent components to check what to do here
+    // if imageTyoe == 'thumbnail' => axios
+    // els if imageType == 'quizQuestion' => return blob
     props:[
         "getDjangouser",
         "minContainerWidth",
-        "minContainerHeight"
+        "minContainerHeight",
+        "imageType",
     ],
     data(){
         return{
@@ -38,11 +42,12 @@ export default {
             cropper:{},
             destination:{},
             inputFile:'',
+            blob:'',
+            cropperBorder:''
         }
     },
     mounted(){
-        // this.cropper()
-        console.log('thumb mounted',this.getDjangouser)
+        console.log('thumb mounted',this.imageType)
         this.autoClick()
     },
     computed:{
@@ -70,9 +75,9 @@ export default {
             this.selectedFile = URL.createObjectURL(event.target.files[0])
             this.image = event.target.files[0]
             await console.log(this.image,'img',this.selectedFile)
-            this.imageCropper()
+            this.imageCropper(this.imageType)
         },
-        async imageCropper(){
+        async imageCropper(type){
             this.cropper = new Cropper(this.$refs.image, {
             zoomable: true,
             scalable: false,
@@ -89,6 +94,10 @@ export default {
                     console.log(event.detail.rotate);
                     console.log(event.detail.scaleX);
                     console.log(event.detail.scaleY);
+                    if(type == 'thumbnail'){
+                        const cropperBorder = document.getElementsByClassName("cropper-view-box","cropper-face")
+                        cropperBorder[0].style.borderRadius = '50vh'
+                    }
                 },
             })
         },
@@ -132,35 +141,66 @@ export default {
         //      });
         // },
         async userUpdate(){
-            try{
-                const canvas = this.cropper.getCroppedCanvas({
-                width: 160,
-                height: 90,
-                minCropBoxHeight: 300,
-                minCropBoxWidth: 300,
-                maxWidth: 4096,
-                maxHeight: 4096,
-                fillColor: '#fff',
-                imageSmoothingEnabled: false,
-                imageSmoothingQuality: 'high',
-                });
-            await canvas.toBlob(async (blob) => {
-            const formData = new FormData();
-            formData.append('thumbnail',blob, `${this.image}.png`),
-            console.log('getthumb',formData.get('thumbnail'),this.image,blob),
-            axios.patch(`/api/user/${this.getDjangouser.UID}`,
-                formData
-            )
-            }, 'image/png')
-            this.showThumbnailFalse()
-            this.$store.commit('setIsLoading', true)
-            setTimeout(this.reload,1000)
-            }
-            catch(e){
+            console.log('clicked')
+            if(this.imageType == 'thumbnail') {
+                try{
+                    const canvas = this.cropper.getCroppedCanvas({
+                    width: 500,
+                    height: 500,
+                    minCropBoxHeight: 300,
+                    minCropBoxWidth: 300,
+                    maxWidth: 4096,
+                    maxHeight: 4096,
+                    // fillColor: '#fff',
+                    imageSmoothingEnabled: false,
+                    imageSmoothingQuality: 'high',
+                    });
+                await canvas.toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('thumbnail',blob, `${this.image}.png`),
+                    // console.log('getthumb',formData.get('thumbnail'),this.image,blob),
+                    axios.patch(`/api/user/${this.getDjangouser.UID}`,
+                        formData
+                    )
+                }, 'image/png')
                 this.showThumbnailFalse()
-                console.log('fale',e)
+                this.$store.commit('setIsLoading', true)
+                setTimeout(this.reload,1000)
+                }
+                catch(e){
+                    this.showThumbnailFalse()
+                    console.log('fale',e)
+                }
+                // this.$router.go({path: this.$router.currentRoute.path, force: true})
+            } else {
+                console.log('else')
+                try{
+                    const canvas = this.cropper.getCroppedCanvas({
+                    width: 1000,
+                    height: 1000,
+                    minCropBoxHeight: 300,
+                    minCropBoxWidth: 300,
+                    maxWidth: 4096,
+                    maxHeight: 4096,
+                    // fillColor: '#fff',
+                    imageSmoothingEnabled: false,
+                    imageSmoothingQuality: 'high',
+                    });
+                canvas.toBlob(async (blob) => {
+                    this.setImageBlob(blob)
+                    },'image/png')
+                }
+                catch(e){
+                    this.showThumbnailFalse()
+                    console.log('fale',e)
+                }
             }
-            // this.$router.go({path: this.$router.currentRoute.path, force: true})
+        },
+        setImageBlob(blob){
+            this.blob = blob
+            let url = URL.createObjectURL(blob)
+            this.$emit('setImageBlob',blob, url)
+            this.showThumbnailFalse()
         },
         showThumbnailFalse(){
             this.$emit('showThumbnailFalse')
@@ -186,7 +226,6 @@ export default {
 }
 .cropper-view-box,
     .cropper-face {
-      border-radius: 50%;
       cursor: grab;
       outline: initial;
     }

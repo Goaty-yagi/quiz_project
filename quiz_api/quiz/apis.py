@@ -11,6 +11,8 @@ import random
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.parsers import FileUploadParser
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker, MyQuiz, MyQuestion,ParentStatus
@@ -28,7 +30,9 @@ from quiz.serializers import (
     MyQuizSerializer,
     MyQuestionSerializer,
     ParentStatusIdSerializer,
-    QuestionCreateSerializer
+    QuestionImageCreateSerializer,
+    QuestionCreateSerializer,
+    AnswerCreateSerializer
     )
 
 
@@ -108,11 +112,42 @@ def pick_random_object(queryset,quiz_num):
         #         a = set(random_id_list)
         #         random_id_list = list(a)
 
+class QuestionImageDispatchApi(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionCreateSerializer
+    lookup_field = 'id'
+
+
+class QuestionImageCreateApi(generics.CreateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionImageCreateSerializer
+    pagination_class = None
+    # parser_classes = [FileUploadParser]
+
+
 class QuestionCreateApi(generics.CreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionCreateSerializer
     pagination_class = None
+    # parser_classes = [FileUploadParser]
+# class QuestionCreateApi(APIView):
     
+#     def post(self, request, format=None):
+#         print('API',request,request.data)
+#         answer = request.data['answer']
+#         print('type',type(answer))
+        # a = request.query_params['image']
+        # print(type(request.query_params['image']))
+        # # image = dict(''.split(request.query_params['image']))
+        # print('image', image,type(request.data),type(image))
+
+class AnswerCreateApi(APIView):
+     def post(self, request, format=None):
+         print('post',request,request.data)
+    # queryset = Answer.objects.all()
+    # serializer_class = AnswerCreateSerializer
+    # pagination_class = None
+
 
 class QuizListApi(generics.ListAPIView):
     queryset = Quiz.objects.all()

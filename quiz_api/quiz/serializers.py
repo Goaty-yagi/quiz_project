@@ -12,6 +12,14 @@ class AnswerListSerializer(serializers.ModelSerializer):
 		model = Answer
 		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
 
+
+class AnswerCreateSerializer(serializers.ModelSerializer):
+	# percantage = serializers.SerializerMethodField('get_percentage')
+	class Meta:
+		model = Answer
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+
+
 	# def get_percentage(self, obj):
 	# 	answers = Answer.objects.filter(question_id=obj.question.id)
 	# 	print("AOBJ",answers)
@@ -21,7 +29,10 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class AnswerCountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']		
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+
+		def create(self, validated_data):
+			print('IN_Answer-Create_serializer',validated_data)
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -46,6 +57,22 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
 	# def get_answers_count(self, obj):
 	# 	return obj.answer_set.all().count()
+
+class QuestionImageCreateSerializer(serializers.ModelSerializer):
+	answer = AnswerListSerializer(many=True,required=False)
+
+	class Meta:
+		model = Question
+		fields = [
+			"id",
+			"quiz_level",
+			"quiz", 
+			"label",
+			'question_type',
+			"image",
+			'answer'
+			]
+
 
 class QuestionCreateSerializer(serializers.ModelSerializer):
 	answer = AnswerListSerializer(many=True,required=False)

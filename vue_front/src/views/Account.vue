@@ -98,6 +98,7 @@
         @getUserData="getUserData"
         :getDjangouser="getDjangouser"
         :minContainerHeight="minContainerHeight"
+        :imageType="imageType"
         :minContainerWidth="minContainerWidth"/>
     </div>
 </template>
@@ -141,6 +142,7 @@ export default{
             widthForCropper:'',
             minContainerHeight:'',
             minContainerWidth:'',
+            imageType: 'thumbnail',
             backgroundColorList:{
                 '超初級':'rgba(255, 153, 51, 0.2)',
                 '初級':'rgba(81, 255, 0, 0.2)',

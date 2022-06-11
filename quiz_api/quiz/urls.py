@@ -24,7 +24,10 @@ from quiz.apis import (
   MyQuestionApi,
   QuestionFromMyQuestionApi,
   StatusNameIdListApi,
-  QuestionCreateApi
+  QuestionCreateApi,
+  QuestionImageCreateApi,
+  QuestionImageDispatchApi,
+  AnswerCreateApi
   # MyQuestionReadApi
   )
 
@@ -51,6 +54,8 @@ urlpatterns = [
   path('quizzes-name-id/', QuizNameIdListApi.as_view()),
   path('questions/', QuestionListApi.as_view()),
   path('questions-create/', QuestionCreateApi.as_view()),
+  path('questions-image-create/', QuestionImageCreateApi.as_view()),
+  path('questions-image-dispatch/<id>', QuestionImageDispatchApi.as_view()),
   path('question-types/', QuestionTypeApi.as_view()),
   path('questions/quizzes/', QuizFilteredListApi.as_view()),
   path('questions/fields/', FieldFilteredListApi.as_view()),
@@ -60,6 +65,7 @@ urlpatterns = [
   path('my-question-list/', QuestionFromMyQuestionApi.as_view()),
   path('answers/', AnswerListApi.as_view()),
   path('answers-count/', AnswerCountApi.as_view()),
+  path('answers-create/', AnswerCreateApi.as_view()),
   path('quiz-taker/', QuizTakerApi.as_view()),
   path('quiz-taker-test/', QuizTakerTestPatchApi.as_view()),
   path('quiz-taker-practice/', QuizTakerPracticePatchApi.as_view()),

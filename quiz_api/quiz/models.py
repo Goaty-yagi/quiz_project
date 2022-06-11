@@ -61,7 +61,7 @@ class Question(models.Model):
     quiz_level = models.IntegerField(default=1)
     label = models.CharField(max_length=100)
     image = models.ImageField(upload_to='quizzes/', blank=True, null=True)
-    field = models.ManyToManyField(ParentField)
+    field = models.ManyToManyField(ParentField, blank=True, null=True)
     question_type = models.ForeignKey(QuestionType, max_length=50, null=True, blank=True, on_delete=models.CASCADE)
     status = models.ManyToManyField(ParentStatus, blank=True)
     correct_answer = models.JSONField(blank=True, null=True)

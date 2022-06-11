@@ -104,33 +104,46 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="image-bottun" @click='handleShowThumbnail'>
+                            <p v-if="!image">画像を入れますか？</p>
+                            <p v-if="image">画像を変更しますか？</p>
+                        </div>
+                        <div v-if="image" class="image-container">
+                            <img class="image" :src="image">
+                        </div>
+                        <!-- <div v-if="!errorOccurred" class="space-height"></div> -->
+                        <div v-if="errorOccurred" :class="{'notification-red':errorOccurred}">
+                            <div class="notification-text">
+                            {{ errorMessage }}
+                            </div>
+                        </div>
+                        <!-- <input type="file" enctype="multipart/form-data"> -->
                     </div>
                     <!-- <p class="po">{{formAnswerDataList }}</p> -->
-                    <div v-if="!errorOccurred" class="space-height"></div>
-                    <div v-if="errorOccurred" :class="{'notification-fixed-red':errorOccurred}">
-                        <div class="notification-text">
-                           {{ errorMessage }}
-                        </div>
-                    </div>
                     <div>
                         <button class='fbottun' ref='bform' id=''>作成する</button>
                     </div>
                 </form>
             </div>
         </div>
+        <Thumbnail v-if="showThumbnail"
+        @showThumbnailFalse="showThumbnailFalse"
+        @setImageBlob="setImageBlob"/>
     </div>
 </template>
 
 <script>
 import {mapGetters,mapActions} from 'vuex';
 import axios from 'axios'
+import Thumbnail from '@/components/account/Thumbnail.vue'
 
 export default {
     components: {
-        
+        Thumbnail
     },
     data(){
         return{
+            showThumbnail: false,
             showSideBar: true,
             tempQuiz:'初級',
             tempField:'フィールドを選択してください。',
@@ -186,6 +199,7 @@ export default {
             answerNum: 4,
             handleAnswerLength: 4,
             formDataReady: false,
+            image: '',
         }
     },
     created(){
@@ -259,21 +273,74 @@ export default {
             }
         },
         async submitForm(){
-            this.setAllFormData()
+            await this.setAllFormData()
+            let response =''
             try{
+                console.log('GO',this.formQuestionData.field)
                 if(this.formDataReady){
-                    await axios({
+                    response = await axios({
                         method: 'post',
-                        url: '/api/questions-create/',
+                        url: '/api/questions-create/',                            
                         data: {
                             'quiz': this.formQuestionData.quiz,
                             'label': this.formQuestionData.label,
                             'field': [this.formQuestionData.field],
                             'question_type':this.formQuestionData.question_type,
                             'quiz_level': this.formQuestionData.quiz_level,
-                            'answer': this.formAnswerDataList}
+                            'answer': this.formAnswerDataList
+                        },
                     })
                 }
+                if(this.formQuestionData.image){
+                    console.log(response.data)
+                    const formdata = new FormData
+                    formdata.append('image',this.formQuestionData.image,`${this.formQuestionData.image}.png`)
+                    axios
+                    .patch(
+                        `/api/questions-image-dispatch/${response.data.id}`,formdata)
+                }
+                //         const formdata = new FormData
+                //         console.log(this.formQuestionData.image)
+                //         formdata.append('image',this.formQuestionData.image,`${this.formQuestionData.image}.png`)
+                //         formdata.append('quiz',this.formQuestionData.quiz)
+                //         formdata.append('label',this.formQuestionData.label)
+                //         formdata.append('level',this.formQuestionData.level)
+                //         formdata.append('answer',this.formAnswerDataList)
+                //         formdata.append('question_type',this.formQuestionData.question_type)
+                //         await axios
+                //             .post('/api/questions-image-create/',formdata)                        
+                //             .then(response =>{
+                //                 axios
+                //                 .patch(
+                //                     `/api/questions-image-dispatch/${response.data.id}`,{
+                //                         field:[this.formQuestionData.question_type],
+                //                         status:[this.formQuestionData.question_type]})
+                //                 .then(
+                //                     axios
+                //                     .post(
+                //                         '/api/answers-create/',{
+                //                             id:response.data.id,
+                //                             answer:this.formAnswerDataList
+                //                         }
+                //                     )
+                //                 )
+                            
+                //             })
+                //     } else {
+                //         await axios({
+                //             method: 'post',
+                //             url: '/api/questions-create/',                            
+                //             data: {
+                //                 'quiz': this.formQuestionData.quiz,
+                //                 'label': this.formQuestionData.label,
+                //                 'field': [this.formQuestionData.field],
+                //                 'question_type':this.formQuestionData.question_type,
+                //                 'quiz_level': this.formQuestionData.quiz_level,
+                //                 'answer': this.formAnswerDataList
+                //             },
+                //         })
+                //     }
+                // }
             } catch(e) {
                 console.log('error',e)
             }
@@ -383,6 +450,17 @@ export default {
                     return i.id
                 }
             }
+        },
+        handleShowThumbnail(){
+            this.showThumbnail = true
+        },
+        showThumbnailFalse(){
+            this.showThumbnail = false
+        },
+        setImageBlob(blob,url) {
+            console.log('set-blob',blob)
+            this.image = url
+            this.formQuestionData.image = blob
         }
     },
 }
@@ -498,6 +576,7 @@ export default {
         }
     }
     .answer-wrapper{
+        position: relative;
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -587,6 +666,26 @@ export default {
                 .correct-order-container{
                     margin-left: 0.5rem;
                 }
+            }
+        }
+        .image-bottun{
+            margin-top: 1rem;
+            color: $lite-gray;
+            border: solid gray;
+            padding: 0.1rem 0.7rem;
+            transition: .5s;
+        }
+        .image-bottun:hover {
+            border: solid $base-color;
+        }
+        .image-container{
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 1rem;
+            .image{
+                width: 40%;
+                // height: 40%;
             }
         }
     }
