@@ -81,6 +81,7 @@ export default {
     },
     beforeUnmount(){
         this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
     },
     computed:{
         myQuiz(){
@@ -119,6 +120,7 @@ export default {
         },
         showConfirmFalse(){
             this.$emit('showConfirmFalse')
+            this.$emit('chancelAction')
         }
     },
 }
@@ -229,6 +231,8 @@ export default {
             padding-right: 0.3rem;
             padding-left: 0.3rem;
             margin-bottom: 1rem;
+            margin-right: 0.5rem;
+            margin-left: 0.5rem;
         }
 
     }

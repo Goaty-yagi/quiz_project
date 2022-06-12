@@ -60,6 +60,7 @@ export default {
         width: 20%;
         height: 75vh;
         transition: .5s;
+        z-index: 1;
         .fa-backspace{
             position: absolute;
             right: 0;

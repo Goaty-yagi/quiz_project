@@ -133,7 +133,8 @@
         v-if="showConfirm"
         :questionDetailInfo="questionDetailInfo"
         @submitForm="submitForm"
-        @showConfirmFalse="showConfirmFalse"/>
+        @showConfirmFalse="showConfirmFalse"
+        @chancelAction="chancelAction"/>
     </div>
 </template>
 
@@ -165,22 +166,22 @@ function initialData() {
         formAnswerDataList:[{
             label:'',
             is_correct:false,
-            answer_id:0,
+            answer_id:1,
         },
         {
             label:'',
             is_correct:false,
-            answer_id:0,
+            answer_id:2,
         },
         {
             label:'',
             is_correct:false,
-            answer_id:0,
+            answer_id:3,
         },
         {
             label:'',
             is_correct:false,
-            answer_id:0,
+            answer_id:4,
         },
         ],
         formAnswerData:{
@@ -290,10 +291,10 @@ export default {
             }
         },
         async submitForm(){
-            await this.setAllFormData()
+            // await this.setAllFormData()
             let response =''
             try{
-                console.log('GO',this.formQuestionData.field)
+                console.log('GO',this.formQuestionData)
                 if(this.formDataReady){
                     response = await axios({
                         method: 'post',
@@ -375,7 +376,7 @@ export default {
                         this.errorMessage = this.formDataError.noMoreThanThreeError
                         this.setTimeForNotification()
                         return
-                    } else if(counter == 1) {
+                    } else if(counter <= 0 || counter == 1) {
                         this.errorMessage = this.formDataError.moreThanTwoError
                         this.setTimeForNotification()
                         return
@@ -440,6 +441,7 @@ export default {
             this.formQuestionData.image = blob
         },
         showConfirmTrue(){
+            this.formDataReady = false
             this.setQuestionDetailInfo()
             this.setAllFormData()
             if(this.formDataReady){
@@ -463,6 +465,12 @@ export default {
             this.questionDetailInfo.label = this.formQuestionData.label
             this.questionDetailInfo.answers = this.formAnswerDataList
             console.log('doneinfo')
+        },
+        chancelAction() {
+            this.tempQuiz = this.questionDetailInfo.grade
+            this.formQuestionData.quiz = this.questionDetailInfo.grade
+            this.formQuestionData.question_type = this.questionDetailInfo.question_type
+            this.formQuestionData.field = this.questionDetailInfo.field
         }
     },
 }
