@@ -10,33 +10,69 @@
                 </div>
                 <div class="side-bar" :class="{'less-side-bar':showSideBar==false}">
                     <i @click="handleShowSideBar()" class="fas fa-backspace"></i>
+                    <div class='space'></div>
+                    <div class="option-loop" v-for="(val, key, index) in options"
+                        :key="index">
+                        <div v-if="showSideBar" class="each-option" :class="{'select-option':selectOption(key)}" @click="handleEachPage(key)">
+                            {{ key }}   
+                        </div>       
+                    </div>
                 </div>
             </div>
         </div>
-        <CreateQuizQuestion/>
+        <CreateQuizQuestion
+        v-if="options.createQuiz"/>
+        <QuizInfo
+        v-if="options.quizInfo"/>
     </div>
 </template>
 
 <script>
 import CreateQuizQuestion from '@/components/dashboard/CreateQuizQuestion.vue'
+import QuizInfo from '@/components/dashboard/QuizInfo.vue'
 
 export default {
     components: {
-        CreateQuizQuestion
+        CreateQuizQuestion,
+        QuizInfo
     },
     data(){
         return{
             showSideBar: true,
+            currentOption:'quizInfo',
+            options:{
+                'quizInfo':true,
+                'createQuiz':false,
+                }
+                
         }
     },
     mounted(){
         console.log('mounted at dashboard',this.showSideBar)
+    },
+    conoputed:{
+
     },
     methods:{
         handleShowSideBar(){
             console.log(this.showSideBar)
             this.showSideBar = !this.showSideBar 
             console.log(this.showSideBar)
+        },
+        handleEachPage(key) {
+            console.log('OP',key,this.options[key])
+            if(this.options[key] == false){
+                this.options[key] = true
+                this.options[this.currentOption] = false
+                this.currentOption = key
+            }
+        },
+        selectOption(key){
+            if(this.currentOption == key){
+                return true
+            } else {
+                return false
+            }
         }
     }
 }
@@ -57,7 +93,7 @@ export default {
         left: 0;
         margin-top: 1rem;
         background: $dark-tr-blue;
-        width: 20%;
+        width: 100px;
         height: 75vh;
         transition: .5s;
         z-index: 1;
@@ -68,9 +104,30 @@ export default {
             padding-top: 0.5rem;
             padding-right: 0.5rem;
         }
+        .space {
+            height: 1rem;
+        }
+        .option-loop{
+            color: white;
+            margin-top: 0.5rem;
+            .each-option{
+                margin-top: 1rem;
+                transition: .5s;
+                font-weight: bold;
+            }
+            .each-option:hover {
+                background: $lite-gray;
+                color: $lite-blue;
+            }
+            .select-option{
+                background: $lite-gray;
+                transition: .5s;
+                color: $dark-blue;
+            }
+        }
     }
     .less-side-bar{
-        width: 5%;
+        width: 50px;
     }
     .main-wrapper{
         .dashboard-container{

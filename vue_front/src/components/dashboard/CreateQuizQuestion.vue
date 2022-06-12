@@ -211,7 +211,7 @@ function initialData() {
 export default {
     components: {
         Thumbnail,
-        QuizConfirm
+        QuizConfirm,
     },
     data(){
         return initialData()
