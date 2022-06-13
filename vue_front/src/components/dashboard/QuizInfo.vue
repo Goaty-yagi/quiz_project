@@ -1,10 +1,13 @@
 <template>
-    <section class='home-section'>
+    <section class='quiz-info-section'>
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
+            <bar
+            :chart-data='barChartData'/>
+            <p class="total">Total:{{sumOfAllQuestions}} questions</p>
             <div v-if="!showCompo" class='home-main-wrapper'>
                 <div class="home-hero">
                     <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
@@ -58,7 +61,9 @@ import ConfettiExplosion from "vue-confetti-explosion";
 import TestConf from '@/components/initial/TestConf.vue'
 import Notification from '@/components/initial/Notification.vue'
 import NotLogin from '@/components/login/NotLogin.vue'
+import  Bar from '@/components/charts/Bar.vue'
 import  Chart from '@/components/account/Chart.vue'
+import axios from 'axios';
 // import Cookies from 'js-cookie'
 //  import { uuid } from 'vue-uuid';
 export default {
@@ -67,11 +72,14 @@ export default {
         TestConf,
         Notification,
         NotLogin,
+        Bar,
         Chart,
         ConfettiExplosion
     },
     data(){
         return{
+            numOfQuestions:'',
+            
             field:'並び替え',
             showCompo: false,
             showNotLogin: false,
@@ -86,6 +94,32 @@ export default {
                 'rgba(191, 0, 255, 0.2)',
                 'rgba(255, 6, 6, 0.2)',
             ],
+            sumOfAllQuestions:'',
+            barChartData:{
+                labels: [],
+                datasets: [{ 
+                    label: "Question-sum",
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                        ],
+                    borderColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)',
+                    'rgb(54, 162, 235)',
+                    'rgb(153, 102, 255)',
+                    'rgb(201, 203, 207)'
+                    ],
+                }]
+            },
             chartData: {
                 labels: ["形容詞","文法","動詞","語彙","数字"],
                 datasets: [{ 
@@ -102,7 +136,11 @@ export default {
             },
         }
     },
+    created() {
+        
+    },
     mounted(){
+        this.getNumOfQuestions()
         // this.test()
         // this.reload()
         // this.aaa()
@@ -141,11 +179,26 @@ export default {
         }
     },
     methods:{
-        // randomBackground(){
-        //     this.chartData.datasets.backgroundColor = this.backgroundColorList[Math.floor(Math.random() * this.backgroundColorList.length)];
-        //     console.log('RANDOM',this.chartData.datasets.backgroundColor)
-        //     this.showChart=true
-        // },np,
+        async getNumOfQuestions() {
+            try{
+                const response = await axios.get('/api/questions-dashboard/')
+                this.numOfQuestions = response.data[0]
+                console.log('data',this.numOfQuestions)
+                this.setBarChartData()
+            } catch {
+
+            }
+        },
+        setBarChartData() {
+            const tempList = []
+            for(let i of this.numOfQuestions.get_num_of_question.slice(0,this.numOfQuestions.get_num_of_question.length-1)) {
+                let title = Object.keys(i)[0]
+                this.barChartData.labels.push(title)
+                tempList.push(i[title].sum)
+                this.barChartData.datasets[0].data = tempList
+            }
+            this.sumOfAllQuestions = this.numOfQuestions.get_num_of_question[this.numOfQuestions.get_num_of_question.length-1].all_questions_num
+        },
         unko(){
             console.log('clicked')
             this.$store.commit('setTempUserNull')
@@ -217,7 +270,7 @@ export default {
 <style scoped lang="scss">
 @import "style/_variables.scss";
 
-.home-section{
+.quiz-info-section{
     width:100%;
     // height: 100vh;
     display: flex;
@@ -225,6 +278,10 @@ export default {
     align-items: center;
     flex-direction: column;
     .main-wrapper{
+        .total{
+            color: white;
+            font-weight: bold;
+        }
         .home-main-wrapper{
             display: flex;
             .home-hero{

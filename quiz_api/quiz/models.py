@@ -23,7 +23,6 @@ class ParentQuiz(models.Model):
         questions = Question.objects.values('id','quiz','field')
         first_counter = 0
         for i in quizzes:
-            print('id',i['name'])
             counter = 0
             for k in [ field for field in fields if field.grade.name==i['name']]:
                 if counter == 0: 
@@ -33,7 +32,6 @@ class ParentQuiz(models.Model):
                 else:
                     all_num_list[first_counter][i['name']].update({k.name:len([ question for question in questions if question['field']==k.id])})
 
-            # all_num_list[first_counter][i['name']].update({'sum':(questions.filter(quiz=i['id']).count())})
             all_num_list[first_counter][i['name']].update({'sum':len([ question for question in questions if question['quiz']==i['id']])})
             first_counter += 1
         all_num_list.append({'all_questions_num':Question.objects.all().count()})
