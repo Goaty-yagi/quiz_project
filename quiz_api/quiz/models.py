@@ -1,6 +1,7 @@
 from email.policy import default
 from user.models import User
 from django.db import models
+from django.db.models import Prefetch
 from django.forms import BooleanField, DurationField
 from django.utils.text import slugify
 from django.utils import timezone
@@ -14,6 +15,29 @@ class ParentQuiz(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_num_of_question(self):
+        all_num_list = []
+        quizzes = ParentQuiz.objects.values('id','name')
+        fields = ParentField.objects.select_related('grade').all()
+        questions = Question.objects.values('id','quiz','field')
+        first_counter = 0
+        for i in quizzes:
+            print('id',i['name'])
+            counter = 0
+            for k in [ field for field in fields if field.grade.name==i['name']]:
+                if counter == 0: 
+                    all_num_list.append({i['name']:{}})
+                    all_num_list[first_counter][i['name']].update({k.name:len([ question for question in questions if question['field']==k.id])})
+                    counter += 1
+                else:
+                    all_num_list[first_counter][i['name']].update({k.name:len([ question for question in questions if question['field']==k.id])})
+
+            # all_num_list[first_counter][i['name']].update({'sum':(questions.filter(quiz=i['id']).count())})
+            all_num_list[first_counter][i['name']].update({'sum':len([ question for question in questions if question['quiz']==i['id']])})
+            first_counter += 1
+        all_num_list.append({'all_questions_num':Question.objects.all().count()})
+        return all_num_list
 
 
 class Quiz(models.Model):
@@ -76,8 +100,7 @@ class Question(models.Model):
     def get_image(self):
         if self.image:
             return 'http://127.0.0.1:8000' + self.image.url
-        return ''
-
+        return ''        
 
 class Answer(models.Model):
     question = models.ForeignKey(Question,related_name='answer', blank=True, null=True,  on_delete=models.CASCADE)

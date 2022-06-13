@@ -105,11 +105,11 @@ export default {
     mounted(){
         // this.test()
         // this.reload()
-        this.aaa()
-        const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
-        console.log('mounted',regionNames.of('JP'))
-        this.scrollTop()
-        this.setInitUserStatus()
+        // this.aaa()
+        // const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
+        console.log('mounted',this.questions)
+        // this.scrollTop()
+        // this.setInitUserStatus()
         // console.log('mounted',this.$store.state.signup.djangoUser)
         // Cookies.set('unko','chinko')
         // this.$store.dispatch("getAnsweredQuestion")
@@ -135,6 +135,9 @@ export default {
             catch{
                 return false
             }
+        },
+        questions(){
+            return this.$store.getters.questions
         }
     },
     methods:{

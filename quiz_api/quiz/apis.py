@@ -15,7 +15,7 @@ from rest_framework.parsers import FileUploadParser
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, QuizTaker, MyQuiz, MyQuestion,ParentStatus
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, ParentQuiz, QuizTaker, MyQuiz, MyQuestion,ParentStatus
 from quiz.serializers import (
     QuizListSerializer, 
     QuestionListSerializer, 
@@ -32,6 +32,7 @@ from quiz.serializers import (
     ParentStatusIdSerializer,
     QuestionImageCreateSerializer,
     QuestionCreateSerializer,
+    QuestionDashboardSerializer,
     AnswerCreateSerializer
     )
 
@@ -155,6 +156,19 @@ class QuizListApi(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id',]
     pagination_class = None
+
+
+class QuestionDashboardApi(generics.ListAPIView):
+    # queryset = ParentQuiz.objects.all()
+    serializer_class = QuestionDashboardSerializer
+    pagination_class = None
+
+    def get_queryset(request, format=None):
+         print('geeet',request)
+         return ParentQuiz.objects.filter(id=1)
+
+    # def get(self, request, format=None):
+    #      print('geeet',request,request.data)
 
 
 class QuizNameIdListApi(generics.ListAPIView):
