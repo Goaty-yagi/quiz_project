@@ -5,11 +5,24 @@
                 <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
-            <bar
-            :chart-data='barChartData'/>
-            <p class="total">Total:{{sumOfAllQuestions}} questions</p>
-            <div v-if="!showCompo" class='home-main-wrapper'>
-                <div class="home-hero">
+            <div class="bar-wrapper">
+                <bar
+                :chart-data='barChartData'
+                :detail="detail"
+                @barChartDetail="barChartDetail"/>
+            </div>
+            <div class="chart-footer">
+                <p class="total">Total:{{sumOfAllQuestions}} questions</p>
+                <div class="each-title-container">
+                    <div class="title-loop"
+                        v-for="(title,index) in fixedTitleArray"
+                        v-bind:key="index">
+                        <p class="each-title">{{ title }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- <div v-if="!showCompo" class='home-main-wrapper'> -->
+                <!-- <div class="home-hero">
                     <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
                     <img @click="testClick" class='hero-image' src="@/assets/logo.png">
                     <div class="hero-paragraph-wrapper">
@@ -20,7 +33,6 @@
                             class="hero-image"
                             :chart-data="chartData"
                             />
-                            <!-- <img @click="testClick" class='hero-image' src="@/assets/status.png"> -->
                         </div>
                         <div class="paragraph-container">
                             <i class="fas fa-comments hero-image"></i>
@@ -37,9 +49,6 @@
                                 <p>１日１回実力テストに挑戦できるよ！</p>
                             </div>
                             <div class="paragraph-container">
-                                <!-- <div class="test-button-wrapper">
-                                    <div class='test-button' @click='componentHandler()'>実力テストに挑戦する</div>
-                                </div> -->
                                 <div class="done-test">
                                     本日の実力テストは終了しました
                                 </div>
@@ -50,8 +59,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>   
+                </div> -->
+            <!-- </div>    -->
         </div>
     </section>
 </template>
@@ -79,6 +88,9 @@ export default {
     data(){
         return{
             numOfQuestions:'',
+            detail: false,
+            fixedTitleArray:[],
+            currentTitle:'',
             
             field:'並び替え',
             showCompo: false,
@@ -95,10 +107,11 @@ export default {
                 'rgba(255, 6, 6, 0.2)',
             ],
             sumOfAllQuestions:'',
+            fixedTitleArray:[],
             barChartData:{
                 labels: [],
                 datasets: [{ 
-                    label: "Question-sum",
+                    label: "",
                     data: [],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -176,6 +189,10 @@ export default {
         },
         questions(){
             return this.$store.getters.questions
+        },
+
+        handleTitle() {
+
         }
     },
     methods:{
@@ -194,10 +211,24 @@ export default {
             for(let i of this.numOfQuestions.get_num_of_question.slice(0,this.numOfQuestions.get_num_of_question.length-1)) {
                 let title = Object.keys(i)[0]
                 this.barChartData.labels.push(title)
+                this.fixedTitleArray = this.barChartData.labels
                 tempList.push(i[title].sum)
                 this.barChartData.datasets[0].data = tempList
             }
             this.sumOfAllQuestions = this.numOfQuestions.get_num_of_question[this.numOfQuestions.get_num_of_question.length-1].all_questions_num
+        },
+        barChartDetail(index) {
+            for(let i of this.numOfQuestions.get_num_of_question.slice(0,this.numOfQuestions.get_num_of_question.length-1)) {
+                if(Object.keys(i)[0]==this.fixedTitleArray[index]){
+                    this.barChartData.datasets[0].data= Object.values(i[this.fixedTitleArray[index]])
+                    this.barChartData.labels = Object.keys(i[this.fixedTitleArray[index]])
+                    this.detail = true
+                    
+                }
+            }
+        },
+        detailFalse() {
+            this.detail = false
         },
         unko(){
             console.log('clicked')
@@ -278,100 +309,34 @@ export default {
     align-items: center;
     flex-direction: column;
     .main-wrapper{
-        .total{
+        // display: flex;
+        .bar-wrapper{
+
+        }
+        .chart-footer{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .total{
             color: white;
             font-weight: bold;
-        }
-        .home-main-wrapper{
-            display: flex;
-            .home-hero{
-                margin: 1rem;
-                .hero-title{
-                    border-top: 6px solid $base-color;
-                    border-right: 1px solid $base-color;
-                    border-left: 1px solid $base-color;
-                    border-bottom: 1px solid $base-color;
-                    box-shadow:  1px 1px 18px #888888;
-                    // background: rgb(254, 254, 221);
-                    padding-top: 0.5rem;
-                    padding-bottom: 0.5rem;
-                    padding-right: 0.1rem;
-                    padding-left: 0.1rem;
-                    margin-top: 1rem;margin-bottom: 1rem;
-                    font-weight: bold;
-                    font-size: 1.1rem;
-                    color: white;
-
-                }
-                .hero-image{
-                    width: 100px;
-                }
-                
-                .hero-paragraph-wrapper{
-                    color: $back-white;
-                    .paragraph-container{
-                        display: flex;
-                        align-items: center;
-                        background: rgba($color: $back-white, $alpha: 0.1);
-                        padding: 0.6rem;
-                        margin-bottom: 0.5rem;
-                        .hero-paragraph{
-                            flex-basis: 50%;
-                            font-weight: bold;
-                        }
-                        .hero-image{
-                            flex-basis: 60%;
-                        }
-                        .fa-comments{
-                            font-size: 6rem;
-                            color: rgba($color: #a6a6a6, $alpha: 0.6);
-                        }
-                        .test-button-wrapper{
-                            flex-basis: 50%;
-                        }
-                        .fa-gamepad{
-                            font-size: 6rem;
-                            color: rgba($color: #a6a6a6, $alpha: 0.6);
-                        }
-                        .done-test{
-                            border: solid $dull-red;
-                            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
-
-                        }
-                    }
-                    .test-button-wrapper{
-                        margin: 1rem;
-                        .test-button{
-                            display: inline-block;
-                            border: solid $lite-gray;
-                            border-radius: 50vh;
-                            padding: 0.1rem 0.8rem 0.1rem 0.8rem;
-                            color: $back-white;
-                            transition: .5s;
-                        }
-                        .test-button:hover{
-                            background: rgba($color: $back-white, $alpha: 0.1);
-                        }
-                    }
-                    .test-button-wrapper{
-                        margin: 1rem;
-                        .test-button{
-                            display: inline-block;
-                            border: solid $lite-gray;
-                            border-radius: 50vh;
-                            padding: 0.1rem 0.8rem 0.1rem 0.8rem;
-                            color: $back-white;
-                            transition: .5s;
-                        }
-                        .test-button:hover{
-                            background: rgba($color: $back-white, $alpha: 0.1);
-                        }
-                    }
-                }
             }
-        }
-        .home-conf{
-            // margin-bottom: 200px;
+            .each-title-container{
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                .title-loop{
+                    .each-title{
+                        color: white;
+                        margin-left: 0.5rem;
+                        margin-right: 0.5rem;
+                        padding: 0 0.4rem;
+                        font-weight: bold;
+                        border: solid $base-color;
+                    }
+                }
+
+            }
         }
     }
 }

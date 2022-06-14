@@ -10,8 +10,7 @@
             :styles="styles"
             :width="width"
             :height="height"
-        />
-    
+        /> 
 </template>
 
 <script>
@@ -28,7 +27,7 @@ import {
     LinearScale } from 'chart.js'
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels)
 
 export default {
   name: 'BarChart',
@@ -64,12 +63,13 @@ export default {
     }
   },
     data() {
+        let index = ''
+        // const index = function(index) {
+        //     return index
+        // }
         Chart.defaults.color = '#fff'
         Chart.defaults.plugins.title.display = false
         return {
-            // width should be modify laler
-            
-            
             chartData: {
                 labels: [ 'ひらがな', 'カタカナ', 'ボキャブラリー', 'すうじ' ],
                 datasets: [{ 
@@ -95,46 +95,28 @@ export default {
             // },
             chartOptions: {
                 responsive: true,
-                // maintainAspectRatio: true,
-                // plugins: {
-                //     datalabels: {
-                //         display: false
-                //     },
-                //     legend: { display: false
-                //     },
-                // },
-                // scales:{
-                //     r:{
-                //         beginAtZero: true,
-                //         min:0,
-                //         max:10,
-                //         grid: {
-                //             color: "gray",
-                //         },
-                //         angleLines: {
-                //             color: 'white',
-                //         },
-                //         ticks: {
-                //             maxTicksLimit: 3,
-                //             display: false
-                //         },
-                //     }
-                // },        
+                onClick:(e,self) => {
+                    if(!this.$attrs.detail) {
+                        const activePoints = self
+                        if (activePoints.length) {
+                            index = activePoints[0].index;
+                            this.barChartDetail(index)
+                            console.log('self',self)
+                        }
+                    }
+                }
             }
         }
     },
     mounted(){
-        // Chart.defaults.plugins.title.display = false
-        // Chart.defaults.plugins = false
-        
-        // Chart.defaults.font.size = 16
-            // let a = document.getElementsByTagName('canvas')
-            console.log(Chart.defaults)
-            // a.setAttribute('style','padding:1rem')
-        
-        
-
-    }
+        console.log('bar-mounted',Chart.instances,this.$attrs.detail)
+    },
+    methods:{
+        barChartDetail(index){
+            console.log('going')
+            this.$emit('barChartDetail',index)
+        },
+    },
 }
 </script>
 <style scoped lang="scss">
