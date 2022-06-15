@@ -840,6 +840,7 @@ export default {
             .image-container{
                 display: flex;
                 justify-content: center;
+                margin-top: 0.5rem;
                 width: 100%;
                 .image{
                     width: 40%;

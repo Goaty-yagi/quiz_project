@@ -42,9 +42,9 @@
                                 <p>１日１回実力テストに挑戦できるよ！</p>
                             </div>
                             <div class="paragraph-container">
-                                <!-- <div class="test-button-wrapper">
+                                <div class="test-button-wrapper">
                                     <div class='test-button' @click='componentHandler()'>実力テストに挑戦する</div>
-                                </div> -->
+                                </div>
                                 <div class="done-test">
                                     本日の実力テストは終了しました
                                 </div>
@@ -128,7 +128,7 @@ export default {
     mounted(){
         // this.test()
         // this.reload()
-        this.aaa()
+        // this.aaa()
         const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
         console.log('mounted',regionNames.of('JP'))
         this.scrollTop()
@@ -219,11 +219,11 @@ export default {
             this.slideIn = !this.slideIn
             this.slideOut = !this.slideOut
         },
-        aaa(){
-            let b = document.getElementsByClassName('hero-title')
-            console.log('aaa',b,b.length)
-            b[2].style.backgroundColor = 'red'
-        }
+        // aaa(){
+        //     let b = document.getElementsByClassName('hero-title')
+        //     console.log('aaa',b,b.length)
+        //     b[2].style.backgroundColor = 'red'
+        // }
         // reload(){
         //     console.log('reload_enter',this.$store.state.signup.beingException)
         //     if(this.$store.state.signup.beingException){

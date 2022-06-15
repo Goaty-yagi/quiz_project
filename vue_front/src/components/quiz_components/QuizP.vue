@@ -757,6 +757,7 @@ export default {
                 display: flex;
                 justify-content: center;
                 width: 100%;
+                margin-top: 0.5rem;
                 .image{
                     width: 40%;
                 }
