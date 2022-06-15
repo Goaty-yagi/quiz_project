@@ -95,6 +95,13 @@ export default {
             // },
             chartOptions: {
                 responsive: true,
+                plugins: {
+                    datalabels: {
+                        display: false
+                    },
+                    legend: { display: false
+                    },
+                },
                 onClick:(e,self) => {
                     if(!this.$attrs.detail) {
                         const activePoints = self

@@ -9,7 +9,8 @@
                     <h1 class='title-white'>ダッシュボード</h1>
                 </div>
                 <div class="side-bar" :class="{'less-side-bar':showSideBar==false}">
-                    <i @click="handleShowSideBar()" class="fas fa-backspace"></i>
+                    <i @click="handleShowSideBar()" 
+                        class="fas fa-angle-double-left"></i>
                     <div class='space'></div>
                     <div class="option-loop" v-for="(val, key, index) in options"
                         :key="index">
@@ -73,7 +74,8 @@ export default {
             } else {
                 return false
             }
-        }
+        },
+        
     }
 }
 </script>
@@ -86,23 +88,26 @@ export default {
 .dashboard-wrapper{
     width: 100%;
     margin: 0;
+    position: relative;
     // display: flex;
     // justify-content: center;
     .side-bar{
-        position: absolute;
+        position: fixed;
         left: 0;
+        bottom: 0;
         margin-top: 1rem;
         background: $dark-tr-blue;
-        width: 100px;
-        height: 75vh;
+        width: 200px;
+        height: 100%;
         transition: .5s;
         z-index: 1;
-        .fa-backspace{
+        .fa-angle-double-left{
             position: absolute;
             right: 0;
             color: $lite-gray;
-            padding-top: 0.5rem;
-            padding-right: 0.5rem;
+            margin-top: 0.5rem;
+            margin-right: 0.5rem;
+            transition: .5s;
         }
         .space {
             height: 1rem;
@@ -128,6 +133,10 @@ export default {
     }
     .less-side-bar{
         width: 50px;
+        .fa-angle-double-left{
+            transform: rotate(180deg);
+           
+        }
     }
     .main-wrapper{
         .dashboard-container{
@@ -139,4 +148,13 @@ export default {
         }
     }
 }
+// @media(max-width: 629px){
+//     .side-bar{
+//         width: 100%;
+//         // margin-bottom: 20%;
+//     }
+//     .less-side-bar{
+//         width: 0px;
+//     }
+// }
 </style>

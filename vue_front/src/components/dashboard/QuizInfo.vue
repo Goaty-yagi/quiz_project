@@ -6,6 +6,7 @@
             </div>
             <div class="bar-wrapper">
                 <bar
+                class="bar-chart"
                 :chart-data='barChartData'
                 :detail="detail"
                 @barChartDetail="barChartDetail"/>
@@ -267,9 +268,15 @@ export default {
     align-items: center;
     flex-direction: column;
     .main-wrapper{
-        // display: flex;
         .bar-wrapper{
-
+            position: relative;
+            .bar-chart{
+                // position: absolute;
+                width: 90%;
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+            }
         }
         .chart-footer{
             display: flex;
