@@ -2,7 +2,6 @@
     <section class='quiz-info-section'>
         <div class="main-wrapper">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
-                <!-- <i class="fas fa-cog"></i> -->
                 <div class="lds-dual-ring"></div>
             </div>
             <div class="bar-wrapper">
@@ -12,55 +11,20 @@
                 @barChartDetail="barChartDetail"/>
             </div>
             <div class="chart-footer">
+                <div @click="setBarChartData()" class='all-quizzes' :class="{'selected':!currentTitle}">
+                    <p class="all">ALL</p>
+                </div>
                 <p class="total">Total:{{sumOfAllQuestions}} questions</p>
                 <div class="each-title-container">
                     <div class="title-loop"
-                        v-for="(title,index) in fixedTitleArray"
+                        v-for="(quiz,index) in quizNameId"
                         v-bind:key="index">
-                        <p class="each-title">{{ title }}</p>
+                        <p class="each-title" 
+                            :class="{'selected-title':currentTitle==quiz.name}"
+                            @click="barChartDetail(quiz.id-1)">{{ quiz.name }}</p>
                     </div>
                 </div>
             </div>
-            <!-- <div v-if="!showCompo" class='home-main-wrapper'> -->
-                <!-- <div class="home-hero">
-                    <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
-                    <img @click="testClick" class='hero-image' src="@/assets/logo.png">
-                    <div class="hero-paragraph-wrapper">
-                        <div class="paragraph-container">
-                            <p class="hero-paragraph">自分のレベルに合った問題をクイズ形式で
-                            解き、実力の確認ができるプラットフォーム。</p>
-                            <chart
-                            class="hero-image"
-                            :chart-data="chartData"
-                            />
-                        </div>
-                        <div class="paragraph-container">
-                            <i class="fas fa-comments hero-image"></i>
-                            <p class="hero-paragraph">
-                            分からないことはコミュニティで質問し、
-                            世界中のユーザー同士が助け合い学び合う場。
-                            </p>
-                        </div>
-                        <div v-if="!user" class="test-button-wrapper">
-                            <div class='test-button' @click='componentHandler()'>実力テストを始める</div>
-                        </div>
-                        <div v-if="user" class=registered-user>
-                            <div class="hero-title">
-                                <p>１日１回実力テストに挑戦できるよ！</p>
-                            </div>
-                            <div class="paragraph-container">
-                                <div class="done-test">
-                                    本日の実力テストは終了しました
-                                </div>
-                                <i class="fas fa-gamepad  hero-image"></i>
-                            </div>
-                            <div class="hero-title">
-                                <p>運営からのお知らせ</p>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-            <!-- </div>    -->
         </div>
     </section>
 </template>
@@ -73,8 +37,7 @@ import NotLogin from '@/components/login/NotLogin.vue'
 import  Bar from '@/components/charts/Bar.vue'
 import  Chart from '@/components/account/Chart.vue'
 import axios from 'axios';
-// import Cookies from 'js-cookie'
-//  import { uuid } from 'vue-uuid';
+
 export default {
     name: 'Home',
     components: {
@@ -107,7 +70,6 @@ export default {
                 'rgba(255, 6, 6, 0.2)',
             ],
             sumOfAllQuestions:'',
-            fixedTitleArray:[],
             barChartData:{
                 labels: [],
                 datasets: [{ 
@@ -154,17 +116,7 @@ export default {
     },
     mounted(){
         this.getNumOfQuestions()
-        // this.test()
-        // this.reload()
-        // this.aaa()
-        // const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
-        console.log('mounted',this.questions)
-        // this.scrollTop()
-        // this.setInitUserStatus()
-        // console.log('mounted',this.$store.state.signup.djangoUser)
-        // Cookies.set('unko','chinko')
-        // this.$store.dispatch("getAnsweredQuestion")
-        // this.$store.dispatch("commitHandleOnReplyAndOnAnswer")
+        console.log('mounted',this.$store)
     },
     computed:{
         user(){
@@ -190,10 +142,9 @@ export default {
         questions(){
             return this.$store.getters.questions
         },
-
-        handleTitle() {
-
-        }
+        quizNameId(){
+                    return this.$store.getters.quizNameId
+        },
     },
     methods:{
         async getNumOfQuestions() {
@@ -207,11 +158,15 @@ export default {
             }
         },
         setBarChartData() {
+            this.detailFalse()
+            this.currentTitle=''
             const tempList = []
+            const tempLadelList = []
             for(let i of this.numOfQuestions.get_num_of_question.slice(0,this.numOfQuestions.get_num_of_question.length-1)) {
                 let title = Object.keys(i)[0]
-                this.barChartData.labels.push(title)
-                this.fixedTitleArray = this.barChartData.labels
+                tempLadelList.push(title)
+                this.fixedTitleArray = tempLadelList
+                this.barChartData.labels = tempLadelList
                 tempList.push(i[title].sum)
                 this.barChartData.datasets[0].data = tempList
             }
@@ -220,6 +175,7 @@ export default {
         barChartDetail(index) {
             for(let i of this.numOfQuestions.get_num_of_question.slice(0,this.numOfQuestions.get_num_of_question.length-1)) {
                 if(Object.keys(i)[0]==this.fixedTitleArray[index]){
+                    this.currentTitle = this.fixedTitleArray[index]
                     this.barChartData.datasets[0].data= Object.values(i[this.fixedTitleArray[index]])
                     this.barChartData.labels = Object.keys(i[this.fixedTitleArray[index]])
                     this.detail = true
@@ -230,6 +186,8 @@ export default {
         detailFalse() {
             this.detail = false
         },
+        // selectedBarChartDetail(index) {
+        // },
         unko(){
             console.log('clicked')
             this.$store.commit('setTempUserNull')
@@ -317,9 +275,28 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
+            .all-quizzes{
+                color: white;
+                padding: 0 1rem;
+                margin: 0.5rem 0;
+                font-size: 1.2rem;
+                font-weight: bold;
+                border: solid $base-color;
+                border-radius: 50vh;
+                transition: .5s;
+                .all{
+
+                }                
+            }
+            .selected{
+                color: $dark-blue;
+                background: $base-color-tr;
+                border: solid white;
+            }
             .total{
             color: white;
             font-weight: bold;
+            margin-bottom: 0.5rem;
             }
             .each-title-container{
                 display: flex;
@@ -333,6 +310,11 @@ export default {
                         padding: 0 0.4rem;
                         font-weight: bold;
                         border: solid $base-color;
+                        transition: .5s;
+                    }.selected-title{
+                        color: $dark-blue;
+                        background: $base-color-tr;
+                        border: solid white;
                     }
                 }
 
