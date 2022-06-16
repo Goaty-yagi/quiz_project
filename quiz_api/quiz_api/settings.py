@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'quiz',
     'user',
     'board',
+    'log',
 
     'nested_admin',
     'rest_framework',

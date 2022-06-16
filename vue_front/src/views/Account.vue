@@ -6,7 +6,7 @@
                 <div class="lds-dual-ring"></div>
             </div>
             
-            <div v-if='$store.state.isLoading==false&&userData' class="content-wrapper">
+            <div v-if='$store.state.isLoading==false&&userData&&gotInfo' class="content-wrapper">
                 <h1 class='title-white'>アカウント</h1>
                 <div class="cropper-wrapper">
                     <img v-bind:src="getImageURL(userData.thumbnail)"/>
@@ -230,29 +230,31 @@ export default{
     methods:{
         ...mapActions(['getQuizNameId']),
         async getUserData(){
-            // this.$store.commit('setIsLoading', true)
-            await axios
-                .get(`/api/user/${this.getDjangouser.UID}`)
-                .then(response => {
-                    this.userData = response.data
-                    this.quizTaker = response.data.quiz_taker[0]
-                    console.log('inGet', this.userData,this.userStatus)
-                    // this.setInitUserStatus()
-                    this.gotInfo = true
+            try{
+                this.$store.commit('setIsLoading', true)
+                await axios
+                    .get(`/api/user/${tis.getDjangouser.UID}`)
+                    .then(response => {
+                        this.userData = response.data
+                        this.quizTaker = response.data.quiz_taker[0]                    
                 })
-                .catch(e => {
-                    console.log('e',e)
-                    let logger = {
-                        message: "in Account/signup.getUserData. couldn't get django user",
-                        name: window.location.pathname,
-                        actualError: e
-                    }
-                    this.$store.commit('setLogger',logger)
-                    this.$store.commit("checkDjangoError",e.message)
-                    this.$store.commit('setIsLoading', false)
-                })
-                this.handleStatusParameter(this.quizTaker.grade)
+            } catch (e) {
+                console.log('e',e)
+                let logger = {
+                    message: "in Account/signup.getUserData. couldn't get django user",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit("checkDjangoError",e.message)
                 this.$store.commit('setIsLoading', false)
+                router.push({ name: 'NotFound404' })
+            }
+            this.handleStatusParameter(this.quizTaker.grade)
+            this.$store.commit('setIsLoading', false)
+            console.log('false')
+            this.gotInfo = true
         },
         async patchImage(){
             this.$store.commit('setIsLoading', true)

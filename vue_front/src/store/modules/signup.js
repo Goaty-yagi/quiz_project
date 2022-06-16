@@ -52,10 +52,11 @@ export default {
         },
         favoriteQuestion:'',
         logger:{
+            exist: false,
             actualErrorName:'',
             actualErrorMessage:'',
             message:'',
-            name:''
+            path:''
         },
         userInfo:'',
         exceptUserInfo:'',
@@ -203,8 +204,16 @@ export default {
         setLogger(state,payload){
             state.logger.actualErrorName = payload.actualErrorName
             state.logger.actualErrorMessage = payload.actualErrorMessage
-            state.logger.name = payload.name
+            state.logger.path = 'vue' + payload.path
             state.logger.message = payload.message
+            state.logger.exist = true
+        },
+        resetLogger(state){
+            state.logger.actualErrorName = ''
+            state.logger.actualErrorMessage = ''
+            state.logger.path = ''
+            state.logger.message = ''
+            state.logger.exist = false
         },
         setUserInfo(state,payload){
             state.userInfo = payload
@@ -353,7 +362,7 @@ export default {
                 state.userInfo = payload
                 let logger = {
                     message: "in store/signup.SignupDjangoUser. couldn't signup django user",
-                    name: window.location.pathname,
+                    path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
 
@@ -424,7 +433,7 @@ export default {
                         commit("checkDjangoError", e.message)
                         let logger = {
                             message: "in store/signup.SignupDjangoUserException2. couldn't signup django user",
-                            name: window.location.pathname,
+                            path: window.location.pathname,
                             actualErrorName: e.name,
                             actualErrorMessage: e.message,
                         }
@@ -447,7 +456,7 @@ export default {
                         commit("checkDjangoError", e.message)
                         let logger = {
                             message: "in store/signup.SignupDjangoUserException3. couldn't signup django user",
-                            name: window.location.pathname,
+                            path: window.location.pathname,
                             actualErrorName: e.name,
                             actualErrorMessage: e.message,
                         }
@@ -489,7 +498,7 @@ export default {
                 // else{
                 let logger = {
                     message: "in store/signup.SignupDjangoUserFoeThirdParty. couldn't signup django user",
-                    name: window.location.pathname,
+                    path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
                 }
@@ -519,7 +528,7 @@ export default {
                     console.log('catch')
                     let logger = {
                         message: "in store/signup.getDjangoUser. couldn't signup django user",
-                        name: window.location.pathname,
+                        path: window.location.pathname,
                         actualErrorName: e.name,
                         actualErrorMessage: e.message,
                     }
@@ -546,7 +555,7 @@ export default {
                         .catch(e => {
                             let logger = {
                                 message: "in store/signup.getFavoriteQuestion. couldn't get favoriteQuestion ",
-                                name: window.location.pathname,
+                                path: window.location.pathname,
                                 actualErrorName: e.name,
                                 actualErrorMessage: e.message,
                             }
@@ -740,6 +749,23 @@ export default {
                 context.dispatch('getOrSignupDjangoUserForThirdParty')
                 
             }) 
+        },
+        async createLog(context,payload){
+            console.log('go Clog')
+            try{
+                await axios
+                .post('/api/loggers-create',{
+                    message: payload.message,
+                    path: payload.path,
+                    actualErrorName: payload.actualErrorName,
+                    actualErrorMessage: payload.actualErrorMessage,
+                })
+                context.commit('resetLogger')
+            } catch(e) {
+                console.log('logerror',e)
+                context.commit('resetLogger')
+            }
+
         },
         // async patchImage(context){
         //     var list = context.getters.getDjangouser.thumbnail.split('/')
