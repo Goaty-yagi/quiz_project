@@ -25,17 +25,21 @@
         v-if="options.createQuiz"/>
         <QuizInfo
         v-if="options.quizInfo"/>
+        <Logger
+        v-if="options.logger"/>
     </div>
 </template>
 
 <script>
 import CreateQuizQuestion from '@/components/dashboard/CreateQuizQuestion.vue'
 import QuizInfo from '@/components/dashboard/QuizInfo.vue'
+import Logger from '@/components/dashboard/Logger.vue'
 
 export default {
     components: {
         CreateQuizQuestion,
-        QuizInfo
+        QuizInfo,
+        Logger
     },
     data(){
         return{
@@ -44,6 +48,7 @@ export default {
             options:{
                 'quizInfo':true,
                 'createQuiz':false,
+                'logger': false
                 }
                 
         }
