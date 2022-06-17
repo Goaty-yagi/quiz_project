@@ -230,18 +230,15 @@ export default{
     methods:{
         ...mapActions(['getQuizNameId']),
         async getUserData(){
-            try{
-                this.$store.commit('setIsLoading', true)
-                await axios
-                    .get(`/api/user/${tis.getDjangouser.UID}`)
-                    .then(response => {
-                        this.userData = response.data
-                        this.quizTaker = response.data.quiz_taker[0]                    
-                })
-            } catch (e) {
-                console.log('e',e)
-                let logger = {
-                    message: "in Account/signup.getUserData. couldn't get django user",
+            this.$store.commit('setIsLoading', true)
+            await axios
+                .get(`/api/user/${this.getDjangouser.UID}`)
+                .then(response => {
+                    this.userData = response.data
+                    this.quizTaker = response.data.quiz_taker[0]})
+                .catch(e => {
+                    let logger = {
+                    message: "in Account/getUserData. couldn't get user ",
                     path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
@@ -249,8 +246,8 @@ export default{
                 this.$store.commit('setLogger',logger)
                 this.$store.commit("checkDjangoError",e.message)
                 this.$store.commit('setIsLoading', false)
-                router.push({ name: 'NotFound404' })
-            }
+                router.push({ name: 'ConnectionError' })
+                })
             this.handleStatusParameter(this.quizTaker.grade)
             this.$store.commit('setIsLoading', false)
             console.log('false')
@@ -273,11 +270,18 @@ export default{
                         {headers}
                     )
                 }
+            } catch (e) {
+                let logger = {
+                    message: "in Account/patchImage. couldn't Patch image",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             }
-            catch{
-                // doing nothig
-            }
-            
+            this.$store.commit('setIsLoading', false)
             this.getUserData()
         },
         getImageURL(url){

@@ -558,7 +558,19 @@ export default {
             return lavel
         },
         async updateQuizTaker(){
-            await axios.patch(`api/quiz-taker-practice/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}`)
+            await axios
+            .patch(`api/quiz-taker-practice/?quiz_taker=${this.$store.state.signup.djangoUser.quiz_taker[0].id}`)
+            .catch(e => {
+                    let logger = {
+                        message: "in components/quiz_components/QuizP/updateQuizTaker. couldn't update QuizTaker",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
+                })
         },
         resultNext(){
             this.pagination.a += 1 

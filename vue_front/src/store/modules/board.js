@@ -208,9 +208,16 @@ export default {
                 .then(response => {
                     state.searchedQuestions = response.data
                 })
-                .catch(error => {
-                    console.log(error)
-                })
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/board.getSearchQuestion. couldn't get SearchQuestion",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
         },
         async getRelatedQuestion({ state , getters, commit }, payload) {
             // for reccomended-question, if user and user.user_tag exist, get reccomended-question.
@@ -239,11 +246,22 @@ export default {
             }
             try{
                 console.log("try2",url)
-                await axios.get(url)
+                await axios
+                    .get(url)
                     .then(response => {
                         commit('setReccomendedQuestion', response.data)
                     // state.reccomendedQuestion = response.data
                     })
+                    .catch((e) => {
+                        let logger = {
+                            message: "in store/board.getRelatedQuestion. couldn't get RelatedQuestion",
+                            name: window.location.pathname,
+                            actualErrorName: e.code,
+                            actualErrorMessage: e.message,
+                        }
+                        context.commit('setLogger',logger)
+                        router.push({ name: 'ConnectionError' })
+                    });
                 }
             catch{(error => {
                     console.log(error)
@@ -254,33 +272,40 @@ export default {
             // this.$store.commit('setIsLoading', true)
             console.log("INGAQ")
             var url = `/api/board/question-answered?user=${rootGetters.getUID}`
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    state.answeredQuestion = response.data
-                    console.log('A',state.answeredQuestion)
-                    })                    
-                }
-            catch{(error => {
-                    console.log("error",error)
-            })}
-            // this.$store.commit('setIsLoading', false)
+            await axios.get(url)
+                .then(response => {
+                state.answeredQuestion = response.data
+                console.log('A',state.answeredQuestion)
+                })
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/board.getAnsweredQuestion. couldn't get AnsweredQuestion",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });           
         },
         async getNotificationApi({ state , getters,rootState,rootGetters}, payload) {
             // this.$store.commit('setIsLoading', true)
             console.log("INGNAPI")
             var url = `/api/board/user-question-answer-notification?user=${rootGetters.getUID}`
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    state.notificationApi = response.data
-                    console.log('gotAPI',state.answeredQuestion,state.notificationApi)
-                    })                    
-                }
-            catch{(error => {
-                    console.log("error",error)
-            })}
-            // this.$store.commit('setIsLoading', false)
+            await axios.get(url)
+                .then(response => {
+                state.notificationApi = response.data
+                })
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/board.getNotificationApi. couldn't get NotificationApi",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });                 
         },
         // async getFavoriteQuestion({ state , getters }, payload){
         //     const questionId = []

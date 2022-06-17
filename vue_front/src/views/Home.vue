@@ -129,6 +129,7 @@ export default {
         // this.test()
         // this.reload()
         // this.aaa()
+        this.unko()
         const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
         console.log('mounted',regionNames.of('JP'))
         this.scrollTop()
@@ -167,8 +168,8 @@ export default {
         //     this.showChart=true
         // },np,
         unko(){
-            console.log('clicked')
-            this.$store.commit('setTempUserNull')
+            console.log('clicked',this)
+            // this.$store.commit('setTempUserNull')
             // window.localStorage.removeItem('quizkey')
             // return `/quiz/${this.status}`
             },

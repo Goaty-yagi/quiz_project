@@ -43,7 +43,8 @@ export default {
             destination:{},
             inputFile:'',
             blob:'',
-            cropperBorder:''
+            cropperBorder:'',
+            errorMessage:'components/account/Thumbnail',
         }
     },
     mounted(){
@@ -165,17 +166,24 @@ export default {
                     const formData = new FormData();
                     formData.append('thumbnail',blob, `${this.image}.png`),
                     // console.log('getthumb',formData.get('thumbnail'),this.image,blob),
-                    axios.patch(`/api/user/${this.getDjangouser.UID}`,
-                        formData
-                    )
+                    axios
+                    .patch(`/api/user/${this.getDjangouser.UID}`,
+                        formData)
                 }, 'image/png')
                 this.showThumbnailFalse()
                 this.$store.commit('setIsLoading', true)
                 setTimeout(this.reload,1000)
-                }
-                catch(e){
+                } catch(e){    
+                    let logger = {
+                        message: this.errorMessage + " userUpdate",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
                     this.showThumbnailFalse()
-                    console.log('fale',e)
                 }
                 // this.$router.go({path: this.$router.currentRoute.path, force: true})
             } else {

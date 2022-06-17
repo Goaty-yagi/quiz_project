@@ -146,6 +146,7 @@ import QuizConfirm from '@/components/dashboard/QuizConfirm.vue'
 
 function initialData() {
     return{
+        errorMessage:'components/dashboard/CreateQuiz',
         showThumbnail: false,
         showSideBar: true,
         showConfirm: false,
@@ -318,7 +319,15 @@ export default {
                         `/api/questions-image-dispatch/${response.data.id}`,formdata)
                 }
             } catch(e) {
-                console.log('error',e)
+                let logger = {
+                    message: this.errorMessage + " submitForm" + "couldn't submit Form",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             }
             this.allResetVars()
         },

@@ -55,6 +55,7 @@ export default {
             detail: false,
             fixedTitleArray:[],
             currentTitle:'',
+            errorMessage:'components/dashboard/QuizInfo',
             
             field:'並び替え',
             showCompo: false,
@@ -149,14 +150,22 @@ export default {
     },
     methods:{
         async getNumOfQuestions() {
-            try{
-                const response = await axios.get('/api/questions-dashboard/')
-                this.numOfQuestions = response.data[0]
-                console.log('data',this.numOfQuestions)
-                this.setBarChartData()
-            } catch {
-
-            }
+            const response = await axios
+            .get('/api/questions-dashboard/')
+            .catch(e => {
+                let logger = {
+                    message: this.errorMessage + " getNumOfQuestions",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
+            })
+            this.numOfQuestions = response.data[0]
+            console.log('data',this.numOfQuestions)
+            this.setBarChartData()
         },
         setBarChartData() {
             this.detailFalse()

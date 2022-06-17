@@ -1,10 +1,15 @@
 <template>
     <div class='not-wrapper'>
+        <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
+            <div class="notification-text">
+                {{ scripts.errorNoteText }}
+            </div>
+        </div>
         <h1 class='main-title'> {{ scripts.mainTitle }}</h1>
         <p class='sub'> {{ scripts.sub }}</p>
         <p class='sub2'>{{ scripts.sub2 }}</p>
     <div class="error-footer">
-        <button class='btn-litegray-black-gray-sq'>{{ scripts.report }}</button>
+        <button v-if="this.$store.getters.logger.exist" @click="createLog()" class='btn-litegray-black-gray-sq'>{{ scripts.report }}</button>
         <router-link :to="{name:'Home'}" @click='closeConf' class="home"><i class="fas fa-home"></i>{{ scripts.return }}</router-link>
     </div>
 </div>
@@ -18,11 +23,12 @@ export default {
     data(){
         return{
             scripts: {
-            mainTitle:'500　サーバーエラー',
-            sub:'サーバーが混み合っています。しばらく経ってからご利用ください。',
-            sub2:'sorry! somethign wired happened',
-            report:'エラー報告をする',
-            return:'Return to home'
+                errorNoteText:'報告しました。ご協力ありがとうございました。',
+                mainTitle:'500　サーバーエラー',
+                sub:'サーバーが混み合っています。しばらく経ってからご利用ください。',
+                sub2:'sorry! somethign wired happened',
+                report:'エラー報告をする',
+                return:'Return to home'
           }
 
         }
@@ -49,6 +55,15 @@ export default {
                 console.log('start-reload')
                 window.location.reload();
             }
+        },
+        createLog(){
+            console.log('in not 404 got log')
+            this.$store.dispatch('createLog',this.$store.getters.logger)
+            this.showDelete()
+        },
+        showDelete(){
+            console.log("clicked")
+            this.$store.dispatch("handleNotifications", 'reply')
         },
         goHome(){
             router.push('/' )

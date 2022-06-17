@@ -43,6 +43,7 @@ import axios from 'axios'
 export default {
     data(){
         return{
+            errorMessage: 'components/board/Answer',
             description:'',
             alert: false
         }
@@ -81,6 +82,17 @@ export default {
                     question: this.questionId,
                     liked_answer:[]
                 }
+            })
+            .catch((e) => {
+                let logger = {
+                    message: this.errorMessage + " answerPost",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             })
         },
         async addAnswer(){

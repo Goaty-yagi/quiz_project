@@ -124,11 +124,9 @@
 </template>
 
 <script>
-import axios from 'axios'
 import {mapGetters,mapActions} from 'vuex'
 import Result from '@/components/quiz_components/Result.vue'
 import TestResult from '@/components/initial/TestResult.vue'
-import { createHydrationRenderer } from '@vue/runtime-core'
 
 export default {
     components: {
