@@ -168,7 +168,9 @@ export default {
         //     this.showChart=true
         // },np,
         unko(){
-            console.log('clicked',this)
+            // let a = document.getElementById('unko')
+            // let b = document.querySelector('#unko')
+            // console.log('unko',a,b, typeof a)
             // this.$store.commit('setTempUserNull')
             // window.localStorage.removeItem('quizkey')
             // return `/quiz/${this.status}`

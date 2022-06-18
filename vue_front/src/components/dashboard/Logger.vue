@@ -8,11 +8,12 @@
         <div class="main-wrapper">
             <div class="main-container" >
                 <div class="logger-header">
+                    <p>新しいログ{{  }}件</p>
                     <!-- <p class="title-white">My-Quiz</p>
                     <p class="register">登録数{{ length }} / {{myQuiz.max_num}}</p>
                     <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p> -->
                 </div>
-                {{ loggers }}
+                <!-- {{ loggers }} -->
                 <div class="logger-container" v-if="$store.state.isLoading==false">
                     <div class="no-my-quiz" v-if="!loggers.results">
                         <div class="no-quiz">
@@ -28,15 +29,21 @@
                             <!-- <div class="log-time">{{ log.created_on }}</div> -->
                             <div class="log-time">{{ log.created_on }}</div>
                             <div class="log-message">{{ log.actualErrorMessage.substr(0,15)+'...'  }}</div>
-                            <div class="log-checked">{{ ckeckedToString(log.checked) }}</div>
+                            <div v-if="!log.checked" class="log-checked" >{{ ckeckedToString(log.checked) }}</div>
                         </div>
                     </div>
-                    <i v-if="loggers.next" class="fas fa-angle-down"></i>
+                    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': loading }">
+                        <div class="lds-dual-ring"></div>
+                    </div>
+                    <i v-if="this.nextUrl" @click="getNextLogger()" class="fas fa-angle-down"></i>
                     <LogDetail
                     v-if="logDetail"
                     :loggers="loggers"
                     :currentTagIndex="currentTagIndex"
-                    @logDetailFalse="logDetailFalse"                
+                    :nextUrl="nextUrl"
+                    :noMoreUrl="noMoreUrl"
+                    @logDetailFalse="logDetailFalse"
+                    @getNextLogger="getNextLogger"             
                     />
                 </div>
                 <!-- <div @click="handleQuizOpen()" v-if="showButtonAndNoQuiz" class="btn-basegra-white-db-sq">
@@ -62,6 +69,9 @@ export default {
             loggers: "",
             logDetail: false,
             currentTagIndex:'',
+            nextUrl: '',
+            loading: false,
+            noMoreUrl: false,
         }
     },
     mounted(){
@@ -93,10 +103,16 @@ export default {
                 .get('/api/loggers-list')
                 .then(response => {
                     this.loggers = response.data
+                    if(response.data.next){
+                        this.nextUrl = response.data.next
+                    } else {
+                        this.noMoreUrl = true
+                    }
+                    console.log('getlog', this.loggers)
                     })
                 .catch(e => {
                     let logger = {
-                    message: errorMessage + 'getLogger',
+                    message: this.errorMessage + 'getLogger',
                     path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
@@ -108,9 +124,35 @@ export default {
                 })
             this.$store.commit('setIsLoading', false)
         },
+        async getNextLogger() {
+            console.log('next')
+            this.loading = true
+            await axios
+                .get(this.nextUrl)
+                .then(response => {
+                    console.log(response.data.results)
+                    this.loggers.results.push(response.data.results[0])
+                    console.log('n',response.data.next)
+                    this.nextUrl = response.data.next
+                    })
+                .catch(e => {
+                    let logger = {
+                    message: this.errorMessage + 'getLogger',
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit("checkDjangoError",e.message)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
+                })
+            this.loading = false
+
+        },
         ckeckedToString(checked) {
             if(checked){
-                return '確認済み'
+                return ''
             } else {
                 return '未確認'
             }
@@ -213,13 +255,17 @@ export default {
                         flex-basis: 50%;
                     }
                     .log-checked{
+                        position: absolute;
                         flex-basis: 10%;
-                        // font-size: 0.8rem;
+                        right: 0;
                         color: red;
-                        margin-right: 1rem;
+                        margin-right: 0.5rem;
                         border: solid $dull-red;
                     }
                 }
+            }
+            .fa-angle-down{
+                margin-top: 1rem;
             }
            
         }

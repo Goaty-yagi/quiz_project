@@ -8,45 +8,18 @@
                             <i class="fas fa-times"></i>
                         </div>
                     </div>
-                    <div class="main-detail-container" :class="{'noShow':noShow}" v-for="(value, key ,logindex) in loggers.results[DetailTagIndex]"
+                    <div class="log-index">{{ DetailTagIndex+1 }}</div>
+                    <div class="main-detail-container" :class="{'noShow':noShow(logindex)}" v-for="(value, key ,logindex) in loggers.results[DetailTagIndex]"
                         v-bind:key="logindex">
                         <div v-if="logindex!=0&&logindex!=5" class="question-field">
-                            <p  class="detail-text">{{ key }}</p>
+                            <p class="detail-text">{{ key }}</p>
                             <p class="detail-val">{{ value }}</p>
                         </div>
-                        <!-- <div class="question-field">
-                            <p class="detail-text">Message</p>
-                            <p class="center">:</p>
-                            <p class="detail-val">{{  }}</p>
-                        </div>
-                        <div class="question-field">
-                            <p class="detail-text">Path</p>
-                            <p class="center">:</p>
-                            <p class="detail-val">{{  }}</p>
-                        </div>
-                        <div class="question-field">
-                            <p class="detail-text">ActualErrorName</p>
-                            <p class="center">:</p>
-                            <p class="detail-val">{{  }}</p>
-                        </div>
-                        <div class="question-field">
-                            <p class="detail-text">ActualErrorMessage</p>
-                            <p class="center">:</p>
-                            <p class="detail-val">{{  }}</p>
-                        </div> -->
-                        <!-- <div class="question-label">
-                            <p class="question-text">Question</p>
-                            <div class="question-container">
-                                <p class="question-description">{{  }}</p>                                
-                            </div>
-                        </div> -->
-                        <!-- <div v-if="questionDetailInfo.image" class="image-container">
-                            <img class="image" v-bind:src="questionDetailInfo.image"/>
-                        </div> -->
                     </div>
-                    <div class="angle-container">
-                        <i class="fas fa-angle-double-left"></i>
-                        <i class="fas fa-angle-double-right"></i>
+                    <div class="angle-container">                        
+                        <!-- @click="e => result==false && onClick(answerindex,answer,question)" -->
+                        <i @click="e => DetailTagIndex!=0&& back()" :class="DetailTagIndex==0 ? 'space-left':'fas fa-angle-double-left'"></i>
+                        <i @click="e => !nextUrl&&DetailTagIndex!=loggers.results.length-1&& next(e)||typeof nextUrl=='string' && next()" :class="!nextUrl&&DetailTagIndex==loggers.results.length-1 ? 'space-right':'fas fa-angle-double-right'"></i>
                     </div>
                 </div>
             </div>
@@ -55,22 +28,29 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     props:[
         'loggers',
-        'currentTagIndex'
+        'currentTagIndex',
+        'nextUrl',
+        'noMoreUrl'
     ],
     data(){
         return{
+            errorMessage:"components/dashboard/LoggerDetail",
             DetailTagIndex: this.currentTagIndex,
+            logIdList: []
         }
     },
     mounted(){
+        this.ckeckedTrue()
         this.$store.commit('showModalTrue')
-        console.log('mounted at detail',this.questionDetailInfo)
+        console.log('mounted at detail',this.nextUrl)
     },
     beforeUnmount(){
-        this.$store.commit('showModalFalse')
+        console.log('BU')
+        this.patchLogger()
     },
     computed:{
         myQuiz(){
@@ -80,6 +60,57 @@ export default {
     methods:{
         close(){
             this.$emit('logDetailFalse')
+        },
+        async next(e) {
+            console.log('clicked',e)
+            if(this.DetailTagIndex!=this.loggers.results.length-1){
+                this.DetailTagIndex += 1
+                this.ckeckedTrue()
+            } else if (this.nextUrl&&this.DetailTagIndex==this.loggers.results.length-1){
+                await this.getNextLogger()
+                this.DetailTagIndex += 1
+                this.ckeckedTrue()
+            }
+        },
+        ckeckedTrue() {
+            if(!this.loggers.results[this.DetailTagIndex].checked) {
+                this.loggers.results[this.DetailTagIndex].checked = true
+                this.logIdList.push(this.loggers.results[this.DetailTagIndex].id)
+            }
+            console.log('true',this.loggers.results,this.logIdList)
+        },
+        back() {
+            this.DetailTagIndex -= 1
+            this.ckeckedTrue()
+        },
+        getNextLogger() {
+            this.$emit('getNextLogger')
+        },
+        noShow(index) {
+            if(index==0||index==5) {
+                console.log('true',index)
+                return true
+            } else {
+                return false
+            }
+        },
+        async patchLogger(){
+            this.$store.commit('setIsLoading', true)
+            await axios
+                .patch(`/api/loggers-patch?logList=${this.logIdList}`)
+                .catch(e => {
+                    let logger = {
+                    message: this.errorMessage + 'patchLogger',
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit("checkDjangoError",e.message)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
+                })
+            this.$store.commit('setIsLoading', false)
         },
     },
 }
@@ -95,6 +126,21 @@ export default {
     .l-container{
         position: relative;
         width: 90%;
+        .log-index{
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: solid $base-color;
+            border-radius: 50vh;
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-left: 0.6rem;
+            margin-top: 0.3rem;
+            font-weight: bold;
+            background: $dark-blue;
+            color: $lite-gray;
+        }
         .main-detail-container{
             display: flex;
             justify-content: center;
@@ -113,6 +159,7 @@ export default {
                     display: flex;
                     font-weight: bold;
                     font-size: 1.2rem;
+                    color: rgb(167, 167, 167);
                 }
                 .detail-val{
                     display: flex;
@@ -121,6 +168,9 @@ export default {
                     font-size: 0.9rem;
                 }
             }
+        }
+        .noShow{
+            display: none;
         }
         .angle-container{
             display: flex;
@@ -131,11 +181,27 @@ export default {
                 margin-right: 2rem;
                 font-size: 1.2rem;
                 color: gray;
+                transition: .5s;
+            }
+            .fa-angle-double-left:hover{
+                color: $lite-blue;
+            }
+            .space-left{
+                margin-right: 2rem;
+                width: 1.2rem;
             }
             .fa-angle-double-right{
                 margin-left: 2rem;
                 font-size: 1.2rem;
                 color: gray;
+                transition: .5s;
+            }
+            .fa-angle-double-right:hover {
+                color: $lite-blue;
+            }
+            .space-right{
+                margin-left: 2rem;
+                width: 1.2rem;
             }
         }
     }

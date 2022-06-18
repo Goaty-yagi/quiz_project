@@ -6,11 +6,12 @@
             </div>
             <div class="dashboard-container" v-if="$store.state.isLoading==false">
                 <div class="header-flex">
-                    <h1 class='title-white'>ダッシュボード</h1>
+                    <h1 class='title-white'>ダッシュボード
+                        <i @click="handleShowSideBar()" 
+                        class="fas fa-align-justify" :class="{'less-bar':showSideBar==false}"></i>
+                    </h1>
                 </div>
                 <div class="side-bar" :class="{'less-side-bar':showSideBar==false}">
-                    <i @click="handleShowSideBar()" 
-                        class="fas fa-angle-double-left"></i>
                     <div class='space'></div>
                     <div class="option-loop" v-for="(val, key, index) in options"
                         :key="index">
@@ -91,7 +92,9 @@ export default {
 
 
 .dashboard-wrapper{
+    
     width: 100%;
+    height: 100vh;
     margin: 0;
     position: relative;
     // display: flex;
@@ -106,16 +109,8 @@ export default {
         height: 100%;
         transition: .5s;
         z-index: 1;
-        .fa-angle-double-left{
-            position: absolute;
-            right: 0;
-            color: $lite-gray;
-            margin-top: 0.5rem;
-            margin-right: 0.5rem;
-            transition: .5s;
-        }
         .space {
-            height: 1rem;
+            height: 150px;
         }
         .option-loop{
             color: white;
@@ -137,29 +132,44 @@ export default {
         }
     }
     .less-side-bar{
-        width: 50px;
-        .fa-angle-double-left{
-            transform: rotate(180deg);
-           
-        }
+        width: 0px;
     }
-    .main-wrapper{
-        .dashboard-container{
-            // flex-direction: column;
-            // justify-content: center;
-            // align-items: center;
-            margin: 0;
-            width: 100%;
+    .dashboard-container{
+        display: flex;
+        // flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        width: 100%;
+        .header-flex{
+            width: 60%;
+            .title-white{
+                position: relative;
+                .fa-align-justify{
+                    position: absolute;
+                    left:-3rem;
+                    top: 0;
+                    display: inline-block;
+                    color: $lite-gray;
+                    margin-top: 0.7rem;
+                    margin-right: 0.5rem;
+                    transition: .5s;
+                    z-index: 2;
+                }
+                .fa-align-justify.less-bar{
+                    transition: .5s;
+
+                    transform: rotate(180deg);
+                }
+            }
         }
     }
 }
 // @media(max-width: 629px){
-//     .side-bar{
-//         width: 100%;
-//         // margin-bottom: 20%;
-//     }
-//     .less-side-bar{
-//         width: 0px;
+//     .fa-align-justify{
+//         position: absolute;
+//         left:180px;
+//         top: 100px;
 //     }
 // }
 </style>
