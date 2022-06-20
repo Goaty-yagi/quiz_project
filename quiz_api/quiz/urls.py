@@ -8,7 +8,7 @@ from quiz.apis import (
   FieldFilteredListApi, 
   # ModuleFilteredListApi, 
   QuizFilteredListApi, 
-  OneQuestionApi, 
+  # OneQuestionApi, 
   QuizApi,
   QuestionTypeApi,
   QuizNameIdListApi,
@@ -75,7 +75,7 @@ urlpatterns = [
   path('user-status/', UserStatusCreateApi.as_view()),
   path('field-list/', FieldNameIdListApi.as_view()),
   path('status-list/', StatusNameIdListApi.as_view()),
-  path('onequestion/', OneQuestionApi.as_view()),
+  # path('onequestion/', OneQuestionApi.as_view()),
 #   path(r'',include(router.urls)),
 #   path(r'',include(question_router.urls))
 ]

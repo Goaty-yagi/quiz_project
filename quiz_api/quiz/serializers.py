@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.db.models import F
 from django.db.models import Count
 from django.http import Http404
+from django.db import connection
 
 from quiz.models import Quiz, Question, Answer, QuestionType, ParentQuiz, ParentStatus, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
 
@@ -214,6 +215,7 @@ class UserStatusSerializer(serializers.ModelSerializer):
 				user_status = UserStatus.objects.create(
 					**validated_data,
 					is_false=is_false)
+		print('lenseri',len(connection.queries))
 		return user_status
 		
 		

@@ -2,6 +2,7 @@ from django.db.models.query_utils import select_related_descend
 from django.shortcuts import render
 from django.db.models import Prefetch
 from django.db.models import F
+from django.db import connection
 # import django_filters
 from django.db.models import Max
 from itertools import chain
@@ -199,22 +200,31 @@ class StatusNameIdListApi(generics.ListAPIView):
     pagination_class = None
 
 
-class OneQuestionApi(generics.ListAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionListSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['label',]
-    pagination_class = None
-
-
-class UserStatusCreateApi(generics.CreateAPIView):
-    # queryset = UserStatus.objects.all()
-    serializer_class = UserStatusSerializer
-    pagination_class = None
-# class AnswerCountApi(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Answer.objects.all()
-#     serializer_class = AnswerCountSerializer
+# class OneQuestionApi(generics.ListAPIView):
+#     queryset = Question.objects.all()
+#     serializer_class = QuestionListSerializer
+#     filter_backends = [DjangoFilterBackend]
+#     filterset_fields = ['label',]
 #     pagination_class = None
+
+
+# class UserStatusCreateApi(generics.CreateAPIView):
+#     # queryset = UserStatus.objects.all()
+#     serializer_class = UserStatusSerializer
+#     pagination_class = None
+
+class UserStatusCreateApi(APIView):
+
+    def post(self, request, format=None):
+        print('post',request)
+        serializer =  UserStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print('len',len(connection.queries))
+            return Response(serializer.data, status=201)
+        print('not valid')
+        return Response(serializer.errors, status=400)
+
 
 
 class AnswerCountApi(APIView):
