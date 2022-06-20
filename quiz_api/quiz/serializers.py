@@ -252,6 +252,20 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 			"test_take_num",
 			"practice_take_num"]
 
+	def get(self, validated_data):
+		print('IN_QT_serializer',validated_data)
+		# answers = validated_data.pop('answer')
+		# field = validated_data.pop('field')
+		# print('A',answers)
+		# print('F',field[0].parent_status.id)
+		# question = Question.objects.create(**validated_data)
+		# question.field.add(field[0])
+		# question.status.add(field[0].parent_status.id)
+		# print('Q',question,'A',answers)
+		# for answer in answers:
+		# 	Answer.objects.create(question=question, **answer)	
+		return validated_data
+
 
 # here for user-storage purpose
 
@@ -297,9 +311,6 @@ class MyQuestionSerializer(serializers.ModelSerializer):
 		print("create",validated_data)
 		my_quiz = validated_data.pop('my_quiz')
 		question = validated_data.pop('question')
-		# my_question = MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists()
-			
-		# print(my_question)
 		if MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists():
 			my_question = MyQuestion.objects.get(my_quiz=my_quiz,question__id=question.id)
 			my_question.delete()
@@ -307,8 +318,6 @@ class MyQuestionSerializer(serializers.ModelSerializer):
 			return "deleted"
 		else:
 			num = MyQuiz.objects.annotate(Count('my_question'))
-			print("num",int(num.values_list('my_question__count')[0][0]))
-			# print("questionlen", my_quiz.objects.annotate(Count('my_question')))
 			if int(num.values_list('my_question__count')[0][0]) >= my_quiz.max_num:
 				print('max')
 				return Http404

@@ -267,7 +267,6 @@ export default {
             .fa-angle-down{
                 margin-top: 1rem;
             }
-           
         }
         .btn-basegra-white-db-sq{
             margin-top: 0.5rem;

@@ -132,6 +132,14 @@ class UserDetail(generics.RetrieveUpdateAPIView ):
         'quiz_taker__user',
         'quiz_taker__grade',
         'quiz_taker__user_status',
+        'quiz_taker__user_status__status',
+        'my_quiz',
+        'my_quiz__my_question',
+        'my_quiz__my_question__my_quiz',
+        'my_quiz__my_question__question',
+        'my_quiz__my_question__question__question_type',
+        'my_quiz__my_question__question__field',
+        'my_quiz__my_question__question__status'        
         )
         # Prefetch('answer', queryset=BoardAnswer.objects.select_related('user', 'question'), to_attr="user_answer"),        
     serializer_class = UserStrageSerializer

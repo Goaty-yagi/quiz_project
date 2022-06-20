@@ -1,4 +1,3 @@
-from django.db.models import Prefetch
 from django.db.models.query_utils import select_related_descend
 from django.shortcuts import render
 from django.db.models import Prefetch
@@ -15,6 +14,7 @@ from rest_framework.parsers import FileUploadParser
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
+from user.models import User
 from quiz.models import Quiz, Question, Answer, QuestionType, ParentField, UserStatus, ParentQuiz, QuizTaker, MyQuiz, MyQuestion,ParentStatus
 from quiz.serializers import (
     QuizListSerializer, 
@@ -58,7 +58,11 @@ class QuizFilteredListApi(APIView):
 # this is for only filtering specific quiz
     def get(self, request, format=None):
         try:
-            queryset = Question.objects.filter(quiz=request.query_params['quiz'])
+            queryset = Question.objects.filter(quiz=request.query_params['quiz']).prefetch_related(
+                'field',
+                'status',
+                'answer'
+            )
             quiz_num = int(request.query_params['num'])
             question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
             serializer = QuestionListSerializer(question, many=True)
@@ -70,21 +74,25 @@ class QuizFilteredListApi(APIView):
 class FieldFilteredListApi(APIView):
 # this is for only filtering specific field
     def get(self, request, format=None):
-        queryset = Question.objects.filter(field=request.query_params['field'])
+        queryset = Question.objects.filter(field=request.query_params['field']).prefetch_related(
+                'field',
+                'status',
+                'answer'
+            )
         quiz_num = int(request.query_params['num'])
         question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
         serializer = QuestionListSerializer(question, many=True)
         return Response(serializer.data)
 
 
-class ModuleFilteredListApi(APIView):
-# this is for only filtering specific module
-    def get(self, request, format=None):
-        queryset = Question.objects.filter(module=request.query_params['module'])
-        quiz_num = int(request.query_params['num'])
-        question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
-        serializer = QuestionListSerializer(question, many=True)
-        return Response(serializer.data)
+# class ModuleFilteredListApi(APIView):
+# # this is for only filtering specific module
+#     def get(self, request, format=None):
+#         queryset = Question.objects.filter(module=request.query_params['module'])
+#         quiz_num = int(request.query_params['num'])
+#         question = queryset.filter(id__in=pick_random_object(queryset,quiz_num))
+#         serializer = QuestionListSerializer(question, many=True)
+#         return Response(serializer.data)
     
 def pick_random_object(queryset,quiz_num):
     """recive num and queryset which have specific range.
@@ -142,16 +150,18 @@ class QuestionCreateApi(generics.CreateAPIView):
         # # image = dict(''.split(request.query_params['image']))
         # print('image', image,type(request.data),type(image))
 
-class AnswerCreateApi(APIView):
-     def post(self, request, format=None):
-         print('post',request,request.data)
+# class AnswerCreateApi(APIView):
+#      def post(self, request, format=None):
+#          print('post',request,request.data)
     # queryset = Answer.objects.all()
     # serializer_class = AnswerCreateSerializer
     # pagination_class = None
 
 
 class QuizListApi(generics.ListAPIView):
-    queryset = Quiz.objects.all()
+    queryset = Quiz.objects.prefetch_related(
+        'question'
+    )
     serializer_class = QuizListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id',]
@@ -172,7 +182,7 @@ class QuestionDashboardApi(generics.ListAPIView):
 
 
 class QuizNameIdListApi(generics.ListAPIView):
-    queryset = Quiz.objects.all()
+    queryset = Quiz.objects.prefetch_related('name')
     serializer_class = QuizNameIdListSerializer
     pagination_class = None
 
@@ -198,11 +208,7 @@ class OneQuestionApi(generics.ListAPIView):
 
 
 class UserStatusCreateApi(generics.CreateAPIView):
-    queryset = UserStatus.objects.select_related(
-                'quiz_taker', 
-                'status',
-                'grade'
-                )
+    # queryset = UserStatus.objects.all()
     serializer_class = UserStatusSerializer
     pagination_class = None
 # class AnswerCountApi(generics.RetrieveUpdateDestroyAPIView):
@@ -213,7 +219,6 @@ class UserStatusCreateApi(generics.CreateAPIView):
 
 class AnswerCountApi(APIView):
     def patch(self, request):
-        print("ACA",request)
         answer_id = request.query_params['answer']
         question_id = request.query_params['question']
         Question.objects.filter(id=question_id).update(taken_num=F('taken_num') + 1)
@@ -339,7 +344,11 @@ class QuestionFromMyQuestionApi(APIView):
         i = ''.join(f[0])
         id_list = i.split(',')
         # id_list = random.sample(id_list,len(id_list))
-        queryset = Question.objects.filter(id__in=id_list).order_by('?')
+        queryset = Question.objects.prefetch_related(
+            'answer',
+            'field',
+            'status'
+            ).filter(id__in=id_list).order_by('?')
         serializer = QuestionListSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -411,13 +420,27 @@ class QuestionTypeApi(generics.ListAPIView):
 
 
 class QuizTakerApi(generics.ListAPIView):
-    queryset = QuizTaker.objects.all()
+    queryset = QuizTaker.objects.select_related(
+        'user',
+        'grade'
+    ).prefetch_related(
+        'user_status',
+        'user_status__grade',
+        'user_status__status'
+    )
     serializer_class = QuizTakerSerializer
     pagination_class = None
-    
+
 
 class QuizTakerRetrieveApi(generics.RetrieveUpdateDestroyAPIView):
-    queryset = QuizTaker.objects.all()
+    queryset = QuizTaker.objects.select_related(
+        'user',
+        'grade'
+    ).prefetch_related(
+        'user_status',
+        'user_status__grade',
+        'user_status__status'
+    )
     serializer_class = QuizTakerSerializer
     pagination_class = None
     lookup_field = 'id'
@@ -428,9 +451,27 @@ class MyQuizApi(generics.CreateAPIView):
     serializer_class = MyQuizSerializer
 
 
-class MyQuestionApi(generics.CreateAPIView):
-    queryset = MyQuestion.objects.all()
-    serializer_class = MyQuestionSerializer
+class MyQuestionApi(APIView):
+    def post(self, request, format=None):
+        print('post',request)
+        serializer =  MyQuestionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        print('not valid')
+        return Response(serializer.errors, status=400)
+
+    # queryset = MyQuestion.objects.select_related(
+    #     'my_quiz',
+    #     'question'
+    # )
+    # serializer_class = MyQuestionSerializer
+
+    # def get_queryset(request, format=None):
+    #      print('geeet',request)
+    #      return MyQuestion.objects.prefetch_related(
+    #         Prefetch('my_quiz',queryset=MyQuiz.objects.select_related('user'),to_attr='my_quiz_user')
+    #     )
 
 
 # class MyQuestionReadApi(APIView):
