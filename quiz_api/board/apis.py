@@ -59,9 +59,8 @@ class BoardQuestionList(generics.ListAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
@@ -87,16 +86,15 @@ class ViewedOrderedQuestion(generics.ListAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
@@ -317,7 +315,7 @@ class FavoriteQuestionUpdate(generics.RetrieveUpdateDestroyAPIView):
 
 
 class FavoriteQuestionCreate(generics.CreateAPIView):
-    queryset = UserFavoriteQuestion.objects.select_related('user').prefetch_related('question')
+    queryset = UserFavoriteQuestion.objects.all()
     serializer_class = FavoriteQuestionSerializer
 
     
@@ -329,11 +327,13 @@ class FavoriteQuestionCreate(generics.CreateAPIView):
     #     user = User.objects.filter(user=self.request.user)
     #     return BoardQuestion.objects.filter(UID=user)
 
+
 class AnsweredQuestionList(GenericAPIView):
 # get questions from user UID in answer
     pagination_class = PageNumberPagination
     serializer_class = BoardQuestionListSerializer
     queryset = BoardQuestion.objects.prefetch_related(
+        Prefetch("answer",queryset=BoardAnswer.objects.select_related('user').all(),to_attr="answer_user"),
         "tag", 
         "tag__parent_tag",
         "tag__user",
@@ -341,29 +341,31 @@ class AnsweredQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
-        )
+        ).order_by('-on_reply')
     
     def get(self, request, format=None):
         user = request.query_params.getlist("user")
         try:
-            question_queryset = self.queryset.filter(
-                answer__user = user[0],
-            ).distinct().order_by('-on_reply')
+            filtered_question = []
+            question_queryset = [question for question in self.queryset.all() if len(question.answer_user)]
+            for i in question_queryset:
+                for k in i.answer_user:
+                    if k.user.UID == user[0]:
+                        filtered_question.append(i)
             print("oeder",question_queryset)
-            page = self.paginate_queryset(question_queryset)
+            page = self.paginate_queryset(filtered_question)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
             data = result.data
@@ -384,16 +386,15 @@ class TagQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
-        'answer__user',
         'answer__reply',
+        'answer__reply__user',
+        'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
@@ -426,29 +427,26 @@ class favoriteQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
         )
 
     def get(self, request):
-        print("request",request)
+        print("request45",request)
         question_id = request.query_params.getlist("question_id")[0].split(",")
-        print(type(question_id),question_id)
+        print('ids',question_id)
         try:
-            question_queryset  = self.queryset.filter(
-                id__in = question_id
-            ).distinct()
+            question_queryset = [question for question in self.queryset.all() if str(question.id) in question_id]
             page = self.paginate_queryset(question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
@@ -469,29 +467,24 @@ class UserQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
-        )
+        ).order_by('-on_reply','-on_answer')
 
     def get(self, request):
-        print("request",request)
         uid = request.query_params.getlist("uid")[0]
-        print("uid",uid)
         try:
-            user_question_queryset = self.queryset.filter(
-                user__UID=uid
-            ).order_by('-on_reply','-on_answer')
+            user_question_queryset = [question for question in self.queryset.all() if question.user.UID == uid]
             page = self.paginate_queryset(user_question_queryset)
             serializer = self.get_serializer(page, many=True)
             result = self.get_paginated_response(serializer.data)
@@ -506,7 +499,7 @@ class RelatedQuestionList(GenericAPIView):
     and filtered tag_id and solved status. then go to set_random_question function"""
     pagination_class = PageNumberPagination
     serializer_class = BoardQuestionListSerializer
-    queryset = BoardQuestion.objects.prefetch_related(
+    queryset = BoardQuestion.objects.prefetch_related( #cant solve two duplicate
         "tag", 
         "tag__parent_tag",
         "tag__user",
@@ -514,24 +507,24 @@ class RelatedQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
         )
 
     def get(self, request, format=None):
-        print("request",request)
+        print("requestko",request)
         request_tag_list = request.query_params.getlist("tag")
+        print('check',request_tag_list)
         try:
             uid = request.query_params.getlist("uid")[0]
             solved_queryset = self.queryset.exclude(user__UID=uid).filter(
@@ -592,16 +585,15 @@ class SearchQuestionList(GenericAPIView):
         'answer__question',
         'answer__question__user',
         'answer__question__tag',
-        'answer__question__tag__parent_tag',
-        'answer__question__tag__user',
         'answer__reply',
+        'answer__reply__user',
         'answer__user',
         'answer__liked_answer',
         'answer__liked_answer__user',
         'liked_num',
         'liked_num__user',
         'liked_num__question',
-        'liked_num__question__user',
+        # 'liked_num__question__user',
         'liked_num__question__tag',
         ).select_related(
             'user'
@@ -668,16 +660,11 @@ class UserAnswerAndQuestionApi(APIView):
         user_UID = request.query_params['user']
         print(user_UID)
         try:
-            # q = Q()
-            # q.add(Q(on_answer=True),Q.OR)
-            # q.add(Q(on_reply=True),Q.OR)
             question = BoardQuestion.objects.filter(user_id=user_UID).filter(Q(on_answer=True) | Q(on_reply=True)).all()
             answer  = BoardAnswer.objects.filter(
                 user_id = user_UID,
                 on_reply = True
                 )
-            print('got question ', question, answer)
-            print('got answer', answer)
             serializer = AnswerAndReplyOnQuestionSerializer(question, many=True)
             serializer2 = ReplyOnAnswerSerializer(answer, many=True)
             union = list(chain([serializer.data], [serializer2.data]))

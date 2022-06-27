@@ -543,6 +543,7 @@ export default {
             if(state.djangoUser){
                 const questionId = []
                 for(let i of state.djangoUser.favorite_question[0].question){
+                    console.log('GFQQQQQ',i)
                     questionId.push(i)
                 }
                 if(questionId[0]){
