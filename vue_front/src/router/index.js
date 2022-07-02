@@ -19,6 +19,7 @@ import Community from '../views/Community.vue'
 import BoardDetail from '../views/BoardDetail.vue'
 import RelatedQuestion from '../views/board/RelatedQuestion.vue'
 import BoardAccount from '../views/board/BoardAccount.vue'
+import TermsAndConditions from '../views/footer-contents/TermsAndConditions.vue'
 import store from '../store'
 
 const routes = [
@@ -112,6 +113,11 @@ const routes = [
     path: '/policy',
     name: 'Policy',
     component: Policy,
+  },
+  {
+    path: '/terms-and-conditions',
+    name: 'terms-and-conditions',
+    component: TermsAndConditions,
   },
   { 
     path: '/notfound',

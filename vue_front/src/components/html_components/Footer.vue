@@ -19,7 +19,12 @@
                 </div>                
             </div>
         </div>
-        <p class="copy-right">Copyright (c) 2021</p>
+        <div class="social-link">
+            <div class="space">
+            </div>
+            <img @click="twitter" class="social-img" src="@/assets/twitter.png">
+        </div>
+        <p class="copy-right">Copyright (c) 2022</p>
     </footer>
 </template>
 
@@ -28,6 +33,7 @@ import {router} from "/src/main.js"
 export default {
     data(){
         return{
+            tweetUrl:'',
             footerContents:{
                 'ガイドとヘルプ':[
                     'About',
@@ -45,6 +51,12 @@ export default {
                 ]
             }
         }
+    },
+    methods:{
+        twitter(){
+            var shareURL = 'https://twitter.com/intent/tweet?text=' + "ねこJapanese" + "%20%23ねこサンプルコード集" + '&url=' + "URL";  
+            window.open(shareURL)
+        },
     },
 }
 </script>
@@ -94,9 +106,18 @@ export default {
     }
     .copy-right{
         color: $base-white;
-        margin-top: 1rem;
-        padding: 2rem;
+        padding: 1rem;
         
+    }
+    .social-link{
+        .social-img{
+            width: 3rem;
+            transition: .5s;
+        }
+        .social-img:hover{
+            box-shadow: 0.5px 0.5px 10px 2.5px #cbfaed;
+            border-radius: 7px;
+        }
     }
 }
 @media(max-width: 480px){
