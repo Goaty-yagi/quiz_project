@@ -54,7 +54,7 @@
                 </div>
                 <div class="field">
                     <input class='check-box' required type='checkbox' v-model='accept'>
-                    <span class='check-box-text'>・利用規約に同意します。</span>
+                    <span @click='goPolicy()' class='check-box-text'>・利用規約に同意します。</span>
                 </div>
                 <div class='error-form' v-if='passwordError||passwordError2||mailError||nameError||mailInUseError'>
                     <i class="fas fa-exclamation-triangle"></i>
@@ -111,11 +111,11 @@ export default {
         // console.log(this.showButton,this.username,event.target.value)
     },
     computed: {
-    inputType: function () {
-      return this.passType ? "text" : "password";
+        inputType: function () {
+        return this.passType ? "text" : "password";
         },
-    inputType2: function () {
-      return this.passType2 ? "text" : "password";
+        inputType2: function () {
+        return this.passType2 ? "text" : "password";
         }
     },
     watch:{
@@ -207,6 +207,9 @@ export default {
                     return this.countryData[i][i].two_code
                 }
             }
+        },
+        goPolicy(){
+            window.open('/terms-and-conditions/', '_blank');
         }
     },        
 }
@@ -320,6 +323,7 @@ export default {
     }
     .check-box-text{
         color:white;
+        cursor: pointer;
     }
     .error-wwapper{
         position:relative;

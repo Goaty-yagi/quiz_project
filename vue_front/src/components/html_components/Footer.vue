@@ -14,7 +14,7 @@
                     <div class="content-loop"
                     v-for="(content,key,contentIndex) in contents"
                     v-bind:key="contentIndex">
-                        {{ content }}
+                        <p @click="guideAndHelp(content)">{{ content }}</p>
                     </div>
                 </div>                
             </div>
@@ -57,6 +57,11 @@ export default {
             var shareURL = 'https://twitter.com/intent/tweet?text=' + "ねこJapanese" + "%20%23ねこサンプルコード集" + '&url=' + "URL";  
             window.open(shareURL)
         },
+        guideAndHelp(arg) {
+            if(arg == '利用規約') {
+                router.push('/terms-and-conditions/' )
+            }
+        }
     },
 }
 </script>

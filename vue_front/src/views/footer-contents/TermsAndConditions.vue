@@ -19,7 +19,7 @@
                                     <div class="detail-container">
                                         <p>{{ detailindex + 1 }}、</p>
                                         <p v-if='checkObject(detail)'> {{ detail }}</p>
-                                        <div v-if='!checkObject(detail)'>
+                                        <div class="more-detail-container" v-if='!checkObject(detail)'>
                                             <p>{{ detail.detail }}</p>
                                             <div class="fourth-loop" v-for="(md,mdindex) in detail.moreDetail" 
                                             v-bind:key="mdindex">
@@ -253,7 +253,9 @@ export default {
         display: flex;
         justify-content: center;
         .l-container{
-            padding: 1rem;
+            padding: 1.3rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
             .term-loop{
                 .term-title{
                     font-weight: bold;
@@ -263,25 +265,33 @@ export default {
                 }
                 .second-loop{
                     margin-bottom: 0.5rem;
+                    width: 100%;
                     .description-container{
                         display: flex;
+                        text-align:left;
                         .term-description2{
                             .third-loop{
                                 display: flex;
                                 justify-content: center;
                                 .detail-container{
                                     display: flex;
-                                    width: 80%;
-                                    // justify-content: center;
+                                    width: 90%;
+                                    margin-top: 0.5rem;
+                                    text-align:left;
+                                    .more-detail-container{
+                                        .fourth-loop{
+                                            width: 100%;
+                                            display: flex;
+                                            margin-top: 0.5rem;
+                                        }
+                                    }
                                 }
 
                             }
                         }
                     }
-
                 }
             }
-// 
         }
     }
 

@@ -95,7 +95,7 @@ export default {
             this.passType2 = !this.passType2
         },
         goPolicy(){
-            window.open('/policy', '_blank');
+            window.open('/terms-and-conditions/', '_blank');
         }
     }
         
