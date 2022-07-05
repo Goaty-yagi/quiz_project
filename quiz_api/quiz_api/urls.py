@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/v1/', include('djoser.urls')),
     # path('api/v1/', include('djoser.urls.authtoken')),
+    path('api/',include('enquire.urls')),
     path('api/',include('quiz.urls')),
     path('api/',include('user.urls')),
     path('api/',include('log.urls')),

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user',
     'board',
     'log',
+    'enquire',
 
     'nested_admin',
     'rest_framework',
