@@ -38,7 +38,7 @@ export default {
                 'ガイドとヘルプ':[
                     'About',
                     '利用規約',
-                    'ガイドライン',
+                    '個人情報の取り扱い',
                     '問い合わせ',
                     'ヘルプ'
                 ],
@@ -60,6 +60,8 @@ export default {
         guideAndHelp(arg) {
             if(arg == '利用規約') {
                 router.push('/terms-and-conditions/' )
+            } else if(arg == '個人情報の取り扱い') {
+                router.push('/privacy' )
             }
         }
     },

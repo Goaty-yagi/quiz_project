@@ -21,6 +21,8 @@ import RelatedQuestion from '../views/board/RelatedQuestion.vue'
 import BoardAccount from '../views/board/BoardAccount.vue'
 import TermsAndConditions from '../views/footer-contents/TermsAndConditions.vue'
 import Privacy from '../views/footer-contents/Privacy.vue'
+import Enquire from '../views/footer-contents/Enquire.vue'
+
 import store from '../store'
 
 const routes = [
@@ -125,6 +127,11 @@ const routes = [
     name: 'Privacy',
     component: Privacy,
   },
+  {
+    path: '/enquire',
+    name: 'Enquire',
+    component: Enquire,
+  },
   { 
     path: '/notfound',
     name: 'NotFound',
@@ -152,6 +159,11 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+const scrollTop = (() => {  
+    window.scrollTo({
+        top: 0,
+    });
+})
 
 
 // there are 6 types of way, 
@@ -168,6 +180,7 @@ const router = createRouter({
 // 6 can't go quiz-test if took already
 
 router.beforeEach((to, from, next) => {
+    scrollTop()
     // this is for 1
     console.log("router",!store.state.signup.emailVerified&&store.state.signup.registeredUser,store.state.signup.registeredUser)
     if (to.matched.some(record => record.meta.login) && !store.state.signup.djangoUser) {
