@@ -28,6 +28,8 @@
         v-if="options.quizInfo"/>
         <Logger
         v-if="options.logger"/>
+        <Enquire
+        v-if="options.enquire"/>
     </div>
 </template>
 
@@ -35,12 +37,14 @@
 import CreateQuizQuestion from '@/components/dashboard/CreateQuizQuestion.vue'
 import QuizInfo from '@/components/dashboard/QuizInfo.vue'
 import Logger from '@/components/dashboard/Logger.vue'
+import Enquire from '@/components/dashboard/Enquire.vue'
 
 export default {
     components: {
         CreateQuizQuestion,
         QuizInfo,
-        Logger
+        Logger,
+        Enquire 
     },
     data(){
         return{
@@ -49,7 +53,8 @@ export default {
             options:{
                 'quizInfo':true,
                 'createQuiz':false,
-                'logger': false
+                'logger': false,
+                'enquire': false
                 }
                 
         }
@@ -114,9 +119,10 @@ export default {
         }
         .option-loop{
             color: white;
-            margin-top: 0.5rem;
+            // margin-top: 0.5rem;
             .each-option{
-                margin-top: 1rem;
+                padding: 1.3rem 0;
+                // margin-top: 1rem;
                 transition: .5s;
                 font-weight: bold;
             }

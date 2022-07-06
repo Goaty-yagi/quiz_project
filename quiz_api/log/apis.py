@@ -26,7 +26,12 @@ class LoggerPatchApi(APIView):
     def patch(self, request):
         print('patch',request)
         upd_loggers = []
-        log_list = [i for i in request.query_params['logList'].strip("[]") if i is not ',']      
+        # f = [i.strip("[]") for i in request.query_params.getlist("field")if i is not ',']
+        #     i = ''.join(f[0])
+            # field_list = i.split(',')
+        log_list = request.query_params['logList'].split()
+        log_list = ''.join(log_list[0])
+        log_list = log_list.split(',')
         logger_list = Logger.objects.filter(id__in=log_list)
         for i in logger_list:
             i.checked = True

@@ -96,7 +96,9 @@ export default {
         },
         async patchLogger(){
             this.$store.commit('setIsLoading', true)
-            await axios
+            console.log(this.logIdList)
+            if(this.logIdList.length) {
+                await axios
                 .patch(`/api/loggers-patch?logList=${this.logIdList}`)
                 .catch(e => {
                     let logger = {
@@ -110,6 +112,7 @@ export default {
                 this.$store.commit('setIsLoading', false)
                 router.push({ name: 'ConnectionError' })
                 })
+            }
             this.$store.commit('setIsLoading', false)
         },
     },
@@ -162,10 +165,13 @@ export default {
                     color: rgb(167, 167, 167);
                 }
                 .detail-val{
-                    display: flex;
                     font-weight: bold;
                     margin-left: 0.5rem;
                     font-size: 0.9rem;
+                    width: 90%;
+                    max-width: 90%;
+                    // margin: 0 1rem;
+                    overflow-wrap: break-word;
                 }
             }
         }
