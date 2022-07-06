@@ -14,6 +14,12 @@ class EnquireCreateApi(generics.CreateAPIView):
     queryset = Enquire.objects.all()
 
 
+class EnquireListApi(generics.ListAPIView):
+    pagination_class = PageNumberPagination
+    serializer_class = EnquireSerializer
+    queryset = Enquire.objects.all()
+
+
 class EnquireDetailApi(generics.RetrieveUpdateDestroyAPIView):
     pagination_class = PageNumberPagination
     serializer_class = EnquireSerializer

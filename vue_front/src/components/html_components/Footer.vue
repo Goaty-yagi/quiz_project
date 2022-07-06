@@ -62,6 +62,8 @@ export default {
                 router.push('/terms-and-conditions/' )
             } else if(arg == '個人情報の取り扱い') {
                 router.push('/privacy' )
+            } else if(arg == '問い合わせ') {
+                router.push('/enquire' )
             }
         }
     },
