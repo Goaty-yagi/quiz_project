@@ -35,15 +35,13 @@ export default {
         'currentTagIndex',
         'nextUrl',
         'noMoreUrl',
-        'urlForPatch',
+        'patchUrl',
     ],
     data(){
         return{
             errorMessage:"components/dashboard/LoggerDetail",
             DetailTagIndex: this.currentTagIndex,
-            logIdList: [],
-            nextURL: this.nextUrl,
-            values: this.loggers
+            logIdList: []
         }
     },
     mounted(){
@@ -70,8 +68,9 @@ export default {
                 this.DetailTagIndex += 1
                 this.ckeckedTrue()
             } else if (this.nextUrl&&this.DetailTagIndex==this.loggers.results.length-1){
-                this.getNext()
-                this.DetailTagIndex += 1                
+                this.getNextLogger(this.ckeckedTrue())
+                this.DetailTagIndex += 1
+                
             }
         },
         ckeckedTrue() {
@@ -86,10 +85,6 @@ export default {
             this.DetailTagIndex -= 1
             this.ckeckedTrue()
         },
-        getNextUrlFromChild(url) {
-            console.log('GNUFC',url)
-            this.$emit('getNextUrlFromChild',url)
-        },
         getNextLogger() {
             this.$emit('getNextLogger')
         },
@@ -100,32 +95,6 @@ export default {
             } else {
                 return false
             }
-        },
-        async getNext() {
-            console.log('next')
-            await axios
-                .get(this.nextURL)
-                .then(response => {
-                    console.log(response.data.results)
-                    response.data.results.forEach(e => {
-                        this.values.results.push(e)
-                    })
-                    this.nextURL = response.data.next
-                    this.getNextUrlFromChild(this.nextURL)
-                    this.ckeckedTrue()
-                    })
-                .catch(e => {
-                    let logger = {
-                    message: this.errorMessage + 'getLogger',
-                    path: window.location.pathname,
-                    actualErrorName: e.name,
-                    actualErrorMessage: e.message,
-                }
-                this.$store.commit('setLogger',logger)
-                this.$store.commit("checkDjangoError",e.message)
-                this.$store.commit('setIsLoading', false)
-                router.push({ name: 'ConnectionError' })
-                })
         },
         async patchLogger(){
             this.$store.commit('setIsLoading', true)

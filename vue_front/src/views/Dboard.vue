@@ -10,6 +10,9 @@
                         <i @click="handleShowSideBar()" 
                         class="fas fa-align-justify" :class="{'less-bar':showSideBar==false}"></i>
                     </h1>
+                    <h2 class="current-option">
+                        {{ currentOption }}
+                    </h2>
                 </div>
                 <div class="side-bar" :class="{'less-side-bar':showSideBar==false}">
                     <div class='space'></div>
@@ -149,6 +152,9 @@ export default {
         width: 100%;
         .header-flex{
             width: 60%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             .title-white{
                 position: relative;
                 .fa-align-justify{
@@ -167,6 +173,14 @@ export default {
 
                     transform: rotate(180deg);
                 }
+            }
+            .current-option{
+                margin-top: 0.5rem;
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: white;
+                border: solid $lite-gray;
+                padding: 0 1rem;
             }
         }
     }

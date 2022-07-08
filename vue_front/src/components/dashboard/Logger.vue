@@ -42,6 +42,7 @@
                     :currentTagIndex="currentTagIndex"
                     :nextUrl="nextUrl"
                     :noMoreUrl="noMoreUrl"
+                    @getNextUrlFromChild="getNextUrlFromChild"
                     @logDetailFalse="logDetailFalse"
                     @getNextLogger="getNextLogger"             
                     />
@@ -76,6 +77,7 @@ export default {
     },
     mounted(){
         this.getLogger()
+        console.log('moubted',this.$refs.child)
     },
     computed:{
         user(){
@@ -131,7 +133,11 @@ export default {
                 .get(this.nextUrl)
                 .then(response => {
                     console.log(response.data.results)
-                    this.loggers.results.push(response.data.results[0])
+                    response.data.results.forEach(e => {
+                        this.loggers.results.push(e)
+                    })
+                    console.log('refs',this.$refs.child)
+                    // this.$refs.child.ckeckedTrue()
                     console.log('n',response.data.next)
                     this.nextUrl = response.data.next
                     })
@@ -163,6 +169,10 @@ export default {
         logDetailTrue(index) {
             this.currentTagIndex = index
             this.logDetail = true
+        },
+        getNextUrlFromChild(url){
+            console.log('gotURL',url)
+            this.nextUrl = url
         }
     }
 }
