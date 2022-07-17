@@ -2,7 +2,6 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SecureLS from "secure-ls";
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import {router} from "../main.js"
 import  signup  from './modules/signup'
 import  board  from './modules/board'
@@ -154,6 +153,7 @@ export default createStore({
     },
     fixedScrollTrue(state){
       state.fixedScroll = true
+      console.log("scroll-status-changed",state.fixedScroll)
     },
     fixedScrollFalse(state){
       state.fixedScroll = false

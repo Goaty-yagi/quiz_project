@@ -1,5 +1,5 @@
 <template>
-    <div class="logger-wrapper" :class="{'laoding-center':$store.state.isLoading}">
+    <div class="logger-wrapper">
         <div  :class="{'notification-blue':$store.state.board.notifications.reply}">
             <div class="notification-text">
                 
@@ -8,16 +8,13 @@
         <div class="main-wrapper">
             <div class="main-container" >
                 <div class="logger-header">
-                    <p>新しいログ{{  }}件</p>
-                    <!-- <p class="title-white">My-Quiz</p>
-                    <p class="register">登録数{{ length }} / {{myQuiz.max_num}}</p>
-                    <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p> -->
+                    
                 </div>
                 <!-- {{ loggers }} -->
                 <div class="logger-container" v-if="$store.state.isLoading==false">
                     <div class="no-my-quiz" v-if="!loggers.results">
                         <div class="no-quiz">
-                            ログはありません。<br>
+                            問い合わせはありません。<br>
                         </div>
                     </div>
                     <div class=logger-loop @click="logDetailTrue(logindex)" v-for="(log,logindex) in loggers.results"
@@ -42,6 +39,7 @@
                     :currentTagIndex="currentTagIndex"
                     :nextUrl="nextUrl"
                     :noMoreUrl="noMoreUrl"
+                    :urlForPatch="urlForPatch"
                     @getNextUrlFromChild="getNextUrlFromChild"
                     @logDetailFalse="logDetailFalse"
                     @getNextLogger="getNextLogger"             
@@ -73,6 +71,7 @@ export default {
             nextUrl: '',
             loading: false,
             noMoreUrl: false,
+            urlForPatch: '/api/enquire-patch?logList='
         }
     },
     mounted(){

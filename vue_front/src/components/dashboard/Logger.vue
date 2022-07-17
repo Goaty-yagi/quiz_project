@@ -8,7 +8,7 @@
         <div class="main-wrapper">
             <div class="main-container" >
                 <div class="logger-header">
-                    <p>新しいログ{{  }}件</p>
+                    <!-- <p>新しいログ{{  }}件</p> -->
                     <!-- <p class="title-white">My-Quiz</p>
                     <p class="register">登録数{{ length }} / {{myQuiz.max_num}}</p>
                     <p class="max">(最大 {{myQuiz.max_num}} 個まで登録できます)</p> -->
@@ -42,6 +42,7 @@
                     :currentTagIndex="currentTagIndex"
                     :nextUrl="nextUrl"
                     :noMoreUrl="noMoreUrl"
+                    :urlForPatch="urlForPatch"
                     @getNextUrlFromChild="getNextUrlFromChild"
                     @logDetailFalse="logDetailFalse"
                     @getNextLogger="getNextLogger"             
@@ -73,6 +74,7 @@ export default {
             nextUrl: '',
             loading: false,
             noMoreUrl: false,
+            urlForPatch: '/api/loggers-patch?logList='
         }
     },
     mounted(){

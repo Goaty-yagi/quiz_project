@@ -28,6 +28,9 @@
 </template>
 
 <script>
+// this is common componest to show detail.
+// copy logger and make a new vue file to be pasted.
+// change the values and url for api request and patch
 import axios from 'axios';
 export default {
     props:[
@@ -49,10 +52,13 @@ export default {
     mounted(){
         this.ckeckedTrue()
         this.$store.commit('showModalTrue')
+        this.$store.commit('fixedScrollTrue')
         console.log('mounted at detail',this.nextUrl)
     },
     beforeUnmount(){
         console.log('BU')
+        this.$store.commit('showModalFalse')
+        this.$store.commit('fixedScrollFalse')
         this.patchLogger()
     },
     computed:{
@@ -87,7 +93,6 @@ export default {
             this.ckeckedTrue()
         },
         getNextUrlFromChild(url) {
-            console.log('GNUFC',url)
             this.$emit('getNextUrlFromChild',url)
         },
         getNextLogger() {
@@ -133,7 +138,7 @@ export default {
             if(this.logIdList.length) {
                 // let a = '/api/loggers-patch?logList='
                 await axios
-                .patch(`/api/loggers-patch?logList=${this.logIdList}`)
+                .patch(this.urlForPatch + this.logIdList)
                 .catch(e => {
                     let logger = {
                     message: this.errorMessage + 'patchLogger',

@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-wrapper" >
+    <div class="dashboard-wrapper" :class="{'scroll-fixed':$store.state.fixedScroll,}">
         <div class="">
             <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
                 <div class="lds-dual-ring"></div>
@@ -53,6 +53,7 @@ export default {
         return{
             showSideBar: true,
             currentOption:'quizInfo',
+            // fixedScroll: this.$store.state.fixedScroll,
             options:{
                 'quizInfo':true,
                 'createQuiz':false,
@@ -63,10 +64,12 @@ export default {
         }
     },
     mounted(){
-        console.log('mounted at dashboard',this.showSideBar)
+        console.log('mounted at dashboard')
     },
     conoputed:{
-
+        // fixedScroll(){
+        //     return this.$store.getters.fixedScroll
+        // },
     },
     methods:{
         handleShowSideBar(){
@@ -97,14 +100,12 @@ export default {
 <style scoped lang="scss">
 @import "style/_variables.scss";
 
-
-
 .dashboard-wrapper{
     
     width: 100%;
-    height: 100vh;
+    // height: 100vh;
     margin: 0;
-    position: relative;
+    // position: relative;
     // display: flex;
     // justify-content: center;
     .side-bar{

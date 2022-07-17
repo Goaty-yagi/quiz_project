@@ -92,6 +92,8 @@ body{
 // }
 .scroll-fixed{
     position: fixed;
+    background: cover;
+    height: 100vh;
     // overflow-x: hidden
 }
 // this is for loading bar centered

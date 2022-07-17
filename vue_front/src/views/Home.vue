@@ -16,7 +16,7 @@
             <div v-if="!showCompo" class='home-main-wrapper'>
                 <div class="home-hero">
                     <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
-                    <img @click="testClick" class='hero-image' src="@/assets/logo.png">
+                    <img @click="testClick" src="@/assets/logo-with-logo.png">
                     <div class="hero-paragraph-wrapper">
                         <div class="paragraph-container">
                             <p class="hero-paragraph">自分のレベルに合った問題をクイズ形式で
@@ -251,6 +251,7 @@ export default {
         .home-main-wrapper{
             display: flex;
             .home-hero{
+                width: 100%;
                 margin: 1rem;
                 .hero-title{
                     border-top: 6px solid $base-color;
@@ -269,9 +270,9 @@ export default {
                     color: white;
 
                 }
-                .hero-image{
-                    width: 100px;
-                }
+                // img{
+                //     width: 100px;
+                // }
                 
                 .hero-paragraph-wrapper{
                     color: $back-white;
@@ -287,6 +288,7 @@ export default {
                         }
                         .hero-image{
                             flex-basis: 60%;
+                            width: 10%;
                         }
                         .fa-comments{
                             font-size: 6rem;
