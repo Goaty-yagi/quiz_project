@@ -55,6 +55,7 @@ export default {
             title: '',
             discription:'',
             uuid:uuid.v1(),
+            errorMessage: 'components/board/Comfirm',
         }
     },
     mounted(){
@@ -78,6 +79,17 @@ export default {
                     tag: this.getTagId()
                 },
                 
+            })
+            .catch((e) => {
+                let logger = {
+                    message: this.errorMessage + " publish",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             })
             // this.$emit('handleNotifications')
             this.$emit('getDetail',this.uuid)

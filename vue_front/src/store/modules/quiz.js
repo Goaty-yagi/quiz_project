@@ -32,6 +32,7 @@ let getDefaultState = () => {
         quiz:[],
         quizNameId:'',
         fieldNameId:'',
+        questionTypeId:'',
         statusNameId:'',
         randomURL:'',
         test:null,
@@ -54,6 +55,7 @@ export default {
         statusNameId:(state) => state.statusNameId,
         gradeForConvert:(state) => state.gradeForConvert,
         currentQuizMode:(state) => state.currentQuizMode,
+        questionTypeId:(state) => state.questionTypeId,
         quizTaker(state, getters, rootState){
             try{
                 return rootState.signup.djangoUser.quiz_taker[0].id
@@ -137,6 +139,9 @@ export default {
         setStatusNameId(state, payload){
             state.statusNameId = payload
         },
+        setQuestionTypeId(state, payload){
+            state.questionTypeId = payload
+        },
         getUserStatusInfo(state, payload){
             state.userStatusDict.status = payload.status
             // state.userStatusDict.grade = payload.grade
@@ -197,47 +202,107 @@ export default {
     },
     actions:{
         async getquestions({ state, commit,getters }){
-            console.log('action2',state.quizID,state.level)
-            state.questions = []
-            state.quiz = []
-            commit('setIsLoading', true, {root:true})
-            if(state.questionField[0]){
-                var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
-            }else{
-                var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}`)
+            try{
+                state.questions = []
+                state.quiz = []
+                commit('setIsLoading', true, {root:true})
+                if(state.questionField[0]){
+                    var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}&field=${state.questionField}`)
+                }else{
+                    var response = await axios.get(`/api/quizzes-questions/?quiz=${state.quizID}&num=${state.numOfQuiz}`)
+                }
+                commit('setQuizTakerID',getters.quizTaker)
+                commit('getQuiz',response.data[0])
+                commit('setQuizID',response.data[0].name)
+                response.data.shift()
+                commit('getRandomQuestion',response.data)
+                commit('setQuestions',response.data);
+                commit('setIsLoading', false,{root:true})
+            } catch(e) {
+                let logger = {
+                    message: "in store/quiz.getquestions. couldn't get questions",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
             }
-            console.log(getters.quizTaker)
-            commit('setQuizTakerID',getters.quizTaker)
-            commit('getQuiz',response.data[0])
-            commit('setQuizID',response.data[0].name)
-            response.data.shift()
-            commit('getRandomQuestion',response.data)
-            commit('setQuestions',response.data);
-            commit('setIsLoading', false,{root:true})
         },
         async getQuizNameId({ state, commit }){
             if(state.quizNameId==false){
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get("/api/quizzes-name-id/")
+                let response = await axios
+                .get("/api/quizzes-name-id/")
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getQuizNameId. couldn't get QuizNameId",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 commit('setQuizNameId',response.data)
-                console.log(state.quizNameId)
                 commit('setIsLoading', false,{root:true})
             }
         },
         async getFieldNameId({ state, commit }){
             if(state.fieldNameId==false){
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get("/api/field-list/")
+                let response = await axios
+                .get("/api/field-list/")
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getFieldNameId. couldn't get FieldNameId",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 commit('setFieldNameId',response.data)
-                console.log(state.fieldNameId)
                 commit('setIsLoading', false,{root:true})
             }
         },
         async getStatusNameId({ state, commit }){
             if(state.statusNameId==false){
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get("/api/status-list/")
+                let response = await axios
+                .get("/api/status-list/")
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getStatusNameId. couldn't get StatusNameId",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 commit('setStatusNameId',response.data)
+                commit('setIsLoading', false,{root:true})
+            }
+        },
+        async getQuestionTypeId({ state, commit }){
+            console.log('question-type1')
+            if(state.questionTypeId==false){
+                commit('setIsLoading', true, {root:true})
+                let response = await axios
+                .get("/api/question-types")
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getQuestionTypeId. couldn't get QuestionTypeId",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
+                commit('setQuestionTypeId',response.data)
                 commit('setIsLoading', false,{root:true})
             }
         },
@@ -248,7 +313,18 @@ export default {
                 // quiz_taker exist
                 console.log('true')
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get(`/api/quizzes-tests/?quiz=${state.quizID}&level=${state.level}`)
+                let response = await axios
+                .get(`/api/quizzes-tests/?quiz=${state.quizID}&level=${state.level}`)
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getTestQuestions-first. couldn't get TestQuestions",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 commit('getQuiz',response.data[0])
                 commit('setQuizTakerID',getters.quizTaker)
                 commit('setQuizID',response.data[0].name)
@@ -259,7 +335,18 @@ export default {
             }else{
                 // first questions in init
                 commit('setIsLoading', true, {root:true})
-                let response = await axios.get(`/api/quizzes-tests/?quiz=4&level=${state.level}`)
+                let response = await axios
+                .get(`/api/quizzes-tests/?quiz=4&level=${state.level}`)
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.getTestQuestions-second. couldn't get TestQuestions",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 commit('getQuiz',response.data[0])
                 response.data.shift()
                 commit('getRandomQuestion',response.data)
@@ -271,7 +358,18 @@ export default {
             // commit('setIsLoading', true, {root:true})
             commit('setAnswerAndQuestionID',payload)
             if(state.countUpDict.questionType!=4){
-                await axios.patch(`/api/answers-count/?answer=${state.countUpDict.answerID}&question=${state.countUpDict.questionID}`)
+                await axios
+                .patch(`/api/answers-count/?answer=${state.countUpDict.answerID}&question=${state.countUpDict.questionID}`)
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/quiz.countUpAnswerAndQuestion. couldn't countUp AnswerAndQuestion",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
             }
             // commit('setIsLoading', false,{root:true})
             
@@ -290,6 +388,16 @@ export default {
                     is_false: state.userStatusDict.isFalse,
                 }
             })
+            .catch((e) => {
+                let logger = {
+                    message: "in store/quiz.userStatusPost. couldn't post userStatus",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
+            });
         },
         async createAndDeleteMyQuiz({ state , commit }, payload){
             console.log("inMY",payload)
@@ -301,6 +409,16 @@ export default {
                     question: payload.question
                 }
             })
+            .catch((e) => {
+                let logger = {
+                    message: "in store/quiz.createAndDeleteMyQuiz. couldn't create And Delete MyQuiz",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
+            });
         },
         async convertGradeFromIntToIDForNewUser({ state , dispatch, commit }, payload){
             if(!state.quizNameId){

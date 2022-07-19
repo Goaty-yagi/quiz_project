@@ -56,6 +56,10 @@ export default{
     MobileHeader,
     ConnectionError
   },
+  mounted(){
+    console.log('mounted-app')
+    this.unko()
+  },
   methods:{
     storeReset(){
           this.$store.commit('reset')
@@ -67,6 +71,15 @@ export default{
     },
     handleShowSent(){
       this.showsent = true
+    },
+    unko() {
+      // document.addEventListener('wrapper', function(){
+
+      // ページの表示状態が変わったときに実行
+      document.addEventListener("visibilitychange", function() {
+        console.log('changed',document.visibilityState);
+      // });
+    });
     }
   }
 }

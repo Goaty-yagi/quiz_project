@@ -331,8 +331,16 @@ export default {
                     //     this.$store.commit('setIsLoading', false)
                     // }
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(e => {
+                    let logger = {
+                    message: "in Community/getDetail. couldn't get Detail-question",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             })
             // this.$store.commit('setIsLoading', false)
         },
@@ -348,6 +356,18 @@ export default {
                         data: {
                             on_reply: false,
                         },
+                    })
+                    // if error happenes, delete catch part
+                    .catch(e =>{
+                        let logger = {
+                            message: "in Community/PatchOnReplay. couldn't patch onReplay",
+                            path: window.location.pathname,
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
+                        }
+                        this.$store.commit('setLogger',logger)
+                        this.$store.commit('setIsLoading', false)
+                        router.push({ name: 'ConnectionError' })
                     })
                     this.$store.dispatch('getDjangoUser')
                     this.$store.dispatch('getAnsweredQuestion')
@@ -383,16 +403,22 @@ export default {
                     var url = `/api/board/question/filter-list?tag=${this.questionTags[0]}&tag=${this.questionTags[1]}&tag=${this.questionTags[2]}`
                 }
             }
-            try{
-                await axios.get(url)
-                    .then(response => {
-                    this.relatedQuestion = response.data
-                    })
-                }
-            catch{(error => {
-                    console.log(error)
-            })}
-            console.log('after-try',this.relatedQuestion)
+            await axios
+                .get(url)
+                .then(response => {
+                this.relatedQuestion = response.data
+                })
+                .catch(e => {
+                    let logger = {
+                        message: "in Community/getRelatedQuestion. couldn't get RelatedQuestion",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
+                })
             this.$store.commit('setRelatedQuestion', this.relatedQuestion.results)
             this.deleteSameQuestion()
             this.makeRandomSlicedArray()
@@ -406,6 +432,17 @@ export default {
                     user: this.$store.state.signup.user.uid,
                     question: [this.question.id]
                 },
+            })
+            .catch(e => {
+                let logger = {
+                    message: "in Community/createFavorite. couldn't create Favorite",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             })
         },
         handleAddedFavorite(){
@@ -426,6 +463,17 @@ export default {
                         user: this.$store.state.signup.user.uid,
                         tag: this.question.tag[i].id
                         },  
+                    })
+                    .catch(e => {
+                        let logger = {
+                            message: "in Community/createFavorite. couldn't increase ViewedNum",
+                            path: window.location.pathname,
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
+                        }
+                        this.$store.commit('setLogger',logger)
+                        this.$store.commit('setIsLoading', false)
+                        router.push({ name: 'ConnectionError' })
                     })
                 }
             }
@@ -598,67 +646,85 @@ export default {
                     user: this.checkedLikedUserList,
                     liked_num: this.liked_num
                 })
-                console.log('done')
+                .catch(e => {
+                    let logger = {
+                        message: "in Community/createFavorite. couldn't countUp Liked",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
+                })
             }
         },
         async questionPatch(){
             // patch view count_up and on_answer
             console.log("inPatch-question")
             if(this.user){
-                console.log("patch Question",this.questionUserBoolean,this.question.on_answer,this.question.on_reply,this.question.user.UID,this.user.UID)
-                if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.on_reply==true&&this.question.user.UID==this.user.UID){
-                    console.log('count', this.questionSlug)
-                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
-                        viewed: this.viewed + 1,
-                        on_answer: false,
-                        on_reply: false
-                    })
-                    this.$store.dispatch('getDjangoUser')
-                    this.$store.dispatch('getAnsweredQuestion')
-                    console.log('done patch 2')
-                }
-                else if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
-                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
-                        viewed: this.viewed + 1,
-                        on_answer: false
-                    })
-                    this.$store.dispatch('getDjangoUser')
-                    this.$store.dispatch('getAnsweredQuestion')
-                    console.log('done patch answer')
-                }
-                else if(!this.questionUserBoolean&&this.question.on_reply&&this.question.user.UID==this.user.UID){
-                    console.log("in_reply")
-                    await axios.patch(`/api/board/question/${this.questionSlug}`,{
-                        viewed: this.viewed + 1,
-                        on_reply: false
-                    })
-                    this.$store.dispatch('getDjangoUser')
-                    this.$store.dispatch('getAnsweredQuestion')
-                    console.log('done patch reply')
-                }
-                else if(this.questionUserBoolean == false){
-                    axios.patch(`/api/board/question/${this.questionSlug}`,{
-                        viewed: this.viewed + 1
-                    })
-                    console.log('done patch count')
+                try{
+                    const url = `/api/board/question/${this.questionSlug}`
+                    if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.on_reply==true&&this.question.user.UID==this.user.UID){
+                        console.log('count', this.questionSlug)
+                        await axios.patch(url,{
+                            viewed: this.viewed + 1,
+                            on_answer: false,
+                            on_reply: false
+                        })
+                        this.$store.dispatch('getDjangoUser')
+                        this.$store.dispatch('getAnsweredQuestion')
+                        console.log('done patch 2')
+                    }
+                    else if(this.questionUserBoolean == false&&this.question.on_answer==true&&this.question.user.UID==this.user.UID){
+                        await axios.patch(url,{
+                            viewed: this.viewed + 1,
+                            on_answer: false
+                        })
+                        this.$store.dispatch('getDjangoUser')
+                        this.$store.dispatch('getAnsweredQuestion')
+                        console.log('done patch answer')
+                    }
+                    else if(!this.questionUserBoolean&&this.question.on_reply&&this.question.user.UID==this.user.UID){
+                        console.log("in_reply")
+                        await axios.patch(url,{
+                            viewed: this.viewed + 1,
+                            on_reply: false
+                        })
+                        this.$store.dispatch('getDjangoUser')
+                        this.$store.dispatch('getAnsweredQuestion')
+                        console.log('done patch reply')
+                    }
+                    else if(this.questionUserBoolean == false){
+                        axios.patch(url,{
+                            viewed: this.viewed + 1
+                        })
+                        console.log('done patch count')
+                    }
+                } catch (e){
+                    let logger = {
+                        message: "in Community/createFavorite. couldn't patch question",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
                 }
             }
         },
         makeAnswerDict(){
             // liked_answer start from here to make each answer dict
             // to hold information
-            console.log("in make dict",this.allAnswer)
             for(let answer of this.allAnswer){
-                console.log(answer,'id',answer.id)
                 this.answerDict[answer.id] = {
                     "liked_id":answer.liked_answer[0].id,
                     "liked_num":answer.liked_answer[0].liked_num,
                     "addedAnswerLiked":false,
                     "likedUsers":[answer.liked_answer[0].user]
                 }
-                console.log("oneloop done")
             }
-            console.log('answer-dict',this.answerDict)
             this.checkUserLiked()
         },
         addAnsweerLikedNum(answerId){
@@ -668,20 +734,28 @@ export default {
                 this.answerDict[answerId].liked_num += 1
                 this.answerDict[answerId].addedAnswerLiked = true
                 this.answerDict[answerId].likedUsers[0].push(this.$store.state.signup.user.uid)
-                console.log("is addliked",this.answerDict)
                 this.countUpLikedAnswer(answerId)
             }else{
                 this.handleShowNotLogin()
             }
         },
         countUpLikedAnswer(answerId){
-            console.log("countUpLikedAnswer")
-                axios.patch(`/api/board/answer-liked/${this.answerDict[answerId].liked_id}/`,
-                {
-                    user: this.answerDict[answerId].likedUsers[0],
-                    liked_num: this.answerDict[answerId].liked_num
-                })
-                console.log('done')
+            axios.patch(`/api/board/answer-liked/${this.answerDict[answerId].liked_id}/`,
+            {
+                user: this.answerDict[answerId].likedUsers[0],
+                liked_num: this.answerDict[answerId].liked_num
+            })
+            .catch(e => {
+                let logger = {
+                    message: "in Community/countUpLikedAnswer. couldn't countUp LikedAnswer",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
+            })
         },
         handleShowEmailVerified(){
             console.log('V')

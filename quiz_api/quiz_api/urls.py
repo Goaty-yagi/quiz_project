@@ -7,8 +7,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/v1/', include('djoser.urls')),
     # path('api/v1/', include('djoser.urls.authtoken')),
+    path('api/',include('enquire.urls')),
     path('api/',include('quiz.urls')),
     path('api/',include('user.urls')),
+    path('api/',include('log.urls')),
     path('api/board/',include('board.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

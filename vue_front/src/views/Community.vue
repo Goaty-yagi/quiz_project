@@ -273,17 +273,23 @@ export default {
                 .get('/api/board/question/list')
                 .then(response => {
                     this.temporaryQuestion = response.data
-                    // this.next = response.data.next
-                    // document.title = this.product.name + ' | Djackets'
                 })
-                .catch(error => {
-                    console.log(error)
-                })
+                .catch(e => {
+                let logger = {
+                message: "in Community/getQuestio. couldn't get Question",
+                path: window.location.pathname,
+                actualErrorName: e.name,
+                actualErrorMessage: e.message,
+            }
+            this.$store.commit('setLogger',logger)
+            this.$store.commit('setIsLoading', false)
+            router.push({ name: 'ConnectionError' })
+            })
             this.$store.commit('setIsLoading', false)
             this.getParentTag()
         },
         async getAdditionalQuestion(next){
-            if(next!=null){
+            if(next!=null) {
                 await axios
                 .get(next)
                 .then(response => {
@@ -297,8 +303,16 @@ export default {
                         this.scrollBottom = false
                     }
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(e => {
+                    let logger = {
+                    message: "in Community/getAdditionalQuestion. couldn't get EdditionalQuestion",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
                 })
             }
         },
@@ -309,8 +323,16 @@ export default {
                     let parentTags = response.data
                     this.getParentTagDict(parentTags)
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(e => {
+                    let logger = {
+                        message: "in Community/getParentTag. couldn't get ParentTag",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
                 })
         },
         handleOnAnswerOrReply(){
@@ -328,8 +350,16 @@ export default {
                     this.questionHandler("search")
                     console.log("status changed to :",this.showQuestionStatus.search)
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch(e => {
+                    let logger = {
+                        message: "in Community/getSearchQuestion. couldn't get SearchQuestion",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
                 })
             this.$store.commit('setIsLoading', false)
         },          

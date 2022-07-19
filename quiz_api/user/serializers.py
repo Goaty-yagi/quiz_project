@@ -110,7 +110,8 @@ class UserStrageSerializer(serializers.ModelSerializer):
                   "user_tag",
                   "favorite_question",
                   "quiz_taker",
-                  "my_quiz"
+                  "my_quiz",
+                  "created_on"
                   ]
 
 

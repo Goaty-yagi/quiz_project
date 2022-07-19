@@ -39,6 +39,7 @@ import axios from 'axios'
 export default {
     data(){
         return{
+            errorMessage: 'components/board/Reply',
             description:'',
             alert: false,
         }
@@ -92,6 +93,17 @@ export default {
                     user: this.$store.state.signup.user.uid,
                     answer: this.answerId
                 }
+            })
+            .catch((e) => {
+                let logger = {
+                    message: this.errorMessage + " replyPost",
+                    path: window.location.pathname,
+                    actualErrorName: e.name,
+                    actualErrorMessage: e.message,
+                }
+                this.$store.commit('setLogger',logger)
+                this.$store.commit('setIsLoading', false)
+                router.push({ name: 'ConnectionError' })
             })
         },
         addAnswer(){

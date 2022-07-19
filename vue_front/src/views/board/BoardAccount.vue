@@ -173,7 +173,6 @@ export default {
     },
     watch:{
         showOnes:function(v) {if (v == true){
-            console.log('go set',this.showOnes)
             this.setTime()
         }}
     },
@@ -188,7 +187,6 @@ export default {
             const _ = require('lodash');
             let used_num_list = []
             let userTag = _.cloneDeep(this.user.user_tag)
-            console.log('UT',userTag)
             if(userTag){
                 if(userTag.length == 1){
                     return userTag
@@ -231,35 +229,28 @@ export default {
             // }
         },
         getAnsweredQuestion(){
-            console.log("getdazeAQ")
             return this.$store.getters.gettersAnsweredQuestions
         },
         handleQuestion(){
             const handledQuestion= []
-            console.log("questiontype",this.showQuestion.questionType)
             if(this.showQuestion.questionType.question){
                 try{
                     this.questions = this.userQuestion
-                    console.log("UQR",this.questions.results)
                     return this.handleStatus(this.HandleQuestionOnanswerOrder(this.questions.results))
                 }catch{
                 }
             }
             else if(this.showQuestion.questionType.answered){
                 const answeredquiz = []
-                console.log('AQ',this.getAnsweredQuestion)
                 this.questions = this.getAnsweredQuestion
-                console.log("best",this.showQuestion.questionStatus.best)
                 if(this.showQuestion.questionStatus.best){
                     Object.values(this.questions.results).forEach(value =>{
-                        console.log("loop",value.answer)
                         for(let answer of value.answer){
                             if(answer.best==true&&answer.user.UID==this.user.UID){
                                 answeredquiz.push(value)
                             }
                         }
                     })
-                    console.log("best list",answeredquiz)
                     return answeredquiz
                 }
                 else{
@@ -267,7 +258,6 @@ export default {
                     var answeredquiz2 = []
                     // for(let i of this.answeredQuestion){
                         Object.values(this.questions.results).forEach(value =>{
-                            console.log("value",value.answer)
                             if(value.answer[0].on_reply==true&&value.answer[0].user.UID==this.user.UID){
                                 answeredquiz.push(value)
                             }else{
@@ -370,7 +360,6 @@ export default {
                 .get(`/api/board/tag-question?tag=${tagID}`)
                 .then(response => {
                     this.tagQuestion = response.data
-                    console.log("GTQ",this.tagQuestion,tagID,tag)
                     this.handleQuestionType(tag)
                 })
                 .catch(error => {
@@ -379,14 +368,11 @@ export default {
             this.spinner = false
         },
         handleStatus(question){
-            console.log("handle",question)
             const handledQuestion= []
             if(this.showQuestion.questionStatus.all){
-                console.log('just_return__dayo')
                     return question
                 }
                 else if(this.showQuestion.questionStatus.solved){
-                    console.log('solved_dayo')
                     for(let i of question){
                         if(i.solved){
                             handledQuestion.push(i)
@@ -402,7 +388,6 @@ export default {
                     }
                     return handledQuestion
                 }else if(this.showQuestion.questionStatus.onVoting){
-                    console.log('on_going_dayo')
                     for(let i of question){
                         if(i.vote_on_going==true){
                             handledQuestion.push(i)
@@ -480,13 +465,6 @@ export default {
                     this.handleQuestionStatus('all')
                 }
             }
-            // if(type == question){
-                
-                // }
-                // for(let i=0; i<Object.keys(this.showQuestion.questionType.length); i++){
-
-                // }
-            
         },
         resetNotifications(){
             this.onNotification.show = false
@@ -501,11 +479,8 @@ export default {
         },
         handleOnReply(){
             try{
-                console.log("handleOnREPLY", this.getAnsweredQuestion)
                 for(let question of this.getAnsweredQuestion.results){
-                    console.log("first loop",question.answer)
                     for(let answer of question.answer){
-                        console.log("second loop",answer)
                         if(answer.on_reply==true&&answer.user.UID==this.user.UID){
                             this.onNotification.onReply = true
                             this.showOnes = true
@@ -579,7 +554,6 @@ export default {
                 for(let i of Object.keys(this.showQuestion.questionType)){
                     if(this.showQuestion.questionType[i]==true){
                         this.temporaryStatus = i
-                        console.log('TMK',this.temporaryStatus)
                     }
                 }
             }
@@ -614,7 +588,6 @@ export default {
             return stringDT.replace(/\//g,'-')
         },
         viewedNum(likedNum){
-            console.log('in_liked',likedNum)
             try{
                 if(likedNum){
                     return likedNum[0].liked_num

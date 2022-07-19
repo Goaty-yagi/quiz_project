@@ -202,9 +202,16 @@ export default {
                     this.IPInfo.country = IP.country
                     console.log(this.IPInfo)
                     })
-                .catch(error => {
-                    console.log(error)
-                })
+                .catch((e) => {
+                    let logger = {
+                        message: "in component/signin/register.getCountry. couldn't get country",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
                 this.gotIP = true
             }
         }    

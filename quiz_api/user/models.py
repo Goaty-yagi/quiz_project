@@ -4,6 +4,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import Http404
 
+import datetime
+
+
 
 
 class User(models.Model):
@@ -12,7 +15,10 @@ class User(models.Model):
     email = models.EmailField(blank=False)
     country = models.CharField(max_length=100, blank=True, null=True)
     thumbnail = models.ImageField(blank=True, null=True, default='account/default.png')
-    # IP = models.ForeignKey(IPData, related_name='user', on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_on',]
 
     def __str__(self):
         return self.name

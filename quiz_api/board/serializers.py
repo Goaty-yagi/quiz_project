@@ -11,6 +11,131 @@ from board.models import BoardQuestion, BoardAnswer, BoardReply, BoardQuestionLi
 # from user.serializers import UserSerializer
 
 
+# fron here for user storage Purpose
+
+class NonEmailUserSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = User
+		fields = ["UID",
+                  ]
+
+class BoardQuestionStorageSerializer(serializers.ModelSerializer):
+	user = NonEmailUserSerializer
+
+	class Meta:
+		model = BoardQuestion
+		fields = ["id",
+				  "title", 
+				  "description", 
+				  "slug", 
+				  "solved",
+				  "select_best_on_going",
+				  "post_on_going",
+				  "vote_on_going",
+				  "on_answer",
+				  "tag", 
+				  "vote", 
+				  "img",
+				  "viewed",
+				  "user",
+				  "created_on", 
+				  ]
+
+
+class BoardAnswerStorageSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "question", 
+				  "description", 
+				  "created_on",
+				  "on_reply",
+				  "best",
+				  ]
+		read_only_field = ['questions']
+
+
+class BoardLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardQuestionLiked
+		fields = ["id",
+				  "question", 
+				  "liked_num",
+				  ]
+		read_only_field = ["question"]
+
+
+class AnswerLikedStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardAnswerLiked
+		fields = ["id", 
+				  "answer", 
+				  "liked_num",
+				  ]
+
+class UserTagStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = BoardUserTag
+		fields = ["id",
+				  "tag",
+				  "used_num",
+				  "viewed_num",
+				  "total_num"
+				  ]
+		read_only_field = ['tag']
+		depth=1
+
+
+class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = UserFavoriteQuestion
+		fields = ["id",
+				  "question",
+				  ]
+
+
+# user optimization end
+
+# from here, general optimazation
+
+# class LikedNumOptimalSerializer(serializers.ModelSerializer):
+# 	user = NonEmailUserSerializer
+# 	class Meta:
+# 		model = BoardQuestionLiked
+# 		fields = [
+# 			"id",
+# 			"user",
+# 			"question",
+# 			"liked_num"
+# 		]
+
+
+# general optimazation end
+
+# from here for board notifications in front
+
+class AnswerAndReplyOnQuestionSerializer(serializers.ModelSerializer):
+	
+	class Meta:
+		model = BoardQuestion
+		fields = ["id", 
+				  "on_answer",
+				  "on_reply",
+				  ]
+
+
+class ReplyOnAnswerSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BoardAnswer
+		fields = ["id",
+				  "on_reply",
+				  ]
+
+
+# from here, general serializer
 
 class AnswerLikedCreateSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -150,8 +275,6 @@ class BoardAnswerCreateSerializer(serializers.ModelSerializer):
 class BoardQuestionListSerializer(serializers.ModelSerializer):
 	answer = BoardAnswerReadSerializer(many=True, required=False)
 	liked_num = BoardLikedReadSerializer(many=True, required=False)
-	# viewed_count = serializers.SerializerMethodField()
-	# user = UserSerializer(required=True)
 	
 	class Meta:
 		model = BoardQuestion
@@ -173,8 +296,6 @@ class BoardQuestionListSerializer(serializers.ModelSerializer):
 				  "viewed",
 				  "liked_num",
 				  "created_on", 
-				#   "viewed_count",
-				#   'replay_count'
 				  ]
 		depth=3
 
@@ -351,112 +472,3 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 		print('created')
 		return favorite_question[0]
 		
-
-
-# fron here for user storage Purpose
-
-class NonEmailUserSerializer(serializers.ModelSerializer):
-	
-	class Meta:
-		model = User
-		fields = ["UID",
-                  ]
-
-class BoardQuestionStorageSerializer(serializers.ModelSerializer):
-	user = NonEmailUserSerializer
-
-	class Meta:
-		model = BoardQuestion
-		fields = ["id",
-				  "title", 
-				  "description", 
-				  "slug", 
-				  "solved",
-				  "select_best_on_going",
-				  "post_on_going",
-				  "vote_on_going",
-				  "on_answer",
-				  "tag", 
-				  "vote", 
-				  "img",
-				  "viewed",
-				  "user",
-				  "created_on", 
-				  ]
-
-
-class BoardAnswerStorageSerializer(serializers.ModelSerializer):
-	
-	class Meta:
-		model = BoardAnswer
-		fields = ["id",
-				  "question", 
-				  "description", 
-				  "created_on",
-				  "on_reply",
-				  "best",
-				  ]
-		read_only_field = ['questions']
-
-
-class BoardLikedStorageSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardQuestionLiked
-		fields = ["id",
-				  "question", 
-				  "liked_num",
-				  ]
-		read_only_field = ["question"]
-
-
-class AnswerLikedStorageSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardAnswerLiked
-		fields = ["id", 
-				  "answer", 
-				  "liked_num",
-				  ]
-
-class UserTagStorageSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BoardUserTag
-		fields = ["id",
-				  "tag",
-				  "used_num",
-				  "viewed_num",
-				  "total_num"
-				  ]
-		read_only_field = ['tag']
-		depth=1
-
-
-class FavoriteQuestionStorageSerializer(serializers.ModelSerializer):
-	# question = BoardQuestionListSerializer(many=True)
-	class Meta:
-		model = UserFavoriteQuestion
-		fields = ["id",
-				  "question",
-				  ]
-
-
-# user optimization end
-
-# from here for board notifications
-
-class AnswerAndReplyOnQuestionSerializer(serializers.ModelSerializer):
-	
-	class Meta:
-		model = BoardQuestion
-		fields = ["id", 
-				  "on_answer",
-				  "on_reply",
-				  ]
-
-
-class ReplyOnAnswerSerializer(serializers.ModelSerializer):
-
-	class Meta:
-		model = BoardAnswer
-		fields = ["id",
-				  "on_reply",
-				  ]

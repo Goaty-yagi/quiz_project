@@ -9,6 +9,13 @@
         :stageHeight="1200"
         :stageWidth="1600"
         :shouldDestroyAfterDone="true"/>
+        <div v-if="showResultNotification" class="progress-container">
+            <p class="progress-text"> {{ gradeForConvert }} Lv, {{ startGradeAndLevel.level }} => 
+                {{ finalResult.grade }} Lv, {{ finalResult.level }}
+            </p>
+            <p class="result-text"> {{ resultText }}</p>
+            <router-link :to="{name:'Home'}" class=""><i class="fas fa-home"></i>Return to Home</router-link>
+        </div>
         <h1 class='is-size-1 has-text-white'>-結果-</h1>
         <p class='result-text'>あなたのレベルは…</p>
         <div class="diamond-wrapper">
@@ -49,12 +56,19 @@ export default {
   data(){
         return{
             showNotification: false,
+            showResultNotification: false,
+            resultText: '',
             gradeDict:{
                 '超初級':0,
                 '初級':10,
                 '中級':20,
                 '上級':30
-            }
+            },
+            resultTextObjects:{
+                'up':'UP',
+                'stay':'STAY',
+                'down':'DOWN'
+            },
         }
     },
     computed:{
@@ -64,10 +78,18 @@ export default {
 
     },
     mounted(){
+        console.log('test-result2',this)
         console.log('testresult',this.init,this.finalResult,this.startGradeAndLevel)
-        if(this.init){setTimeout(() =>{
-        this.handleShowNotification()
-        },3000)
+        if(this.init){
+            setTimeout(() =>{
+                this.handleShowNotification()
+            },3000
+            )
+        } else {
+            setTimeout(() =>{
+                this.handleShowResultNotification()
+            },2000
+            )
         }
     },
     methods:{
@@ -79,26 +101,81 @@ export default {
             console.log('show',this.gradeForConvert,this.gradeDict[this.finalResult.grade],this.gradeDict[this.gradeForConvert])
             if(this.gradeDict[this.finalResult.grade] > this.gradeDict[this.gradeForConvert]){
                 console.log('grade')
+                this.$store.commit('convertGradeFromIntToID',this.startGradeAndLevel.grade)
+                this.handleResultText('up')
                 return true
             }
             else if(this.gradeDict[this.finalResult.grade] == this.gradeDict[this.gradeForConvert]) {
                 if(this.finalResult.level > this.startGradeAndLevel.level){
                     console.log('level')
+                    this.handleResultText('up')
                     return true 
-                }else{
+                } else if(this.finalResult.level == this.startGradeAndLevel.level){
+                    this.handleResultText('stay')
+                    return false
+                }
+                else{
+                    this.handleResultText('down')
                     return false
                 }
             }else{
+                this.handleResultText('down')
                 return false
             }
         },
+        handleResultText(status){
+            console.log('inhandle')
+            this.resultText = this.resultTextObjects[status]
+            // return this.resultText[status]
+        },
+        handleShowResultNotification() {
+            if(!this.init){
+                setTimeout(
+                this.showResultNotificationTrue(),3000
+                )
+            }
+        },
+        showResultNotificationTrue() {
+            console.log("in true")
+            this.showResultNotification = true
+        }
     }
 }
 </script>
 
 <style scoped lang="scss">
+@import "style/_variables.scss";
+
 .testresult-wrapper{
-        
+    position: relative;
+    .progress-container{
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: solid $base-color;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        // margin: 0 auto;
+        height: 120px;
+        width: 100%;
+        background: $back-tr-white;
+        z-index: 1;
+        .progress-text{
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .result-text{
+            color: black;
+            bottom: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: $dull-red;
+        }
+    }
 }
     /* // this is only for i phone5 */
   @media(max-width: 355px){

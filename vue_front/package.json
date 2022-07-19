@@ -13,15 +13,19 @@
     "chartjs-plugin-datalabels": "^2.0.0",
     "core-js": "^3.22.7",
     "cropperjs": "^1.5.12",
+    "crypto-js": "^4.1.1",
+    "firebase": "^9.8.3",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
+    "secure-ls": "^1.2.6",
     "vue": "^3.2.36",
     "vue-chartjs": "^4.1.0",
     "vue-confetti-explosion": "^1.0.1",
     "vue-router": "^4.0.15",
     "vue-select": "^4.0.0-beta.3",
     "vue-uuid": "^3.0.0",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.4",

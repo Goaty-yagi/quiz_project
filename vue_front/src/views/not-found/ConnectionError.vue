@@ -1,11 +1,17 @@
 <template>
-<div class='not-wrapper'>
-  <h1 class='title is-1 mt-4'> サーバーエラー500</h1>
-  <h1 class='subtitle is-3'> サーバーが混み合っています。しばらく経ってからご利用ください。</h1>
-  <div>
-    <button>エラー報告をする</button>
-    <router-link :to="{name:'Home'}" @click='reload'  class="is-centered mt-6"><i class="fas fa-home"></i>reload</router-link>
-  </div>
+    <div class='not-wrapper'>
+        <div v-if="$store.state.board.notifications.reply" :class="{'notification-blue':$store.state.board.notifications.reply}">
+            <div class="notification-text">
+                {{ scripts.errorNoteText }}
+            </div>
+        </div>
+        <h1 class='main-title'> {{ scripts.mainTitle }}</h1>
+        <p class='sub'> {{ scripts.sub }}</p>
+        <p class='sub2'>{{ scripts.sub2 }}</p>
+    <div class="error-footer">
+        <button v-if="this.$store.getters.logger.exist" @click="createLog()" class='btn-litegray-black-gray-sq'>{{ scripts.report }}</button>
+        <router-link :to="{name:'Home'}" @click='closeConf' class="home"><i class="fas fa-home"></i>{{ scripts.return }}</router-link>
+    </div>
 </div>
 
 </template>
@@ -16,13 +22,21 @@ import {router} from "/src/main.js"
 export default {
     data(){
         return{
+            scripts: {
+                errorNoteText:'報告しました。ご協力ありがとうございました。',
+                mainTitle:'500　サーバーエラー',
+                sub:'サーバーが混み合っています。しばらく経ってからご利用ください。',
+                sub2:'sorry! somethign wired happened',
+                report:'エラー報告をする',
+                return:'Return to home'
+          }
 
         }
     },
     mounted(){
         console.log('mounted',this.$store.getters.logger)
-        // this.checkBeingException()
-        // setTimeout(this.reload, 3000)  
+        this.checkBeingException()
+        setTimeout(this.reload, 3000)  
     },
     methods:{
         closeConf(){
@@ -39,22 +53,63 @@ export default {
                 this.$store.commit('reloadForExceptionFalse')
                 // this.goHome()
                 console.log('start-reload')
-                window.location.reload(true);
+                window.location.reload();
             }
         },
-        // goHome(){
-        //     router.push('/' )
-        // }
+        createLog(){
+            console.log('in not 404 got log')
+            this.$store.dispatch('createLog',this.$store.getters.logger)
+            this.showDelete()
+        },
+        showDelete(){
+            console.log("clicked")
+            this.$store.dispatch("handleNotifications", 'reply')
+        },
+        goHome(){
+            router.push('/' )
+        }
     }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "style/_variables.scss";
   .not-wrapper{
     /* background: linear-gradient(#5B759F,#1C254C); */
-    width: 100vw;
-    /* height:100vh; */
-    padding-top:25vh;
-    padding-bottom: 25vh;
+    width: 100%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .main-title{
+        font-size: 2rem;
+        font-weight: bold;
+        color: $base-white;
+    }
+    .sub{
+        font-weight: bold;
+        color: $base-white;
+    }
+    .sub2{
+        font-weight: bold;
+        color: $dull-red;
+    }
+    .error-footer{
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        .btn-litegray-black-gray-sq{
+            margin-bottom: 2rem;
+        }
+        .home{
+            border: solid $lite-gray;
+            padding: 0 0.6rem;
+            transition: .5s;
+        }
+        .home:hover{
+            color: white;
+        }
+    }
   }
 </style>

@@ -6,9 +6,9 @@ from quiz.apis import (
   QuestionListApi, 
   AnswerListApi, 
   FieldFilteredListApi, 
-  ModuleFilteredListApi, 
+  # ModuleFilteredListApi, 
   QuizFilteredListApi, 
-  OneQuestionApi, 
+  # OneQuestionApi, 
   QuizApi,
   QuestionTypeApi,
   QuizNameIdListApi,
@@ -24,6 +24,11 @@ from quiz.apis import (
   MyQuestionApi,
   QuestionFromMyQuestionApi,
   StatusNameIdListApi,
+  QuestionCreateApi,
+  QuestionImageCreateApi,
+  QuestionImageDispatchApi,
+  # AnswerCreateApi,
+  QuestionDashboardApi
   # MyQuestionReadApi
   )
 
@@ -48,16 +53,21 @@ urlpatterns = [
   path('quizzes-questions/', QuizApi.as_view()),
   path('quizzes-tests/', QuizTestApi.as_view()),
   path('quizzes-name-id/', QuizNameIdListApi.as_view()),
-  path('questions/', QuestionListApi.as_view()),
+  path('questions/', QuestionListApi.as_view()), # might not need
+  path('questions-dashboard/', QuestionDashboardApi.as_view()),
+  path('questions-create/', QuestionCreateApi.as_view()),
+  path('questions-image-create/', QuestionImageCreateApi.as_view()),
+  path('questions-image-dispatch/<id>', QuestionImageDispatchApi.as_view()),
   path('question-types/', QuestionTypeApi.as_view()),
   path('questions/quizzes/', QuizFilteredListApi.as_view()),
   path('questions/fields/', FieldFilteredListApi.as_view()),
-  path('questions/modules/', ModuleFilteredListApi.as_view()),
+  # path('questions/modules/', ModuleFilteredListApi.as_view()),
   path('my-quiz/', MyQuizApi.as_view()),
   path('my-question/', MyQuestionApi.as_view()),
   path('my-question-list/', QuestionFromMyQuestionApi.as_view()),
   path('answers/', AnswerListApi.as_view()),
   path('answers-count/', AnswerCountApi.as_view()),
+  # path('answers-create/', AnswerCreateApi.as_view()),
   path('quiz-taker/', QuizTakerApi.as_view()),
   path('quiz-taker-test/', QuizTakerTestPatchApi.as_view()),
   path('quiz-taker-practice/', QuizTakerPracticePatchApi.as_view()),
@@ -65,7 +75,7 @@ urlpatterns = [
   path('user-status/', UserStatusCreateApi.as_view()),
   path('field-list/', FieldNameIdListApi.as_view()),
   path('status-list/', StatusNameIdListApi.as_view()),
-  path('onequestion/', OneQuestionApi.as_view()),
+  # path('onequestion/', OneQuestionApi.as_view()),
 #   path(r'',include(router.urls)),
 #   path(r'',include(question_router.urls))
 ]

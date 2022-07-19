@@ -803,7 +803,19 @@ export default {
             console.log('UQT',
             this.$store.state.signup.djangoUser.quiz_taker)
             this.$store.commit("convertGradeFromIntToID",this.finalResult.grade)
-            await axios.patch(`api/quiz-taker-test/?quiz_taker=${this.$store.getters.quizTaker}&grade=${this.currentGrade}&level=${this.finalResult.level}`)
+            await axios
+            .patch(`api/quiz-taker-test/?quiz_taker=${this.$store.getters.quizTaker}&grade=${this.currentGrade}&level=${this.finalResult.level}`)
+            .catch(e => {
+                    let logger = {
+                        message: "in QuizTestInit/updateQuizTaker. couldn't update QuizTaker",
+                        path: window.location.pathname,
+                        actualErrorName: e.name,
+                        actualErrorMessage: e.message,
+                    }
+                    this.$store.commit('setLogger',logger)
+                    this.$store.commit('setIsLoading', false)
+                    router.push({ name: 'ConnectionError' })
+                })
         },
         getFinalResult(){
             console.log("GFR",this.currentGrade)
@@ -879,6 +891,7 @@ export default {
                 display: flex;
                 justify-content: center;
                 width: 100%;
+                margin-top: 0.5rem;
                 .image{
                     width: 40%;
                 }

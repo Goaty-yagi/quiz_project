@@ -16,7 +16,7 @@
             <div v-if="!showCompo" class='home-main-wrapper'>
                 <div class="home-hero">
                     <p class="hero-title">楽しく学ぶ最高峰の日本語ラーニングコミュニティ</p>
-                    <img @click="testClick" class='hero-image' src="@/assets/logo.png">
+                    <img @click="testClick" src="@/assets/logo-with-logo.png">
                     <div class="hero-paragraph-wrapper">
                         <div class="paragraph-container">
                             <p class="hero-paragraph">自分のレベルに合った問題をクイズ形式で
@@ -42,9 +42,9 @@
                                 <p>１日１回実力テストに挑戦できるよ！</p>
                             </div>
                             <div class="paragraph-container">
-                                <!-- <div class="test-button-wrapper">
+                                <div class="test-button-wrapper">
                                     <div class='test-button' @click='componentHandler()'>実力テストに挑戦する</div>
-                                </div> -->
+                                </div>
                                 <div class="done-test">
                                     本日の実力テストは終了しました
                                 </div>
@@ -128,6 +128,8 @@ export default {
     mounted(){
         // this.test()
         // this.reload()
+        // this.aaa()
+        this.unko()
         const regionNames = new Intl.DisplayNames(['jp'], { type: 'region' });
         console.log('mounted',regionNames.of('JP'))
         this.scrollTop()
@@ -166,8 +168,10 @@ export default {
         //     this.showChart=true
         // },np,
         unko(){
-            console.log('clicked')
-            this.$store.commit('setTempUserNull')
+            // let a = document.getElementById('unko')
+            // let b = document.querySelector('#unko')
+            // console.log('unko',a,b, typeof a)
+            // this.$store.commit('setTempUserNull')
             // window.localStorage.removeItem('quizkey')
             // return `/quiz/${this.status}`
             },
@@ -218,6 +222,11 @@ export default {
             this.slideIn = !this.slideIn
             this.slideOut = !this.slideOut
         },
+        // aaa(){
+        //     let b = document.getElementsByClassName('hero-title')
+        //     console.log('aaa',b,b.length)
+        //     b[2].style.backgroundColor = 'red'
+        // }
         // reload(){
         //     console.log('reload_enter',this.$store.state.signup.beingException)
         //     if(this.$store.state.signup.beingException){
@@ -242,6 +251,7 @@ export default {
         .home-main-wrapper{
             display: flex;
             .home-hero{
+                width: 100%;
                 margin: 1rem;
                 .hero-title{
                     border-top: 6px solid $base-color;
@@ -260,9 +270,9 @@ export default {
                     color: white;
 
                 }
-                .hero-image{
-                    width: 100px;
-                }
+                // img{
+                //     width: 100px;
+                // }
                 
                 .hero-paragraph-wrapper{
                     color: $back-white;
@@ -278,6 +288,7 @@ export default {
                         }
                         .hero-image{
                             flex-basis: 60%;
+                            width: 10%;
                         }
                         .fa-comments{
                             font-size: 6rem;

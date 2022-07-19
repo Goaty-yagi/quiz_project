@@ -1,11 +1,16 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import SecureLS from "secure-ls";
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import {router} from "../main.js"
 import  signup  from './modules/signup'
 import  board  from './modules/board'
 import  quiz  from './modules/quiz'
+import crypto from 'crypto-js'
+
+const cryptKey = 'unko'
+console.log(window.sessionStorage)
+const ls = new SecureLS({ isCompression: false,useSessionStore: true });
 
 let getDefaultState = () => {
   return {
@@ -43,7 +48,11 @@ export default createStore({
         "signup.myQuestion",
         "signup.myQuizInfo",
       ],  // 保存するモジュール：設定しなければ全部。
-      storage: window.sessionStorage
+      storage: {
+          getItem: key => ls.get(key),
+          setItem: (key, value) => ls.set(key, value),
+          removeItem: key => ls.remove(key),
+      }
     }),
     createPersistedState({
       key: 'quiz-session',
@@ -53,8 +62,14 @@ export default createStore({
         "board.centerTag",
         "quiz.quizNameId",
         "quiz.fieldNameId",
+        // "quiz.questionTypeId"
         ],
-      storage: window.sessionStorage
+        storage:
+        {
+          getItem: key => ls.get(key),
+          setItem: (key, value) => ls.set(key, value),
+          removeItem: key => ls.remove(key),
+        },
     }),
     createPersistedState({
         key: 'tempKey',  // 設定しなければ'vuex'
@@ -138,6 +153,7 @@ export default createStore({
     },
     fixedScrollTrue(state){
       state.fixedScroll = true
+      console.log("scroll-status-changed",state.fixedScroll)
     },
     fixedScrollFalse(state){
       state.fixedScroll = false

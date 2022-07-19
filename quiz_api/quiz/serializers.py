@@ -3,14 +3,23 @@ from rest_framework import serializers
 from django.db.models import F
 from django.db.models import Count
 from django.http import Http404
+from django.db import connection
 
-from quiz.models import Quiz, Question, Answer, QuestionType, ParentStatus, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
+from quiz.models import Quiz, Question, Answer, QuestionType, ParentQuiz, ParentStatus, ParentField,QuizTaker,UserStatus, MyQuiz, MyQuestion
 
 class AnswerListSerializer(serializers.ModelSerializer):
 	# percantage = serializers.SerializerMethodField('get_percentage')
 	class Meta:
 		model = Answer
 		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+
+
+class AnswerCreateSerializer(serializers.ModelSerializer):
+	# percantage = serializers.SerializerMethodField('get_percentage')
+	class Meta:
+		model = Answer
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+
 
 	# def get_percentage(self, obj):
 	# 	answers = Answer.objects.filter(question_id=obj.question.id)
@@ -21,7 +30,10 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class AnswerCountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Answer
-		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']		
+		fields = ["id", "question", "label", "is_correct",'answer_id','taken_num']
+
+		def create(self, validated_data):
+			print('IN_Answer-Create_serializer',validated_data)
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -42,11 +54,69 @@ class QuestionListSerializer(serializers.ModelSerializer):
 			'correct_answer', 
 			'max_select',
 			'taken_num',
-			'answer']
+			'answer',
+			]
 
 	# def get_answers_count(self, obj):
 	# 	return obj.answer_set.all().count()
 
+class QuestionDashboardSerializer(serializers.ModelSerializer):
+	# answers_count = serializers.SerializerMethodField()
+	class Meta:
+		model = ParentQuiz
+		fields = [
+			'get_num_of_question']
+
+
+class QuestionImageCreateSerializer(serializers.ModelSerializer):
+	answer = AnswerListSerializer(many=True,required=False)
+
+	class Meta:
+		model = Question
+		fields = [
+			"id",
+			"quiz_level",
+			"quiz", 
+			"label",
+			'question_type',
+			"image",
+			'answer'
+			]
+
+
+class QuestionCreateSerializer(serializers.ModelSerializer):
+	answer = AnswerListSerializer(many=True,required=False)
+	
+	class Meta:
+		model = Question
+		fields = [
+			"id",
+			"quiz_level",
+			"quiz", 
+			"label", 
+			"image", 
+			"get_image", 
+			'field', 
+			'question_type',
+			'status',
+			'correct_answer', 
+			'max_select',
+			'taken_num',
+			'answer']
+	
+	def create(self, validated_data):
+		print('IN_Create_serializer',validated_data)
+		answers = validated_data.pop('answer')
+		field = validated_data.pop('field')
+		print('A',answers)
+		print('F',field[0].parent_status.id)
+		question = Question.objects.create(**validated_data)
+		question.field.add(field[0])
+		question.status.add(field[0].parent_status.id)
+		print('Q',question,'A',answers)
+		for answer in answers:
+			Answer.objects.create(question=question, **answer)	
+		return question
 
 class QuizListSerializer(serializers.ModelSerializer):
 	# questions_count = serializers.SerializerMethodField()
@@ -70,7 +140,7 @@ class QuizNameIdListSerializer(serializers.ModelSerializer):
 class FieldNameIdListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ParentField
-		fields = ["id", "name"]
+		fields = ["id", "name", "grade", "parent_status"]
 
 
 class ParentStatusIdSerializer(serializers.ModelSerializer):
@@ -85,6 +155,8 @@ class QuizFilterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Quiz
 		fields = ["id", "name", "description", "image", "slug" ]
+
+		
 
 
 class QuestionTypeSerializer(serializers.ModelSerializer):
@@ -143,6 +215,7 @@ class UserStatusSerializer(serializers.ModelSerializer):
 				user_status = UserStatus.objects.create(
 					**validated_data,
 					is_false=is_false)
+		print('lenseri',len(connection.queries))
 		return user_status
 		
 		
@@ -180,6 +253,20 @@ class QuizTakerSerializer(serializers.ModelSerializer):
 			"user_status",
 			"test_take_num",
 			"practice_take_num"]
+
+	def get(self, validated_data):
+		print('IN_QT_serializer',validated_data)
+		# answers = validated_data.pop('answer')
+		# field = validated_data.pop('field')
+		# print('A',answers)
+		# print('F',field[0].parent_status.id)
+		# question = Question.objects.create(**validated_data)
+		# question.field.add(field[0])
+		# question.status.add(field[0].parent_status.id)
+		# print('Q',question,'A',answers)
+		# for answer in answers:
+		# 	Answer.objects.create(question=question, **answer)	
+		return validated_data
 
 
 # here for user-storage purpose
@@ -226,9 +313,6 @@ class MyQuestionSerializer(serializers.ModelSerializer):
 		print("create",validated_data)
 		my_quiz = validated_data.pop('my_quiz')
 		question = validated_data.pop('question')
-		# my_question = MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists()
-			
-		# print(my_question)
 		if MyQuestion.objects.filter(my_quiz=my_quiz,question__id=question.id).exists():
 			my_question = MyQuestion.objects.get(my_quiz=my_quiz,question__id=question.id)
 			my_question.delete()
@@ -236,8 +320,6 @@ class MyQuestionSerializer(serializers.ModelSerializer):
 			return "deleted"
 		else:
 			num = MyQuiz.objects.annotate(Count('my_question'))
-			print("num",int(num.values_list('my_question__count')[0][0]))
-			# print("questionlen", my_quiz.objects.annotate(Count('my_question')))
 			if int(num.values_list('my_question__count')[0][0]) >= my_quiz.max_num:
 				print('max')
 				return Http404

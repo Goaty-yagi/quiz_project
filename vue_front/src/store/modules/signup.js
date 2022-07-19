@@ -52,10 +52,11 @@ export default {
         },
         favoriteQuestion:'',
         logger:{
+            exist: false,
             actualErrorName:'',
             actualErrorMessage:'',
             message:'',
-            name:''
+            path:''
         },
         userInfo:'',
         exceptUserInfo:'',
@@ -203,8 +204,16 @@ export default {
         setLogger(state,payload){
             state.logger.actualErrorName = payload.actualErrorName
             state.logger.actualErrorMessage = payload.actualErrorMessage
-            state.logger.name = payload.name
+            state.logger.path = 'vue' + payload.path
             state.logger.message = payload.message
+            state.logger.exist = true
+        },
+        resetLogger(state){
+            state.logger.actualErrorName = ''
+            state.logger.actualErrorMessage = ''
+            state.logger.path = ''
+            state.logger.message = ''
+            state.logger.exist = false
         },
         setUserInfo(state,payload){
             state.userInfo = payload
@@ -353,7 +362,7 @@ export default {
                 state.userInfo = payload
                 let logger = {
                     message: "in store/signup.SignupDjangoUser. couldn't signup django user",
-                    name: window.location.pathname,
+                    path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
 
@@ -424,7 +433,7 @@ export default {
                         commit("checkDjangoError", e.message)
                         let logger = {
                             message: "in store/signup.SignupDjangoUserException2. couldn't signup django user",
-                            name: window.location.pathname,
+                            path: window.location.pathname,
                             actualErrorName: e.name,
                             actualErrorMessage: e.message,
                         }
@@ -447,7 +456,7 @@ export default {
                         commit("checkDjangoError", e.message)
                         let logger = {
                             message: "in store/signup.SignupDjangoUserException3. couldn't signup django user",
-                            name: window.location.pathname,
+                            path: window.location.pathname,
                             actualErrorName: e.name,
                             actualErrorMessage: e.message,
                         }
@@ -489,7 +498,7 @@ export default {
                 // else{
                 let logger = {
                     message: "in store/signup.SignupDjangoUserFoeThirdParty. couldn't signup django user",
-                    name: window.location.pathname,
+                    path: window.location.pathname,
                     actualErrorName: e.name,
                     actualErrorMessage: e.message,
                 }
@@ -519,7 +528,7 @@ export default {
                     console.log('catch')
                     let logger = {
                         message: "in store/signup.getDjangoUser. couldn't signup django user",
-                        name: window.location.pathname,
+                        path: window.location.pathname,
                         actualErrorName: e.name,
                         actualErrorMessage: e.message,
                     }
@@ -532,31 +541,28 @@ export default {
         async getFavoriteQuestion({ state, commit }){
             state.favoriteQuestion = null
             if(state.djangoUser){
-                try{
-                    const questionId = []
-                    for(let i of state.djangoUser.favorite_question[0].question){
-                        questionId.push(i)
-                    }
-                    if(questionId[0]){
-                        await axios
-                        .get(`/api/board/question-favorite?question_id=${questionId}`)
-                        .then(response => {
-                            state.favoriteQuestion = response.data
-                            })
-                        .catch(e => {
-                            let logger = {
-                                message: "in store/signup.getFavoriteQuestion. couldn't get favoriteQuestion ",
-                                name: window.location.pathname,
-                                actualErrorName: e.name,
-                                actualErrorMessage: e.message,
-                            }
-                            commit('setLogger',logger)
-                            commit("checkDjangoError", e.message)
-                        
+                const questionId = []
+                for(let i of state.djangoUser.favorite_question[0].question){
+                    console.log('GFQQQQQ',i)
+                    questionId.push(i)
+                }
+                if(questionId[0]){
+                    await axios
+                    .get(`/api/board/question-favorite?question_id=${questionId}`)
+                    .then(response => {
+                        state.favoriteQuestion = response.data
                         })
-                    }
-                }catch{
+                    .catch(e => {
+                        let logger = {
+                            message: "in store/signup.getFavoriteQuestion. couldn't get favoriteQuestion ",
+                            path: window.location.pathname,
+                            actualErrorName: e.name,
+                            actualErrorMessage: e.message,
+                        }
+                        commit('setLogger',logger)
+                        commit("checkDjangoError", e.message)
                     
+                    })
                 }
             }
         },
@@ -645,12 +651,12 @@ export default {
             try{
                 await context.state.user.sendEmailVerification()
             }catch(e){
-                // let logger = {
-                //     message: "in store/signup.googleLogin. couldn't sentValidation firebase user",
-                //     name: window.location.pathname,
-                //     actualErrorName: e.code,
-                //     actualErrorMessage: e.message,
-                // }
+                let logger = {
+                    message: "in store/signup.sendEmailVerify. couldn't send EmailVerify",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
                 context.commit('setLogger',logger)
                 router.push({ name: 'ConnectionError' })
             }
@@ -660,9 +666,15 @@ export default {
             console.log('in_login')
             try{
                 var ref = await signInWithEmailAndPassword(auth, email, password)
-            }catch{
-                console.log('error')
-                throw new Error('could not complite signin')
+            }catch (e){
+                let logger = {
+                    message: "in store/signup.login. couldn't login Google-account",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
             }
             if(ref){
                 console.log("IF YES")
@@ -672,8 +684,14 @@ export default {
                 context.commit('emailVerifiedHandler',ref.user.emailVerified)
                 console.log(context.state.user,context.state.emailVerified)
             }else{
-                console.log('error in sign in')
-                throw new Error('could not complite signin')
+                let logger = {
+                    message: "in store/signup.login. couldn't login Google-account",
+                    name: window.location.pathname,
+                    actualErrorName: '',
+                    actualErrorMessage: '',
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
             }
             // context.commit('setIsLoading', false, {root:true})                
         },
@@ -687,9 +705,15 @@ export default {
                     context.commit('checkEmailHandler',true)
                     console.log('you can use it')
                 }
-            }catch{
-                console.log('error in sign up')
-                throw new Error('could not check email')
+            }catch(e){
+                let logger = {
+                    message: "in store/signup.checkEmail. couldn't check Email",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
             }
         },
         async passwordReset(context,email){
@@ -698,16 +722,33 @@ export default {
                 context.state.actionCodeSettings['url'] = context.state.accountURL
                 await sendPasswordResetEmail(auth,email,context.state.actionCodeSettings)
             console.log('password reset sent')
-            }catch{
-                console.log('error in pass reset')
-                throw new Error('could not sent pass reset')
+        }catch(e){
+            let logger = {
+                message: "in store/signup.passwordReset. couldn't sent pass reset",
+                name: window.location.pathname,
+                actualErrorName: e.code,
+                actualErrorMessage: e.message,
+            }
+            context.commit('setLogger',logger)
+            router.push({ name: 'ConnectionError' })
             }
         },
         async logout(context){
-            await signOut(auth)
-            context.commit('setUser',null)
-            context.commit('resetQuizKeyStorage')
-            router.push({ name: 'Home' })
+            try{
+                await signOut(auth)
+                context.commit('setUser',null)
+                context.commit('resetQuizKeyStorage')
+                router.push({ name: 'Home' })
+            } catch(e) {
+                let logger = {
+                    message: "in store/signup.logout. couldn't logout",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
+            }
         },
         updateQuizTakerAction({state, commit, getters},payload){
             console.log('inUQTA',getters)
@@ -739,7 +780,39 @@ export default {
                 context.commit('setIpData',response.data)
                 context.dispatch('getOrSignupDjangoUserForThirdParty')
                 
-            }) 
+            })
+            .catch((e) => {
+                let logger = {
+                    message: "in store/signup.getIpData. couldn't get ip-data",
+                    name: window.location.pathname,
+                    actualErrorName: e.code,
+                    actualErrorMessage: e.message,
+                }
+                context.commit('setLogger',logger)
+                router.push({ name: 'ConnectionError' })
+            });
+        },
+        async createLog(context,payload){
+            if(context.state.logger.exist) {
+                await axios
+                .post('/api/loggers-create',{
+                    message: payload.message,
+                    path: payload.path,
+                    actualErrorName: payload.actualErrorName,
+                    actualErrorMessage: payload.actualErrorMessage,
+                })
+                .catch((e) => {
+                    let logger = {
+                        message: "in store/signup.createLog. couldn't create log",
+                        name: window.location.pathname,
+                        actualErrorName: e.code,
+                        actualErrorMessage: e.message,
+                    }
+                    context.commit('setLogger',logger)
+                    router.push({ name: 'ConnectionError' })
+                });
+                context.commit('resetLogger')
+            }
         },
         // async patchImage(context){
         //     var list = context.getters.getDjangouser.thumbnail.split('/')
@@ -763,6 +836,7 @@ const unsub = onAuthStateChanged(auth,(user) =>{
     store.commit('setAuthIsReady',true)
     store.commit('setUser',user)
     console.log('unsub',user)
+    store.dispatch('createLog')
     if(user){
         store.dispatch('getDjangoUser')
         store.commit('emailVerifiedHandler',user.emailVerified)

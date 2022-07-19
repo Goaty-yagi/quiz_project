@@ -1,7 +1,7 @@
 // @import 'cropperjs/dist/cropper.css';
 
 $base-color: #ff9933;
-$base-color-tr: rgba(255, 153, 51, 0.5);
+// $base-color-tr: rgba(255, 153, 51, 0.5);
 $base-lite:#f5b030;
 $base-lite-2:#ffd68b;
 $base-lite-3:#ffebc6;
@@ -13,6 +13,8 @@ $back-tr-white:rgba(252, 252, 252, 0.95);
 $dark-blue: #1C254C;
 $middle-blue: #2b409f;
 $lite-blue: #5B759F;
+$dark-tr-blue:rgba(15, 24, 92, 0.5);
+$base-color-tr: rgba(255, 128, 0, 0.761);
 $buttongradient:linear-gradient(#FFD3CC 1%, #ff9933 40%);
 $background:linear-gradient(#5B759F,#1C254C);
 $background-bottom-right:linear-gradient(to bottom right, #5B759F,#1C254C);
@@ -90,6 +92,8 @@ body{
 // }
 .scroll-fixed{
     position: fixed;
+    background: cover;
+    height: 100vh;
     // overflow-x: hidden
 }
 // this is for loading bar centered
@@ -380,6 +384,26 @@ input[type="text"]:focus {
     height: auto;
     min-height: 3rem;
     width: 90%;
+    max-width: 550px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .notification-text{
+        font-weight: bold;
+        color: blue;
+    }
+}
+.notification-fixed-red{
+    animation: notification 3s;
+    animation-fill-mode: forwards;
+    border: solid red;
+    background: rgba(255, 221, 241, 0.8);
+    bottom: 5rem;
+    height: 3rem;
+    // min-height: 3rem;
+    width: 80%;
     max-width: 550px;
     padding: 1rem;
     display: flex;
