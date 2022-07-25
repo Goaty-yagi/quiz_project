@@ -788,7 +788,6 @@ export default {
 
 <style lang='scss' scoped>
 @import "style/_variables.scss";
-@import "style/_board.scss";
 .scroll{
     position:fixed;
 }

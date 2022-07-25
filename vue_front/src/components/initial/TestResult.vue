@@ -1,6 +1,7 @@
 <template>
-    <div class='testresult-wrapper'>
+    <div class='testresult-wrapper' :class="{'scroll-fixed':fixedScroll}">
         <ConfettiExplosion
+        class="conf"
         v-if="init||showConfetti()"
         :particleCount="160"
         :particleSize="12"
@@ -71,10 +72,16 @@ export default {
             },
         }
     },
+    beforeUnmount(){
+        this.$store.commit('fixedScrollFalse')
+    },
     computed:{
         gradeForConvert(){
             return this.$store.getters.gradeForConvert
-        }
+        },
+        fixedScroll(){
+            return this.$store.getters.fixedScroll
+        },
 
     },
     mounted(){
@@ -95,6 +102,7 @@ export default {
     methods:{
         handleShowNotification(){
             this.showNotification = !this.showNotification
+            this.$store.commit('fixedScrollTrue')
 
         },
         showConfetti(){
@@ -146,8 +154,17 @@ export default {
 <style scoped lang="scss">
 @import "style/_variables.scss";
 
+.scroll-fixed{
+    text-align: center;
+}
 .testresult-wrapper{
     position: relative;
+    .conf{
+        position: absolute;
+        right: 0;
+        left:0;
+        margin: 0 auto;
+    }
     .progress-container{
         position: absolute;
         display: flex;

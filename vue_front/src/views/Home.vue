@@ -21,10 +21,11 @@
                         <div class="paragraph-container">
                             <p class="hero-paragraph">自分のレベルに合った問題をクイズ形式で
                             解き、実力の確認ができるプラットフォーム。</p>
-                            <chart
+                            <i class="fas fa-chart-line hero-image"></i>
+                            <!-- <chart
                             class="hero-image"
                             :chart-data="chartData"
-                            />
+                            /> -->
                             <!-- <img @click="testClick" class='hero-image' src="@/assets/status.png"> -->
                         </div>
                         <div class="paragraph-container">
@@ -294,6 +295,10 @@ export default {
                             font-size: 6rem;
                             color: rgba($color: #a6a6a6, $alpha: 0.6);
                         }
+                        .fa-chart-line{
+                            font-size: 6rem;
+                            color: rgba($color: #a6a6a6, $alpha: 0.6);
+                        }
                         .test-button-wrapper{
                             flex-basis: 50%;
                         }
@@ -307,32 +312,35 @@ export default {
 
                         }
                     }
+                    // .test-button-wrapper{
+                    //     margin: 1rem;
+                    //     .test-button{
+                    //         display: inline-block;
+                    //         border: solid $lite-gray;
+                    //         // border-radius: 50vh;
+                    //         padding: 0.1rem 0.8rem 0.1rem 0.8rem;
+                    //         color: $back-white;
+                    //         transition: .5s;
+                    //     }
+                    //     .test-button:hover{
+                    //         background: rgba($color: $back-white, $alpha: 0.1);
+                    //     }
+                    // }
                     .test-button-wrapper{
                         margin: 1rem;
                         .test-button{
                             display: inline-block;
-                            border: solid $lite-gray;
-                            border-radius: 50vh;
-                            padding: 0.1rem 0.8rem 0.1rem 0.8rem;
-                            color: $back-white;
+                            border: 0.3rem solid $base-color;
+                            // border-radius: 50vh;
+                            padding: 0.3rem 0.8rem 0.3rem 0.8rem;
+                            color: $dark-blue;
                             transition: .5s;
+                            font-weight: bold;
+                            background: $back-gra-white;
                         }
                         .test-button:hover{
                             background: rgba($color: $back-white, $alpha: 0.1);
-                        }
-                    }
-                    .test-button-wrapper{
-                        margin: 1rem;
-                        .test-button{
-                            display: inline-block;
-                            border: solid $lite-gray;
-                            border-radius: 50vh;
-                            padding: 0.1rem 0.8rem 0.1rem 0.8rem;
-                            color: $back-white;
-                            transition: .5s;
-                        }
-                        .test-button:hover{
-                            background: rgba($color: $back-white, $alpha: 0.1);
+                            color: white;
                         }
                     }
                 }
